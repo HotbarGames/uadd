@@ -1,0 +1,16 @@
+## Interface: 16001, 16000
+## Title: UADD - OpenMap
+## Notes: OpenMap's dungeon map on the World Map in Ukrainian: a font with Ukrainian letters, its words, and the dungeon and boss names other UADD modules saved. Type /uadd openmap.
+## Author: HotbarGames
+## Version: 1.0.0
+## Dependencies: UADD, OpenMap
+## X-Category: Localization
+## X-License: GPL-3.0
+
+ui/locale.lua
+Locale.lua
+Fonts.lua
+Words.lua
+Screen.lua
+Tooltip.lua
+Module.lua

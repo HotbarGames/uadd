@@ -1,0 +1,9 @@
+dist/
+__pycache__/
+CLAUDE.local.md
+# FDJ's own English, made locally by tools/make_dj_prose.py
+tools/dj_prose/en_*.lua
+# the copy check's scan of the installed addons (tools/copy_check.py)
+tools/.cache/
+# review files with the target addons' English, made locally by the tools/make_*.py generators
+local/

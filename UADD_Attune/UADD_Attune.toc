@@ -1,0 +1,25 @@
+## Interface: 16001, 16000
+## Title: UADD - Attune
+## Notes: Attune in Ukrainian: its window, steps, Next window, settings, tooltips, dialogs and chat lines, plus quest, NPC, item and zone names from UALL Forever. Type /uadd attune.
+## Author: HotbarGames
+## Version: 1.0.0
+## Dependencies: UADD, Attune
+## OptionalDeps: UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+ui/locale.lua
+ui/notes.lua
+data/hashed.lua
+Pairs.lua
+Words.lua
+Shape.lua
+Names.lua
+Fonts.lua
+Texts.lua
+Claim.lua
+Screen.lua
+Tooltip.lua
+Popup.lua
+Chat.lua
+Module.lua

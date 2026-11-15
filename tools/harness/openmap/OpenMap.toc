@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: OpenMap (harness stand-in)
+## Notes: Not OpenMap. A small stand-in for tools/harness/flow_openmap.py: frames shaped like OpenMap's dungeon view, every text in the client's standard font.
+## Version: 0
+
+OpenMap.lua

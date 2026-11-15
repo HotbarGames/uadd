@@ -1,0 +1,20 @@
+## Interface: 16001, 16000
+## Title: UADD - Questie
+## Notes: Questie in Ukrainian: menus, plus quest, NPC, item and zone names from UALL Forever. Type /uadd questie.
+## Author: HotbarGames
+## Version: 1.0.0
+## Dependencies: UADD, Questie, QuestieDB
+## OptionalDeps: UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+ui/strings.lua
+Shared.lua
+Locale.lua
+Names.lua
+Tracker.lua
+Original.lua
+Font.lua
+ControlFont.lua
+HeaderFont.lua
+Module.lua

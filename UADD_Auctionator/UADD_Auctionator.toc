@@ -1,0 +1,23 @@
+## Interface: 16001, 16000
+## Title: UADD - Auctionator
+## Notes: Auctionator's own words in Ukrainian: its auction house tabs, buy panels, dialogs, settings pages, tooltip price lines and chat lines. Type /uadd auctionator.
+## Author: HotbarGames
+## Version: 1.0.0
+## Dependencies: UADD, Auctionator
+## X-Category: Localization
+## X-License: GPL-3.0
+
+ui/locale.lua
+ui/text.lua
+Patterns.lua
+Words.lua
+Parts.lua
+Fonts.lua
+Texts.lua
+Screen.lua
+Rows.lua
+Menu.lua
+Chat.lua
+Tooltip.lua
+Popup.lua
+Module.lua

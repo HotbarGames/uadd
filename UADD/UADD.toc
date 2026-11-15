@@ -1,0 +1,27 @@
+## Interface: 16001, 16000
+## Title: UADD - Ukrainian for Addons
+## Notes: Ukrainian translations for other addons. Modules: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune. Type /uadd for the list.
+## Author: HotbarGames
+## Version: 1.0.0
+## SavedVariables: UADD_DB
+## OptionalDeps: UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+Core.lua
+Hash.lua
+Original.lua
+Glossary.lua
+glossary/ui.lua
+glossary/game.lua
+glossary/quests.lua
+glossary/professions.lua
+glossary/world.lua
+glossary/journal.lua
+glossary/map.lua
+Font.lua
+AceFont.lua
+uall.lua
+QuestVariants.lua
+Routes.lua
+Collector.lua

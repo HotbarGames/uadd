@@ -1,0 +1,90 @@
+"""Runs the flow checks and prints each one. Usage: python3 tools/harness/run.py
+
+Needs lupa (pip install lupa) and the Forever AddOns folder (UADD_ADDONS_DIR overrides it).
+The Dungeon Journal module's checks (flow_dj_module.py) run after the main flow when
+ForeverDungeonJournal and UALLF are in that folder; otherwise they are skipped with a note.
+UADD_OpenMap's checks run with them, on a stand-in for OpenMap (flow_openmap.py).
+UADD_DialogueUI's checks run next, on a stand-in for DialogueUI (flow_dialogueui.py).
+UADD_ForeverXPBar's checks run next, on a stand-in for ForeverXP Bar (flow_fxpb.py).
+UADD_Auctionator's checks run next, on a stand-in for Auctionator (flow_auc.py).
+UADD_Attune's checks run next, on a stand-in for Attune (flow_att.py).
+UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
+Exit code 0 = every check passed, 1 = a check failed, 2 = cannot run here.
+"""
+import gc
+import json
+import os
+import sys
+import time
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import loader  # noqa: E402
+import session  # noqa: E402
+
+
+def run_all():
+    """Every flow, one after another. Returns (checks, facts, notes)."""
+    import flow
+    import flow_att
+    import flow_auc
+    import flow_dialogueui
+    import flow_dj_module
+    import flow_fxpb
+    import flow_hash
+    f = flow.run()
+    checks, facts, notes = list(f.checks), dict(f.facts), []
+    del f
+    gc.collect()                       # the main flow's games go before the journal's starts
+    missing = flow_dj_module.missing_addons()
+    if missing:
+        notes.append("dj module checks skipped: missing addons: " + ", ".join(missing))
+    else:
+        dj_checks, dj_facts = flow_dj_module.run()
+        checks += dj_checks
+        facts["dj_module"] = dj_facts
+        gc.collect()
+    dui_checks, dui_facts = flow_dialogueui.run_checks()
+    checks += dui_checks
+    facts["dialogueui"] = dui_facts
+    gc.collect()
+    fx_checks, fx_facts = flow_fxpb.run_checks()
+    checks += fx_checks
+    facts["fxpb"] = fx_facts
+    gc.collect()
+    auc_checks, auc_facts = flow_auc.run_checks()
+    checks += auc_checks
+    facts["auc"] = auc_facts
+    gc.collect()
+    att_checks, att_facts = flow_att.run_checks()
+    checks += att_checks
+    facts["att"] = att_facts
+    gc.collect()
+    hash_checks, hash_facts = flow_hash.run_checks()
+    checks += hash_checks
+    facts["hash"] = hash_facts
+    return checks, facts, notes
+
+
+def main():
+    if loader.lua_runtime() is None:
+        print("cannot run: lupa is not installed (pip install lupa)")
+        return 2
+    missing = session.missing_addons()
+    if missing:
+        print("cannot run: missing addons: " + ", ".join(missing))
+        return 2
+    t0 = time.time()
+    checks, facts, notes = run_all()
+    bad = [c for c in checks if not c.ok]
+    for c in checks:
+        print(("ok    " if c.ok else "FAIL  ") + c.name + (f"  [{c.detail}]" if c.detail else ""))
+    for n in notes:
+        print("note  " + n)
+    print(json.dumps(facts, ensure_ascii=False))
+    print(f"{len(checks) - len(bad)}/{len(checks)} passed in {time.time() - t0:.0f} s")
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

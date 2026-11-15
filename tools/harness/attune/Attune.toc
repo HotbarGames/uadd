@@ -1,0 +1,11 @@
+## Interface: 16001, 16000
+## Title: Attune (harness stand-in)
+## Notes: Not Attune. A stand-in with Attune's globals, functions, frame names and table shapes for tools/harness/flow_att.py; the libraries come from the installed Attune.
+## Version: 0
+## SavedVariables: Attune_DB
+## SavedVariablesPerCharacter: AttuneLastViewed, TreeExpandStatus
+
+Attune.lua
+Data.lua
+Panels.lua
+Extra.lua

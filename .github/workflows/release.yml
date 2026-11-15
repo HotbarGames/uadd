@@ -1,0 +1,102 @@
+# Packages UADD with the BigWigs packager (https://github.com/BigWigsMods/packager) when a version tag (v1.0.1, ...)
+# is pushed: builds UADD-<tag>.zip from .pkgmeta (both folders, UADD and UADD_Questie) and attaches it to a GitHub
+# release. It uploads to CurseForge too, but only once UADD/UADD.toc has `## X-Curse-Project-ID: <id>` (game type
+# Forever, game versions from the TOC's ## Interface). There is no CurseForge project yet, so for now a tag makes the
+# GitHub release only.
+#
+# Dry run (uploads nothing): Actions > release > Run workflow, or `gh workflow run release.yml`. It builds the zip,
+# lists what is in it and, when the CF_API_TOKEN secret is set, checks that CurseForge accepts the token and lists
+# the TOC's Forever versions.
+#
+# CurseForge setup (later): create the project, add `## X-Curse-Project-ID: <id>` to UADD/UADD.toc and the
+# repository secret CF_API_TOKEN (CurseForge > My Profile > API Tokens). GITHUB_TOKEN is GitHub's own per-run token.
+# Release: bump `## Version` in both TOCs and UADD/CHANGELOG.md together, commit, push, then tag that commit.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # the packager creates the GitHub release and uploads the zip to it
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0          # the packager reads tags and history for the version and changelog
+          persist-credentials: false
+
+      - name: CurseForge project
+        run: |
+          if grep -q '^## X-Curse-Project-ID:' UADD/UADD.toc; then
+            echo "CurseForge project ID found: the zip goes to CurseForge and GitHub."
+          else
+            echo "::warning::no X-Curse-Project-ID in UADD/UADD.toc: GitHub release only, nothing goes to CurseForge"
+          fi
+
+      - name: Package and upload
+        uses: BigWigsMods/packager@e50a250f8705041e40f2fa1ddcb280a686d65aa0 # v2.6.1
+        with:
+          pandoc: "false"         # only needed for WoWInterface uploads
+          # file and label without the "-forever" suffix the packager adds for non-retail game types:
+          # the addon is Forever-only
+          args: -n "{package-name}-{project-version}:{project-version}"
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_TOKEN }}   # unused while the TOC has no X-Curse-Project-ID
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+  dry-run:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: CurseForge token and Forever game versions
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          grep -q '^## X-Curse-Project-ID:' UADD/UADD.toc \
+            || echo "::warning::no X-Curse-Project-ID in UADD/UADD.toc yet: a tag would make a GitHub release only"
+          if [ -z "$CF_API_KEY" ]; then
+            echo "::warning::no CF_API_TOKEN secret: skipping the CurseForge check"; exit 0
+          fi
+          code=$(curl -s -o versions.json -w '%{http_code}' -H "x-api-token: $CF_API_KEY" \
+            https://wow.curseforge.com/api/game/wow/versions)
+          if [ "$code" != 200 ] || grep -q errorMessage versions.json; then
+            echo "::error::CurseForge refused the token (HTTP $code)"; exit 1
+          fi
+          echo "Token accepted. Forever versions on CurseForge (game type 88568):"
+          jq -r 'map(select(.gameVersionTypeID == 88568)) | sort_by(.id) | .[].name' versions.json | sed 's/^/  /'
+          # the TOC's interface numbers, as the packager turns them into versions (16001 -> 1.60.1)
+          for i in $(sed -n 's/^## Interface:\s*//p' UADD/UADD.toc | tr -d '\r' | tr ',' ' '); do
+            v="$((i / 10000)).$((i / 100 % 100)).$((i % 100))"
+            if jq -e --arg v "$v" 'map(select(.gameVersionTypeID == 88568 and .name == $v)) | length > 0' versions.json >/dev/null; then
+              echo "TOC interface $i -> $v: listed"
+            else
+              echo "::warning::TOC interface $i -> $v is not listed for Forever yet; the upload would use the nearest lower version"
+            fi
+          done
+
+      - name: Package without uploading
+        uses: BigWigsMods/packager@e50a250f8705041e40f2fa1ddcb280a686d65aa0 # v2.6.1
+        with:
+          pandoc: "false"
+          args: -d -n "{package-name}-{project-version}:{project-version}"
+
+      - name: What the zip would contain
+        run: for z in .release/*.zip; do echo "$z"; unzip -l "$z"; done

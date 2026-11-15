@@ -1,0 +1,18 @@
+## Interface: 16001, 16000
+## Title: UADD - Dialogue UI
+## Notes: Dialogue UI's own words in Ukrainian: buttons, quest labels, hints, settings, tooltips and chat lines. Type /uadd dialogueui.
+## Author: HotbarGames
+## Version: 1.0.0
+## Dependencies: UADD
+## OptionalDeps: DialogueUI, DialogueUI_UALL
+## X-Category: Localization
+## X-License: GPL-3.0
+
+ui/locale.lua
+ui/hashes.lua
+Words.lua
+Fonts.lua
+Texts.lua
+Screen.lua
+Chat.lua
+Module.lua

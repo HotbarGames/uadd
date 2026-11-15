@@ -1,0 +1,27 @@
+-- UADD glossary: words first needed by the OpenMap module (UADD_OpenMap):
+-- map pins, waypoints, zoom, floors, the quill and the map's own layers.
+-- One line per meaning. Rules: docs/GLOSSARY.md.
+local E = UADD.Glossary.Add
+
+E{ id = "map.pin", en = "Map pin", uk = "Позначка", note = "a pin the player drops on the map; not «пін», not «шпилька»" }
+E{ id = "map.pins", en = "Pins", uk = "Позначки", note = "plural of map.pin; OpenMap's tab and button" }
+E{ id = "map.drop_pin", en = "Drop a pin", uk = "Поставити позначку", note = "the action; key binding and menu item" }
+E{ id = "map.waypoint", en = "Waypoint", uk = "Точка маршруту", note = "the one tracked point the arrow leads to" }
+E{ id = "map.zoom", en = "Zoom", uk = "Наближення", note = "how far in the map is; «масштаб» is the window's scale" }
+E{ id = "map.deepest_zoom", en = "Deepest zoom", uk = "Найбільше наближення", note = "slider: how far in the map can go" }
+E{ id = "map.floor", en = "Floor %d", uk = "Поверх %d", note = "a level of a dungeon's map" }
+E{ id = "map.layer", en = "Layer", uk = "Шар", note = "a drawn layer of the map, not a server layer" }
+E{ id = "map.coordinates", en = "Coordinates", uk = "Координати", note = "x, y on the map" }
+E{ id = "map.continent", en = "Continent", uk = "Континент", note = "Kalimdor, Eastern Kingdoms: the map level above a zone" }
+E{ id = "map.unexplored", en = "Unexplored areas", uk = "Недосліджені місця", note = "parts of a zone the character has not visited" }
+E{ id = "map.fog_of_war", en = "Fog of war", uk = "Туман війни", note = "the same idea as map.unexplored, in other addons" }
+E{ id = "map.flight_path", en = "Flight path", uk = "Шлях польоту", note = "a learned flight point or route" }
+E{ id = "map.flight_masters", en = "Flight masters", uk = "Майстри польотів", note = "plural of npc.flight_master; could move next to it" }
+E{ id = "map.boats", en = "Boats", uk = "Кораблі", note = "boat routes between continents" }
+E{ id = "map.zeppelins", en = "Zeppelins", uk = "Цепеліни", note = "zeppelin routes between continents" }
+E{ id = "map.quill", en = "Quill", uk = "Перо", note = "OpenMap's drawing tool as a whole; its Pen tool is «Олівець»" }
+E{ id = "map.notes", en = "Map notes", uk = "Нотатки на карті", note = "painted areas with a text note" }
+E{ id = "map.zone_levels", en = "Zone levels", uk = "Рівні зон", note = "the level range shown on each zone" }
+E{ id = "map.arrow", en = "Arrow", uk = "Стрілка", note = "drawing tool: a pointing arrow. Not the ammo (that is gear.arrow)" }
+E{ id = "map.find_me", en = "Find me", uk = "Знайти мене", note = "button: move the map to the player" }
+E{ id = "map.classic_map", en = "Classic", uk = "Класична", note = "welcome-page choice of map look: the classic full map (карта, feminine). Not a style name (ui.classic_look)" }

@@ -1,0 +1,50 @@
+# CurseForge / BigWigs packager (https://github.com/BigWigsMods/packager).
+# One zip with eight addon folders: UADD (the core) and its seven modules (Questie, Dungeon Journal, OpenMap,
+# DialogueUI, ForeverXP Bar, Auctionator, Attune). This is the same list tools/make_zip.py ships. The repo is
+# checked out into UADD/, so move each folder up: the zip then holds UADD/UADD.toc, UADD_Questie/UADD_Questie.toc
+# and so on. Nothing is a required dependency: each module loads only when its own addon is there, and the core
+# alone changes nothing. The addons it translates, and UALL Forever (for names), are optional dependencies.
+package-as: UADD
+
+move-folders:
+  UADD/UADD: UADD
+  UADD/UADD_Questie: UADD_Questie
+  UADD/UADD_DungeonJournal: UADD_DungeonJournal
+  UADD/UADD_OpenMap: UADD_OpenMap
+  UADD/UADD_DialogueUI: UADD_DialogueUI
+  UADD/UADD_ForeverXPBar: UADD_ForeverXPBar
+  UADD/UADD_Auctionator: UADD_Auctionator
+  UADD/UADD_Attune: UADD_Attune
+
+# CurseForge slugs, each checked on its project page on 2026-11-14
+optional-dependencies:
+  - questie
+  - forever-dungeon-journal
+  - openmap
+  - dialogueui
+  - foreverxpbar
+  - auctionator
+  - attune
+  # names come from UALL Forever when it is installed; without it the menus are still Ukrainian
+  - uall-forever-ukrainian-localization
+
+manual-changelog:
+  filename: UADD/CHANGELOG.md
+  markup-type: markdown
+
+# dev-only files: none of these ship
+ignore:
+  - docs
+  - tools
+  - data
+  - dist
+  - install.bat
+  - README.md
+  - CLAUDE.md
+  - CLAUDE.local.md
+  - size-budget.json
+  - .gitignore
+  - .gitattributes
+  - .github
+  - .pytest_cache
+  - LICENSE
