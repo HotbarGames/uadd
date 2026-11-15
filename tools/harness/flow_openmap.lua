@@ -96,6 +96,13 @@ function M.tip()
     GameTooltip:Hide()
     return { text = shown, font = font, after = FontOf(fs), n = n, boxes = #boxes }
 end
+-- A quest row's tooltip (OpenMap's "Level" around L["from %d"]): its line while shown.
+function M.questTip()
+    S().QuestTip(30, 25)
+    local t = _G.GameTooltipTextLeft1:GetText()
+    GameTooltip:Hide()
+    return t
+end
 function M.menuText(key)
     local m = S().menu
     local w = { tab1 = m.tabs[1].Text, row = m.row, count = m.count }
@@ -118,6 +125,15 @@ function M.panel()
 end
 function M.closePanel() S().panel:Hide() end
 
+-- Lines built like OpenMap builds them (openmap/Built.lua), their texts, and the dock tooltip's line.
+function M.built(version, zone, note)
+    S().OpenBuilt({ version = version, zone = zone, from = "Quix", note = note or "my note" })
+end
+function M.builtTexts() return S().BuiltTexts() end
+function M.closeBuilt() S().CloseBuilt() end
+function M.dockTip(zone) return S().DockTip(zone) end
+function M.pinTip(note, zone, how) return S().PinTip(note, zone, "Quix", how) end
+
 -- Combat: on, or off with the event the game sends when it ends.
 function M.combat(on)
     H.combat = on
@@ -128,6 +144,7 @@ end
 function M.open(title1, title2)
     WorldMapFrame:Show()
     S().Open({ name = "Razorfen Kraul", range = "24-33", zone = "The Barrens", boss = "Charlga Razorflank",
+        also = { name = "Razorfen Downs", range = "33-43" },
         quests = { { level = 30, title = title1, state = "done" }, { level = 29, title = title2, state = "log" } } })
 end
 

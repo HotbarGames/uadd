@@ -17,8 +17,9 @@
 --   * Quest and book text (body): DialogueUI's paragraphs are the game's prose, on the same pooled
 --     FontStrings as its sub-headers. There only a short text that is one L value as a whole, or a
 --     format whose values are numbers or key pictures, changes: never a %s, never joined lines.
---   * A %s value longer than MAX_CAP letters, or with a line break or ". " in it, is prose, not a
---     name: then that format does not fit (so a "quest done" chat format never takes a quest sentence).
+--   * What a %s may hold (a number, a time, one of DialogueUI's own texts, a name of the kind that key
+--     takes): Slots.lua. Anything else there and the format does not fit, so a line is never half
+--     translated.
 -- Never translated (DialogueUI or the game reads them back, or they are names, keys or patterns): the
 -- SKIP keys below and every key whose Ukrainian is false or the English.
 
@@ -32,7 +33,7 @@ local index                -- UADD.TextIndex of our words, made by W.Build
 local memo, memoBody, memoSize = {}, {}, 0
 local count = 0
 local dupes = {}          -- keys whose English an earlier key has with other Ukrainian (that one wins)
-local MAX_CAP, MAX_BODY = 60, 60
+local MAX_BODY = 60
 
 -- Item level lines: DialogueUI finds L["Item Level"] in a tooltip line and appends a delta to it.
 -- Money symbols are single letters. The rest are matched against game text or are names.
@@ -201,7 +202,7 @@ end
 -- ── The index ────────────────────────────────────────────────────────────────────────────────
 
 function W.Build()
-    wipe(memo) wipe(memoBody) wipe(dupes)
+    wipe(memo) wipe(memoBody) wipe(dupes) ns.Slots.Reset()
     memoSize, count = 0, 0
     local UA = ns.UA or {}
     local keys = {}
@@ -231,24 +232,17 @@ function W.Build()
     end
 end
 
--- A %s value that is a name (a quest, an item, a faction), not a piece of prose.
-local function NameLike(c)
-    if c:find("\n", 1, true) or c:find(". ", 1, true) then return false end
-    c = c:gsub("|T.-|t", "T"):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-    return #c <= MAX_CAP
-end
-
--- Fill checks (Hash.lua): false = this template does not fit, the next best is tried.
-local function NameFit(k, v, d) if d.kinds[k] == "s" and not NameLike(v) then return false end end
+local One
+local Filler = ns.Slots.Filler(function(t) return One(t) end)
 local function BodyFit(k, _, d) if d.kinds[k] == "s" then return false end end
 
 -- One text that is a single L value (or one in colour) in Ukrainian, or nil. `body`: quest text.
-local function One(t, body)
+One = function(t, body)
     if body and (#t > MAX_BODY or t:find("\n", 1, true)) then return nil end
     local uk = index:Exact(t)
     if uk then return uk end
     if #t > 600 then return nil end
-    uk = index:Text(t, body and BodyFit or NameFit)
+    uk = index:Text(t, body and BodyFit or Filler)
     if uk then return uk end
     local code, inner = t:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r$")
     if code and not inner:find("|r", 1, true) then
@@ -287,7 +281,12 @@ function W.Text(t, body)
     local m = body and memoBody or memo
     local hit = m[t]
     if hit ~= nil then return hit or nil end
+    local S = ns.Slots
+    hit = S.Soon(t, body)
+    if hit ~= nil then return hit or nil end
+    S.Begin()
     local uk = One(t, body) or (not body and t:find("\n", 1, true) and Joined(t)) or nil
+    if S.unsure then S.Keep(t, body, uk) return uk end
     if memoSize > 2000 then wipe(memo) wipe(memoBody) memoSize = 0 end
     m[t], memoSize = uk or false, memoSize + 1
     return uk

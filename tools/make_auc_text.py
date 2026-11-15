@@ -189,6 +189,20 @@ def parse_review(text):
     return [tuple(e) for e in out if e[2] is not None and e[3] is not None]
 
 
+# The code templates' %s slots that may hold a text that is not Auctionator's own (Words.lua keeps it
+# as it is; any other English in a slot leaves the whole line English). By hash key: word = one
+# lowercase word (a slash command argument: Auctionator lowers the input and splits it at spaces,
+# or a Lua type name); free = any text (an option's value as tostring gives it).
+SLOTS = {
+    "40:3b031f89": {"word": [1, 2]},                 # wrong value type: two type names
+    "29:b29dd698": {"word": [1]},                    # cannot edit an option of this type
+    "25:a8b9e4b7": {"word": [1]},                    # unknown command
+    "18:5115a13d": {"word": [1]},                    # unknown option
+    "14:c267c9cf": {"word": [1], "free": [2]},       # option set to a value
+    "13:29cad8a5": {"word": [1], "free": [2]},       # option's value
+}
+
+
 def build_text_lua(entries):
     """ui/text.lua's text from the CODE entries of a review file."""
     exact, templates = {}, []
@@ -197,7 +211,8 @@ def build_text_lua(entries):
         if kind != "CODE" or not uk or uk == en:
             continue
         if hashtext.is_template(en):
-            templates.append(hashtext.template(en, uk, id=hashtext.key(en)))
+            k = hashtext.key(en)
+            templates.append(hashtext.template(en, uk, id=k, **SLOTS.get(k, {})))
         else:
             exact[hashtext.key(en)] = uk
     return hashtext.write_lua(exact, templates, "UA_TEXT", HEADER)

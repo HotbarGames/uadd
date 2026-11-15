@@ -17,6 +17,7 @@ import gc
 import os
 import sys
 
+import halves_mods
 import session
 from loader import Addon, Client, lua_str, read_text, txt
 
@@ -97,7 +98,21 @@ def _body(c, M, check, facts):
     check("words: a name in %s still matches", named.startswith("Wanted: Hogger") and named != "Wanted: Hogger completed.",
           named)
     check("words: on a quest page a %s format never matches", M.words("Wanted: Hogger completed.", True) is None)
+    _slots(M, check)
     facts["dialogueui_dupe_keys"] = int(M.dupes())
+
+
+LINK = "|cff1eff00|Hitem:2140::::::::60:::::|h[Carving Knife]|h|r"
+
+
+def _slots(M, check):
+    """What a %s may hold: made-up English in a %s keeps the whole line English (halves_mods.dui, on
+    every format of the installed DialogueUI); values, times and names of the right kind still fit."""
+    halves_mods.dui(check, M)
+    for t, end in (("Time Left: 2 |4Hr:Hr; 5 |4Min:Min;", ": 2 год 5 хв"), ("- You have |cffffffff1,234|r", " |cffffffff1,234|r"),
+                   ("Title: Scarab Lord", ": Scarab Lord"), ("Replace " + LINK, " " + LINK)):
+        got = txt(M.words(t, False)) or ""
+        check(f"words: {t!r} in Ukrainian, its %s kept or translated", got.endswith(end) and got != t, got)
     n, bad = M.shapes()
     check("words: Lua's hashes of a game global = make_dui_data.py's", int(n or 0) > 0 and not bad, f"{n} looked at; {bad}")
 

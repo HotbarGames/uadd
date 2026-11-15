@@ -10,15 +10,19 @@
   * a results list filled before its window was known: its rows in Ukrainian once it is known
     (Rows.lua asks those cells again);
   * the hold key let go in a fight: tooltip and menu back in Ukrainian when combat ends;
-  * the cost of a text with a blank line that is not in the memo yet (facts).
+  * the cost of a text with a blank line that is not in the memo yet (facts);
+  * what a template's %s may hold (slots): made-up English in a slot leaves the line English
+    (halves_mods.auc, on every real template; its free-slot marks: tools/test_halves.py).
 The expected Ukrainian is read from the module's data (flow_auc.lua), not from the module's answers.
 """
 import os
 import sys
 
+import halves_mods
 from loader import txt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import hashtext  # noqa: E402
 import make_auc_text  # noqa: E402  (tools/: reads the installed Auctionator)
 
 HELD = 0.4
@@ -140,3 +144,48 @@ def run(check, c, M, u, uo, facts):
     facts["nl_miss_ms_en"] = round(M.missCost(MISSES, "en"), 4)
     facts["line_miss_ms_en"] = round(M.missCost(MISSES, "line"), 4)
     check("blank-line texts kept in the memo (found or not)", M.memo() - memo0 >= 2 * MISSES, f"{memo0} -> {M.memo()}")
+    slots(check, c, M, u)
+
+
+def slots(check, c, M, u):
+    """What a template's %s may hold (Words.lua Slot): a value, one of Auctionator's texts, or a slot
+    that takes any text. Made-up English anywhere else leaves the whole line English (never half).
+    Made-up English for some keys and a made-up ui/text.lua are put in for a while, then taken out."""
+    W, lua = c.H.ns.UADD_Auctionator.Words, c.lua.globals()
+    en = {k: txt(v) for k, v in M.standInEN().items()}
+    link, junk = txt(M.link()), "Florp the wobbly gizmo"
+
+    def m(copper):
+        return txt(M.money(copper))
+
+    def eq(name, got, want):
+        got = txt(got) if got is not None else None
+        check(name, got == want, f"{got!r} | want {want!r}")
+    halves_mods.auc(check, c)       # made-up English in each slot of every real template
+    eq("slot: link and money kept", W.Text(en["BUYOUT_AUCTION_INFO"] % (link, m(2500))),
+       u("BUYOUT_AUCTION_INFO") % (link, m(2500)))
+    # Made-up English for keys the stand-in does not have: free slots, a link with a space before a %s.
+    made = {"X_PRICE_HISTORY": "%s blorp chart", "DELETE_LIST_CONFIRM": "Zap '%s' for good?",
+            "MULTIPLE_STACKS_AUCTION_INFO": "%s %s, zumming %s", "X_STACKS_OF_X": "%s blorps of %s"}
+    for k, v in made.items():
+        lua["AUCTIONATOR_L_" + k] = v
+    W.Build()
+    eq("slot: free (item name) kept", W.Text("Wobble Gizmo blorp chart"), u("X_PRICE_HISTORY") % "Wobble Gizmo")
+    eq("slot: free (list name) kept", W.Text("Zap 'Wobble List' for good?"), u("DELETE_LIST_CONFIRM") % "Wobble List")
+    eq("slot: a link's name with a space is not cut", W.Text(f"{link} 3 blorps of 20, zumming {m(900)}"),
+       u("MULTIPLE_STACKS_AUCTION_INFO") % (link, u("X_STACKS_OF_X") % ("3", "20"), m(900)))
+    eq("slot: made-up English in a non-free slot of it", W.Text(f"{link} {junk}, zumming {m(900)}"), None)
+    for k in made:
+        lua["AUCTIONATOR_L_" + k] = None
+    # ui/text.lua's word (one lowercase word) and free slots, on made-up code texts.
+    ns, real = c.H.ns.UADD_Auctionator, c.H.ns.UADD_Auctionator.UA_TEXT
+    src = hashtext.write_lua({}, [hashtext.template("Blorf set %s: %s", "Блорф %s: %s", word=[1], free=[2]),
+                                  hashtext.template("Unknown blorf: %s", "Невідомий блорф: %s", word=[1])], "UA_TEXT")
+    lua.loadstring(src.encode("utf-8"))(None, ns)       # the harness Lua takes bytes for UTF-8
+    W.Build()
+    eq("code slot: word and free kept", W.Text("Blorf set auto_zap: Big Value"), "Блорф auto_zap: Big Value")
+    eq("code slot: a word slot with two words stays English", W.Text("Blorf set Auto Zap: 5"), None)
+    eq("code slot: word kept", W.Text("Unknown blorf: zap_it"), "Невідомий блорф: zap_it")
+    eq("code slot: made-up English stays English", W.Text("Unknown blorf: " + junk), None)
+    ns.UA_TEXT = real
+    W.Build()

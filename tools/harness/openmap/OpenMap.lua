@@ -5,7 +5,9 @@
 --     title, a level line, tab Buttons (each with .Text) and rows (left and right text).
 --   * The card: a child of the World Map with a title, a fold button and a scroll child text.
 -- Every text is drawn the way OpenMap draws it: SetFont(STANDARD_TEXT_FONT, size, flags).
--- OpenMapStandIn.Open(d) fills the English texts (with the quest titles given) and shows it all.
+-- OpenMapStandIn.Open(d) fills the texts (with the quest titles given) and shows it all. Like
+-- OpenMap's Map/Dungeons.lua, it builds them from L and its own English ("Level", a level range in
+-- colour), so a line can hold both: our words from L and English around them.
 
 --   * OpenMap.L: its locale table, made as OpenMap's Core.lua makes it (English back when nothing
 --     is set). One text a locale file of its own set ("Older"), to check it comes back exactly.
@@ -40,6 +42,8 @@ local function Button(parent, size)
     return b
 end
 
+S.Text, S.Button = Text, Button   -- for Built.lua
+
 local view, card
 
 local function Build()
@@ -60,7 +64,7 @@ local function Build()
     side.tabs = {}
     for i, key in ipairs({ "Bosses", "Quests", "Loot", "Floors" }) do
         local b = Button(side, 12)
-        b:SetText(key)
+        b:SetText(L[key])
         b:SetWidth(b.Text:GetStringWidth() + 20)
         side.tabs[i] = b
     end
@@ -90,28 +94,35 @@ local function Row(i)
     return row
 end
 
--- d = { name, range, boss, quests = { { id, level, title, state = "done" | "log" | nil } } }
+-- A level range in its colour, as OpenMap's Range() writes it.
+local function Range(r) return "|cffff8040" .. r .. "|r" end
+
+-- d = { name, range, zone, boss, also = { name, range } (one more on the card),
+--       quests = { { level, title, state = "done" | "log" | nil } } }
 function S.Open(d)
     if not view then Build() end
     view.where:SetText(d.name)
-    view.floorName:SetText("|cffffd100Floor 1|r  |cff998866 1 / 2|r")
-    view.back:SetText("|cffffd100<|r  Back to " .. d.zone)
+    view.floorName:SetText(("|cffffd100%s|r%s"):format(L["Floor %d"]:format(1), ("  |cff998866%d / %d|r"):format(1, 2)))
+    view.back:SetText("|cffffd100<|r  " .. L["Back to %s"]:format(d.zone))
     view.back:SetWidth(view.back.Text:GetStringWidth() + 24)
-    view.credit:SetText("Map by Someone")
+    view.credit:SetText(L["Map by %s"]:format("Someone"))
     view.pinNum:SetText("1")
-    view.hint:SetText("|cffffd100Right-click|r or |cffffd100Esc|r to go back to the world map")
+    view.hint:SetText(L["|cffffd100Right-click|r or |cffffd100Esc|r to go back to the world map"])
     view.side.title:SetText("|cffffd100" .. d.name .. "|r")
-    view.side.sub:SetText("Level " .. d.range .. "   |cffbbbbbbRaid|r")
+    view.side.sub:SetText((LEVEL or "Level") .. " " .. Range(d.range) .. "   |cffbbbbbb" .. L["Raid"] .. "|r")
     Row(1).left:SetText(("|cff998866%d.|r  %s"):format(1, d.boss))
     Row(1).right:SetText("")
     for i, q in ipairs(d.quests or {}) do
         local row = Row(i + 1)
         row.left:SetText(("|cffffff00[%d] %s|r"):format(q.level, q.title))
-        row.right:SetText(q.state == "done" and "|cff808080done|r" or q.state == "log" and "|cff80f070in your log|r" or "")
+        row.right:SetText(q.state == "done" and "|cff808080" .. L["done"] .. "|r"
+            or q.state == "log" and "|cff80f070" .. L["in your log"] .. "|r" or "")
     end
-    card.title:SetText("|cffffd100" .. d.name .. "|r")
-    local lines = { "|cffe6c27aBosses|r", ("|cff998866%d.|r %s"):format(1, d.boss), " ",
-        "|cffe6c27aQuests|r  |cff998866(Questie)|r" }
+    local head = { d.name .. "  " .. Range(d.range) }
+    if d.also then head[2] = d.also.name .. "  " .. Range(d.also.range) end
+    card.title:SetText("|cffffd100" .. table.concat(head, ", ") .. "|r")
+    local lines = { "|cffe6c27a" .. L["Bosses"] .. "|r", ("|cff998866%d.|r %s"):format(1, d.boss), " ",
+        "|cffe6c27a" .. L["Quests"] .. "|r  |cff998866(Questie)|r" }
     for _, q in ipairs(d.quests or {}) do lines[#lines + 1] = ("|cffffff00[%d] %s|r"):format(q.level, q.title) end
     card.text:SetText(table.concat(lines, "\n"))
     view:Show()
@@ -165,6 +176,18 @@ function S.Tip()
     local fs = _G.GameTooltipTextLeft1
     fs:SetFont(STANDARD_TEXT_FONT, 12, "")
     fs:SetText(L["Close"])
+    fs:Show()
+    GameTooltip:Show()
+end
+
+-- A quest row's tooltip, built like OpenMap's: its English "Level", the level and L["from %d"].
+function S.QuestTip(level, req)
+    GameTooltip:SetOwner(view.side.rows[1], "ANCHOR_RIGHT")
+    local t = (LEVEL or "Level") .. " " .. level .. "  (" .. L["from %d"]:format(req) .. ")"
+    GameTooltip:AddLine(t)
+    local fs = _G.GameTooltipTextLeft1
+    fs:SetFont(STANDARD_TEXT_FONT, 12, "")
+    fs:SetText(t)
     fs:Show()
     GameTooltip:Show()
 end

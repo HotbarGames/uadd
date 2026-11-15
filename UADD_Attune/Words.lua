@@ -6,7 +6,9 @@
 --   * Template: Attune fills "##NAME##"-style places with :gsub. Such a text becomes a pattern; what each
 --     place captures goes into the Ukrainian at the place with the same name (the order may differ).
 --     A capture that is itself one of Attune's texts or names is translated too. Only when both texts
---     have the same places and the same |c |r |T |t |H |h |n codes.
+--     have the same places and the same |c |r |T |t |H |h |n codes. What each place may hold (a number,
+--     a player's name, one of Attune's names...): ns.Slots in Pairs.lua. When a place holds something else, the
+--     template does not fit and the next one is tried: an unrelated text never comes out half translated.
 --   * A "%s" template (a glued line, or a locale text with %s in it) works the same way, its places in
 --     order, but strictly: each place with letters must be translated too, else the whole text stays
 --     English (the "in" line never half-translates a quest title that has the word in it).
@@ -37,10 +39,7 @@ local memo, memoSize = {}, 0
 local hint = setmetatable({}, { __mode = "k" })   -- FontString -> the template it matched last
 local count = 0
 local MEMO_MAX, MAX_LEN, MAX_DEPTH = 3000, 600, 3
--- Places that hold a player name, a number or a version: left as they are (a player called like
--- an NPC keeps their name).
-local KEEP = { PLAYER = true, FROM = true, TO = true, VERSION = true, COUNT = true, DURATION = true,
-    LEVEL = true, NUMBER = true, SIZE = true, SKILL = true, NB = true }
+local Slots = ns.Slots
 
 
 -- ── Patterns ─────────────────────────────────────────────────────────────────────────────────
@@ -75,11 +74,12 @@ local function PlaceSet(toks)
     return table.concat(s, ",")
 end
 
--- A pattern for `en` and the Ukrainian pieces, or nil when the two do not fit together.
-local function Build(en, uk)
+-- A pattern for `en` and the Ukrainian pieces, or nil when the two do not fit together. `key`: the
+-- locale key (ns.Slots: a place's kind may depend on it). `strict`: a "%s" template.
+local function Build(en, uk, key, strict)
     local et, ut = Tokens(en), Tokens(uk)
     if PlaceSet(et) ~= PlaceSet(ut) or Codes(en) ~= Codes(uk) then return nil end
-    local parts, lit, at, k = { "^" }, 0, {}, 0
+    local parts, lit, at, kinds, k = { "^" }, 0, {}, {}, 0
     for _, tk in ipairs(et) do
         if tk[1] == "lit" then
             parts[#parts + 1] = tk[2]:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0")
@@ -88,12 +88,13 @@ local function Build(en, uk)
             k = k + 1
             if at[tk[2]] then return nil end      -- one place twice: no single answer
             at[tk[2]] = k
-            parts[#parts + 1] = KEEP[tk[2]] and "([^\n]-)" or "(.-)"   -- a name or number is one line
+            kinds[k] = not strict and Slots.Kind(tk[2], key) or "text"
+            parts[#parts + 1] = Slots.Free(kinds[k]) and "([^\n]-)" or "(.-)"   -- a name or number: one line
         end
     end
     if lit < 3 then return nil end            -- "##A## ##B##" alone would match anything
     parts[#parts + 1] = "$"
-    return { pat = table.concat(parts), uk = ut, at = at, lit = lit, en = en,
+    return { pat = table.concat(parts), uk = ut, at = at, kinds = kinds, strict = strict, lit = lit, en = en,
         first = et[1][1] == "lit" and et[1][2] or "", last = et[#et][1] == "lit" and et[#et][2] or "",
         slots = {}, rivals = {} }
 end
@@ -107,12 +108,17 @@ local function Fill(f, caps, depth, quick)
         else
             local k = f.at[tk[2]]
             local c = caps[k] or ""
-            local uk
-            if depth < MAX_DEPTH and not KEEP[tk[2]] then
+            local kind, uk = f.kinds[k], nil
+            if depth < MAX_DEPTH and not Slots.Free(kind) then
                 f.slots[k] = f.slots[k] or {}             -- this place's hint key
                 uk = (quick and Quick or Text)(c, f.slots[k], depth + 1)
             end
-            if f.strict and not uk and not ns.Shape.Neutral(c) then return nil end
+            if f.strict then
+                if not uk and not ns.Shape.Neutral(c) then return nil end
+            elseif not uk then
+                uk = Slots.Keep(kind, c)                  -- c, or a faction's Ukrainian
+                if uk == nil then return nil end          -- c does not belong here: not this template
+            end
             c = uk or c
             out[#out + 1] = c
         end
@@ -130,17 +136,17 @@ local function Printf(t)
     return (t:gsub("\1", "%%"))
 end
 
--- One English text and its Ukrainian into the tables.
-local function Add(en, uk)
+-- One English text and its Ukrainian into the tables. `key`: its locale key, when it has one.
+local function Add(en, uk, key)
     if type(en) ~= "string" or en == "" then return end
     if type(uk) ~= "string" or uk == "" or uk == en then return end
     uk = uk:gsub("\\n", "\n")                     -- a written \n is a line break, as in Attune
     local pen, puk = Printf(en), Printf(uk)
     if pen and puk then
-        local f = Build(pen, puk)
-        if f then f.strict, formats[#formats + 1], count = true, f, count + 1 end
+        local f = Build(pen, puk, key, true)
+        if f then formats[#formats + 1], count = f, count + 1 end
     elseif en:find(PLACE) then
-        local f = Build(en, uk)
+        local f = Build(en, uk, key)
         if f then formats[#formats + 1], count = f, count + 1 end
     elseif exact[en] == nil then
         exact[en], count = uk, count + 1
@@ -150,6 +156,7 @@ end
 function W.Build()
     wipe(exact) wipe(formats) wipe(nlFormats) wipe(memo)
     memoSize, count = 0, 0
+    Slots.Build()
     ns.Pairs(Add)
     -- English Attune writes in its code: found by the hash of the shown text.
     hashed = UADD.TextIndex({ exact = ns.UA_TEXTHASH or {} })
@@ -182,8 +189,10 @@ function W.Build()
 end
 
 -- The names Names.lua found (English -> Ukrainian). The memo is wiped: misses may hit now.
+-- Attune's own names are read again too (ns.Slots).
 function W.SetNames(map)
     names = type(map) == "table" and map or {}
+    Slots.Build()
     wipe(memo)
     memoSize = 0
 end

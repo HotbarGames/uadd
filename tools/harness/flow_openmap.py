@@ -14,6 +14,8 @@ The Lua helpers are in flow_openmap.lua.
 """
 import os
 
+import flow_openmap_built
+import halves_mods
 import session
 from loader import Addon, Client, lua_str, read_text, txt
 
@@ -23,6 +25,7 @@ MODULE = "UADD_OpenMap"
 HELD = 0.3
 FONT_EN = "Fonts\\FRIZQT__.TTF"
 TABS = ["Боси", "Завдання", "Здобич", "Поверхи"]
+RANGE = "|cffff804024-33|r"   # a level range as OpenMap colours it
 
 
 def module_addon():
@@ -35,7 +38,11 @@ def _reads(M):
 
 
 def _view_checks(M, t, check, step, rfk_uk, boss_uk, quest_uk):
-    """The view in Ukrainian, as it should be with the module on."""
+    """The view in Ukrainian, as it should be with the module on. The card's title: both names
+    Ukrainian with their levels, or all English when one has no saved name (never half)."""
+    rfd = txt(M.cached("zones", "Razorfen Downs"))
+    heads = [f"{rfk_uk}  {RANGE}", f"{rfd}  |cffff804033-43|r"] if rfk_uk and rfd else         [f"Razorfen Kraul  {RANGE}", "Razorfen Downs  |cffff804033-43|r"]
+    card_title = "|cffffd100" + ", ".join(heads) + "|r"
     n, total = M.cyrCount()
     check(f"{step}: every text in a Cyrillic font", n == total and total > 0, f"{n}/{total}")
     check(f"{step}: the Ukrainian quest title shown", quest_uk in t("quest1"), t("quest1"))
@@ -43,12 +50,12 @@ def _view_checks(M, t, check, step, rfk_uk, boss_uk, quest_uk):
     check(f"{step}: tab labels in Ukrainian", tabs == TABS, tabs)
     states = [t("state1"), t("state2")]
     check(f"{step}: quest states in Ukrainian", "виконано" in states[0] and "у журналі" in states[1], states)
-    check(f"{step}: level line in Ukrainian", t("sub").startswith("Рівень 24-33") and "Рейд" in t("sub"), t("sub"))
+    check(f"{step}: level line in Ukrainian", t("sub") == f"Рівень {RANGE}   |cffbbbbbbРейд|r", t("sub"))
     check(f"{step}: floor and hint in Ukrainian", "Поверх 1" in t("floor") and "Правий клік" in t("hint"),
           [t("floor"), t("hint")])
     want_name = rfk_uk or "Razorfen Kraul"
     check(f"{step}: dungeon name {'from the saved names' if rfk_uk else 'English (none saved)'}",
-          t("where") == want_name and want_name in t("title") and want_name in t("cardTitle"),
+          t("where") == want_name and want_name in t("title") and t("cardTitle") == card_title,
           [t("where"), t("title"), t("cardTitle")])
     want_boss = boss_uk or "Charlga Razorflank"
     check(f"{step}: boss row", want_boss in t("boss") and want_boss in t("cardText"), t("boss"))
@@ -119,7 +126,8 @@ def in_game(s, check, facts):
     s.uadd("openmap off")
     en = [t("tab1"), t("where"), t("back"), t("sub")]
     check("/uadd openmap off: English back exactly",
-          en == ["Bosses", "Razorfen Kraul", "|cffffd100<|r  Back to The Barrens", "Level 24-33   |cffbbbbbbRaid|r"], en)
+          en == ["Bosses", "Razorfen Kraul", "|cffffd100<|r  Back to The Barrens", f"Level {RANGE}   |cffbbbbbbRaid|r"],
+          en)
     fonts = txt(M.fonts()).split("|")
     exact = all(f.startswith(FONT_EN + " ") for f in fonts) and _font(M, "pin") == (FONT_EN, 11, "OUTLINE")
     check("/uadd openmap off: OpenMap's fonts back exactly (file, size, flags)", exact, fonts[:4])
@@ -138,6 +146,8 @@ def in_game(s, check, facts):
           s.client.chat()[before:][:2])
 
     _more(s, M, check)
+    flow_openmap_built.run(s, M, check)    # lines OpenMap builds from L and a zone or a version
+    halves_mods.openmap(check, s.lua)       # made-up English in each slot: never a half-translated line
     boxes = session.cyr_boxes(s.client)
     check("guard: no Ukrainian text in a font without Ukrainian letters (view open)", not boxes, boxes[:3])
     M.close()
@@ -213,6 +223,9 @@ def _more(s, M, check):
     check("tooltip over OpenMap: our line in a Cyrillic font, its own font back once hidden",
           t["text"] != "Close" and t["font"] in ("Fonts\\FRIZQT___CYR.TTF 12", "Fonts\\ARIALN.TTF 12")
           and str(t["n"]) == "1" and t["after"] == "Fonts\\FRIZQT__.TTF 12", t)
+    qt = txt(M.questTip())
+    check("quest tooltip: OpenMap's English Level around our words from L, all Ukrainian",
+          qt == "Рівень 30  (від 25)", qt)
 
     M.key(True)
     M.wait(HELD)

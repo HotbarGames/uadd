@@ -6,8 +6,11 @@
 --     lines), by hash, found through UADD.TextIndex (UADD/Hash.lua). A text missing there stays English.
 --   * Exact: a text as Auctionator shows it -> its Ukrainian.
 --   * Template: a text with %s / %d becomes a pattern; what it captures goes into the Ukrainian in the
---     same order. A captured %s that is itself one of Auctionator's texts is translated too. Only when
---     the % slots and the |c |r |T |t |H |h |n codes of the two match.
+--     same order. Only when the % slots and the |c |r |T |t |H |h |n codes of the two match.
+--     A captured %s must be (Slot below): a value (a number, money, a count "x5", an item link),
+--     one of Auctionator's texts (put in in Ukrainian), or a slot that takes any text (FREE: a list,
+--     item, seller or group name; ui/text.lua's free / word slots). Anything else: that template
+--     does not fit, the next one is tried, and with none the text stays all English (never half).
 --   * A text in one colour (|cff..text|r) is translated inside the colour.
 --   * A date "Tuesday, February 25" becomes "Вівторок, 25 лютого" (Date below).
 --   * Several texts joined by a blank line ("\n\n"), and a %s that is two texts ("X (Y pending)"):
@@ -44,7 +47,39 @@ local BLIZZARD = { "ACCEPT", "CANCEL", "BACK", "NOT_BOUND", "EMPTY" }
 local blizzard = {}
 local days, months = {}, {}   -- English weekday (DAY_1..7) / month (MONTH_1..12) -> our Ukrainian
 
+-- The %s slots that take any text (a name the player or the game gives), by locale key: kept as
+-- they are. ui/text.lua marks its own (free = any text; word = one lowercase word, a slash command
+-- argument: Auctionator lowers the input and splits it at spaces).
+local FREE = {
+    X_PRICE_HISTORY = { 1 },                                    -- an item name
+    DELETE_LIST_CONFIRM = { 1 }, RENAME_LIST_CONFIRM = { 1 }, MAKE_PERMANENT_CONFIRM = { 1 },
+    LIST_SEARCH_START = { 1 }, LIST_SEARCH_STATUS = { 3 },      -- a list name
+    COPY_ITEM_ADDED = { 1, 2 },                                 -- a search term, a list name
+    SELLERS_OVERFLOW_TEXT = { 1 },                              -- seller names
+    ADD_TO_X = { 1 }, REMOVE_FROM_X = { 1 },                    -- a group name
+}
+
 local Text, Quick
+
+local function Has(list, k)   -- is slot k in list (nil: none)
+    for _, i in ipairs(list or {}) do if i == k then return true end end
+end
+
+-- What captured text c puts into slot k of template d: c itself (a value, or a slot of d that takes
+-- any text), its Ukrainian (one of Auctionator's texts), or false (d does not fit this text).
+-- hk: the slot's hint key; quick: in combat (memo, exact table and hint only).
+local function Slot(c, k, d, hk, depth, quick)
+    if c == "" or P.IsValue(c) then return c end
+    if depth < MAX_DEPTH then
+        local uk = (quick and Quick or Text)(c, hk, depth + 1)
+        if uk == nil and not quick then uk = ns.Parts.Slot(c, depth + 1) end
+        if uk == false then return false end      -- English text with a line break
+        if uk then return uk end
+    end
+    if Has(d.free, k) then return c end
+    if Has(d.word, k) and not c:find("[%s%u|]") then return c end
+    return false
+end
 
 local function Fill(f, caps, depth, quick)
     local out, k = {}, 0
@@ -54,12 +89,10 @@ local function Fill(f, caps, depth, quick)
         else
             k = k + 1
             local c = caps[k]
-            if f.kinds[k] == "s" and depth < MAX_DEPTH then
+            if f.kinds[k] == "s" then
                 f.slots[k] = f.slots[k] or {}             -- this slot's hint key
-                local uk = (quick and Quick or Text)(c, f.slots[k], depth + 1)
-                if uk == nil and not quick then uk = ns.Parts.Slot(c, depth + 1) end
-                if uk == false then return nil end        -- English text with a line break: no match
-                c = uk or c
+                c = Slot(c, k, f, f.slots[k], depth, quick)
+                if not c then return nil end
             end
             out[#out + 1] = c
         end
@@ -75,6 +108,7 @@ local function Add(en, uk, key)
     if P.IsTemplate(en) then
         local f = good and P.Build(en, uk) or nil
         if f then
+            f.free = key and FREE[key]
             formats[#formats + 1], count = f, count + 1
             if key then byKey[key] = { f = f } end
         end
@@ -146,21 +180,21 @@ function W.Build()
     end
 end
 
-local function Try(f, t, depth, quick)
-    local caps = { t:match(f.pat) }
-    if caps[1] == nil then return nil end
-    return Fill(f, caps, depth, quick)
+local function Try(f, m, links, depth, quick)
+    local caps = P.Caps(f, m, links)
+    return caps and Fill(f, caps, depth, quick) or nil
 end
 
 -- The hint's answer, or nil: `fs`'s last template, unless a longer one (a rival) matches too.
-local function Hinted(t, fs, depth, quick)
+-- m, links: the text from P.Mask.
+local function Hinted(m, links, fs, depth, quick)
     local h = hint[fs]
-    if not h or (not h.nl and t:find("\n", 1, true)) or not t:find(h.pat) then return nil end
+    if not h or (not h.nl and m:find("\n", 1, true)) or not m:find(h.pat) then return nil end
     for _, g in ipairs(h.rivals) do
-        if t:find(g.pat) then h = g break end
+        if m:find(g.pat) then h = g break end
     end
     hint[fs] = h
-    return Fill(h, { t:match(h.pat) }, depth, quick)
+    return Fill(h, P.Caps(h, m, links), depth, quick)
 end
 
 -- Auctionator's dates (Utilities/PrettyDate.lua): weekday .. ", " .. month .. " " .. day, all three
@@ -172,14 +206,11 @@ local function Date(t)
     return days[d] .. ", " .. n .. " " .. months[m]
 end
 
--- A ui/text.lua text in Ukrainian, or nil. A template's %s that is itself one of Auctionator's texts
--- is translated too (as Fill does).
+-- A ui/text.lua text in Ukrainian, or nil. Its %s slots as Fill's (Slot; false: the next template).
 local function Hashed(t, depth)
     return lit:Text(t, function(k, v, d)
-        if d.kinds[k] ~= "s" or depth >= MAX_DEPTH then return nil end
-        local uk = Text(v, nil, depth + 1)
-        if uk == nil then uk = ns.Parts.Slot(v, depth + 1) end
-        return uk                                 -- false: English text with a line break, no match
+        if d.kinds[k] ~= "s" then return nil end
+        return Slot(v, k, d, nil, depth)
     end)
 end
 
@@ -189,14 +220,15 @@ local function One(t, fs, depth)
     if uk then return uk end
     if #t > MAX_LEN then return nil end
     local nl = t:find("\n", 1, true)
+    local m, links = P.Mask(t)
     local h = fs and hint[fs]
     if h then
-        uk = Hinted(t, fs, depth)
+        uk = Hinted(m, links, fs, depth)
         if uk then return uk end
     end
     for _, f in ipairs(nl and nlFormats or formats) do
         if f ~= h then
-            uk = Try(f, t, depth)
+            uk = Try(f, m, links, depth)
             if uk then
                 if fs then hint[fs] = f end
                 return uk
@@ -237,19 +269,20 @@ Quick = function(t, fs, depth)
     local uk = exact[t] or lit:Exact(t)
     if uk then return uk end
     if not fs or #t > MAX_LEN or t:find(CYR) then return nil end
-    return Hinted(t, fs, depth or 0, true)
+    local m, links = P.Mask(t)
+    return Hinted(m, links, fs, depth or 0, true)
 end
 W.Quick = Quick
 
--- `t` as the text of one locale key only (exact, or that key's template; its %s stays as it is),
--- or nil. Cheap: one lookup or one match. For tooltip lines, also in combat.
+-- `t` as the text of one locale key only (exact, or that key's template; its %s must be a value or
+-- a FREE slot, it is not looked up), or nil. Cheap: one lookup or one match. For tooltip lines,
+-- also in combat.
 function W.Key(key, t)
     local k = byKey[key]
     if not k or type(t) ~= "string" then return nil end
     if k.f then
-        local caps = { t:match(k.f.pat) }
-        if caps[1] == nil then return nil end
-        return Fill(k.f, caps, MAX_DEPTH)
+        local caps = P.Caps(k.f, P.Mask(t))
+        return caps and Fill(k.f, caps, MAX_DEPTH) or nil
     end
     return t == k.en and k.uk or nil
 end

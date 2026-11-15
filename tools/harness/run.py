@@ -9,6 +9,8 @@ UADD_ForeverXPBar's checks run next, on a stand-in for ForeverXP Bar (flow_fxpb.
 UADD_Auctionator's checks run next, on a stand-in for Auctionator (flow_auc.py).
 UADD_Attune's checks run next, on a stand-in for Attune (flow_att.py).
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
+Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
+halves_cover.COVERED whose flow gave no "no half-translated line: <module>" result fails here.
 Exit code 0 = every check passed, 1 = a check failed, 2 = cannot run here.
 """
 import gc
@@ -18,9 +20,19 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import halves_cover  # noqa: E402
 import loader  # noqa: E402
 import session  # noqa: E402
+
+
+def halves_guard(checks, skipped=()):
+    """[(name, detail)]: one per module in halves_cover.COVERED (not skipped) with no half-translation
+    result among the checks, so a flow that stops calling its check cannot pass quietly."""
+    return [(f"half-translation check ran: {mod}", "its flow gave no 'no half-translated line' result")
+            for mod in halves_cover.COVERED if mod not in skipped
+            and not any(f"no half-translated line: {mod} " in c.name for c in checks)]
 
 
 def run_all():
@@ -63,6 +75,8 @@ def run_all():
     hash_checks, hash_facts = flow_hash.run_checks()
     checks += hash_checks
     facts["hash"] = hash_facts
+    skipped = ["UADD_OpenMap"] if missing else []      # its flow runs with the journal's
+    checks += [flow.Check(name, False, why) for name, why in halves_guard(checks, skipped)]
     return checks, facts, notes
 
 

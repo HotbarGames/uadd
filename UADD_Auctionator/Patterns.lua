@@ -64,4 +64,40 @@ end
 
 local function IsTemplate(en) return en:find(SPEC) ~= nil or en:find("%%%%") ~= nil end
 
-ns.Patterns = { Build = Build, IsTemplate = IsTemplate }
+-- A value, not words: after taking out icons (|T..|t), links (|H..|h[..]|h) and colour codes, any
+-- letters are at most two next to a digit ("12g", "x20", " x5", "1.2K").
+local function IsValue(c)
+    c = c:gsub("|T.-|t", ""):gsub("|H.-|h.-|h", ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    for i, run, j in c:gmatch("()(%a+)()") do
+        if #run > 2 or not (c:sub(i - 1, i - 1):find("%d") or c:sub(j, j):find("%d")) then return false end
+    end
+    return true
+end
+
+-- An item link's name has spaces ("[Linen Cloth]"), and a slot must not end inside it: the
+-- templates are matched with each link |H..|h..|h made one mark (\1, a byte, \1), and the marks
+-- are put back in what they captured. Returns the marked text and the links (nil: none).
+local function Mask(t)
+    if not t:find("|H", 1, true) then return t, nil end
+    local links = {}
+    local m = t:gsub("|H.-|h.-|h", function(l)
+        if #links >= 120 then return nil end
+        links[#links + 1] = l
+        return "\1" .. string.char(0x80 + #links) .. "\1"
+    end)
+    return m, links
+end
+
+-- Template f's captures in marked text m (links put back), or nil.
+local function Caps(f, m, links)
+    local caps = { m:match(f.pat) }
+    if caps[1] == nil then return nil end
+    if links then
+        for i, c in ipairs(caps) do
+            caps[i] = c:gsub("\1(.)\1", function(b) return links[b:byte() - 0x80] end)
+        end
+    end
+    return caps
+end
+
+ns.Patterns = { Build = Build, IsTemplate = IsTemplate, IsValue = IsValue, Mask = Mask, Caps = Caps }

@@ -83,6 +83,24 @@ local function Others()
     return Unique(list)
 end
 
+-- Two sets (English -> true) for ns.Slots (Pairs.lua): every name Attune shows from its own tables (quests, NPCs,
+-- items, zones, steps' names and kinds, attunements), and the attunements' names alone.
+function N.Own()
+    local own, attunes, d = {}, {}, Data()
+    local function Put(en) if Good(en) then own[en] = true end end
+    for _, prefix in ipairs({ "Q1_", "I_" }) do
+        for _, row in ipairs(ById(prefix)) do Put(row[2]) end
+    end
+    for _, list in ipairs({ Npcs(), Zones() }) do
+        for _, en in ipairs(list) do Put(en) end
+    end
+    for _, en in ipairs(Others()) do Put(en) attunes[en] = true end
+    for _, step in ipairs(d and type(d.steps) == "table" and d.steps or {}) do
+        if type(step) == "table" then Put(step.STEP) Put(step.TYPE) end
+    end
+    return own, attunes
+end
+
 -- ── The saved copy ────────────────────────────────────────────────────────────────────────────
 
 function N.Signature()

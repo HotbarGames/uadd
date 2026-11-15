@@ -1,0 +1,136 @@
+"""No half-translated line: one check for every module that fills template slots (halves_mods.py).
+
+A half translation is a template that matched while one of its slots kept English ("Рівень card theme").
+Each template's real English (read from the installed addon at test time) gets made-up English in its
+slots, and goes through the module's real translate path:
+  * pass 1: every slot that is not free holds the same filler;
+  * pass 2 (two or more such slots): one slot holds the filler, the others a value that fits ("7");
+  * free slots (a name the module keeps as it is) hold a made-up name, the other slots a value
+    of their kind (7, 7.5, ff, a picture).
+The check fails when the module gives back a changed text that still has the filler in it: Ukrainian
+around English that is not a name. It also fails when a template does not translate with fitting
+values (its real sample values: the output is not the input), unless halves_cover.UNFIT lists it with
+a reason; and when an UNFIT entry is stale (the template fits now, or is gone).
+It fails, too, when one long or tricky text (hard(): many short Cyrillic words, a 160-byte note, many
+separators, colour pieces, brackets) takes more than BOUND: a line can come from another player (a
+shared note), and a slow one freezes the game.
+
+  run(check, module, templates, translate)   templates: tpl(..) dicts; translate(tpl, text) -> str,
+                                             None or a list of those (one per path); hard= another
+                                             translate for the time check (more paths), if wanted
+"""
+import os
+import sys
+import time
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import halves_cover  # noqa: E402
+import hashtext  # noqa: E402
+
+FILLERS = ("wobbly gizmo", "Zorp Blatter", "It went fine.", "zork42")
+VALUE = {"d": "7", "f": "7.5", "x": "ff", "x2": "0f", "t": "|TInterface\\Icons\\INV_Misc_QuestionMark:0|t"}
+GOOD = "7"
+BOUND = 0.005   # seconds: the most one text may take, at best of three
+
+
+def tpl(id, en, free=None, good=None, **extra):
+    """A template: its id (a key or a hash), real English, {slot: made-up name} for free slots and
+    {slot: value} for slots that take neither a number nor a free name."""
+    return dict(extra, id=id, en=en, free=free or {}, good=good or {})
+
+
+def fill(en, pick):
+    """en with slot k (1-based, in order) replaced by pick(k, kind)."""
+    out, k = [], 0
+    for t in hashtext.tokens(en):
+        if t[0] == "lit":
+            out.append(t[1])
+        else:
+            k += 1
+            out.append(pick(k, t[1]))
+    return "".join(out)
+
+
+def texts(tp):
+    """[(filler, text)] for one template; [] when it has no slot that is not free."""
+    free, good = tp["free"], tp["good"]
+    open_ = [k for k, kind in enumerate(halves_cover.kinds(tp["en"]), 1) if kind in ("s", "l") and k not in free]
+    if not open_:
+        return []
+    sets = [set(open_)] + ([{j} for j in open_] if len(open_) > 1 else [])
+
+    def picker(f, these):
+        def pick(k, kind):
+            if k in free:
+                return free[k]
+            if k in these:
+                return f
+            return good.get(k, GOOD) if kind in ("s", "l") else VALUE[kind]
+        return pick
+    return [(f, fill(tp["en"], picker(f, these))) for f in FILLERS for these in sets]
+
+
+def good_text(tp):
+    return fill(tp["en"], lambda k, kind: tp["free"].get(k) or (tp["good"].get(k, GOOD) if kind in ("s", "l")
+                                                                 else VALUE[kind]))
+
+
+def hard(tp, v):
+    """Long and tricky texts, alone and in the template's open slots; variant v (0-2) uses other
+    letters, so no answer is remembered from the one before."""
+    a = "абв"[v]
+    raw = [" ".join([a + "ж"] * 40) + " Hogger", a * 80, " · ".join([a + "к Orgrimmar"] * 12),
+           "  ".join([a + "м"] * 30), ": ".join([a + "н"] * 30), f"|cffffffff{a}п|r · " * 15,
+           "(" * 20 + a + "р" + ")" * 20, "Level " * 30 + a, ", ".join([a + "с"] * 30)]
+    def into(t):
+        return fill(tp["en"], lambda k, kind: tp["free"][k] if k in tp["free"] else
+                    t if kind in ("s", "l") else VALUE[kind])
+    return raw + [into(t) for t in raw]
+
+
+def slowest(tp, translate):
+    """(seconds, text): the slowest hard text, each at the best of its three variants."""
+    worst = (0.0, "")
+    for row in zip(*(hard(tp, v) for v in range(3))):
+        best = None
+        for t in row:
+            t0 = time.perf_counter()
+            translate(tp, t)
+            dt = time.perf_counter() - t0
+            best = dt if best is None else min(best, dt)
+        worst = max(worst, (best, row[0]))
+    return worst
+
+
+def _outs(got):
+    return [g for g in (got if isinstance(got, list) else [got]) if isinstance(g, str)]
+
+
+def run(check, module, templates, translate, note="", hard=None):
+    """One check for the module: no output keeps a filler while the rest changed."""
+    assert module in halves_cover.COVERED, module
+    name = f"no half-translated line: {module}"
+    if note:
+        check(f"{name} ({note})", True, note)
+        return
+    bad, n, count, unfit, first = [], 0, 0, [], None
+    for tp in templates:
+        cases = texts(tp)
+        if not cases:
+            continue
+        n, first = n + 1, first or tp
+        g = good_text(tp)
+        if not any(o != g for o in _outs(translate(tp, g))):
+            unfit.append(tp["id"])
+        for f, t in cases:
+            count += 1
+            bad += [(tp["id"], t, o) for o in _outs(translate(tp, t)) if o != t and f in o]
+    known = halves_cover.UNFIT.get(module, {})
+    new, stale = [i for i in unfit if i not in known], [i for i in known if i not in unfit]
+    sec, text = slowest(first, hard or translate) if first else (0.0, "")
+    slow = sec > BOUND and {"too slow (ms)": round(sec * 1000, 1), "text": text[:80]}
+    detail = (bad[:3] or slow or (new and {"unfit, not in UNFIT": new[:8]})
+              or (stale and {"stale UNFIT": stale[:8]})
+              or f"{n} templates, {n - len(unfit)} fit, {len(unfit)} known unfit")
+    check(f"{name} ({n} templates, {count} texts, {n - len(unfit)} fit, {len(unfit)} unfit, "
+          f"slowest {sec * 1000:.1f} ms)", n > 0 and not bad and not slow and not new and not stale, detail)

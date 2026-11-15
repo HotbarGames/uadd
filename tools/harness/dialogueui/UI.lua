@@ -144,9 +144,9 @@ end
 local function Server() return S.SERVER end
 local VARIANTS = {
     detail = { Server, function(l) return l["Format Quest Accepted"], "Wanted: Hogger" end,
-        function(l) return l["Format Time Left"], "5 min" end },
+        function(l) return l["Format Time Left"], l == L and "5 |4Min:Min;" or "5 хв" end },   -- SecondsToTime
     gossip = { function(l) return l["Format And More"], 2 end, Server,
-        function(l) return l["Widget Is Docked Named"], "Quest Item" end,
+        function(l) return l["Widget Is Docked Named"], l["Quest Item Display"] end,
         function(l) return l["Format Quest Accepted"], "Wanted: Hogger" end },
 }
 local function SetOptions(list)

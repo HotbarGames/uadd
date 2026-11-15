@@ -17,9 +17,12 @@ local W = {}
 ns.Words = W
 
 local G = U.Glossary and U.Glossary.Text or function() return nil end
-local Lc = ns.Locale
+local Lc, P = ns.Locale, ns.Parts
 local CYR = "[\208\209]"
 local C = "|c%x%x%x%x%x%x%x%x"
+local JOIN = { To = true }   -- OpenMap's words it puts right before a zone name ("To Orgrimmar")
+local Pieces = P.Pieces
+W.Dungeon = P.Dungeon
 
 local orig = {}       -- FontString -> the English text OpenMap set
 local mine = {}       -- FontString -> the text we put in its place
@@ -27,127 +30,11 @@ local hooked = {}     -- FontString or Button -> true once its SetText is hooked
 local stale = {}      -- FontString -> true: hidden at the last Sync, put right when it shows (W.Flush)
 local guard = false   -- up while we set a text ourselves
 
-local function Wing(word)
-    local e = U.Glossary and U.Glossary.entries and U.Glossary.entries["wing." .. word:lower()]
-    return e and e.uk or nil
-end
-
--- A dungeon, a wing ("Stratholme: Living", "Dire Maul - East") or a zone, or nil.
-function W.Dungeon(en)
-    if type(en) ~= "string" or en == "" then return nil end
-    local uk = U.CachedName("zones", en)
-    if uk then return uk end
-    local base, wing = en:match("^(.-): (.+)$")
-    if not base then base, wing = en:match("^(.-) %- (.+)$") end
-    if not base then return nil end
-    uk = U.CachedName("zones", base .. ": " .. wing)
-    if uk then return uk end
-    local b, w = U.CachedName("zones", base), Wing(wing) or U.CachedName("zones", wing)
-    return b and w and (b .. ": " .. w) or nil
-end
-
--- Text pieces: colour blocks (|c........ ... |r) and the plain runs between them.
-local function Pieces(t)
-    local out, pos = {}, 1
-    while pos <= #t do
-        local s, e = t:find(C .. ".-|r", pos)
-        if not s then out[#out + 1] = t:sub(pos) break end
-        if s > pos then out[#out + 1] = t:sub(pos, s - 1) end
-        out[#out + 1] = t:sub(s, e)
-        pos = e + 1
-    end
-    return out
-end
-
--- One line in Ukrainian, or nil when nothing in it is ours to change.
-local Line
-Line = function(t)
-    if t == "" or t:find(CYR) then return nil end
-    local w = Lc.entries[t]
-    if w then return w end
-    local lead, body, trail = t:match("^(%s*)(.-)(%s*)$")
-    if body == "" then return nil end
-    if lead ~= "" or trail ~= "" then
-        local b = Line(body)
-        return b and (lead .. b .. trail) or nil
-    end
-    local d = W.Dungeon(t)
-    if d then return d end
-    local num, boss = t:match("^(" .. C .. "%d+%.|r%s+)(.+)$")
-    if num then
-        local uk = U.CachedName("Npc", boss)
-        return uk and (num .. uk) or nil
-    end
-    local rest = t:match("^Level (.+)$")
-    if rest and G"game.level" then return G"game.level" .. " " .. (Line(rest) or rest) end
-    local f = Lc.Forward(t, W.Dungeon)                -- "Floor %d", "Back to %s", "Map by %s", ...
-    if f then return f end
-    local name, range = t:match("^(.-)(  %d+%-%d+)$")
-    if name and W.Dungeon(name) then return W.Dungeon(name) .. range end
-    if t:find(", ", 1, true) then                       -- the card's title: "Name, Name"
-        local parts, any = {}, false
-        for part in (t .. ", "):gmatch("(.-), ") do
-            local uk = W.Dungeon(part)
-            any = any or uk ~= nil
-            parts[#parts + 1] = uk or part
-        end
-        if any then return table.concat(parts, ", ") end
-    end
-    if t:find("|c", 1, true) then
-        local pieces, any = Pieces(t), false
-        if #pieces == 1 and not pieces[1]:find("^" .. C) then return nil end
-        for i, p in ipairs(pieces) do
-            local code, inner = p:match("^(" .. C .. ")(.-)|r$")
-            local uk = code and Line(inner) or (not code and Line(p))
-            if uk then
-                pieces[i] = code and (code .. uk .. "|r") or uk
-                any = true
-            end
-        end
-        if any then return table.concat(pieces) end
-    end
-    return nil
-end
-W.Line = Line
-
--- One line of ours back in English, or nil: a word, a formatted text, or in colour pieces.
-local function Back(t)
-    local en = Lc.English(t)
-    if en then return en end
-    local lead, body, trail = t:match("^(%s*)(.-)(%s*)$")
-    if (lead ~= "" or trail ~= "") and body ~= "" then
-        en = Back(body)
-        return en and (lead .. en .. trail) or nil
-    end
-    if not t:find("|c", 1, true) then return nil end
-    local pieces, any = Pieces(t), false
-    for i, p in ipairs(pieces) do
-        local code, inner = p:match("^(" .. C .. ")(.-)|r$")
-        local e = Lc.English(code and inner or p)
-        if e then
-            pieces[i] = code and (code .. e .. "|r") or e
-            any = true
-        end
-    end
-    return any and table.concat(pieces) or nil
-end
-
--- A text OpenMap took from L (our Ukrainian) in English, or nil when no line of it is ours.
-function W.English(text)
-    if type(text) ~= "string" or not text:find(CYR) then return nil end
-    local out, any = {}, false
-    for line in (text .. "\n"):gmatch("(.-)\n") do
-        local en = line:find(CYR) and Back(line)
-        any = any or en ~= nil and en ~= false
-        out[#out + 1] = en or line
-    end
-    return any and table.concat(out, "\n") or nil
-end
-
--- Finished texts: English -> Ukrainian, or false for "nothing to change". They hold while the word
--- lists (Lc.gen) and the saved name tables are the same tables: the modules that save names put in
--- a new table each time, so a new name means a new table here, and the memo starts again.
-local memo, memoSize, stamp, slot, changed = {}, 0, {}, 0, false
+-- Finished texts: English -> Ukrainian, or false for "nothing to change"; `built`: lines OpenMap
+-- built from L (P.Built). They hold while the word lists (Lc.gen) and the saved name tables are the
+-- same tables: the modules that save names put in a new table each time, so a new name means a new
+-- table here, and the memo starts again.
+local memo, memoSize, built, builtSize, stamp, slot, changed = {}, 0, {}, 0, {}, 0, false
 local OWNERS = { "dj", "questie" }
 
 local function Same(v)
@@ -165,7 +52,125 @@ local function Fresh()
         Same(mod or false) Same(c or false)
         Same(type(c) == "table" and c.zones or false) Same(type(c) == "table" and c.Npc or false)
     end
-    if changed then wipe(memo) memoSize = 0 end
+    if changed then wipe(memo) wipe(built) memoSize, builtSize = 0, 0 end
+end
+
+-- A line OpenMap built from L and its own parts, whole Ukrainian (maybe as it is), or nil.
+local function Built(t)
+    Fresh()
+    local b = built[t]
+    if b == nil then
+        if builtSize > 2000 then wipe(built) builtSize = 0 end
+        b = P.Built(t) or false
+        built[t], builtSize = b, builtSize + 1
+    end
+    return b or nil
+end
+
+-- One line in Ukrainian, or nil when nothing in it is ours to change. All or nothing: a line that
+-- would keep English other than a value or a free name stays English.
+local Line
+Line = function(t)
+    if t == "" then return nil end
+    if t:find(CYR) then   -- built by OpenMap from our words in L and its own parts ("Level", a zone)
+        local b = Built(t)
+        return b ~= t and b or nil
+    end
+    local w = Lc.entries[t]
+    if w then return w end
+    local lead, body, trail = t:match("^(%s*)(.-)(%s*)$")
+    if body == "" then return nil end
+    if lead ~= "" or trail ~= "" then
+        local b = Line(body)
+        return b and (lead .. b .. trail) or nil
+    end
+    local d = W.Dungeon(t)
+    if d then return d end
+    local num, boss = t:match("^(" .. C .. "%d+%.|r%s+)(.+)$")
+    if num then
+        local uk = U.CachedName("Npc", boss)
+        return uk and (num .. uk) or nil
+    end
+    local rest = t:match("^Level (.+)$")
+    local lv = rest and G"game.level" and (Line(rest) or Lc.IsValue(rest) and rest)  -- else English, not half
+    if lv then return G"game.level" .. " " .. lv end
+    local f = Lc.Forward(t, W.Dungeon)                -- "Floor %d", "Back to %s", "Map by %s", ...
+    if f then return f end
+    local word, place = t:match("^(%a+) (.+)$")
+    d = JOIN[word] and Lc.entries[word] and W.Dungeon(place)
+    if d then return Lc.entries[word] .. " " .. d end
+    local name, tail = t:match("^(.-)(  .+)$")            -- a dungeon and its levels (maybe in colour)
+    d = name and Lc.IsValue(tail) and W.Dungeon(name)
+    if d then return d .. tail end
+    if t:find(", ", 1, true) then                       -- the card's title: "Name, Name", all of them ours
+        local parts = {}
+        for part in (t .. ", "):gmatch("(.-), ") do
+            local uk = Line(part)
+            if not uk then parts = nil break end
+            parts[#parts + 1] = uk
+        end
+        if parts then return table.concat(parts, ", ") end
+    end
+    if t:find(P.DOT, 1, true) then                     -- L's words around a zone ("New note · Orgrimmar")
+        local b = Built(t)
+        if b and b ~= t then return b end
+    end
+    if not t:find("|c", 1, true) then return nil end
+    local pieces, any = Pieces(t), false                -- colour pieces: each ours or a value
+    if not pieces or #pieces == 1 and not pieces[1]:find("^" .. C) then return nil end
+    local note = {}   -- the player's note: kept as written
+    for i in ipairs(pieces) do note[i] = P.Note(pieces, i) end
+    for i, p in ipairs(pieces) do
+        local code, inner = p:match("^(" .. C .. ")(.*)|r$")
+        local uk = not note[i] and Line(code and inner or p)
+        if note[i] then
+        elseif uk then
+            pieces[i], any = code and (code .. uk .. "|r") or uk, true
+        elseif not (Lc.IsValue(p) or P.Free(code and inner or p)) then
+            return nil
+        end
+    end
+    return any and table.concat(pieces) or nil
+end
+W.Line = Line
+P.Line = Line
+
+-- One line of ours back in English, or nil: a word, a formatted text, or in colour pieces.
+local function Back(t)
+    local en = Lc.English(t)
+    if en then return en end
+    local lead, body, trail = t:match("^(%s*)(.-)(%s*)$")
+    if (lead ~= "" or trail ~= "") and body ~= "" then
+        en = Back(body)
+        return en and (lead .. en .. trail) or nil
+    end
+    local pieces, any = t:find("|c", 1, true) and Pieces(t), false
+    if not pieces or #pieces == 1 and not pieces[1]:find("^" .. C) then return P.English(t) end
+    local note = {}   -- the player's note: as written, on or off
+    for i in ipairs(pieces) do note[i] = P.Note(pieces, i) end
+    for i, p in ipairs(pieces) do
+        local code, inner = p:match("^(" .. C .. ")(.*)|r$")
+        local e = not note[i] and Back(code and inner or p)
+        if e then
+            pieces[i] = code and (code .. e .. "|r") or e
+            any = true
+        end
+    end
+    local out = any and table.concat(pieces) or nil
+    if out and not out:find(CYR) then return out end
+    return P.English(t) or out   -- a line OpenMap built: "Мітка · Orgrimmar  ...  Поділився: Thrall"
+end
+
+-- A text OpenMap took from L (our Ukrainian) in English, or nil when no line of it is ours.
+function W.English(text)
+    if type(text) ~= "string" or not text:find(CYR) then return nil end
+    local out, any = {}, false
+    for line in (text .. "\n"):gmatch("(.-)\n") do
+        local en = line:find(CYR) and Back(line)
+        any = any or en ~= nil and en ~= false
+        out[#out + 1] = en or line
+    end
+    return any and table.concat(out, "\n") or nil
 end
 
 -- A whole text (lines joined with "\n") in Ukrainian, or nil when nothing in it changes.
@@ -200,6 +205,21 @@ local function Kept(fs, now)
     if en and en ~= now and type(now) == "string" and now:find(CYR) and W.Text(en) == now then return en end
 end
 
+-- Every line with Ukrainian in it is whole as it is (a text from L, maybe with a version or a free
+-- name), not one OpenMap built from L and its own English ("Level 24-33 Рейд", "Куди: Orgrimmar"),
+-- and no English line is one we have words for (the card's boss under L's "Боси").
+local function Whole(text)
+    for line in (text .. "\n"):gmatch("(.-)\n") do
+        if line:find(CYR) then
+            if Built(line) ~= line then return false end
+        elseif Line(line) then
+            return false
+        end
+    end
+    return true
+end
+W.Whole = Whole
+
 -- One FontString as it should be now: our words while they are wanted, OpenMap's otherwise.
 -- `fresh`: OpenMap has just set its text (the SetText hook), so the key it read from L is known.
 function W.Apply(fs, fresh)
@@ -209,13 +229,11 @@ function W.Apply(fs, fresh)
         local en = not fresh and Kept(fs, now) or W.English(now)   -- from L: already our words
         orig[fs], mine[fs] = en or now, en and now or nil
     end
-    if ns.WordsWanted() then
-        if mine[fs] then return end
-        local uk = W.Text(orig[fs])
-        if uk then
-            if uk ~= now then Put(fs, uk) end
-            mine[fs] = uk
-        end
+    if ns.WordsWanted() then   -- L's words when whole; else ours, or English when we have none
+        local uk = mine[fs]
+        if not (uk and Whole(uk)) then uk = W.Text(orig[fs]) or uk and orig[fs] end
+        if uk and uk ~= now then Put(fs, uk) end
+        mine[fs] = uk ~= orig[fs] and uk or nil
     elseif mine[fs] then
         if orig[fs] ~= now then Put(fs, orig[fs]) end
         mine[fs] = nil

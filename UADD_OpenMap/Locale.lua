@@ -29,12 +29,9 @@ local lastRead = {} -- shared Ukrainian -> the English key OpenMap read last (Wo
 local index = nil   -- { mt, its own __index, ours } while `served` keys go through L's metatable
 
 local function Count(s, sub)
-    local n, pos = 0, 1
-    while true do
-        local a, b = s:find(sub, pos, true)
-        if not a then return n end
-        n, pos = n + 1, b + 1
-    end
+    local n, a, b = 0, s:find(sub, 1, true)
+    while a do n, a, b = n + 1, s:find(sub, b + 1, true) end
+    return n
 end
 
 local function Specs(s)
@@ -89,16 +86,44 @@ local function Pattern(fmt)
     return n > 0 and table.concat(out) or nil
 end
 
--- `fmt` with its specs replaced by `caps`, in order; %s ones through Name when given.
-local function Fill(fmt, caps, Name)
-    local i = 0
-    return (fmt:gsub(SPEC, function(spec)
+-- %s slots OpenMap fills with a name as it is (addon, player, flight node, zone, version, date). Any other
+-- %s must hold a value or a name Words.lua translates, or the line stays English (never half translated).
+Lc.FREE = {
+    ["addons' memory: %s"] = { 1 }, ["garbage a second: %.1f MB in all, of which %s"] = { 2 },
+    ["Lua memory %.0f MB (%+.1f MB a minute), map pins %d (most: %s %d)"] = { 4 },
+    ["%s is also changing the world map. Turn off its world map options (or the addon) so the two don't fight."] = { 1 },
+    ["Leatrix Maps: turn off %s there; OpenMap does the same for its map."] = { 1 }, ["Released %s."] = { 1 },
+    ["A map addon brings its own HereBeDragons (%s), which OpenMap doesn't know: its pins keep the game's own placement."] = { 1 },
+    ["Back to %s"] = { 1 }, ["Map by %s"] = { 1 }, ["Somewhere in %s"] = { 1 }, ["Shared by %s"] = { 1 },
+    ["From %s: about %s"] = { 1 }, ["No flight route from %s to %s."] = { 1, 2 }, ["Drawing on the pin: %s"] = { 1 },
+    ["Updated to %s: see What's new in the OpenMap menu."] = { 1 }, ["%s shared %d map pin(s) with you:"] = { 1 },
+    ["Added %d map pin(s) from %s."] = { 2 }, ["That isn't a code of map pins (it starts %s)."] = { 1 },
+    ["Sharing %d map pin(s) with %s (players with OpenMap are asked whether to add them)."] = { 2 },
+}
+
+-- A value: no letters (a byte past ASCII is one: Cyrillic) but a unit of 1 to 3 right after a digit ("1:05").
+function Lc.IsValue(c)
+    c = c:gsub("||", ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T.-|t", "")
+    for a, w in c:gmatch("()([%a\128-\255]+)") do
+        if #w > 3 or not c:sub(a - 1, a - 1):find("%d") then return false end
+    end
+    return true
+end
+
+-- `fmt` with its specs replaced by `caps`, in order; %s ones through Name when given, then nil if one
+-- Name does not know is neither free (`free`: slot numbers) nor a value.
+local function Fill(fmt, caps, Name, free)
+    local i, fits = 0, true
+    local out = fmt:gsub(SPEC, function(spec)
         if spec == "%%" then return "%" end
         i = i + 1
         local c = caps[i] or ""
-        if Name and spec:sub(-1) == "s" then c = Name(c) or c end
-        return c
-    end))
+        if not Name or spec:sub(-1) ~= "s" then return c end
+        local uk = Name(c)
+        fits = fits and (uk or Lc.IsValue(c) or (free and tContains(free, i))) and true
+        return uk or c
+    end)
+    return fits and out or nil
 end
 
 local function ByLength(a, b) return #a[1] > #b[1] end
@@ -122,7 +147,7 @@ function Lc.Build(over)
             and uk:gsub(SPEC, ""):find("[\208\209]") then
             local pe, pu = Pattern(en), Pattern(uk)
             if pe and pu then
-                fwd[#fwd + 1] = { pe, uk }
+                fwd[#fwd + 1] = { pe, uk, Lc.FREE[en] }
                 back[#back + 1] = { pu, en }
             end
         end
@@ -142,7 +167,8 @@ end
 local function Match(list, t, Name, Read)
     for _, p in ipairs(list) do
         local caps = { t:match(p[1]) }
-        if caps[1] then return Fill(Read and Read(p[2]) or p[2], caps, Name) end
+        local out = caps[1] and Fill(Read and Read(p[2]) or p[2], caps, Name, p[3])
+        if out then return out end
     end
 end
 
@@ -173,10 +199,10 @@ local function Plain(L)
 end
 
 -- For the checks: true when `en`'s Ukrainian is shared with another key ("Dungeon", "Dungeons").
-function Lc.Shared(en)
-    local uk = Lc.entries[en]
-    return uk ~= nil and rev[uk] == false
-end
+function Lc.Shared(en) return Lc.entries[en] ~= nil and rev[Lc.entries[en]] == false end
+
+-- true when `t` is one of our texts as it is, shared or not ("Підземелля", "Куди:").
+function Lc.Ours(t) return type(t) == "string" and rev[t] ~= nil end
 
 -- A Ukrainian text two keys share ("Підземелля": "Dungeon", "Dungeons") cannot be read back to
 -- its English. So those keys are not written into L: L's own __index (English back when nothing

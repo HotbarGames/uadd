@@ -27,3 +27,36 @@ none; one harness file: 10; all harness files together: 20) and their short labe
 only in bulk (a limit per addon, per file). The scan is cached in `tools/.cache/` (git-ignored) until a file
 it reads changes; delete it to force a fresh scan. Thresholds: `tools/copy_check.py`; what counts as a
 sentence or a label, and the scan itself: `tools/copy_scan.py`.
+
+## No half translations
+
+**Rule.** A line is all Ukrainian or all English, never a mix. A template ("Level %s") may fill a slot only
+with a value (a number, a time, money, a link), a name we translate, or a slot marked free (one that holds a
+name as it is: a player, an addon, a version). If any slot holds other English, the whole line stays English.
+Text the player wrote (a pin's note, chat) is never changed, on or off: only our words around it.
+
+**Why.** A half line ("Рівень card theme") looks broken and is harder to read than plain English. It also
+hides a missing translation, so nobody adds it.
+
+**How to check.** `python3 tools/harness/run.py` runs the check (`tools/harness/halves.py`). For each module
+it takes every real template, puts made-up English ("wobbly gizmo") in each slot, and sends the text through
+the module's own translate code (`tools/harness/halves_mods.py`, one function per module). Any output that is
+not the input but still has the made-up English fails, and so does a path that takes over 5 ms on one long or
+tricky text (`halves.hard`: many short Cyrillic words, a 160-byte note, many separators). Each template must also fit: with its real sample
+values the output must differ from the input. A template that stays English goes in `UNFIT` in
+`tools/halves_cover.py` with a reason (a real gap: no Ukrainian for it); an `UNFIT` entry that fits now, or
+whose template is gone, fails too. Feed texts the way the addon really builds them (OpenMap: its English
+around L's words, which are ours). `run.py` fails a module in `COVERED` whose flow gave no result.
+`python3 -m unittest tools.test_halves` makes sure no module is missed: each `UADD_*` folder is in
+`COVERED` or `NO_SLOTS` (with a reason), its flow really calls its function (not in a comment), and each
+free-slot mark points to a real `%s` slot. Free slots are marked here, by English or locale key:
+
+- ForeverXPBar: `FREE` and `BLANK` in `tools/fxpb_words.py`.
+- DialogueUI: `SLOTS` in `UADD_DialogueUI/Slots.lua` (what each `%s` holds).
+- Auctionator: `FREE` in `UADD_Auctionator/Words.lua`; code texts: `SLOTS` in `tools/make_auc_text.py`.
+- Attune: `KIND`, `BYKEY` and `FREE` in `UADD_Attune/Pairs.lua`.
+- OpenMap: `Lc.FREE` in `UADD_OpenMap/Locale.lua`.
+- Questie: none (its tracker shapes take an item or a creature name only).
+
+A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
+only when the game or the addon puts a name there that has no translation.

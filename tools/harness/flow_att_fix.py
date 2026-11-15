@@ -9,10 +9,14 @@ in game A after the names:
   * another addon's AceGUI widget, made while Attune's windows show (it may be one Attune gave back to
     the pool), starts no walk and keeps its English;
   * Shift: a text a player typed that reads like our words stays as typed (no guess of its English);
-    ours show their exact English.
+    ours show their exact English;
+  * a template's places (ns.Slots in UADD_Attune/Pairs.lua): made-up English in a place gives no half-translated
+    line (halves_mods.att, on every real template; here also in combat, on the template's hint), while
+    real names, values and factions still fit.
 """
 import re
 
+import halves_mods
 from loader import txt
 
 HELD = 0.4                      # the hold key counts after 0.25 s
@@ -82,9 +86,43 @@ def typed(check, c, M):
     M.siCall("Typed", False)
 
 
+# Templates filled by AttuneLang key (by place for the hashed one), through the module's own Words.
+_SLOTS = r"""
+local W, L = HARNESS.ns.UADD_Attune.Words, AttuneLang
+local function T(key, p)
+  local t = rawget(L, key)
+  if not t then for _, v in pairs(L) do if type(v) == "string" and v:find("##" .. key .. "##") then t = v end end end
+  return (t:gsub("##(%u+)##", function(n) return p[n] or "" end))
+end
+local function Q(s) local u = W.Text(s) return u and ("1" .. u) or "0" .. s end
+local real = {}
+local fs = {}
+W.SetNames(HARNESS.ns.UADD_Attune.Names.map)       -- an empty memo: the next text sets fs's hint
+W.Text(T("AttuneComplete", { NAME = "Molten Core" }), fs)
+local quick = W.Quick(T("AttuneComplete", { NAME = "the server" }), fs)
+local u = W.Quick(T("AttuneComplete", { NAME = "Onyxia's Lair" }), fs)
+real[#real + 1] = u and ("1" .. u) or "0"
+real[#real + 1] = Q(T("CompletedStep", { TYPE = "Level", STEP = "3/10", NAME = "Onyxia's Lair" }))
+real[#real + 1] = Q(T("SendingDataTo", { NAME = "Gaya Greyhoof" }))
+real[#real + 1] = Q(T("FACTION", { FACTION = select(2, UnitFactionGroup("player")) }))
+real[#real + 1] = Q(T("Sync over", { DURATION = "1h 5min 3sec" }))
+return table.concat(real, "\1") .. "\2" .. tostring(quick)
+"""
+
+
+def slots(check, c, M):
+    halves_mods.att(check, c)       # made-up English in each place of every real template
+    real, quick = _text(c, f"(function() {_SLOTS} end)()").split("\x02")
+    check("made-up English in a place, in combat on the hint: English", quick == "nil", quick)
+    real = real.split("\x01")
+    ok = all(t[0] == "1" and CYR.search(t) for t in real) and "Альянс" in real[3]
+    check("real names, values and the faction still fit their places", ok, real)
+
+
 def run(check, c, M):
     """Returns the walks of one bag update."""
     measured(check, c, M)
+    slots(check, c, M)
     n = walks_per_bag(check, c, M)
     foreign(check, c, M)
     typed(check, c, M)

@@ -8,7 +8,9 @@ Attune, at test time only.
   strings in Attune's code; ns.UA_STEP_TYPE keys are step TYPE values; ns.UA_NOTES keys are N2_ keys;
 - each Ukrainian keeps its English's ##TOKEN## places, %s slots (same order), | codes, line breaks and
   leading or trailing space;
-- data/hashed.lua is what tools/make_att_text.py builds from a fresh review file (nothing lost on the way).
+- data/hashed.lua is what tools/make_att_text.py builds from a fresh review file (nothing lost on the way);
+- every ##TOKEN## place in our tables has a kind in UADD_Attune/Pairs.lua (KIND), and each BYKEY key is an
+  ns.UA key whose English has that place.
 
 Attune is read from the game folder, ATTUNE_DIR or $UADD_ADDONS_DIR/Attune. Without it, the tests that need
 it are skipped.
@@ -33,6 +35,15 @@ ENUS = ADDON / "Locales" / "enUS.lua"
 HAVE_ADDON = ENUS.is_file()
 PLACE = re.compile(r"##[A-Z][A-Z0-9_]*##")
 TYPE = re.compile(r'TYPE\s*=\s*"([^"]+)"')
+
+
+SLOTS = (HERE.parent / "UADD_Attune" / "Pairs.lua").read_text(encoding="utf-8")
+
+
+def slot_table(name):
+    """{ key: body } of the Lua table `local <name> = { ... }` in Pairs.lua (one nesting level)."""
+    m = re.search(r"local " + name + r" = (\{(?:[^{}]|\{[^{}]*\})*\})", SLOTS)
+    return m.group(1) if m else ""
 
 
 def norm(text):
@@ -77,6 +88,13 @@ class Local(unittest.TestCase):
             bad = [r[0] for r in self.tables[name] if not M.HASH.match(r[0])]
             self.assertEqual(bad, [], f"ns.{name} keys that are not <bytes>:<hash>")
 
+    def test_places_have_a_kind(self):
+        kinds = set(re.findall(r"\b([A-Z][A-Z0-9_]*) = \"", slot_table("KIND")))
+        self.assertIn("NAME", kinds)
+        places = {p.strip("#") for rows in self.tables.values() for r in rows
+                  if isinstance(r[1], str) for p in PLACE.findall(r[1])}
+        self.assertEqual(sorted(places - kinds), [], "places with no kind in Pairs.lua KIND")
+
     def test_shapes_have_one_place(self):
         for name in ("UA_GLUED", "UA_GLUEHASH"):
             bad = [r[0] for r in self.tables[name] if r[4] is None or r[4].count("{}") != 1]
@@ -105,6 +123,14 @@ class AgainstAttune(unittest.TestCase):
         for table in ("UA", "UA_CATEGORY", "UA_GLUED"):
             with self.subTest(table=table):
                 self.assertEqual(self.unknown(table, self.enus), [], f"ns.{table} keys that are not enUS.lua keys")
+
+    def test_slot_keys(self):
+        ua = {r[0] for r in self.tables["UA"]}
+        body = slot_table("BYKEY")
+        pairs = re.findall(r"(\w+) = \{ (\w+) = ", body)
+        self.assertTrue(pairs, "Pairs.lua BYKEY not read")
+        bad = [(k, p) for k, p in pairs if k not in ua or f"##{p}##" not in norm(self.enus.get(k) or "")]
+        self.assertEqual(bad, [], "Pairs.lua BYKEY: not an ns.UA key whose English has that place")
 
     def test_no_prose_keys(self):
         prose = [(k, line) for k, _, _, line, _ in self.tables["UA"] if M.prose(k)]

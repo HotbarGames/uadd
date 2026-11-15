@@ -9,6 +9,7 @@ import os
 import time
 
 import flow_controls
+import halves_mods
 import session
 from flow_dropdown import dropdown
 from flow_live import Live
@@ -154,6 +155,7 @@ def run():
     f.check("names: QuestieDB has a Ukrainian quest name", qid, f"{qid}: {txt(en)} -> {txt(uk)}")
     f.check("names: quest found by a spelling variant", *_ok_text(c.F.questName(5147), ARNAK))
     T.translated(c, "collection")
+    halves_mods.questie(f.check, c)          # made-up English in an objective: never half translated
     T.reused(c, "collection")
     f.no_errors(c, "collection")
     O = Original(f, T)                           # 4c. the "[34D]" letter; the show-original key

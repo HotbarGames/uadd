@@ -26,6 +26,7 @@ L["Format Quest Accepted"] = "Quest accepted: %s"
 L["Format Time Left"] = "Time Left: %s"
 L["Format And More"] = "and %d more..."
 L["Widget Is Docked Named"] = "%s is docked with other pop-ups."
+L["Quest Item Display"] = "Quest Item Display"
 -- Settings.
 L["UI"] = "UI"
 L["Gameplay"] = "Gameplay"
