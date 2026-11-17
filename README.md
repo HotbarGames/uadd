@@ -1,6 +1,6 @@
 # UADD - Ukrainian for Addons
 
-UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Classic Forever only.
+UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Forever only.
 
 There are seven modules: one for **Questie**, one for **Dungeon Journal**, one for **OpenMap**, one
 for **Dialogue UI**, one for **ForeverXP Bar**, one for **Auctionator** and one for **Attune**.

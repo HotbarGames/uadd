@@ -2,7 +2,7 @@
 
 ## 1.0.0
 
-First release, for WoW Classic Forever.
+First release, for WoW Forever.
 
 - UADD: the core addon. `/uadd` lists the modules. Adds a font with Cyrillic letters ("UADD Cyrillic") that
   other addons can pick.

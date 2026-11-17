@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions
-rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator and UADD_Attune into the WoW Classic Forever AddOns folder. See docs\TESTING.md.
+rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator and UADD_Attune into the WoW Forever AddOns folder. See docs\TESTING.md.
 rem
 rem   install.bat            -> _forever_
 rem

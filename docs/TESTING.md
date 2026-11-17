@@ -1,6 +1,6 @@
 # Testing in the game
 
-What to check before a release, on WoW Classic Forever with Questie installed. UALL Forever is optional: test
+What to check before a release, on WoW Forever with Questie installed. UALL Forever is optional: test
 once with it and once without it.
 
 ## Install
