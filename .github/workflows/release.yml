@@ -1,16 +1,15 @@
 # Packages UADD with the BigWigs packager (https://github.com/BigWigsMods/packager) when a version tag (v1.0.1, ...)
-# is pushed: builds UADD-<tag>.zip from .pkgmeta (both folders, UADD and UADD_Questie) and attaches it to a GitHub
-# release. It uploads to CurseForge too, but only once UADD/UADD.toc has `## X-Curse-Project-ID: <id>` (game type
-# Forever, game versions from the TOC's ## Interface). There is no CurseForge project yet, so for now a tag makes the
-# GitHub release only.
+# is pushed: builds UADD-<tag>.zip from .pkgmeta (all eight folders, UADD and its modules), uploads it to
+# CurseForge (project 1807250, the `## X-Curse-Project-ID` in UADD/UADD.toc; game type Forever, game versions from
+# the TOC's ## Interface) and attaches it to a GitHub release.
 #
 # Dry run (uploads nothing): Actions > release > Run workflow, or `gh workflow run release.yml`. It builds the zip,
 # lists what is in it and, when the CF_API_TOKEN secret is set, checks that CurseForge accepts the token and lists
 # the TOC's Forever versions.
 #
-# CurseForge setup (later): create the project, add `## X-Curse-Project-ID: <id>` to UADD/UADD.toc and the
-# repository secret CF_API_TOKEN (CurseForge > My Profile > API Tokens). GITHUB_TOKEN is GitHub's own per-run token.
-# Release: bump `## Version` in both TOCs and UADD/CHANGELOG.md together, commit, push, then tag that commit.
+# Setup: the project ID is in UADD/UADD.toc; the upload also needs the repository secret CF_API_TOKEN
+# (CurseForge > My Profile > API Tokens) and Actions turned on for this repo. GITHUB_TOKEN is GitHub's own token.
+# Release: bump `## Version` in all eight TOCs and UADD/CHANGELOG.md together, commit, push, then tag that commit.
 name: release
 
 on:
@@ -53,7 +52,7 @@ jobs:
           # the addon is Forever-only
           args: -n "{package-name}-{project-version}:{project-version}"
         env:
-          CF_API_KEY: ${{ secrets.CF_API_TOKEN }}   # unused while the TOC has no X-Curse-Project-ID
+          CF_API_KEY: ${{ secrets.CF_API_TOKEN }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
   dry-run:

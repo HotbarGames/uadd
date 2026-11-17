@@ -1,18 +1,20 @@
 # Releasing a new version
 
-A version tag (`v1.0.1`, ...) runs `.github/workflows/release.yml`. It builds one zip with both folders (`UADD` and
-`UADD_Questie`) from `.pkgmeta` and makes a GitHub release with it.
+A version tag (`v1.0.1`, ...) runs `.github/workflows/release.yml`. It builds one zip with all eight folders
+(`UADD` and its modules) from `.pkgmeta`, uploads it to CurseForge (project 1807250, game type Forever, game
+versions from the TOC's `## Interface`) and makes a GitHub release with it.
 
-There is no CurseForge project yet. Until `UADD/UADD.toc` has `## X-Curse-Project-ID: <id>`, nothing is uploaded to
-CurseForge. To start uploading: create the project on CurseForge (game type Forever), add that line to the TOC, and
-add the repository secret `CF_API_TOKEN` (CurseForge > My Profile > API Tokens).
+The project ID is in `UADD/UADD.toc` (`## X-Curse-Project-ID: 1807250`). The upload also needs the repository
+secret `CF_API_TOKEN` (CurseForge > My Profile > API Tokens; one token works for all projects of the account) and
+GitHub Actions turned on for this repo. Actions are off for now, so a version is uploaded by hand: build the zip
+with `python3 tools/make_zip.py` and upload `dist/UADD-<version>.zip` on the project's Files page.
 
 ## Steps
 
 1. If Blizzard changed Forever's interface number (in game: `/dump select(4, GetBuildInfo())`), test the addon on
-   the new client and add the number in front in both TOCs: `## Interface: 16002, 16001, 16000`.
-2. Bump `## Version` in `UADD/UADD.toc` and `UADD_Questie/UADD_Questie.toc` (the repo check fails if they
-   differ) and add a section on top of `UADD/CHANGELOG.md`.
+   the new client and add the number in front in all eight TOCs: `## Interface: 16002, 16001, 16000`.
+2. Bump `## Version` in all eight TOCs (`UADD/UADD.toc` and each `UADD_*/UADD_*.toc`; the repo check fails if
+   they differ) and add a section on top of `UADD/CHANGELOG.md`.
 3. If Questie changed: `python3 tools/extract_questie_keys.py --out data/questie-keys.json`, then
    `python3 tools/coverage.py --list missing` shows the new strings to translate.
 4. `python3 -m unittest discover -s tools`, commit, push to `main`.
@@ -20,4 +22,7 @@ add the repository secret `CF_API_TOKEN` (CurseForge > My Profile > API Tokens).
    lists what the zip contains.
 6. Tag and push: `git tag v1.0.1 && git push origin v1.0.1`, then `gh run watch`.
 
-`python3 tools/make_zip.py` builds the same zip by hand into `dist/`.
+While Actions are off, steps 5 and 6 do nothing. Instead, `python3 tools/make_zip.py` builds the same zip into
+`dist/`; upload it on the project's Files page: release type Release, game version Forever (as the TOC's
+`## Interface`), the new `UADD/CHANGELOG.md` section as the changelog, and the `optional-dependencies` from
+`.pkgmeta` as Optional Dependency relations.
