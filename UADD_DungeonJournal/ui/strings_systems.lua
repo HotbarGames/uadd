@@ -18,6 +18,10 @@ local S = {
     LOOTED_FROM = "Випадає з: %s, %s",
     ITEM_CLICK_BOSS = "Клацніть, щоб показати",
 
+    -- Core/Journal.lua: the row under an item that is joined with another into a third (Built.lua)
+    LOOT_COMBINE_WITH = "Поєднайте з: %s",
+    LOOT_MADE_FROM = "Створюється поєднанням: %s і %s.",
+
     -- Systems/QuestText.lua and Systems/OnyxiaAttunement.lua: the home page icons' menu
     SLEEPING_BAG_HIDE = G"ui.hide",
     SLEEPING_BAG_HIDE_TIP = "Правий клік — сховати",

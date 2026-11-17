@@ -28,10 +28,9 @@ COVERED = {
     "UADD_Attune": ("flow_att_fix.py", "att"),
     "UADD_OpenMap": ("flow_openmap.py", "openmap"),
     "UADD_Questie": ("flow.py", "questie"),
+    "UADD_DungeonJournal": ("flow_dj_summon.py", "dj"),
 }
 NO_SLOTS = {
-    "UADD_DungeonJournal": "whole texts by hash; its {npc:..} places and %s warnings are filled from its own "
-                           "data before the journal shows them, never from text on screen",
 }
 UNFIT = {
     "UADD_ForeverXPBar": {

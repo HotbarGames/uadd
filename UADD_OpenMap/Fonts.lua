@@ -65,6 +65,18 @@ local function Put(fs, old)
     end
 end
 
+-- One FontString back as it was (a StaticPopup's, shared with other addons: Popup.lua).
+function F.Back(fs)
+    local old = changed[fs]
+    if not old then return end
+    if UADD.IsCyrFont((fs:GetFont())) then
+        guard = true
+        pcall(Put, fs, old)
+        guard = false
+    end
+    changed[fs] = nil
+end
+
 -- Every font we changed back as OpenMap left it.
 function F.Restore()
     for fs, old in pairs(changed) do

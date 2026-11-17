@@ -1,6 +1,8 @@
 """Part of flow_fxpb.py (game A): which template a text gets, and never a half-translated line.
 
   * Hints: a FontString's last (short) template is tried first, but a longer one that fits wins.
+  * The reputation strip's drag tooltip (a nameless movable frame on UIParent since 0.9.1): all
+    Ukrainian, Latin-free; a short word on that same owner stays English (it could be any addon's).
   * A %s holds a value, a time or one of the addon's own texts. Other English there means another
     text that only starts or ends the same way: it stays English as a whole (halves_mods.fxpb, on
     every template of the installed addon). A value in the same slot, or a name in a slot marked
@@ -12,6 +14,7 @@ import halves_mods
 from loader import lua_str, txt
 
 CYR = re.compile("[Ѐ-ӿ]")
+LATIN = re.compile("[A-Za-z]")
 KEPT = (("Level 12", "12"), ("Active: Bob", "Bob"))     # a value; a name in a free slot
 
 
@@ -27,3 +30,12 @@ def checks(check, eq, M, S):
         ok = bool(got) and bool(CYR.search(got)) and keep in got and \
             not any(w in got for w in en.replace(keep, "").split())
         check(f"... but {en!r} is translated", ok, got)
+    M.hoverRep(False)
+    for i in (1, 2):
+        got = txt(M.tipLine(i)) or ""
+        check(f"rep strip drag tooltip line {i}: Ukrainian", bool(CYR.search(got)) and not LATIN.search(got), got)
+    M.leave()
+    M.hoverRep(True)
+    got = txt(M.tipLine(1)) or ""
+    check("rep strip: a short word stays English", not CYR.search(got), got)
+    M.leave()

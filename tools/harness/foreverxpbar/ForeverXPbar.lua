@@ -82,6 +82,16 @@ function S.Hover()
     GameTooltip:Show()
 end
 function S.Leave() GameTooltip:Hide() end
+-- Its reputation strip since 0.9.1: nameless, movable, right on UIParent. Unlocked, it shows a drag
+-- tooltip (the title is a template plus one of its own texts); `short` puts a short word of its own there instead.
+local repStrip = CreateFrame("Frame", nil, UIParent)
+repStrip.__movable = true
+function S.HoverRep(short)
+    GameTooltip:SetOwner(repStrip, "ANCHOR_TOP")
+    GameTooltip:SetText(short and "Options" or ("Drag to move " .. "reputation bar" .. " freely"))
+    if not short then GameTooltip:AddLine("Lock it again in Tracking settings.", 0.75, 0.85, 1) end
+    GameTooltip:Show()
+end
 
 -- ── Options window (ARIALN labels, a tab shown later) ────────────────────────────────────────
 local opt = CreateFrame("Frame", "ForeverXPBarOptionsFrame", UIParent)

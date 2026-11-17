@@ -48,10 +48,15 @@ end
 
 -- FDJ's search with the query and the names in lower case, then the proper names on the rows.
 -- `keep`: keep the scroll position FDJ just set (mouse wheel).
+-- Since FDJ 2.0.9, a search that keeps the scroll position does not search again when the text is
+-- the one it searched last (it only scrolls). FDJ has just searched the text in the box, so with
+-- `keep` we add a space at the end: FDJ trims it off before it compares, so the search is the
+-- same, but the text is new to FDJ and it searches again with our lower-case names.
 local function Folded(f, text, keep, container)
     local K = ns.Content
+    local query = K.Fold(text) .. (keep and " " or "")
     busy, K.folding, K.proper = true, true, {}
-    local ok, err = pcall(f.RefreshSearchResults, K.Fold(text), keep)
+    local ok, err = pcall(f.RefreshSearchResults, query, keep)
     K.folding = false
     if ok then ok, err = pcall(FixRows, container) end
     busy = false

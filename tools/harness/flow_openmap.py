@@ -5,7 +5,7 @@ Run by flow_dj_module.py, so run.py runs it too:
   * in_game(s, check, facts): in the Dungeon Journal module's game (names collected), the Razorfen
     Kraul view: Ukrainian quest titles in a Cyrillic font, Ukrainian labels and names, size and
     flags kept, redraws, the hold key, OpenMap's L (on, hold key, combat, a bad text, off), its
-    menu, News and Settings page, "/uadd dj off" leaves it alone, "/uadd openmap off" puts
+    menu, News and Settings page, its StaticPopup questions, "/uadd dj off" leaves it alone, "/uadd openmap off" puts
     everything back exactly and "on" again, the Dungeon Journal's own panel inside the dungeon (a
     fact), the guard (no Ukrainian text in a font without Ukrainian letters) and no Lua errors.
   * alone(saved, check, facts): a second game with UADD and UADD_OpenMap only (no Dungeon
@@ -15,6 +15,7 @@ The Lua helpers are in flow_openmap.lua.
 import os
 
 import flow_openmap_built
+import flow_openmap_popup
 import halves_mods
 import session
 from loader import Addon, Client, lua_str, read_text, txt
@@ -147,6 +148,7 @@ def in_game(s, check, facts):
 
     _more(s, M, check)
     flow_openmap_built.run(s, M, check)    # lines OpenMap builds from L and a zone or a version
+    flow_openmap_popup.run(s, check)        # its questions in the game's StaticPopup dialogs
     halves_mods.openmap(check, s.lua)       # made-up English in each slot: never a half-translated line
     boxes = session.cyr_boxes(s.client)
     check("guard: no Ukrainian text in a font without Ukrainian letters (view open)", not boxes, boxes[:3])
@@ -290,9 +292,7 @@ def _more(s, M, check):
 
 
 def _three(r):
-    if r is None:
-        return (None, None, None)
-    return tuple(r) if isinstance(r, tuple) else (r, None, None)
+    return (None, None, None) if r is None else tuple(r) if isinstance(r, tuple) else (r, None, None)
 
 
 def _font(M, key):

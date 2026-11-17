@@ -1,9 +1,9 @@
 -- Tooltips over ForeverXP Bar's frames (the bar, minimap button, options, race windows): their lines
 -- come from AddLine / AddDoubleLine / SetText with the addon's English. While GameTooltip is owned by
--- one of its frames (Screen.RootSet, up the parent chain), each line we know is set to our words
--- when the tooltip shows, gets our font file (UADD/AceFont.lua, that one line only), and the tooltip
--- is laid out again. The hold key puts the English back on a shown tooltip; the font goes back
--- exactly when the tooltip is cleared or hidden. Other tooltips, and ForeverXPBarScanTip (its own
+-- one of its frames (Screen.RootSet, up the parent chain; or Loose below), each line we know is set
+-- to our words when the tooltip shows, gets our font file (UADD/AceFont.lua, that one line only), and
+-- the tooltip is laid out again. The hold key puts the English back on a shown tooltip; the font
+-- goes back exactly when the tooltip is cleared or hidden. Other tooltips, and ForeverXPBarScanTip (its own
 -- scanning tooltip that reads lines back), are never touched. Nothing is changed in combat.
 
 local _, ns = ...
@@ -25,6 +25,19 @@ local function Ours(owner)
         f = f.GetParent and f:GetParent() or nil
     end
     return false
+end
+
+-- Since 0.9.1 its reputation strip is a nameless movable frame right on UIParent (not under the
+-- bar), and its drag tooltip is owned by it. Such an owner counts only while the tooltip's first line
+-- is one of the addon's long texts (Words.Distinct), so other addons' nameless frames stay untouched.
+local function Loose(owner)
+    if type(owner) ~= "table" or not owner.GetParent or owner:GetParent() ~= rawget(_G, "UIParent") then
+        return false
+    end
+    if owner.GetName and owner:GetName() then return false end
+    if not (owner.IsMovable and owner:IsMovable()) then return false end
+    local fs = rawget(_G, tip:GetName() .. "TextLeft1")
+    return type(fs) == "table" and fs.GetText and ns.Words.Distinct(fs:GetText()) or false
 end
 
 local function Layout()
@@ -66,7 +79,8 @@ end
 
 local function OnShow(self)
     if guard or not ns.WordsWanted() or (InCombatLockdown and InCombatLockdown()) then return end
-    if not (self.GetOwner and Ours(self:GetOwner())) then return end
+    local owner = self.GetOwner and self:GetOwner()
+    if not (Ours(owner) or Loose(owner)) then return end
     if Translate() then Layout() end
 end
 
@@ -88,7 +102,7 @@ function T.Sync(show)
         guard = false
         UADD.AceFont.Stop(APP)
         Layout()
-    elseif ns.WordsWanted() and Ours(tip:GetOwner()) then
+    elseif ns.WordsWanted() and (Ours(tip:GetOwner()) or Loose(tip:GetOwner())) then
         if Translate() then Layout() end
     end
 end

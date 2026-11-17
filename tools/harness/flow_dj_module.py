@@ -11,7 +11,7 @@ objects untouched), the title's font on later dungeons, size and OUTLINE kept, f
 exactly and hooks idle when off or under another language, item names on item rows only and after
 every page change, no look while no window shows, dungeon names past the zone route, and no Lua
 errors; short words from our tables (flow_dj_words.py); Shift on search results and on a shut
-journal (flow_dj_shift.py). Two more games: UALLF's storage route off (the collection still ends
+journal (flow_dj_shift.py); the summon line and the joined-item row (flow_dj_summon.py). Two more games: UALLF's storage route off (the collection still ends
 and is saved) and a Russian client on "auto" (we step aside). The Lua helpers are in flow_dj_module.lua.
 UADD_OpenMap runs in the same games, on a stand-in for OpenMap (flow_openmap.py): its checks at
 the end of the main game ("openmap: ..."), then a game with UADD and UADD_OpenMap alone.
@@ -30,6 +30,7 @@ sys.path.insert(0, HERE)
 import loader  # noqa: E402
 import flow_dj_prose  # noqa: E402
 import flow_dj_shift  # noqa: E402
+import flow_dj_summon  # noqa: E402
 import flow_dj_words  # noqa: E402
 import flow_openmap  # noqa: E402
 import session  # noqa: E402
@@ -215,6 +216,7 @@ def run_main(check, om_check, facts):
     probe_before = screen_checks(s, check, facts, item_en, item_uk)
     flow_dj_words.run(s, check, facts)     # Favourites, place lines, loot types, Trash Drops
     flow_dj_shift.run(s, check, facts)     # Shift on search results and on a shut journal
+    flow_dj_summon.run(s, check, facts)    # the summon line, the joined-item row; no half lines
 
     # 7. Русский: we step aside; Українська: we come back.
     s.switch_language("Русский")

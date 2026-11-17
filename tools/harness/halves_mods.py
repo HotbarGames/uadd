@@ -4,6 +4,7 @@ The English is read from the installed addon at test time; without it the check 
 Made-up names for free slots: "Quix" (an item link, a key binding "QUIX" where the module wants one).
 """
 import os
+import re
 import sys
 
 from halves import run, tpl
@@ -195,3 +196,38 @@ def questie(check, c):
     T = c.H.ns.UADD_Questie.Tracker
     tps = [tpl(en, en, {}, {k: good}, what=what, quest=q) for en, what, k, (q, good) in QUESTIE_SHAPES]
     run(check, "UADD_Questie", tps, lambda tp, t: _t(T.Objective(tp["quest"], tp["what"], lua_str(t))))
+
+
+def _parts(en, text):
+    """The slot values of `text` read back by the English template `en` (all %s), or None."""
+    m = re.match("^" + "(.*?)".join(re.escape(p) for p in en.split("%s")) + "$", text, re.S)
+    return [lua_str(v) for v in m.groups()] if m else None
+
+
+def _named(v):
+    """An item part of the joined-item line, "Name (Boss)": (name, boss or None)."""
+    m = re.match(r"^(.*) \(([^()]*)\)$", txt(v))
+    return (lua_str(m[1]), lua_str(m[2])) if m else (v, None)
+
+
+def dj(check, s):
+    """Dungeon Journal: the lines it builds with names in our words (Built.lua), each drawn by the
+    journal's own function (PlaceSummonHelp, ShowLootChild) with the slot values as its names."""
+    X, F = s.H.djx, s.lua.globals().ForeverDungeonJournal_NS
+    if not F or not X:
+        return run(check, "UADD_DungeonJournal", [], None, SKIP)
+    en = F.Locales.enUS
+    _, _, boss, item = (list(X.summonQuest()) + [None] * 4)[:4]
+    own, own_boss, other, other_boss = X.halves()
+    keys = {"SUMMON_QUEST_NOTE": {1: boss, 2: item}, "HOW_TO_SUMMON": {1: boss}, "LOOT_COMBINE_WITH": {1: other},
+            "LOOT_MADE_FROM": {1: f"{txt(own)} ({txt(own_boss)})", 2: f"{txt(other)} ({txt(other_boss)})"}}
+    tps = [tpl(k, txt(en[k]), {}, {i: txt(v) for i, v in good.items()}) for k, good in keys.items()]
+    paths = {"SUMMON_QUEST_NOTE": lambda v: X.summon(v[0], v[1])[0],
+             "HOW_TO_SUMMON": lambda v: X.summon(v[0], item)[1],
+             "LOOT_COMBINE_WITH": lambda v: X.child(own, own_boss, v[0], other_boss)[0],
+             "LOOT_MADE_FROM": lambda v: X.child(*_named(v[0]), *_named(v[1]))[1]}
+
+    def tr(tp, t):
+        v = _parts(tp["en"], t)
+        return _t(paths[tp["id"]](v)) if v else None
+    run(check, "UADD_DungeonJournal", tps, tr)

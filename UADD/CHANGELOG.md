@@ -74,6 +74,9 @@ First release, for WoW Classic Forever.
   texts English mid-fight. A fight that starts while English is shown brings the Ukrainian back; if you still
   hold the key when the fight ends, English shows at once. `/uadd combat off` lets the key work in a fight too,
   `/uadd combat on` turns it back.
+- Made for the newest versions at release: Dungeon Journal 2.0.9, ForeverXP Bar 0.9.1 and OpenMap 0.8.10.
+  Dungeon Journal's "combine with" and "made from" lines and its summon help are Ukrainian too; OpenMap's
+  popups get Ukrainian words and the font with Cyrillic letters.
 
 Українською: перший випуск. Questie українською: меню, налаштування, список завдань (назви завдань, зон,
 предметів і НІП у цілях) і підказки. Назви завдань,
@@ -139,3 +142,6 @@ UADD - Attune: власні написи Attune українською: його
 клавіш не вмикає англійську посеред бою. Якщо бій почався, коли видно англійську, повертається українська;
 якщо після бою клавіша ще затиснута, англійська з'являється одразу. `/uadd combat off` вмикає клавішу й у бою,
 `/uadd combat on` повертає як було.
+Зроблено для найновіших версій на час випуску: Dungeon Journal 2.0.9, ForeverXP Bar 0.9.1 і OpenMap 0.8.10.
+Рядки Dungeon Journal про те, з чим поєднати предмет і з чого його зроблено, та його довідка про призов теж
+українською; спливні вікна OpenMap отримують українські слова й шрифт із кириличними літерами.

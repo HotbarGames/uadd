@@ -142,6 +142,7 @@ end
 
 function M.hover() S().Hover() end
 function M.leave() S().Leave() end
+function M.hoverRep(short) S().HoverRep(short) end
 -- The same tooltip text, owned by a frame that is not ForeverXP Bar's.
 function M.hoverOther()
     GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")

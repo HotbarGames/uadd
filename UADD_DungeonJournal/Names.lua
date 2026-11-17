@@ -87,7 +87,10 @@ function N.Sources()
         if type(d) == "table" then
             for _, b in ipairs(type(d.bosses) == "table" and d.bosses or {}) do
                 Add("Npc", b.name, b.npcID)
-                for _, it in ipairs(type(b.loot) == "table" and b.loot or {}) do AddItem(it) end
+                for _, it in ipairs(type(b.loot) == "table" and b.loot or {}) do
+                    AddItem(it)
+                    if type(it) == "table" then AddItem(it.makes) end   -- the item two halves make (Built.lua)
+                end
             end
             for _, q in ipairs(type(d.quests) == "table" and d.quests or {}) do
                 if type(q.id) == "number" and type(q.name) == "string" and not seen.Quest[q.id] then
@@ -97,6 +100,8 @@ function N.Sources()
                 for _, it in ipairs(type(q.rewardItems) == "table" and q.rewardItems or {}) do AddItem(it) end
                 AddItem(q.noteItem)
                 AddItem(q.requiredItem)
+                local help = type(q.summonHelp) == "table" and q.summonHelp      -- Built.lua, B.Summon
+                if help then Add("Item", help.itemName, help.item) end
                 Add("Npc", Person(q.pickup))
                 Add("Npc", Person(q.turnin))
             end
@@ -122,7 +127,7 @@ end
 -- ── The saved copy ────────────────────────────────────────────────────────────────────────────
 
 function N.Signature()
-    local parts = { "dj4", "rules=" .. tostring(U.UALL and U.UALL.RULES) }
+    local parts = { "dj5", "rules=" .. tostring(U.UALL and U.UALL.RULES) }
     for _, addon in ipairs({ "UADD", "UADD_DungeonJournal", "ForeverDungeonJournal", "UALLF" }) do
         parts[#parts + 1] = addon .. "=" .. tostring(U.Meta(addon, "Version"))
     end

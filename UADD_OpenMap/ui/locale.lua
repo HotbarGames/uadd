@@ -14,7 +14,7 @@
 -- Place names inside a sentence ("Searing Gorge", "Mount Hyjal", "Dire Maul - East") stay English
 -- here: names come from UALL. "Dire Maul - East" is typed in a slash command, so it must stay.
 -- UADD_OpenMap/Locale.lua puts these in OpenMap's L; Words.lua uses them for texts read earlier.
--- Over the 300-line budget on purpose: it is one flat table of 547 texts.
+-- Over the 300-line budget on purpose: it is one flat table of 552 texts.
 local _, ns = ...
 -- G"id" takes a word from the shared base, UADD/glossary/*.lua (see docs/GLOSSARY.md).
 local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil end
@@ -62,8 +62,6 @@ local MAP = {
         "наближення %.1f, текстур намальовано: %d, фрагментів мінікарти: %d",
 
     -- Close.lua (up close)
-    ["At the closest zoom the painted map runs out of pixels: soften it and lay paper grain over it."] =
-        "На найбільшому наближенні намальованій карті бракує пікселів: пом'якшити її й накласти зернистість паперу.",
     ["At the closest zoom, how much of the game's minimap is mixed in for detail. The painted map always leads."] =
         "Скільки мінікарти гри домішується для деталей на найбільшому наближенні. Намальована карта завжди головна.",
     ["At the closest zoom, mix in the game's minimap for detail (tree cover, rocks, buildings). Off, the painted map is all you see, however far you zoom."] =
@@ -83,6 +81,8 @@ local MAP = {
         "Найбільша видимість деталей мінікарти на будь-якому наближенні: коли ви наближаєте далі, ніж є деталі намальованої карти, мінікарта поступово доходить до цього значення.",
     ["Zoom right in on a cave, mine or crypt, or a dungeon's entrance area, and its map surfaces from underground: Blizzard's own where it drew one, else the game's minimap of it. Over one, the zoom goes on past the deepest zoom."] =
         "Наблизьте печеру, шахту, склеп чи місце біля входу до підземелля, і з-під землі з'явиться його карта: карта Blizzard, якщо вона є, інакше мінікарта гри. Над ним наближення йде далі за найбільше.",
+    ["Zoomed in, the painted map runs out of pixels: this softens it and lays paper grain over it. The softening rests while the map moves, so the map is sharp while you zoom or pan and softens a moment after it stops. Off (the default): always sharp."] =
+        "Зблизька намальованій карті бракує пікселів: це пом'якшує її й накладає зернистість паперу. Поки карта рухається, пом'якшення чекає, тож під час наближення чи руху карта чітка, а пом'якшується за мить після зупинки. Вимкнено (типово): карта завжди чітка.",
     ["Minimap detail"] = "Деталі мінікарти",
     ["Minimap detail in major cities"] = "Деталі мінікарти у великих містах",
     ["Minimap strength"] = "Сила мінікарти",
@@ -148,10 +148,15 @@ local MAP = {
         "NeedRoll теж показує завдання підземель: відкрийте його й виберіть це підземелля.",
     ["NeedRoll lists this dungeon's loot: what every boss drops, what you've collected, and a wishlist."] =
         "NeedRoll показує здобич цього підземелля: що падає з кожного боса, що у вас уже є, і список бажаного.",
+    ["Dungeon maps inside dungeons"] = "Карти підземель усередині підземель",
     ["Open a dungeon's map first: /openmap bosses places its bosses on it."] =
         "Спершу відкрийте карту підземелля: /openmap bosses розміщує на ній його босів.",
     ["OpenMap's maps of dungeons and raids: Blizzard's where the client has one, the ones drawn for WoW Forever's where it has none. Off: inside a dungeon the map stays the world map, and an entrance's card opens over it instead."] =
         "Карти підземель і рейдів від OpenMap: карти Blizzard, де вони є в клієнті, а де немає — намальовані для WoW Forever. Вимкнено: у підземеллі лишається карта світу, а поверх неї натомість відкривається картка входу.",
+    ["Opening the map in a dungeon shows OpenMap's map of it. To turn that off: OpenMap's menu > Dungeons > Dungeon maps inside dungeons."] =
+        "Якщо відкрити карту в підземеллі, буде карта цього підземелля від OpenMap. Щоб це вимкнути: меню OpenMap > Підземелля > Карти підземель усередині підземель.",
+    ["Opening the map inside a dungeon or raid shows that dungeon's map. Off: the map opens there as the game's own would, and a dungeon's map still opens from its entrance on the world map. With Dungeon Journal installed, its map is left to it inside a dungeon it has a page for."] =
+        "Якщо відкрити карту в підземеллі чи рейді, буде карта цього підземелля. Вимкнено: там відкривається звичайна карта гри, а карта підземелля так само відкривається з його входу на карті світу. Якщо встановлено Журнал підземель, то в підземеллі, для якого в ньому є сторінка, карту показує він.",
     ["Or right-click the map, or press Escape"] = "Або правий клік по карті, або Escape",
     ["Placed by you (/openmap bosses)"] = "Розміщено вами (/openmap bosses)",
     ["Questie lists no quests for it that you can take."] = "У Questie немає завдань звідси, які ви можете взяти.",
@@ -593,10 +598,14 @@ local MAP = {
         "Недосліджені місця сховано. Без значків підземель і майстрів польотів і без рівнів зон.",
     ["You can change any of it later in OpenMap's menu (its button on the map, or /openmap)."] =
         "Усе це можна змінити пізніше в меню OpenMap (його кнопка на карті або /openmap).",
+    ["ClassicUI Forever's World map option is on. It lays out the world map window itself, which is known to cause problems with OpenMap: the window can't be resized or moved, and in combat parts of the map can go missing.\n\nTurn that option off? Your interface will reload."] =
+        "У ClassicUI Forever увімкнено параметр «World map». Він сам розставляє вікно карти світу, а це, як відомо, заважає OpenMap: вікно не можна ні пересунути, ні змінити його розмір, а в бою частини карти можуть зникати.\n\nВимкнути цей параметр? Інтерфейс перезавантажиться.",
     ["Drag to move the map"] = "Перетягніть, щоб перемістити карту",
     ["Drag to resize the map"] = "Перетягніть, щоб змінити розмір карти",
     ["Enhance QoL: if its Mover > World Map is on, turn it off. It and OpenMap both size the map, and the map's scale goes wrong."] =
         "Enhance QoL: якщо в ньому ввімкнено Mover > World Map, вимкніть це. І він, і OpenMap змінюють розмір карти, і її масштаб збивається.",
+    ["Kept as it is. You can turn it off any time in ClassicUI Forever's options (World map)."] =
+        "Залишено як є. Його можна будь-коли вимкнути в налаштуваннях ClassicUI Forever («World map»).",
     ["Keeps the chat windows on show over the map while it's full screen, to keep talking while you look."] =
         "Лишає вікна чату поверх карти на весь екран, щоб ви могли спілкуватися, поки дивитеся.",
     ["MapUtils also changes the world map's zoom and scale: with it and OpenMap both on, the map and Blizzard's quest areas can jump while zooming. Turn one of them off if you see that."] =

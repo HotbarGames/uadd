@@ -49,7 +49,9 @@ function W.slotGaps()
                 if w ~= "" then words[w] = (words[w] or 0) + 1 end
             end
         end
-        for _, v in pairs(t) do if type(v) == "table" then walk(v) end end
+        -- An item made from two halves (FDJ 2.0.8+: item.makes) lists them in `from` as
+        -- {id, name, boss}: the third field is a boss name there, not a type line.
+        for k, v in pairs(t) do if type(v) == "table" and k ~= "from" then walk(v) end end
     end
     walk(F().DB)
     local gaps, n = {}, 0

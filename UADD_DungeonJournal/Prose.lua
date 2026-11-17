@@ -213,6 +213,7 @@ end
 
 -- Once the journal's note text exists (it is made with the journal's window).
 function P.HookNotes()
+    if ns.Built then ns.Built.Install() end   -- the summon line and the joined-item row
     if hooked then return end
     local f = rawget(_G, "ForeverDungeonJournalFrame")
     local fs = type(f) == "table" and f.questNotesText

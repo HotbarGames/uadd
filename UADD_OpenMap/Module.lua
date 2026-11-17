@@ -7,6 +7,7 @@
 --   * Fonts.lua gives a Cyrillic font to the texts that need one: the client's standard font has
 --     no Ukrainian letters (Questie's Ukrainian quest titles showed as squares on the dungeon view).
 --   * Dungeon and boss names come from the names the other modules already saved.
+--   * Popup.lua does the same for OpenMap's questions in the game's StaticPopup dialogs.
 -- While the hold key is held (UADD/Original.lua) the words are English again; the fonts stay, so
 -- Questie's titles still read. "/uadd openmap off" puts everything back as OpenMap had it.
 
@@ -27,12 +28,14 @@ local function Init()
     Screen.CatchPanel()           -- before OpenMap's PLAYER_LOGIN adds its page to Settings
     Locale.Sync()                 -- before OpenMap builds its options from L
     U.AceFont.Register("OpenMap", ns.On)   -- the options window's fonts (UADD/AceFont.lua)
+    ns.Popup.Install()            -- its StaticPopup questions (Popup.lua)
 end
 
 -- Our words in L and on the shown texts, as they should be now (hold key, on, off).
 local function Sync()
     U.SafeCall(Locale.Sync)
     U.SafeCall(Words.Sync)
+    U.SafeCall(ns.Popup.Sync)
 end
 
 local frame = CreateFrame("Frame")
@@ -87,6 +90,7 @@ local function Command(args)
         Screen.Stop()
         Sync()                          -- English back: our words are not wanted now
         U.SafeCall(Screen.Sweep)        -- and on texts built while L was ours, shown or not
+        U.SafeCall(ns.Popup.Restore)    -- its questions: English and the game's fonts
         Fonts.Restore()
         U.AceFont.Stop("OpenMap")
         ns.Tooltip.Stop()
