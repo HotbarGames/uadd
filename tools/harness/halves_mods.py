@@ -168,6 +168,8 @@ OM_SHAPES = (("Level %s", {}), ("%s, %s", {1: RFK, 2: RFK}), ("%s  %d-%d", {1: R
              ("What's new in OpenMap  |cff998866%s|r", {1: "v0.8.9"}), ("Нова нотатка · %s", {1: RFK}),
              ("Нотатка #%d · %s", {2: RFK}), ("%s · |cffffffffmy note|r |cffe6c27a(малюнок)|r", {1: RFK}),
              ("Мітка · %s  %.1f, %.1f", {1: RFK}), ("Куди: %s", {1: RFK}), ("To %s", {1: RFK}))
+# The World Map's hover label as OpenMap writes it (Label.lua): a zone and its level range in colour.
+OM_LABEL = (("%s |cffff8040(%d-%d)|r", {1: RFK}), ("%s |cff40c040(%d)|r", {1: RFK}))
 
 
 def openmap(check, lua):
@@ -178,10 +180,11 @@ def openmap(check, lua):
     tps = [tpl(en, en, {i: NAME for i in free.get(en, [])})
            for en in sorted(txt(k) for k in Lc.entries.keys()) if hashtext.is_template(en)]
     tps += [tpl(en, en, {}, good) for en, good in OM_SHAPES]
-    P = lua.globals().HARNESS.ns.UADD_OpenMap.Parts
+    tps += [tpl(en, en, {}, good, label=True) for en, good in OM_LABEL]
+    P, Lb = lua.globals().HARNESS.ns.UADD_OpenMap.Parts, lua.globals().HARNESS.ns.UADD_OpenMap.Label
     every = lambda tp, t: [Wd.Line(lua_str(t)), Wd.Whole(lua_str(t)), Wd.English(lua_str(t)),  # noqa: E731
-                           P.Built(lua_str(t)), P.English(lua_str(t))]   # the time check: the tooltip's paths too
-    run(check, "UADD_OpenMap", tps, lambda tp, t: _t(Wd.Line(lua_str(t))), hard=every)
+                           P.Built(lua_str(t)), P.English(lua_str(t)), Lb.Text(lua_str(t))]   # the time check: the tooltip's and label's paths too
+    run(check, "UADD_OpenMap", tps, lambda tp, t: _t((Lb.Text if tp.get("label") else Wd.Line)(lua_str(t))), hard=every)
 
 
 # Tracker.lua's objective shapes (the counter, "slain", "name: N/M"), each on a quest that has that

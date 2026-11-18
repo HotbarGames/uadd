@@ -11,8 +11,8 @@
 -- walk: its widgets are shared with other addons' windows, so UADD/AceFont.lua does its fonts.
 -- OpenMap makes these frames on first use, so we look for them every TICK seconds while the World
 -- Map or one of them is shown, and once a second, while the World Map is shown, until all the
--- named ones exist; their OnShow is hooked. Nothing of the World Map's own is touched. Nothing is
--- changed in combat. S.Sweep ("/uadd openmap off") reaches every text, shown or not.
+-- named ones exist; their OnShow is hooked. Nothing of the World Map's own is touched (but its hover
+-- label, where OpenMap writes its own parts: Label.lua). Nothing is changed in combat. S.Sweep ("/uadd openmap off") reaches every text, shown or not.
 
 local _, ns = ...
 local U = UADD

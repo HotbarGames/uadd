@@ -16,4 +16,5 @@ Words.lua
 Screen.lua
 Tooltip.lua
 Popup.lua
+Label.lua
 Module.lua

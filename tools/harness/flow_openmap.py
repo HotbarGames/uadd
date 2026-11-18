@@ -5,8 +5,8 @@ Run by flow_dj_module.py, so run.py runs it too:
   * in_game(s, check, facts): in the Dungeon Journal module's game (names collected), the Razorfen
     Kraul view: Ukrainian quest titles in a Cyrillic font, Ukrainian labels and names, size and
     flags kept, redraws, the hold key, OpenMap's L (on, hold key, combat, a bad text, off), its
-    menu, News and Settings page, its StaticPopup questions, "/uadd dj off" leaves it alone, "/uadd openmap off" puts
-    everything back exactly and "on" again, the Dungeon Journal's own panel inside the dungeon (a
+    menu, News and Settings page, its StaticPopup questions, the World Map's hover label, "/uadd dj
+    off" leaves it alone, "/uadd openmap off" puts everything back exactly and "on" again, the Dungeon Journal's own panel inside the dungeon (a
     fact), the guard (no Ukrainian text in a font without Ukrainian letters) and no Lua errors.
   * alone(saved, check, facts): a second game with UADD and UADD_OpenMap only (no Dungeon
     Journal, no UALL), on the saved settings of the first: fonts fixed, names from the saved copy.
@@ -147,7 +147,7 @@ def in_game(s, check, facts):
           s.client.chat()[before:][:2])
 
     _more(s, M, check)
-    flow_openmap_built.run(s, M, check)    # lines OpenMap builds from L and a zone or a version
+    flow_openmap_built.run(s, M, check)    # lines OpenMap builds from L and a zone or a version, the map label
     flow_openmap_popup.run(s, check)        # its questions in the game's StaticPopup dialogs
     halves_mods.openmap(check, s.lua)       # made-up English in each slot: never a half-translated line
     boxes = session.cyr_boxes(s.client)

@@ -4,11 +4,12 @@ titles, a row of the pin list and the dock's tooltip, each with a zone name the 
 
 With a zone UALL saved, each line is whole Ukrainian (the version and the player's note kept as they
 are); with one nobody saved, whole English; the hold key gives OpenMap's English back. The player's
-own note stays exactly as written in the pin list row and the pin tooltips, on, held and off. Called from
-flow_openmap.in_game; the Lua helpers are in flow_openmap.lua.
+own note stays exactly as written in the pin list row and the pin tooltips, on, held and off. Then the World
+Map's hover label (flow_openmap_label.py). Called from flow_openmap.in_game; the Lua helpers are in flow_openmap.lua.
 """
 import re
 
+import flow_openmap_label
 from loader import lua_str, txt
 
 ZONE, NOWHERE = "Razorfen Kraul", "Zorp Blatter"   # a zone the journal saved; a made-up one
@@ -63,6 +64,7 @@ def run(s, M, check):
     check("dock tooltip, a zone nobody saved: whole English", tip == f"To {NOWHERE}", tip)
     _notes(s, M, check)
     M.closeBuilt()
+    flow_openmap_label.run(s, M, check)   # the World Map's hover label: OpenMap's levels and fishing
 
 
 # Notes a player might write (or get from another player): our words, English, names, a long one.

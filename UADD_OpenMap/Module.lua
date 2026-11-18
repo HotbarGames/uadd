@@ -8,6 +8,7 @@
 --     no Ukrainian letters (Questie's Ukrainian quest titles showed as squares on the dungeon view).
 --   * Dungeon and boss names come from the names the other modules already saved.
 --   * Popup.lua does the same for OpenMap's questions in the game's StaticPopup dialogs.
+--   * Label.lua: the World Map's hover label, where OpenMap adds a zone's levels and fishing skill.
 -- While the hold key is held (UADD/Original.lua) the words are English again; the fonts stay, so
 -- Questie's titles still read. "/uadd openmap off" puts everything back as OpenMap had it.
 
@@ -36,6 +37,7 @@ local function Sync()
     U.SafeCall(Locale.Sync)
     U.SafeCall(Words.Sync)
     U.SafeCall(ns.Popup.Sync)
+    U.SafeCall(ns.Label.Sync)
 end
 
 local frame = CreateFrame("Frame")
@@ -49,6 +51,7 @@ frame:SetScript("OnEvent", function(self, event, name)
     else
         C_Timer.After(0, function() U.SafeCall(Screen.Install) end)
         U.SafeCall(ns.Tooltip.Install)
+        U.SafeCall(ns.Label.Install)
     end
 end)
 
@@ -81,6 +84,7 @@ local function Command(args)
         db.enabled = true
         U.SafeCall(Screen.Install)
         U.SafeCall(Screen.Start)
+        U.SafeCall(ns.Label.Install)
         Sync()
         U.SafeCall(Screen.Scan)
         Say("увімкнено.")
