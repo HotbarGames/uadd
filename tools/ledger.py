@@ -8,7 +8,8 @@ python3 tools/ledger.py summary [--last 10]                             cost per
 tokens: the sum of the agents' tokens the lead saw. wall: minutes from start to commit. owner: the owner's
 minutes (asked or estimated; in-game testing counts most). caught: problems the checks caught before the game.
 game_bugs: bugs found in the game (by the owner or players) in what this run made, added later with `bug`.
-The file is .claude/ledger.tsv (git-ignored: it stays on this PC); --file or $UADD_LEDGER uses another one.
+The file is ../.claude/ledger.tsv, next to the skills (a private repo), when that folder exists; else
+.claude/ledger.tsv (git-ignored). --file or $UADD_LEDGER uses another one.
 A run of translations-review is a row too: `add` and `summary` say "Review due" after REVIEW_EVERY other runs.
 Standard library only.
 """
@@ -18,7 +19,9 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT = os.path.join(REPO, ".claude", "ledger.tsv")
+_PRIVATE = os.path.join(os.path.dirname(REPO), ".claude")
+DEFAULT = (os.path.join(_PRIVATE, "ledger.tsv") if os.path.isdir(os.path.join(_PRIVATE, "skills"))
+           else os.path.join(REPO, ".claude", "ledger.tsv"))
 COLS = ["date", "skill", "addons", "tokens", "agents", "wall_min", "owner_min", "caught", "game_bugs", "note"]
 NUM = {"tokens": int, "agents": int, "wall_min": float, "owner_min": float, "caught": int, "game_bugs": int}
 REVIEW = "translations-review"
@@ -154,7 +157,7 @@ def summary(p, last=10):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--file", default=None, help="ledger file (default .claude/ledger.tsv, or $UADD_LEDGER)")
+    ap.add_argument("--file", default=None, help="ledger file (default ../.claude/ledger.tsv, or $UADD_LEDGER)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("add")
     a.add_argument("--skill", required=True)

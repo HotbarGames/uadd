@@ -8,14 +8,14 @@ When a new kind of problem is found, add a lesson there and a check in the same 
 
 ## Translation skills
 
-They live outside this repo, in the workspace folder above it (`../.claude/skills/`), so they stay private.
+They live outside this repo, in the workspace folder above it (`../.claude/skills/`): a private GitHub repo, HotbarGames/hotbar-claude.
 
 - `update-translations`: after the addons update, or after a test with `/uadd missed on`.
   It runs `tools/drift.py` and `tools/missed.py` first; when both are empty it stops at once.
 - `translate-addon`: a new addon, from `docs/LESSONS.md` "Before a new addon" to the
   owner's test.
 - `translations-review`: about every 5 runs (`python3 tools/ledger.py summary` says when).
-  Each run adds a row with `python3 tools/ledger.py add` (`.claude/ledger.tsv`, git-ignored).
+  Each run adds a row with `python3 tools/ledger.py add` (`../.claude/ledger.tsv`, in the private skills repo).
 
 ## Other addons' texts
 
