@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The addon list shows the UADD logo as the icon of UADD and of each module, instead of a red question mark.
+
 ## 1.0.0
 
 First release, for WoW Forever.

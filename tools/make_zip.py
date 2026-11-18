@@ -13,7 +13,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 FOLDERS = ["UADD", "UADD_Questie", "UADD_DungeonJournal", "UADD_OpenMap", "UADD_DialogueUI", "UADD_ForeverXPBar",
            "UADD_Auctionator", "UADD_Attune"]
-EXTRA = {"UADD": ["LICENSE.txt", "CHANGELOG.md"], "UADD_Questie": [], "UADD_DungeonJournal": [], "UADD_OpenMap": [],
+EXTRA = {"UADD": ["LICENSE.txt", "CHANGELOG.md", "Logo.tga"], "UADD_Questie": [], "UADD_DungeonJournal": [], "UADD_OpenMap": [],
          "UADD_DialogueUI": [], "UADD_ForeverXPBar": [], "UADD_Auctionator": [], "UADD_Attune": []}
 # files from the repo root that go into a folder of the zip: the notices for the OpenMap (MIT) and Questie (GPL)
 # texts we copy must ship with the copies

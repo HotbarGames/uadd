@@ -1,5 +1,6 @@
 ## Interface: 16001, 16000
 ## Title: UADD - Dialogue UI
+## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Dialogue UI's own words in Ukrainian: buttons, quest labels, hints, settings, tooltips and chat lines. Type /uadd dialogueui.
 ## Author: HotbarGames
 ## Version: 1.0.0
