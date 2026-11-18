@@ -62,7 +62,7 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
 - Auctionator: `FREE` in `UADD_Auctionator/Words.lua`; code texts: `SLOTS` in `tools/make_auc_text.py`.
 - Attune: `KIND`, `BYKEY` and `FREE` in `UADD_Attune/Pairs.lua`.
 - OpenMap: `Lc.FREE` in `UADD_OpenMap/Locale.lua`.
-- Questie: none (its tracker shapes take an item or a creature name only).
+- Questie: none (UALL Forever translates its tracker; UADD_Questie is in `NO_SLOTS`).
 
 A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
 only when the game or the addon puts a name there that has no translation.

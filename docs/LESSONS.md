@@ -23,7 +23,9 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
 5. Open every window and tab of the addon. Write down every English text you see, not only the texts in
    its locale tables (lesson 1).
 6. If the module changes a font, test that the change really shows, also in windows made later (lesson 2).
-7. Before you call the module done, run all checks:
+7. Look for lines that share a row with another text, and for names the addon glues extra text onto
+   (lessons 5 and 6).
+8. Before you call the module done, run all checks:
    `python3 tools/check_repo.py`, `python3 -m unittest discover -s tools -p 'test_*.py'`,
    `python3 tools/harness/run.py`.
 
@@ -88,3 +90,33 @@ a new word, add it to both in the same commit.
 **Check.** `python3 -m unittest tools.test_banned_words`. It reads every string we ship (the `.lua` files
 that each `UADD*/*.toc` loads, the TOC Title and Notes lines, and `tools/dj_prose/uk_*.lua`) and lists each
 banned word as file:line: text. `python3 tools/test_banned_words.py` prints the same list.
+
+## 5. A translation too long for its place
+
+**What went wrong.** In ForeverXP Bar, the line under the bar («До рівня: 3 год 59 хв (16.5k досвіду/год)»,
+41 letters; the English has 35) ran into the «Виконано / Відпочинок» line on the same row. It looked like a
+font bug, but the addon draws that line big (size 15) on purpose. The fix was shorter words:
+«До рівня: 3 год 59 хв (16.5k/год)».
+
+**Rule.** A text that shares a row with another text, or sits in a fixed-size box (a button, a column, a
+bar), must fit at the addon's own font size on a narrow window. Make the words shorter. Never make the font
+smaller: the size is the addon's and the player's choice. Try to keep such texts no longer than the
+English.
+
+**Check.** Manual: in the game, make the window or bar as narrow as it goes and look at each row with two
+texts. `python3 tools/harness/run.py` only checks that the module keeps the addon's font size and outline
+("keeps its own size and outline, also on resize"); no script measures the length yet. This is a gap.
+
+## 6. A name with extra text glued on
+
+**What went wrong.** OpenMap puts the zone's levels after its name on the World Map ("Tirisfal Glades
+(1-10)") and adds a "Fishing 25" line. UALL Forever translates zone names, but only when the whole text is
+exactly a name, so both lines stayed English. Nobody hooked them, because each part looked translated.
+
+**Rule.** Search the addon's code for places where it glues extra text onto a name or a game text
+(`..`, `format`, `table.concat`). If UALL Forever or the game would translate the bare text, the glued line
+is now ours: translate the whole line, with the name taken from UALL Forever. A name it does not know keeps
+the whole line English (no half translations).
+
+**Check.** Manual: list such places in the module notes. For each one, add a flow with a real joined text
+in the harness (as `tools/harness/flow_openmap_label.py` does), then run `python3 tools/harness/run.py`.

@@ -24,6 +24,8 @@
   can translate each whole line. The `/uadd questie font` and `font off` commands are gone. If an older UADD
   switched the tracker fonts to "UADD Cyrillic", the fonts it switched come back (Friz Quadrata TT by default).
   Menus, settings, tooltips, My Journey, map pins and the names from UALL Forever are still Ukrainian.
+- ForeverXP Bar: the line under the bar is shorter, «До рівня: 3 год 59 хв (16.5k/год)», so it no longer
+  runs into «Виконано / Відпочинок» on a narrow bar.
 
 ## 1.0.0
 
