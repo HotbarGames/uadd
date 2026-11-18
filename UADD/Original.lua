@@ -2,26 +2,31 @@
 --
 -- The key is UALLF's own "show original" key when UALLF is loaded (UALLFSettingsDB.originalKey,
 -- a global we only read: "SHIFT", "CTRL", "ALT" or "NONE" for no key), and Shift otherwise.
--- UALLF's reverse mode (English unless the key is held) is not copied here.
+-- UALLF's reverse mode (UALLFSettingsDB.reverseOriginal) is followed the same way: then the
+-- English shows unless the key is held, and holding the key shows the Ukrainian. Without UALLF
+-- there is no reverse mode.
 --
--- A module calls UADD.OnOriginal(fn[, name]). fn(true) runs once the key has been held for HOLD seconds,
--- fn(false) as soon as it comes up, and only after a true. A quick tap does nothing: Shift is also
--- pressed for capital letters, shift-clicks (loot, quest links, which must keep the Ukrainian
--- names) and Shift keybinds, and every switch redraws Questie's tracker. Nothing switches while
--- a text box has the keyboard (typing in chat).
+-- A module calls UADD.OnOriginal(fn[, name]). fn(true) means "show the English", fn(false) "show the
+-- Ukrainian"; each is told only when it changes. Normally fn(true) runs once the key has been held for
+-- HOLD seconds, fn(false) as soon as it comes up; in reverse mode the other way round, and fn(true)
+-- runs once when the game world is loaded, or at the next key change after the setting is turned on.
+-- A quick tap does nothing: Shift is also pressed for capital letters, shift-clicks (loot, quest
+-- links, which must keep the Ukrainian names) and Shift keybinds, and every switch redraws texts.
+-- Nothing switches while a text box has the keyboard (typing in chat).
 --
 -- We listen to MODIFIER_STATE_CHANGED. The game does not send it when the key comes up outside
--- the game window (Alt-Tab), so while the original is shown, and only then, a ticker checks the
+-- the game window (Alt-Tab), so while the key counts as held, and only then, a ticker checks the
 -- key every POLL seconds. Entering and leaving combat checks it too.
 --
 -- In a fight the key does nothing (Shift is a common keybind there, and a switch redraws texts):
--- a fight that starts with the original shown gives the Ukrainian back once, and when it ends a key
--- still held shows the original at once. /uadd combat off (UADD_DB.keyInCombat = true) turns this off.
+-- a fight that starts with the key counted as held lets it go once (normal mode: Ukrainian; reverse
+-- mode: English), and when it ends a key still held counts at once. /uadd combat off
+-- (UADD_DB.keyInCombat = true) turns this off.
 
 local U = UADD
 local listeners = {}
 U.originalShown = false     -- true after the listeners were told true, until they are told false
-U.originalPoll = nil        -- the ticker while the original is shown
+U.originalPoll = nil        -- the ticker while the key counts as held
 U.originalPerf = {}         -- per listener: { name, down = ms, up = ms } of the last switch (/uadd perf)
 
 local HOLD, POLL = 0.25, 0.2
@@ -45,8 +50,14 @@ function U.OriginalKey()
     return "SHIFT"
 end
 
+-- true when UALLF is loaded and the player turned on its reverse mode (English unless the key is held).
+function U.OriginalReverse()
+    local s = _G.UALLFSettingsDB
+    return Loaded("UALLF") and type(s) == "table" and s.reverseOriginal == true
+end
+
 -- true while the key is held (at once, without the HOLD delay).
-function U.ShowOriginal()
+function U.KeyHeld()
     local key = U.OriginalKey()
     local down = key and _G[DOWN[key]]
     return type(down) == "function" and down() and true or false
@@ -73,12 +84,6 @@ end
 
 local function Tell(show)
     U.originalShown = show
-    if show and not U.originalPoll then
-        U.originalPoll = C_Timer.NewTicker(POLL, function() U.CheckOriginal() end)
-    elseif not show and U.originalPoll then
-        U.originalPoll:Cancel()
-        U.originalPoll = nil
-    end
     local clock = type(debugprofilestop) == "function" and debugprofilestop
     for i, fn in ipairs(listeners) do
         local t0 = clock and clock()
@@ -89,8 +94,24 @@ local function Tell(show)
 end
 
 local keyDown = false       -- the key went down and no HOLD check has given up on it yet
+local engaged = false       -- the key was held for HOLD and has not come up since
 local press = 0             -- counts presses and releases: a HOLD check for an older press does nothing
 local fighting = false      -- between PLAYER_REGEN_DISABLED and PLAYER_REGEN_ENABLED
+
+-- Sets whether the key counts as held, and tells the listeners when what they show changes: the
+-- English while it is held, or in reverse mode while it is not. Engage(engaged) only looks again
+-- at the reverse setting.
+local function Engage(on)
+    engaged = on
+    if on and not U.originalPoll then
+        U.originalPoll = C_Timer.NewTicker(POLL, function() U.CheckOriginal() end)
+    elseif not on and U.originalPoll then
+        U.originalPoll:Cancel()
+        U.originalPoll = nil
+    end
+    local show = engaged ~= U.OriginalReverse()
+    if show ~= U.originalShown then Tell(show) end
+end
 
 -- true unless the player turned it off (/uadd combat off saves UADD_DB.keyInCombat = true).
 function U.IgnoreKeyInCombat()
@@ -107,38 +128,38 @@ end
 
 -- Looks at the key: lets go at once, or starts the HOLD wait when it just went down.
 function U.CheckOriginal()
-    local down = U.ShowOriginal()
+    local down = U.KeyHeld()
     if not down then
         if keyDown then keyDown, press = false, press + 1 end
-        if U.originalShown then Tell(false) end
+        Engage(false)       -- also follows a reverse setting changed since
         return
     end
-    if keyDown or U.originalShown or Blocked() then return end
+    if keyDown or engaged or Blocked() then return end
     keyDown, press = true, press + 1
     local mine = press
     C_Timer.After(HOLD, function()
-        if mine ~= press or U.originalShown then return end
-        if U.ShowOriginal() and not Typing() and not Blocked() then
-            Tell(true)
+        if mine ~= press or engaged then return end
+        if U.KeyHeld() and not Typing() and not Blocked() then
+            Engage(true)
         else
             keyDown = false     -- not now: a later key change looks again
         end
     end)
 end
 
--- A fight that starts while the original is shown gives the Ukrainian back, once. When it ends, the
--- key counts as it is at that moment: still held, the original shows at once (it was held long enough).
+-- A fight that starts while the key counts as held lets it go, once. When it ends, the key counts
+-- as it is at that moment: still held, it counts at once (it was held long enough).
 local function Combat(starts)
     fighting = starts
     if not U.IgnoreKeyInCombat() then return U.CheckOriginal() end
     if starts then
-        if U.originalShown then
+        if engaged then
             keyDown, press = false, press + 1
-            Tell(false)
+            Engage(false)
         end
-    elseif not U.originalShown and U.ShowOriginal() and not Typing() then
+    elseif not engaged and U.KeyHeld() and not Typing() then
         keyDown, press = true, press + 1
-        Tell(true)
+        Engage(true)
     else
         U.CheckOriginal()
     end
@@ -148,8 +169,10 @@ local frame = CreateFrame("Frame")
 frame:RegisterEvent("MODIFIER_STATE_CHANGED")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:SetScript("OnEvent", function(_, event)
     if event == "PLAYER_REGEN_DISABLED" then Combat(true)
     elseif event == "PLAYER_REGEN_ENABLED" then Combat(false)
+    elseif event == "PLAYER_ENTERING_WORLD" then Engage(engaged)   -- reverse mode: English from the start
     else U.CheckOriginal() end
 end)

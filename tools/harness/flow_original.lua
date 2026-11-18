@@ -86,6 +86,26 @@ function F.setOriginalKey(key)
     UALLFSettingsDB.originalKey = key
 end
 
+-- UALLF's reverse mode on (true) or off (nil), as the player sets it in UALLF's options.
+function F.setReverse(on)
+    UALLFSettingsDB = UALLFSettingsDB or {}
+    UALLFSettingsDB.reverseOriginal = on
+end
+
+-- The game says UALLF is not loaded (true), or tells the truth again (false). Its saved settings stay.
+local realLoaded
+function F.hideUALLF(hide)
+    if hide and not realLoaded then
+        realLoaded = C_AddOns.IsAddOnLoaded
+        C_AddOns.IsAddOnLoaded = function(name)
+            if name == "UALLF" then return false, false end
+            return realLoaded(name)
+        end
+    elseif not hide and realLoaded then
+        C_AddOns.IsAddOnLoaded, realLoaded = realLoaded, nil
+    end
+end
+
 -- A Questie pin tooltip under the mouse on the open world map when the key goes down and is held
 -- (true) or comes up (false). Returns the title its last drawing showed.
 -- MapIconTooltip.ShowOnTooltip is replaced by one that works like Questie's: the title (here an

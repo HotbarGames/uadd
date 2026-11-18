@@ -1,5 +1,6 @@
--- UADD - Questie: while the show-original key is held (UADD.ShowOriginal, UADD/Original.lua),
--- Questie shows English; when it is let go, Ukrainian again. Only on/off of the key does work.
+-- UADD - Questie: while the show-original key is held (UADD.OnOriginal, UADD/Original.lua),
+-- Questie shows English; when it is let go, Ukrainian again (in UALLF's reverse mode the other way
+-- round). Only on/off of the key does work.
 --
 -- Questie's l10n() looks the language up on every call (Localization/l10n.lua, SetUILocale and
 -- GetUILocale), so we switch it to enUS and back. Its menus, messages and tooltip lines that are

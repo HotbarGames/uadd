@@ -5,6 +5,11 @@
 - The addon list shows the UADD logo as the icon of UADD and of each module, instead of a red question mark.
 - "Instance" is now «підземелля» everywhere, not «інстанс»: in the settings of Questie, Dialogue UI and
   OpenMap, in the Dungeon Journal and in Attune's notes.
+- The tab name at the top of Questie's options again gets the font with Cyrillic letters, so
+  «Загальні налаштування» has no box instead of "і". Before, UADD wrongly thought the font did not load and
+  gave up. A Questie options tab made later, in the game's settings window, gets the font too.
+- The "show original" key follows UALL Forever's reverse setting: when it is on, the addons show English and
+  holding the key shows Ukrainian. Without UALL Forever, nothing changes.
 - Auctionator: more of its Selling and Cancelling tabs is in Ukrainian. The "Quantity" label next to the
   number box, the bag group titles (Favourites, Consumable, Trade Goods, Recipe and the rest), and the
   column headers of tables that were hidden when they were built (the price history tables under the

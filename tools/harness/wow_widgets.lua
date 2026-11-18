@@ -253,6 +253,9 @@ function CreateFont(name)
     local f = H.newWidget("Font", name)
     f.__font, f.__color = { "Fonts\\FRIZQT__.TTF", 12, "" }, { 1, 1, 1, 1 }
     f.__fs = f
+    -- In the client a font object's SetFont gives back nothing, even when the file took:
+    -- only GetFont tells. (A FontString's SetFont here still says true or false.)
+    f.SetFont = function(self, path, size, flags) Widget.SetFont(self, path, size, flags) end
     return f
 end
 

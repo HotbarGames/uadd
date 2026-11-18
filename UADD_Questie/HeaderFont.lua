@@ -38,13 +38,15 @@ local function Shared()
 end
 
 -- Our copy of Game13Font with only the Cyrillic font file in it. Nil without a Cyrillic font.
+-- A font object's SetFont gives back nothing in the client, so we ask GetFont whether ours took.
 local function Ours()
     if ours then return ours end
     local base, path = Shared(), UADD.CyrFontPath()
     if not (base and path) then return nil end
     local _, size, flags = base:GetFont()
     local f = rawget(_G, FONT_OBJECT) or CreateFont(FONT_OBJECT)   -- one name, made once
-    if not f:SetFont(path, size or 13, flags or "") then return nil end
+    pcall(f.SetFont, f, path, size or 13, flags or "")
+    if not UADD.IsCyrFont((f:GetFont())) then return nil end
     f:SetTextColor(base:GetTextColor())
     f:SetShadowColor(base:GetShadowColor())
     f:SetShadowOffset(base:GetShadowOffset())
@@ -162,23 +164,40 @@ end
 function H.ItemCount() return AF.Count("Questie", "^Dropdown%-Item") end
 
 -- Finds Questie's canvases (Blizzard's settings panel and Questie's own window) and hooks them.
-function H.Scan()
+-- onlyNew: look at once only at a shown canvas we hook now (an old one's OnShow already looked).
+local HookPanel
+function H.Scan(onlyNew)
     if not active then return end
     AF.Hook()
+    HookPanel()
     local E = Engine()
     if not (E and type(E.tabs) == "table") then return end
     for key in pairs(E.tabs) do
         for _, mode in ipairs(MODES) do
             local canvas = rawget(_G, "QuestieOptionsTab_" .. mode .. "_" .. tostring(key))
             if type(canvas) == "table" and canvas.HookScript then
-                if not hooked[canvas] then
+                local new = not hooked[canvas]
+                if new then
                     hooked[canvas] = true
                     canvas:HookScript("OnShow", function(self) Look(self, TRIES) end)
                 end
-                if canvas:IsShown() then Look(canvas, TRIES) end
+                if (new or not onlyNew) and canvas:IsShown() then Look(canvas, TRIES) end
             end
         end
     end
+end
+
+-- Questie may make a settings canvas after its OnReady, when we scanned. So we scan again each
+-- time the game's settings window opens or a category in it is picked: a few name lookups, no
+-- ticker. A canvas shown by that pick gets its look right there.
+local panelHooked = false
+HookPanel = function()
+    local panel = rawget(_G, "SettingsPanel")
+    if panelHooked or type(panel) ~= "table" or not panel.HookScript then return end
+    panelHooked = true
+    local function Rescan() if active then UADD.SafeCall(H.Scan, true) end end
+    panel:HookScript("OnShow", Rescan)
+    if type(panel.SelectCategory) == "function" then hooksecurefunc(panel, "SelectCategory", Rescan) end
 end
 
 local engineHooked = false

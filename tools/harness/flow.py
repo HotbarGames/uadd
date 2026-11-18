@@ -13,7 +13,9 @@ import halves_mods
 import session
 from flow_dropdown import dropdown
 from flow_live import Live
+from flow_header import BLIZZ_TAB, OPTIONS_TITLE, POPUP_TAB, header, late_header
 from flow_original import Original
+from flow_reverse import reverse, reverse_login
 from flow_routes import ARNAK, route_off
 from flow_tracker import Tracker, uall_held
 from loader import read_text, txt, lua_str
@@ -23,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 L10N = {
     "General": "Загальне",
-    "General Options": "Загальні налаштування",
+    "General Options": OPTIONS_TITLE,
     "Show Minimap Button": "Кнопка на мінікарті",
     "Auto Accept Quests": "Автоприйняття завдань",
     "Auto Complete": "Автоздача",
@@ -68,25 +70,6 @@ class Flow:
         t0 = time.time()
         frames, idle = c.F.collect(200000)
         return idle, time.time() - t0, frames
-
-
-# The options tab header: Questie draws the tab name with Game13Font, which has no "і" in the
-# client; we put our own font object on that FontString only, and Game13Font back on "off".
-HEADER_FONT = "UADD_QuestieHeaderFont"
-HEADER_GREY = "0.90 0.90 0.90 1.00"
-BLIZZ_TAB, POPUP_TAB = "QuestieOptionsTab_Blizz_general", "QuestieOptionsTab_Popup_general"
-
-
-def header(f, c, step, canvas, ours, popup=False):
-    got = [txt(x) for x in c.F.header(lua_str(canvas), popup)]
-    want_obj = HEADER_FONT if ours else "Game13Font"
-    want_file = "FRIZQT___CYR.TTF" if ours else "FRIZQT__.TTF"
-    ok = (len(got) == 4 and got[0] == want_obj and got[2] == HEADER_GREY
-          and got[3].upper().endswith(want_file))
-    if ours:
-        ok = ok and got[1] == L10N["General Options"]
-    where = "Questie window" if popup else "settings panel"
-    return f.check(f"{step}: options header ({where}) in {want_obj}, colour kept", ok, str(got))
 
 
 def _ok_text(got, want):
@@ -166,11 +149,13 @@ def run():
     O.combat(c, "show original, combat")
     O.combat_key(c, "show original, combat key")
     O.other_key(c, "show original")
+    reverse(O, c, "show original, UALLF reverse")
     O.hidden(c, "show original, tracker hidden")
     O.perf(c, "show original")
     f.no_errors(c, "show original")
     header(f, c, "first login", BLIZZ_TAB, True)
     header(f, c, "first login", POPUP_TAB, True, popup=True)
+    late_header(f, c, "first login")
     dropdown(f, c, "first login")
     flow_controls.first(f, c, "first login")
     f.no_errors(c, "options header")
@@ -184,6 +169,7 @@ def run():
     T.translated(c2, "reload")
     live.same_after_reload(c2)
     f.no_errors(c2, "reload")
+    reverse_login(f)                           # UALLF reverse mode saved: English from the start
 
     # 5. Every /uadd command. The rebuild runs without the Questie function the live path needs.
     for cmd in COMMANDS:

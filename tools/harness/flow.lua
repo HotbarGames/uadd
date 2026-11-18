@@ -174,6 +174,43 @@ function F.header(name, popup)
         (s:GetFont())
 end
 
+-- A settings canvas Questie makes after its OnReady (when we scanned), with its header built the way
+-- Questie 12.8 builds one (QuestieOptionsEngine.lua:172-193): on canvas.content, the tab name after
+-- the "•" in Game13Font. how = "panel": the game's settings window opens, then the canvas shows;
+-- "select": the window is already open and the canvas's category is picked. Returns the tab name's
+-- font object name and font file.
+function F.lateCanvas(key, how)
+    local E = QuestieLoader:ImportModule("QuestieOptionsEngine")
+    if how == "select" then SettingsPanel:Show() else SettingsPanel:Hide() end
+    E.tabs[key] = E.tabs[key] or {}
+    local canvas = CreateFrame("Frame", "QuestieOptionsTab_Blizz_" .. key, UIParent)
+    canvas:Hide()
+    canvas.content = CreateFrame("Frame", nil, canvas)
+    local title = canvas.content:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    title:SetText("Questie")
+    local bullet = canvas.content:CreateFontString(nil, "OVERLAY", "Game13Font")
+    bullet:SetPoint("LEFT", title, "RIGHT", 4, -1)
+    bullet:SetText("\226\128\162")
+    local sub = canvas.content:CreateFontString(nil, "OVERLAY", "Game13Font")
+    sub:SetPoint("LEFT", bullet, "RIGHT", 8, 0)
+    sub:SetTextColor(0.9, 0.9, 0.9, 1)
+    sub:SetText(QuestieLoader:ImportModule("l10n")("General Options"))
+    canvas.UpdateScrollLayout = function() end      -- the build is done
+    local category = Settings.RegisterCanvasLayoutCategory(canvas, key)
+    if how == "select" then
+        SettingsPanel:SelectCategory(category)
+    else
+        SettingsPanel:Show()
+        canvas:Show()
+    end
+    H.pump(20, nil, 0.05)
+    canvas:Hide()
+    SettingsPanel:Hide()
+    E.tabs[key] = nil
+    local o = sub:GetFontObject()
+    return o and o:GetName() or "none", (sub:GetFont())
+end
+
 -- Switches one UALLF setting off (as the player would in UALLF's options), before collecting.
 function F.uallOff(key) UALLFSettingsDB[key] = false end
 

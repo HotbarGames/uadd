@@ -27,7 +27,8 @@ local function Copy(base)
     count = count + 1
     local name = "UADD_DJFont" .. count
     local f = rawget(_G, name) or CreateFont(name)
-    if not f:SetFont(path, size or 12, flags or "") then return nil end
+    pcall(f.SetFont, f, path, size or 12, flags or "")      -- gives back nothing in the client
+    if not UADD.IsCyrFont((f:GetFont())) then return nil end
     f:SetTextColor(base:GetTextColor())
     f:SetShadowColor(base:GetShadowColor())
     f:SetShadowOffset(base:GetShadowOffset())

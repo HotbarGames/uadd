@@ -171,6 +171,8 @@ local function OnReady()
         Say("у налаштуваннях Questie вибрано іншу мову. Українська там зветься «" .. L.LOCALE_NAME .. "».")
         return
     end
+    -- UALLF's reverse mode: the core may have said "English" before Questie had its language.
+    if U.originalShown and ns.Original then U.SafeCall(ns.Original.Changed, true) end
     CollectNames(false)
     F.Auto(db)
     F.MaybeHint(db, Say)

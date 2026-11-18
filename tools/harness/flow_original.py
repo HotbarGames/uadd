@@ -5,8 +5,8 @@ in English: the tracker exactly as Questie draws it, quest names, Questie's own 
 title of a map pin tooltip. Letting go gives the Ukrainian back at once. A quick tap or a key held
 while typing switches nothing. The tracker is redrawn once per change, never in combat.
 
-flow.py calls hold, pin, combat, other_key, hidden and perf; hold also runs timing, and combat runs
-combat_in_throttle.
+flow.py calls hold, pin, combat, other_key, hidden and perf; hold also runs timing, and combat
+runs combat_in_throttle. UALLF's reverse mode: flow_reverse.py.
 
 The letter after a quest's level must be one the font can draw: A Vengeful Fate (1102) gets
 its tag name from Questie's list through l10n("Dungeon"), which is Ukrainian, and Questie takes

@@ -50,7 +50,11 @@ change). It must also cover windows that the game builds later (for example the 
 Settings window), not only the windows that exist when the addon loads.
 
 **Check.** `tools/test_font_chars.py` checks only that our strings use letters the fonts can draw. It does
-not test the font change itself. Check: being added (`UADD_Questie/HeaderFont.lua` fix).
+not test the font change itself. Check: `python3 tools/harness/run.py`. Its font objects return
+nothing from `SetFont`, as in the game, so code that trusts that return fails. The step "header of a
+canvas made after OnReady" (`late_header` in `tools/harness/flow_header.py`) builds a Questie options canvas
+after the addon is ready, opens it two ways (the Settings window shown, a category picked) and reads the
+font back.
 
 ## 3. The same text translated by two addons
 

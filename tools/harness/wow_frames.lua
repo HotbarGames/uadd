@@ -190,6 +190,13 @@ Settings = {
     SetOnValueChangedCallback = function() end,
 }
 SettingsPanel.GetCategoryList = function() return { GetCategory = Settings.GetCategory } end
+-- Picking a category in the open window shows its page and hides the one shown before.
+function SettingsPanel:SelectCategory(category)
+    local old = self.__selected
+    if old and old.frame and old ~= category then old.frame:Hide() end
+    self.__selected = category
+    if type(category) == "table" and category.frame then category.frame:Show() end
+end
 function H.settingsCategories() return categories end
 
 -- Pools and mixins some libraries reach for.
