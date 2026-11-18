@@ -395,4 +395,5 @@ ns.DUI_HASH = {
     ["Pin Transmogrification"] = { e = "18:2d912798", x = true, u = "18:3f7b0578", g = "TRANSMOGRIFICATION" },
     ["Pin Void Storage"] = { e = "12:5a93ea4c", x = true, u = "12:5122c12c", g = "VOID_STORAGE" },
     ["Pin Vendor"] = { e = "6:d7dc5f93", x = true, u = "6:d58736f3", g = "BATTLE_PET_SOURCE_3" },
+    ["Restart Quest"] = { e = "7:9fe2646a", x = true, u = "7:52e827aa" },
 }

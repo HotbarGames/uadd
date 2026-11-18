@@ -8,6 +8,7 @@ UADD_DialogueUI's checks run next, on a stand-in for DialogueUI (flow_dialogueui
 UADD_ForeverXPBar's checks run next, on a stand-in for ForeverXP Bar (flow_fxpb.py).
 UADD_Auctionator's checks run next, on a stand-in for Auctionator (flow_auc.py).
 UADD_Attune's checks run next, on a stand-in for Attune (flow_att.py).
+UADD_LayerSwap's checks run next, on a stand-in for LayerSwap (flow_lsw.py).
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
 halves_cover.COVERED whose flow gave no "no half-translated line: <module>" result fails here.
@@ -44,6 +45,7 @@ def run_all():
     import flow_dj_module
     import flow_fxpb
     import flow_hash
+    import flow_lsw
     f = flow.run()
     checks, facts, notes = list(f.checks), dict(f.facts), []
     del f
@@ -71,6 +73,10 @@ def run_all():
     att_checks, att_facts = flow_att.run_checks()
     checks += att_checks
     facts["att"] = att_facts
+    gc.collect()
+    lsw_checks, lsw_facts = flow_lsw.run_checks()
+    checks += lsw_checks
+    facts["lsw"] = lsw_facts
     gc.collect()
     hash_checks, hash_facts = flow_hash.run_checks()
     checks += hash_checks

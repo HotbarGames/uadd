@@ -439,4 +439,7 @@ ns.UA = {
     ["Pin Transmogrification"] = false,
     ["Pin Void Storage"] = false,
     ["Pin Vendor"] = false,
+
+    -- New in DialogueUI
+    ["Restart Quest"] = "Почати знову",
 }

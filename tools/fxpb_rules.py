@@ -18,7 +18,7 @@ KEYWORDS = {"and", "break", "do", "else", "elseif", "end", "false", "for", "func
             "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"}
 
 # Blocks (if/function ... end) whose first line matches: debug output only.
-DEBUG_STARTS = [r'if cmd == "(globalpeers|repdebug|flightdebug|questdebug|globaldebug)" then',
+DEBUG_STARTS = [r'if cmd == "(globalpeers|repdebug|flightdebug|questdebug|globaldebug|blizzdebug)" then',
                 r"function Camp\.dump\(", r"^\s*if learn then\s*$", r"function Ins\.testHybridTextures\(",
                 r"function Timing\.DebugText\("]
 DEBUG_TEXT = re.compile(r"^(REP|FLIGHT|QUEST|GLOBAL) DEBUG|^GLOBAL PEERS|^settings check|^#%d id=%s|^loaded %d values$")

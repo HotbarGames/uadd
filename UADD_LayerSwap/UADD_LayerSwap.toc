@@ -1,0 +1,18 @@
+## Interface: 16001, 16000
+## Title: UADD - LayerSwap
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: LayerSwap's own words in Ukrainian: its panel, small bar, menus, options, tooltips and chat lines. Type /uadd layerswap.
+## Author: HotbarGames
+## Version: 1.0.1
+## Dependencies: UADD, LayerSwap
+## X-Category: Localization
+## X-License: GPL-3.0
+
+data/words.lua
+Words.lua
+Fonts.lua
+Texts.lua
+Screen.lua
+Chat.lua
+Tooltip.lua
+Module.lua

@@ -73,18 +73,23 @@ def version(src_dir=None):
 
 
 def debug_lines(toks, text):
-    """Line numbers inside the DEBUG_STARTS blocks (from the opening line to its `end`)."""
+    """Line numbers inside the DEBUG_STARTS blocks (from the opening line to its `end`; for an `elseif`
+    branch, up to the line before the next `elseif`, `else` or `end` of the same `if`)."""
     lines = text.split("\n")
     starts = {n + 1 for n, s in enumerate(lines) if any(re.search(p, s) for p in R.DEBUG_STARTS)}
     out = set()
     for n in sorted(starts):
-        i = next((k for k, tk in enumerate(toks) if tk[2] == n and tk[1] in ("if", "function")), None)
+        i = next((k for k, tk in enumerate(toks) if tk[2] == n and tk[1] in ("if", "elseif", "function")), None)
         if i is None:
             continue
-        depth = 0
-        for k in range(i, len(toks)):
+        branch = toks[i][1] == "elseif"
+        depth = 1 if branch else 0
+        for k in range(i + 1 if branch else i, len(toks)):
             if toks[k][0] != luatok.NAME:
                 continue
+            if branch and depth == 1 and toks[k][1] in ("elseif", "else", "end"):
+                out.update(range(n, toks[k][2]))
+                break
             if toks[k][1] in ("function", "if", "do", "repeat"):
                 depth += 1
             elif toks[k][1] in ("end", "until"):

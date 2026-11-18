@@ -2,6 +2,8 @@
 
 UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Forever only.
 
+**Your game must be in English (enUS or enGB).** On other languages UADD stays off.
+
 ## What it translates
 
 - Dungeon Journal
@@ -10,6 +12,7 @@ UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Fore
 - ForeverXP Bar
 - Auctionator
 - Attune
+- LayerSwap
 - Questie: its menus and settings. The quest tracker and quest texts come from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization).
 
@@ -23,7 +26,7 @@ Hold Shift to see English. Let go, and it is Ukrainian again.
 Each module needs its addon. UALL Forever is optional.
 
 Copy the `UADD`, `UADD_Questie`, `UADD_DungeonJournal`, `UADD_OpenMap`, `UADD_DialogueUI`, `UADD_ForeverXPBar`,
-`UADD_Auctionator` and `UADD_Attune` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
+`UADD_Auctionator`, `UADD_Attune` and `UADD_LayerSwap` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
 is not installed stays off.
 
 The first time, UADD collects the names from UALL Forever in the background. When the chat says the names
@@ -63,7 +66,7 @@ If Questie shows a different language, open Questie's options and pick «Укр�
 Do not copy another addon's text or code into this repo in bulk, unless its licence allows it.
 
 - **Not allowed** (all rights reserved): Auctionator (its LICENSE says so), and Attune, Dialogue UI,
-  ForeverXP Bar and Dungeon Journal (no licence, so all rights are reserved).
+  ForeverXP Bar, Dungeon Journal and LayerSwap (no licence, so all rights are reserved).
 - **Allowed**: Questie (GPL-3.0) and OpenMap (MIT). Their notices are in `THIRD-PARTY-NOTICES.md`.
 
 So for the addons that are not allowed:

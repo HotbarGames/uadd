@@ -38,7 +38,7 @@ HARNESS_TOTAL = 20
 # items, stats) that our glossary and data use too. Limit: about 40% over the worst file, rounded up to 5,
 # at least 20. A bulk copy is still hundreds (they have 200 to 8,000 labels each).
 LABEL_LIMIT = {"Auctionator": 25, "Attune": 100, "DialogueUI": 20, "ForeverXPbar": 20,
-               "ForeverDungeonJournal": 115}
+               "ForeverDungeonJournal": 115, "LayerSwap": 20}
 EXAMPLES = 3
 LICENSE_NAME = re.compile(r"^(?:LICEN[CS]E|COPYING|THIRD-PARTY-NOTICES)(?:\.\w+)?$", re.I)
 EN_LOCALE_NAME = re.compile(r"^(?:en|enus|engb|en_.+)\.lua$", re.I)

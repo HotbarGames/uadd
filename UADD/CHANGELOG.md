@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- New module UADD_LayerSwap: LayerSwap's panel, small bar, menus, options, tooltips and chat
+  lines in Ukrainian. Its layer channel, whispers, invites and addon messages stay English.
+  Новий модуль UADD_LayerSwap: панель, мала панель, меню, налаштування, підказки й рядки в чаті LayerSwap
+  українською.
+- ForeverXP Bar: updated for 0.9.2; its new texts are in Ukrainian (the "What's new" page, the What's New
+  button, the /fxpb help line). The new /fxpb blizzdebug lines stay English: they are for bug reports.
+  ForeverXP Bar: оновлено для 0.9.2; його нові написи українською (сторінка «Що нового», кнопка
+  «Що нового», довідка /fxpb). Нові рядки /fxpb blizzdebug лишаються англійською: вони для звітів про помилки.
+- Dungeon Journal: updated for 2.0.11; its new texts are in Ukrainian (resizing the journal, quest rewards in
+  the loot search, "can also spawn here" on the map, why a dungeon is hidden).
+  Dungeon Journal: оновлено для 2.0.11; його нові написи українською (зміна розміру журналу, нагороди за
+  завдання в пошуку здобичі, «Може з'явитися й тут» на мапі, чому підземелля сховано).
+- Dialogue UI: updated for 1.0.7 c; its new "Restart" quest button is «Почати знову».
+  Dialogue UI: оновлено для 1.0.7 c; його нова кнопка завдання «Restart» тепер «Почати знову».
+
 ## 1.0.1
 
 - The addon list shows the UADD logo as the icon of UADD and of each module, instead of a red question mark.

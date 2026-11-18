@@ -39,8 +39,25 @@ def fxpb(check, M):
             k = hashtext.key(en)
             free = {i: NAME for i in fxpb_words.FREE.get(k, [])}
             free.update({i: "s" for i in fxpb_words.BLANK.get(k, [])})
-            tps.append(tpl(k, en, free))
-    run(check, "UADD_ForeverXPBar", tps, lambda tp, t: _t(M.uk(lua_str(t))))
+            tps.append(tpl(k, en, free, blank=set(fxpb_words.BLANK.get(k, []))))
+    run(check, "UADD_ForeverXPBar", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
+
+
+def lsw(check, M):
+    """LayerSwap: Words.Text (the stand-in's M.uk); free slots from lsw_words.FREE and BLANK."""
+    import lsw_words
+    import make_lsw_data
+    if not make_lsw_data.have_addon():
+        return run(check, "UADD_LayerSwap", [], None, SKIP)
+    kept, _ = make_lsw_data.collect()
+    tps = []
+    for kind, en in make_lsw_data.texts(kept):
+        if kind == "format":
+            k = hashtext.key(en)
+            free = {i: NAME for i in lsw_words.FREE.get(k, [])}
+            free.update({i: "s" for i in lsw_words.BLANK.get(k, [])})
+            tps.append(tpl(k, en, free, blank=set(lsw_words.BLANK.get(k, []))))
+    run(check, "UADD_LayerSwap", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
 
 
 DUI_FREE = {"item": "|cff1eff00|Hitem:2140::::::::60:::::|h[Quix]|h|r", "key": "QUIX"}

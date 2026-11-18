@@ -11,15 +11,21 @@ The check fails when the module gives back a changed text that still has the fil
 around English that is not a name. It also fails when a template does not translate with fitting
 values (its real sample values: the output is not the input), unless halves_cover.UNFIT lists it with
 a reason; and when an UNFIT entry is stale (the template fits now, or is gone).
+With glue=True (a module that finds whole lines on screen, where the addon may have glued two of its
+texts before we see them: ForeverXP Bar, LayerSwap), glued() texts are fed too: a free slot at an edge of
+a template must not take a glued text. Modules that fill a slot at the call that makes the text (DialogueUI,
+Auctionator, OpenMap...) get exactly the name there, which may hold any spaces, so they are not fed.
 It fails, too, when one long or tricky text (hard(): many short Cyrillic words, a 160-byte note, many
 separators, colour pieces, brackets) takes more than BOUND: a line can come from another player (a
 shared note), and a slow one freezes the game.
 
   run(check, module, templates, translate)   templates: tpl(..) dicts; translate(tpl, text) -> str,
                                              None or a list of those (one per path); hard= another
-                                             translate for the time check (more paths), if wanted
+                                             translate for the time check (more paths), if wanted;
+                                             glue=True to feed glued() texts too
 """
 import os
+import re
 import sys
 import time
 
@@ -28,6 +34,8 @@ import halves_cover  # noqa: E402
 import hashtext  # noqa: E402
 
 FILLERS = ("wobbly gizmo", "Zorp Blatter", "It went fine.", "zork42")
+GLUES = ("   ", "\n", " - ")   # marks addons join two texts with (glued()); a name never holds one
+NAME = "Quix"
 VALUE = {"d": "7", "f": "7.5", "x": "ff", "x2": "0f", "t": "|TInterface\\Icons\\INV_Misc_QuestionMark:0|t"}
 GOOD = "7"
 BOUND = 0.005   # seconds: the most one text may take, at best of three
@@ -70,6 +78,33 @@ def texts(tp):
     return [(f, fill(tp["en"], picker(f, these))) for f in FILLERS for these in sets]
 
 
+def _bare(lit):
+    """A literal with no letters once colour codes are taken out ("|cffffb040", "|r", ". (")."""
+    return not re.search(r"[A-Za-z]", re.sub(r"\|c[0-9a-fA-F]{8}|\|r", "", lit))
+
+
+def glued(tp):
+    """[(filler, text)]: each free slot at an edge of the template (no letters and no other slot between
+    it and the start or the end) holds a name glued to made-up English with a mark addons join texts
+    with ("Quix" + "   " + filler at the end, filler + "   " + "Quix" at the start), as when an addon
+    puts its own text before or after this one (LayerSwap's one-line mini bar: name, wide gap, status).
+    A free slot keeps a name, never a glued text: such a line must stay English or be ours as a whole.
+    Blank slots (tp["blank"]: a plural ending the module drops) are not names, so not fed."""
+    toks, out = hashtext.tokens(tp["en"]), []
+    at = [i for i, t in enumerate(toks) if t[0] == "slot"]
+    for k, i in enumerate(at, 1):
+        if k not in tp["free"] or k in tp.get("blank", ()) or toks[i][1] not in ("s", "l"):
+            continue
+        head = i == at[0] and all(_bare(t[1]) for t in toks[:i])
+        tail = i == at[-1] and all(_bare(t[1]) for t in toks[i + 1:])
+        for f in FILLERS[:2]:
+            for g in GLUES:
+                for v in ([f + g + NAME] if head else []) + ([NAME + g + f] if tail else []):
+                    out.append((f, fill(tp["en"], lambda j, kind: v if j == k else tp["free"].get(j) or (
+                        tp["good"].get(j, GOOD) if kind in ("s", "l") else VALUE[kind]))))
+    return out
+
+
 def good_text(tp):
     return fill(tp["en"], lambda k, kind: tp["free"].get(k) or (tp["good"].get(k, GOOD) if kind in ("s", "l")
                                                                  else VALUE[kind]))
@@ -106,15 +141,19 @@ def _outs(got):
     return [g for g in (got if isinstance(got, list) else [got]) if isinstance(g, str)]
 
 
-def run(check, module, templates, translate, note="", hard=None):
+def run(check, module, templates, translate, note="", hard=None, glue=False):
     """One check for the module: no output keeps a filler while the rest changed."""
     assert module in halves_cover.COVERED, module
     name = f"no half-translated line: {module}"
     if note:
         check(f"{name} ({note})", True, note)
         return
-    bad, n, count, unfit, first = [], 0, 0, [], None
+    bad, n, count, unfit, first, nglue = [], 0, 0, [], None, 0
     for tp in templates:
+        for f, t in (glued(tp) if glue else []):
+            nglue += 1
+            bad += [(tp["id"], "free slot took a glued text", t, o)
+                    for o in _outs(translate(tp, t)) if o != t and f in o]
         cases = texts(tp)
         if not cases:
             continue
@@ -132,5 +171,7 @@ def run(check, module, templates, translate, note="", hard=None):
     detail = (bad[:3] or slow or (new and {"unfit, not in UNFIT": new[:8]})
               or (stale and {"stale UNFIT": stale[:8]})
               or f"{n} templates, {n - len(unfit)} fit, {len(unfit)} known unfit")
-    check(f"{name} ({n} templates, {count} texts, {n - len(unfit)} fit, {len(unfit)} unfit, "
-          f"slowest {sec * 1000:.1f} ms)", n > 0 and not bad and not slow and not new and not stale, detail)
+    glues = f"{nglue} glued to a free slot, " if glue else ""
+    check(f"{name} ({n} templates, {count} texts, {glues}{n - len(unfit)} fit, "
+          f"{len(unfit)} unfit, slowest {sec * 1000:.1f} ms)",
+          n > 0 and not bad and not slow and not new and not stale, detail)

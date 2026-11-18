@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: LayerSwap (harness stand-in)
+## Notes: Not LayerSwap. A small stand-in for tools/harness/flow_lsw.py: a panel, a button, two menus made when first opened, a tooltip and chat lines shaped like LayerSwap's, with a few of its real labels.
+## Version: 0
+
+LayerSwap.lua

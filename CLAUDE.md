@@ -11,7 +11,7 @@ When a new kind of problem is found, add a lesson there and a check in the same 
 **Rule.** Never commit another addon's text or code in bulk unless its licence allows it.
 
 - Not allowed (all rights reserved): Auctionator (LICENSE: All Rights Reserved), Attune, DialogueUI,
-  ForeverXPbar, ForeverDungeonJournal (no licence file).
+  ForeverXPbar, ForeverDungeonJournal, LayerSwap (no licence file).
 - Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 
 For the not-allowed ones:
@@ -58,6 +58,7 @@ around L's words, which are ours). `run.py` fails a module in `COVERED` whose fl
 free-slot mark points to a real `%s` slot. Free slots are marked here, by English or locale key:
 
 - ForeverXPBar: `FREE` and `BLANK` in `tools/fxpb_words.py`.
+- LayerSwap: `FREE` and `BLANK` in `tools/lsw_words.py`.
 - DialogueUI: `SLOTS` in `UADD_DialogueUI/Slots.lua` (what each `%s` holds).
 - Auctionator: `FREE` in `UADD_Auctionator/Words.lua`; code texts: `SLOTS` in `tools/make_auc_text.py`.
 - Attune: `KIND`, `BYKEY` and `FREE` in `UADD_Attune/Pairs.lua`.
@@ -65,4 +66,7 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
 - Questie: none (UALL Forever translates its tracker; UADD_Questie is in `NO_SLOTS`).
 
 A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
-only when the game or the addon puts a name there that has no translation.
+only when the game or the addon puts a name there that has no translation; never one that holds only a
+colour code, a number or a clock. In modules that find whole lines on screen (ForeverXPBar, LayerSwap:
+`glue=True`), a free slot at a template's start or end is also fed a name glued to made-up English ("   ",
+a line break, " - "), as when the addon glues two texts (`docs/LESSONS.md`, lesson 7).

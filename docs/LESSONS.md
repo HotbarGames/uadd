@@ -24,7 +24,7 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
    its locale tables (lesson 1).
 6. If the module changes a font, test that the change really shows, also in windows made later (lesson 2).
 7. Look for lines that share a row with another text, and for names the addon glues extra text onto
-   (lessons 5 and 6).
+   (lessons 5, 6 and 7).
 8. Before you call the module done, run all checks:
    `python3 tools/check_repo.py`, `python3 -m unittest discover -s tools -p 'test_*.py'`,
    `python3 tools/harness/run.py`.
@@ -125,3 +125,26 @@ the whole line English (no half translations).
 
 **Check.** Manual: list such places in the module notes. For each one, add a flow with a real joined text
 in the harness (as `tools/harness/flow_openmap_label.py` does), then run `python3 tools/harness/run.py`.
+
+## 7. A free slot that swallows glued text
+
+**What went wrong.** LayerSwap's one-line mini bar is the layer's name, a wide gap, then its status
+(«Шар B   Пауза 4:59»). The status template starts with a slot that only holds a colour code, and that
+slot was marked free. A free slot keeps any English, so on another split the whole name could land in it,
+and the line would come out half Ukrainian. It came out right only because an older guard (no wide gap
+inside a `%s`) said no first. The half-translation check never fed glued text into free slots, so nobody
+saw it. Six more free marks were the same kind (a colour code or a clock). The minimap tooltip's first line
+(name, gap, host mark) stayed all English: the host mark is a text that starts with the gap, so the split
+at the gap never finds it.
+
+**Rule.** Mark a slot free only when it holds one name. Never mark a slot free that holds a colour code, a
+number or a clock: those pass as values anyway. A free slot keeps one name, never a line break or " - "
+with more text after it (Words.lua says no then). When an addon glues two of its texts with a gap, the
+whole line must be ours: check it, and add a JOINED recipe when a piece carries the gap itself.
+
+**Check.** `python3 tools/harness/run.py`. In the half-translation check of each module that finds whole
+lines on screen (ForeverXPBar, LayerSwap: `glue=True`; `halves.glued` in `tools/harness/halves.py`), every
+free slot at the start or end of a template gets a name glued to made-up English with "   ", a line break
+or " - "; an output that changed and still has the made-up English fails.
+LayerSwap's flow also builds its real glued lines from the installed addon (`glued()` in
+`tools/harness/flow_lsw_mixed.py`) and wants each one all Ukrainian, each half as it is alone.

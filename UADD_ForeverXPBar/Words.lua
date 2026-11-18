@@ -121,7 +121,9 @@ local function Filler(depth, quick)
             local uk = (quick and Quick or Text)(c, SlotKey(d, k), depth + 1)
             if uk then return uk end
         end
-        if Has(d.free, k) or knownIdx:Exact(c) ~= nil then return nil end
+        -- A free slot holds one name: a line break or " - " in it means a text glued on. Not this one.
+        if Has(d.free, k) and not (c:find("\n", 1, true) or c:find(" - ", 1, true)) then return nil end
+        if knownIdx:Exact(c) ~= nil then return nil end
         return false
     end
     fillers[quick][depth] = f

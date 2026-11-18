@@ -23,6 +23,7 @@ import hashtext  # noqa: E402
 
 COVERED = {
     "UADD_ForeverXPBar": ("flow_fxpb_mixed.py", "fxpb"),
+    "UADD_LayerSwap": ("flow_lsw_mixed.py", "lsw"),
     "UADD_DialogueUI": ("flow_dialogueui.py", "dui"),
     "UADD_Auctionator": ("flow_auc_more.py", "auc"),
     "UADD_Attune": ("flow_att_fix.py", "att"),
@@ -37,6 +38,10 @@ UNFIT = {
     "UADD_ForeverXPBar": {
         "18:e82f8f8b": "no Ukrainian for it yet: its slot holds a whole message the addon sends to chat, "
                        "joined from parts at run time, so there is no fixed text to translate",
+    },
+    "UADD_LayerSwap": {
+        "25:2288ecc9": "no Ukrainian for it on purpose: its name in front of a chat line; Chat.lua keeps the "
+                       "name and translates the line after it",
     },
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")
@@ -112,6 +117,17 @@ def _fxpb():
     return [(k, i) for k, ii in marks for i in ii if not s_slot(fmt.get(k), i)]
 
 
+def _lsw():
+    import lsw_words
+    import make_lsw_data
+    if not make_lsw_data.have_addon():
+        return None
+    kept, _ = make_lsw_data.collect()
+    fmt = {hashtext.key(en): en for kind, en in make_lsw_data.texts(kept) if kind == "format"}
+    marks = list(lsw_words.FREE.items()) + list(lsw_words.BLANK.items())
+    return [(k, i) for k, ii in marks for i in ii if not s_slot(fmt.get(k), i)]
+
+
 def _dui():
     import make_dui_data
     path = make_dui_data.DEFAULT / "Locales" / "enUS.lua"
@@ -160,7 +176,7 @@ def marks():
     """module -> (problems, note)."""
     out = {}
     for mod, fn in (("UADD_ForeverXPBar", _fxpb), ("UADD_DialogueUI", _dui), ("UADD_Auctionator", _auc),
-                    ("UADD_Attune", _att), ("UADD_OpenMap", _openmap)):
+                    ("UADD_Attune", _att), ("UADD_OpenMap", _openmap), ("UADD_LayerSwap", _lsw)):
         bad = fn()
         out[mod] = ([], SKIP) if bad is None else (bad, "")
     return out
