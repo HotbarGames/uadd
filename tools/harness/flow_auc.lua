@@ -155,6 +155,9 @@ end
 function M.money(c) return S().Money(c) end
 function M.link() return S().LINK end
 function M.uk(en) return NS().Words.Text(en) end
+-- A key's English, and a column header's short form (ui/locale.lua ns.UA_HEAD).
+function M.en(key) return G(key) end
+function M.head(key) local v = (NS().UA_HEAD or {})[key] return type(v) == "string" and v or nil end
 
 -- ── Doing things ───────────────────────────────────────────────────────────────────────────────
 function M.ah(open) H.fire(open and "AUCTION_HOUSE_SHOW" or "AUCTION_HOUSE_CLOSED") end

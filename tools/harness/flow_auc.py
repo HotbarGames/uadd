@@ -20,6 +20,7 @@ import gc
 import os
 import sys
 
+import flow_auc_head
 import flow_auc_more
 import session
 from loader import Addon, Client, read_text, txt
@@ -78,9 +79,7 @@ def surfaces(check, M, Cyr, u, uo):
         _eq(check, f"{key} ({en}) in Ukrainian", M.text("text", key), uo(en))
         check(f"{key}: Cyrillic font, size kept", Cyr(M.font("text", key)[0]) and M.font("text", key)[1] == 13,
               M.font("text", key))
-    _eq(check, "header made at load in Ukrainian", M.text("header", "name"), uo("Name"))
-    M.header("price", "Price")                      # a header made now: no step
-    _eq(check, "header made later: Ukrainian at once", M.text("header", "price"), uo("Price"))
+    flow_auc_head.surfaces(check, M, u, uo)
     made = M.rowsMade("shop")
     M.results(4)                                    # four new rows: no step
     check("rows made now (lazily)", M.rowsMade("shop") == made + 4, f"{made} -> {M.rowsMade('shop')}")
@@ -150,7 +149,7 @@ def hold_key(check, M, u, uo):
     _eq(check, "Shift: button exact English", M.text("text", "searchButton"), "Search")
     check("Shift: its own font back", _font(M, "text", "searchButton") == FONT, M.font("text", "searchButton"))
     _eq(check, "Shift: row cell exact English", M.text("cell", "shop", 2, 2), "Yes")
-    _eq(check, "Shift: header exact English", M.text("header", "price"), "Price")
+    flow_auc_head.held(check, M)
     _eq(check, "Shift: date exact English", M.text("cell", "history", 1, 1), "Tuesday, February 25")
     _eq(check, "Shift: tooltip exact English", M.text("tip", 4, "Right"), "|cffffffff3 days|r")
     _eq(check, "Shift: popup exact English", M.text("popup", "text"), "The price of " + txt(M.link()) +

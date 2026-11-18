@@ -19,6 +19,9 @@
   panel, now come from UALL Forever too («Важка Шкіра» for "Heavy Hide"), in their quality colour. An item
   level like "(35)" stays after the name, also in the Shopping and Cancelling lists. A name UALL Forever
   does not know stays English.
+- Auctionator: the item level column header in the Buy, Selling and Shopping lists is «Рівень», so it
+  is no longer cut to «Рівень пред...». Roomier places (the Shopping item range, tooltips) keep
+  «Рівень предмета».
 - OpenMap: the World Map's label over a zone is whole Ukrainian where OpenMap adds the zone's levels
   and fishing skill. "Tirisfal Glades (1-10)" shows the zone's Ukrainian name with "(1-10)", and
   "Fishing 25" is «Риболовля 25». The zone's name is UALL Forever's own; a zone without one stays

@@ -103,9 +103,14 @@ bar), must fit at the addon's own font size on a narrow window. Make the words s
 smaller: the size is the addon's and the player's choice. Try to keep such texts no longer than the
 English.
 
-**Check.** Manual: in the game, make the window or bar as narrow as it goes and look at each row with two
-texts. `python3 tools/harness/run.py` only checks that the module keeps the addon's font size and outline
-("keeps its own size and outline, also on resize"); no script measures the length yet. This is a gap.
+**Check.** Auctionator's column headers: `python3 -m unittest tools.test_auc_headers`. Each header's
+Ukrainian may be at most 2 letters longer than its English; a longer one gets a short form in
+`ns.UA_HEAD` (`UADD_Auctionator/ui/locale.lua`, used only on headers, so the same English elsewhere keeps
+the full words) or goes in `LONG` with a reason. It was added after the Selling tab cut «Рівень предмета»
+to «Рівень пред...». Everything else is manual: in the game, make the window or bar as narrow as it goes
+and look at each row with two texts. `python3 tools/harness/run.py` only checks that the module keeps the
+addon's font size and outline ("keeps its own size and outline, also on resize"); no script measures
+other texts' length yet. This is a gap.
 
 ## 6. A name with extra text glued on
 

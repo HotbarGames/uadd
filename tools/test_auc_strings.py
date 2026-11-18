@@ -39,15 +39,15 @@ SPEC = re.compile(r"%[-+ #0]*\d*\.?\d*[sdif]|%%")
 DIGITS = {"AUCTION_DURATION_12": "12", "AUCTION_DURATION_24": "24", "AUCTION_DURATION_48": "48"}
 
 
-def read_locale(path):
-    """{"UA": [(key, uk or None, glossary id or None, line)]}: the entries of ns.UA (`["key"] = "uk"`,
+def read_locale(path, name="UA"):
+    """{name: [(key, uk or None, glossary id or None, line)]}: the entries of ns.<name> (`["key"] = "uk"`,
     `["key"] = G"id"`, `KEY = G"id"`). [] when the table or the file is not there."""
-    out = {"UA": []}
+    out = {name: []}
     path = Path(path)
     if not path.is_file():
         return out
     t = list(luatok.tokens(luatok.read(path)))
-    head = [(luatok.NAME, "ns"), (luatok.SYM, "."), (luatok.NAME, "UA"), (luatok.SYM, "="), (luatok.SYM, "{")]
+    head = [(luatok.NAME, "ns"), (luatok.SYM, "."), (luatok.NAME, name), (luatok.SYM, "="), (luatok.SYM, "{")]
     inside, depth, i = False, 0, 0
     while i < len(t):
         if not inside:
@@ -72,9 +72,9 @@ def read_locale(path):
                 key, j = t[i][1], i + 2
             if key is not None and j < len(t):
                 if t[j][0] == luatok.STR:
-                    out["UA"].append((key, t[j][1], None, t[i][2]))
+                    out[name].append((key, t[j][1], None, t[i][2]))
                 else:
-                    out["UA"].append((key, None, glossary._ref_at(t, j), t[i][2]))
+                    out[name].append((key, None, glossary._ref_at(t, j), t[i][2]))
                 i = j + 1
                 continue
         i += 1

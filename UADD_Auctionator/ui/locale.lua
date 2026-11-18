@@ -211,7 +211,7 @@ ns.UA = {
     ["RESULTS_NAME_COLUMN"] = "Назва", -- compared by Auctionator
     ["RESULTS_AVAILABLE_COLUMN"] = "Доступно", -- compared by Auctionator
     RESULTS_STACK_PRICE_COLUMN = G"auction.stack_price", -- compared by Auctionator
-    ["ITEM_LEVEL_COLUMN"] = "Рівень предмета", -- compared by Auctionator -- LONG
+    ITEM_LEVEL_COLUMN = G"game.item_level", -- compared by Auctionator; its column header: ns.UA_HEAD
     SELLERS_COLUMN = G"auction.sellers", -- compared by Auctionator
     ["SELLERS_OVERFLOW_TEXT"] = "%s та ще %s",
     ["OWNED_COLUMN"] = "Ваш?", -- compared by Auctionator
@@ -227,7 +227,7 @@ ns.UA = {
     ["SEARCH_TERM_COLON"] = "Пошуковий запит:",
     ["EXACT_SEARCH"] = "Точний пошук",
     ["ITEM_CLASS"] = "Клас предмета",
-    ["ITEM_LEVEL"] = "Рівень предмета", -- compared by Auctionator
+    ITEM_LEVEL = G"game.item_level", -- compared by Auctionator; its column header: ns.UA_HEAD
     LEVEL = G"game.level", -- compared by Auctionator
     PRICE = G"auction.buyout_price", -- set twice in enUS.lua (the later one counts) -- compared by Auctionator
     ["DATE"] = "Дата", -- compared by Auctionator
@@ -532,6 +532,15 @@ ns.UA_MADE = {
     -- Forever's duration buttons: AUCTION_DURATION_12 with "12" made "2", AUCTION_DURATION_24 with "24" made "8"
     { key = "AUCTION_DURATION_12", from = "12", to = "2", uk = "2 год" },
     { key = "AUCTION_DURATION_24", from = "24", to = "8", uk = "8 год" },
+}
+
+-- Column headers only: a shorter word where the results table's column is narrow (docs/LESSONS.md, lesson 5).
+-- Rows.lua puts it on a column header; the same English anywhere else (a search range, a tooltip line,
+-- the column menu) keeps its ns.UA text. By locale key; Words.lua reads the English from Auctionator's
+-- globals. tools/test_auc_headers.py checks every column header's length against its English.
+ns.UA_HEAD = {
+    ITEM_LEVEL_COLUMN = G"game.item_level_short",   -- Buy and Selling lists
+    ITEM_LEVEL = G"game.item_level_short",          -- Shopping list (a 70 px column)
 }
 
 -- Bag group titles on the Selling tab: the game's item class names, by their Enum.ItemClass name.

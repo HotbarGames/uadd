@@ -27,6 +27,7 @@ local EN = {
     CONFIRM_POST_LOW_PRICE = "The price of %s looks a bit low. Are you sure you want to post at that price?",
     CONFIRM_UNHIDE_ALL = "Are you sure you want to unhide all hidden items?",
     TOTAL_ITEMS_COLORED = "Total |cFFAAAAFF %s items|r", TODAY = "Today",
+    ITEM_LEVEL = "Item Level", ITEM_LEVEL_COLUMN = "Item Level",
 }
 local DAYS = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }
 local MONTHS = { "January", "February", "March", "April", "May", "June", "July", "August",
@@ -223,6 +224,8 @@ skip.Label = Text(skip, "skipLabel")
 skip.Label:SetText(skip.labelText)
 local shopList = List("shop", shop, { "name", "isOwned" })
 S.Header(shopList.HeaderContainer, "name", AUCTIONATOR_L_RESULTS_NAME_COLUMN)
+S.Header(shopList.HeaderContainer, "ilvl", AUCTIONATOR_L_ITEM_LEVEL)    -- a narrow column
+Text(shop, "ilvlRange", AUCTIONATOR_L_ITEM_LEVEL)    -- the same English in a roomy place (Item.xml)
 
 -- The export list: its check boxes are read back, so they must stay English.
 local export = Tab("AuctionatorExportListFrame")

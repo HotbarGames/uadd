@@ -11,7 +11,8 @@
 --     button's SetText (which does not call the FontString's SetText). A header made after the hook
 --     gets it from the mixin; the hook hooks its FontString and puts our words on it at once. A
 --     header named before its window was a root (or before this hook) gets our words when
---     Screen.lua's walk meets it (R.Header), shown or hidden.
+--     Screen.lua's walk meets it (R.Header), shown or hidden. A narrow column's header gets its short
+--     form (HeadName: ns.UA_HEAD); the same English anywhere else keeps the full words.
 -- Cost: a cell or header seen before costs one table lookup per fill (the weak table `looked`). A new
 -- one: a walk up its parents (Screen.Inside) and one hook per FontString, once. Never a walk over
 -- frames. A cell found outside our roots is asked again only after Screen.lua finds a new root
@@ -173,6 +174,23 @@ local function OnGroup(group)
     ns.Texts.Apply(fs, false, ns.Screen.WaitCombat())
 end
 
+-- A column header's words: its short form when ui/locale.lua's ns.UA_HEAD has one for that English
+-- (the first key by name wins, as in Words.lua), else Words.lua's (Quick in combat).
+local short
+local function HeadName(t, fs, combat)
+    if not short then
+        short = {}
+        local keys = {}
+        for key in pairs(ns.UA_HEAD or {}) do keys[#keys + 1] = key end
+        table.sort(keys)
+        for _, key in ipairs(keys) do
+            local en, uk = ns.Words.English(key), ns.UA_HEAD[key]
+            if en and short[en] == nil and type(uk) == "string" and uk ~= "" then short[en] = uk end
+        end
+    end
+    return (type(t) == "string" and short[t]) or (combat and ns.Words.Quick or ns.Words.Text)(t, fs)
+end
+
 -- A header was given its name: our words on it now (and its next names through the hook).
 local function OnHeader(header)
     if not ns.On() then return end
@@ -182,7 +200,7 @@ local function OnHeader(header)
     if was == nil then
         looked[header] = ns.Screen.Inside(header)
         if not looked[header] then return end
-        ns.Texts.Hook(fs)
+        ns.Texts.Hook(fs, nil, HeadName)
         headers = headers + 1
     elseif not was or not ns.Texts.Hooked(fs) then
         return                                     -- a header outside our roots
@@ -201,7 +219,7 @@ function R.Header(f)
     local fs = f.GetFontString and f:GetFontString()
     if type(fs) ~= "table" or not fs.SetText then return end
     looked[f] = true
-    ns.Texts.Hook(fs)
+    ns.Texts.Hook(fs, nil, HeadName)
     headers = headers + 1
     ns.Texts.Apply(fs, false, ns.Screen.WaitCombat())
 end

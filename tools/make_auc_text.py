@@ -222,8 +222,10 @@ def build_locale(entries, text):
     """ui/locale.lua's text with the KEY entries' Ukrainian put in, and warnings."""
     want = {name: uk for kind, name, _, uk in entries if kind == "KEY"}
     lines, seen, warn = text.split("\n"), set(), []
+    inside = False   # only ns.UA's lines: other tables (ns.UA_HEAD) may use the same keys
     for i, line in enumerate(lines):
-        m, g = UA_LINE.match(line), G_LINE.match(line)
+        inside = line.startswith("ns.UA = {") or (inside and not line.startswith("}"))
+        m, g = (UA_LINE.match(line), G_LINE.match(line)) if inside else (None, None)
         if m and m.group(2) in want:
             seen.add(m.group(2))
             if want[m.group(2)] != m.group(3)[1:-1]:

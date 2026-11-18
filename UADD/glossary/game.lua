@@ -15,6 +15,8 @@ E{ id = "game.objectives", en = "Objectives", uk = "Цілі", note = "The steps
 E{ id = "game.zone", en = "Zone", uk = "Зона", note = "An area of the world map (Elwynn Forest). Zone names themselves come from UALLF." }
 E{ id = "game.level", en = "Level", uk = "Рівень", note = "Character, NPC or quest level (a number). Not sound volume." }
 E{ id = "game.level_n", en = "Level %s", uk = "Рівень %s", note = "Level with its number." }
+E{ id = "game.item_level", en = "Item Level", uk = "Рівень предмета", note = "An item's level (a number): a heading, a search range, a tooltip line. A narrow column header: game.item_level_short." }
+E{ id = "game.item_level_short", en = "Item Level", uk = "Рівень", note = "Short form for a narrow column header (Auctionator's result lists: the column is about items); the full form is game.item_level." }
 E{ id = "game.experience", en = "Experience", uk = "Досвід", note = "Experience points (XP)." }
 E{ id = "game.reputation", en = "Reputation", uk = "Репутація", note = "Standing with a faction." }
 E{ id = "game.health", en = "Health", uk = "Здоров'я", note = "Hit points of a character or NPC." }
