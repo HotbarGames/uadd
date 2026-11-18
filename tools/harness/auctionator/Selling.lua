@@ -62,3 +62,33 @@ function S.BagView()
         g:Show()
     end
 end
+
+-- The Selling tab's item (Selling/Mixins/SaleItem.lua): its name in its quality colour; an item
+-- with an item level gets it inside the colour (set again once the item has loaded).
+AuctionatorSaleItemMixin = {}
+function AuctionatorSaleItemMixin:SetItemName()
+    local i = self.itemInfo
+    self.TitleArea.Text:SetText(i.color .. i.name .. "|r")
+    if i.level then self.TitleArea.Text:SetText(i.color .. i.name .. " (" .. i.level .. ")" .. "|r") end
+end
+local sale = Mixin(CreateFrame("Frame", nil, sell), AuctionatorSaleItemMixin)
+sale.TitleArea = CreateFrame("Frame", nil, sale)
+sale.TitleArea.Text = Text(sale.TitleArea, "saleTitle")
+function S.SaleItem(name, color, level)
+    sale.itemInfo = { name = name, color = color, level = level }
+    sale:SetItemName()
+end
+
+-- The buy panel on the Shopping tab (Buying/Mixins/ItemTooltip.lua): an icon and the item's name,
+-- as the results list gives it (coloured, the item level inside the colour).
+AuctionatorBuyingItemTooltipMixin = {}
+function AuctionatorBuyingItemTooltipMixin:ReceiveEvent(eventName, eventData)
+    self.itemLink = eventData.itemLink
+    self.Icon:SetTexture(eventData.iconTexture)
+    self.Text:SetText(eventData.itemName)
+end
+local buy = CreateFrame("Frame", nil, AuctionatorShoppingFrame)
+local tip = Mixin(CreateFrame("Frame", nil, buy), AuctionatorBuyingItemTooltipMixin)
+tip.Icon = tip:CreateTexture()
+tip.Text = Text(tip, "buyItem")
+function S.BuyItem(name) tip:ReceiveEvent("ShowForShopping", { itemName = name, iconTexture = 134400 }) end

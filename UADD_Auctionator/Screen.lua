@@ -167,6 +167,7 @@ local function Walk(f, parent)
     seen[f] = true
     if Skipped(f) then return not skip[f] and ns.Rows.BoxLabel(f) end   -- an edit box: its Label only
     ns.Rows.Header(f)                          -- a column header: our words now, shown or not
+    ns.Rows.Item(f)                            -- one item's name: UALL Forever's words
     if parent then
         for key in pairs(GROW) do
             if rawget(parent, key) == f then grow[f] = true break end

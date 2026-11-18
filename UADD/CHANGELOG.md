@@ -15,6 +15,10 @@
   column headers of tables that were hidden when they were built (the price history tables under the
   Selling tab's price boxes). The item names in the Cancelling list come from UALL Forever when it is on,
   in their quality colour; a name it does not know stays English.
+- Auctionator: the big item name at the top of the Selling tab, and the item name in the Shopping tab's buy
+  panel, now come from UALL Forever too («Важка Шкіра» for "Heavy Hide"), in their quality colour. An item
+  level like "(35)" stays after the name, also in the Shopping and Cancelling lists. A name UALL Forever
+  does not know stays English.
 - OpenMap: the World Map's label over a zone is whole Ukrainian where OpenMap adds the zone's levels
   and fishing skill. "Tirisfal Glades (1-10)" shows the zone's Ukrainian name with "(1-10)", and
   "Fishing 25" is «Риболовля 25». The zone's name is UALL Forever's own; a zone without one stays

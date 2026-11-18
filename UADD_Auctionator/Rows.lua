@@ -19,9 +19,13 @@
 -- Item names: the item column (AuctionatorItemKeyCellTemplate: its Text next to its Icon; Shopping
 -- and Cancelling lists) shows the item's name in its quality colour. That FontString asks UALL
 -- Forever for the name (UADD.UALL.Item: UADD/uall.lua), the colour and a tail with no letters (an
--- item level " (35)") kept. No answer: the name stays English. "Not now" from UALL: English for now,
--- asked again RETRY seconds later (never kept). In combat: names already found only. UALL Forever
--- itself never touches Auctionator's frames, so a name is never translated twice.
+-- item level " (35)", after the colour or inside it as Forever's Auctionator puts it) kept. No
+-- answer, or a tail with letters: the whole text stays English. "Not now" from UALL: English for
+-- now, asked again RETRY seconds later (never kept). In combat: names already found only. UALL
+-- Forever itself never touches Auctionator's frames, so a name is never translated twice.
+-- The same words on two more FontStrings that show one item's name (R.Item, met by Screen.lua's
+-- walk): the Selling tab's item (SaleItem.lua: TitleArea.Text) and the buy panel's item
+-- (Buying/ItemTooltip.lua: its Text).
 -- Bag group titles (Selling tab): AuctionatorGroupsViewGroupMixin:SetName sets a pooled group's
 -- title with the button's SetText, so a post-hook on it puts our words on the title's FontString:
 -- the game's item class names (Class: ns.UA_CLASS keeps our Ukrainian by the Enum.ItemClass name,
@@ -35,7 +39,8 @@ local R = {}
 ns.Rows = R
 
 local looked = setmetatable({}, { __mode = "k" })   -- cell or header -> true: hooked; false: outside our roots
-local installed, cells, headers, groups = false, 0, 0, 0
+local named = setmetatable({}, { __mode = "k" })    -- a frame whose item name FontString is hooked (R.Item)
+local installed, cells, headers, groups, names = false, 0, 0, 0, 0
 local CYR = "[\208-\210]"
 local RETRY, ITEM_MAX = 1, 2000
 local items, itemCount = {}, 0                       -- a cell's item text -> its Ukrainian, or false
@@ -64,6 +69,8 @@ local function ItemName(text, fs, combat)
     if combat or not Available() then return nil end
     local c, name, rest = text:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r(.*)$")
     if not c then name, rest = text, "" end
+    local base, level = name:match("^(.-)( %(%d+%))$")   -- the item level inside the colour
+    if base then name = base else level = "" end
     local uk, wait
     if name ~= "" and not name:find("|", 1, true) and not name:find(CYR) and not rest:find("[%a|\128-\255]") then
         local ok
@@ -75,7 +82,8 @@ local function ItemName(text, fs, combat)
         Retry()
         return nil
     end
-    local out = type(uk) == "string" and uk ~= "" and ((c and (c .. uk .. "|r") or uk) .. rest) or false
+    uk = type(uk) == "string" and uk ~= "" and (uk .. level) or nil
+    local out = uk and ((c and (c .. uk .. "|r") or uk) .. rest) or false
     if itemCount >= ITEM_MAX then wipe(items) itemCount = 0 end
     items[text], itemCount = out, itemCount + 1
     return out or nil
@@ -198,6 +206,30 @@ function R.Header(f)
     ns.Texts.Apply(fs, false, ns.Screen.WaitCombat())
 end
 
+-- Frames that show one item's name, known by their mixin: { mixin, one of its functions (the frame
+-- holds that very function), the path from the frame to its FontString }.
+local NAMED = { { "AuctionatorSaleItemMixin", "SetItemName", "TitleArea", "Text" },
+    { "AuctionatorBuyingItemTooltipMixin", "ReceiveEvent", "Text" } }
+
+-- Screen.lua's walk met f inside a root: when f shows one item's name, that FontString gets the item
+-- column's words (hooked here; the walk puts them on it when it meets it, and its next SetText too).
+function R.Item(f)
+    if named[f] then return end
+    for _, n in ipairs(NAMED) do
+        local m = rawget(_G, n[1])
+        local fn = type(m) == "table" and rawget(m, n[2]) or nil
+        if fn ~= nil and rawget(f, n[2]) == fn then
+            local g = f
+            for i = 3, #n do g = type(g) == "table" and rawget(g, n[i]) or nil end
+            if type(g) ~= "table" or not (g.GetObjectType and g:GetObjectType() == "FontString") then return end
+            named[f] = true
+            ns.Texts.Hook(g, nil, ItemName)
+            names = names + 1
+            return
+        end
+    end
+end
+
 -- Screen.lua's walk met an edit box f (it never enters one): its own "Label" FontString only gets
 -- our words (hooked; shown now if it is shown).
 function R.BoxLabel(f)
@@ -241,3 +273,5 @@ end
 function R.Count() return cells, headers end
 -- For the checks: bag group titles hooked here.
 function R.Groups() return groups end
+-- For the checks: one-item name FontStrings hooked here (R.Item).
+function R.Names() return names end

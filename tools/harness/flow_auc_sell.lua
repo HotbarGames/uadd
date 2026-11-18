@@ -46,3 +46,9 @@ function M.uallStub(map)
 end
 function M.setUallWait(on) M.uallWait = on and true or false end
 function M.uallAsked() return UADD.UALL.__asked or 0 end
+
+-- One item's name: the Selling tab's item (name, colour, item level or nil) and the buy panel's item
+-- (its text as the results give it); how many such FontStrings Rows.lua hooked.
+function M.saleItem(name, color, level) S().SaleItem(name, color, level) end
+function M.buyItem(text) S().BuyItem(text) end
+function M.namesHooked() return NS().Rows.Names() end

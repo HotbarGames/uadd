@@ -12,7 +12,7 @@
   * the hold key let go in a fight: tooltip and menu back in Ukrainian when combat ends;
   * the cost of a text with a blank line that is not in the memo yet (facts);
   * the Selling tab (number box label, bag group titles, headers of its hidden history tables) and
-    the Cancelling list's item names from UALL Forever (selling_cancelling);
+    the Cancelling list's item names from UALL Forever (selling_cancelling; one item's name: flow_auc_items.py);
   * what a template's %s may hold (slots): made-up English in a slot leaves the line English
     (halves_mods.auc, on every real template; its free-slot marks: tools/test_halves.py).
 The expected Ukrainian is read from the module's data (flow_auc.lua), not from the module's answers.
@@ -20,6 +20,7 @@ The expected Ukrainian is read from the module's data (flow_auc.lua), not from t
 import os
 import sys
 
+import flow_auc_items
 import halves_mods
 from loader import txt
 
@@ -240,12 +241,14 @@ def selling_cancelling(check, c, M, u):
     eq("combat: new item name stays English", M.text("cell", "cancel", 1, 1), thick)
     eq("combat: known item name Ukrainian", M.text("cell", "cancel", 2, 1), green + UALL["Heavy Hide"] + "|r")
     M.combat(False)
+    flow_auc_items.run(check, c, M, UALL)                 # one item's name: Selling tab, buy panel
     owned(rows)
     M.toggleHistory(False)
 
 
 def selling_off(check, M):
     """'/uadd auctionator off': the Selling tab's texts and the Cancelling item names exact English."""
+    flow_auc_items.off(check, M)
     en = M.standInEN()
     for where, want in ((("text", "quantityLabel"), en["QUANTITY"]), (("header", "realmPrice"), en["UNIT_PRICE"]),
                         (("group", 2), M.className("Weapon")), (("cell", "cancel", 1, 1), "|cff1eff00Heavy Hide|r")):
