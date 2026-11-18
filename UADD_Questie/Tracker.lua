@@ -1,200 +1,57 @@
--- UADD - Questie: Ukrainian in Questie's quest tracker (the list of quests on the screen).
+-- UADD - Questie: the quest tracker (the list of quests on the screen) stays English.
 --
--- Questie draws the tracker from what the game's quest log says, so it is English even when
--- Questie itself speaks Ukrainian. We wrap three Questie functions that turn quest data into text.
--- Each wrapper hands back Ukrainian in the same call, so the line is drawn once, already
--- translated (no flicker), and a reused line always gets fresh text. Lines this depends on
--- (Questie 12.6.4, Modules/Tracker/):
---   TrackerData.lua:116-119        objective.questId, .Type and .Description (the game's own text)
---   TrackerData.lua:264-281        GetColoredQuestName(displayQuest, ...) builds the title from
---                                  displayQuest.name and .Id (level, "(Complete)", colour)
---   TrackerData.lua:296-303        GetObjectiveText(objective) returns colour .. objective.Description
---   LineBuilder.lua:51-99          AddHeader(options): options.key is the zone, kept English
---                                  (collapsed zones are saved by it); options.text is shown
---   Sections/QuestSection.lua:87   AddHeader({ key = zoneName, text = zoneName })
---   Sections/QuestSection.lua:133-135, 218 and LinePool/TrackerLinePool.lua:405 call the two
---                                  TrackerData functions through the module table, so our
---                                  wrappers are the ones that run.
--- We never change Questie's data or saved settings. With UADD off, or names not collected yet,
--- every wrapper passes Questie's own text through untouched.
+-- UALL Forever translates the tracker (its QuestieHooks.lua) and picks a Cyrillic font for each
+-- line it translates. It skips a line that already has Cyrillic letters. Questie builds tracker
+-- lines from the game's quest log (English) plus a few of its own words through l10n(), such as
+-- "(Complete)" (Modules/Tracker/TrackerData.lua:270-276). Under our language those words would be
+-- Ukrainian, so a line would be half English, UALLF would skip it, and the tracker font would draw
+-- boxes. So while Questie draws the tracker, its l10n() speaks English (Localization/l10n.lua,
+-- SetUILocale and GetUILocale), and every line reaches UALLF in English. Without UALLF the
+-- tracker is all English.
+--
+-- The tracker is drawn by these QuestieTracker functions (Questie 12.10, QuestieTracker.lua:834,
+-- 980, 1476, 1485). Questie calls them through the module table, and its header button keeps the
+-- one it gets at Questie's start (:249), which is after our ADDON_LOADED. So our wrappers run.
 
 local _, ns = ...
 local T = {}
 ns.Tracker = T
-local L, N = ns.Locale, ns.Names
+local L = ns.Locale
 
 local function Module(name)
     local ok, mod = pcall(function() return QuestieLoader:ImportModule(name) end)
     return ok and type(mod) == "table" and mod or nil
 end
 
--- Off while the show-original key is held (Original.lua): then Questie's English goes through.
-local function Active()
-    return L.state == "on" and L.IsActive() and not (ns.Original and ns.Original.held)
-end
-
-local function Text(s)
-    return UADD.Plain(s) and s ~= "" and s or nil
-end
-
--- ── Names for one quest ───────────────────────────────────────────────────────────────────────
-
--- For each quest: { Item = { [English] = "назва" }, Npc = {...} }, built from this quest's own
--- objectives in QuestieDB. A name is used only when it is exactly the game's English text, and
--- not at all when two of the quest's ids share an English name but not a Ukrainian one.
--- Only quests the tracker shows get an entry; all of it is dropped when the names change.
-local perQuest, builtFor = {}, nil
-
-local function AddName(names, dt, id)
-    local uk = type(id) == "number" and N.maps[dt] and Text(N.maps[dt][id])
-    if not uk then return end
-    local fixed, raw = N.EnglishNames(dt, id)
-    for _, en in ipairs({ Text(fixed) or false, Text(raw) or false }) do
-        if en then
-            local had = names[dt][en]
-            if had == nil then names[dt][en] = uk elseif had ~= uk then names[dt][en] = false end
-        end
-    end
-end
-
--- Quest fields as QuestieDB has them, and its correction on top when there is one.
-local function QuestFields(id, key, index)
-    local q, out = _G.LibQuestieDB and _G.LibQuestieDB.Quest, {}
-    if type(q) ~= "table" then return out end
-    local ok, raw = pcall(q.GetRaw, id, key)
-    if ok and type(raw) == "table" then out[#out + 1] = raw end
-    local layer = type(q.overlay) == "table" and q.overlay[id]
-    if type(layer) == "table" and type(layer[index]) == "table" then out[#out + 1] = layer[index] end
-    return out
-end
-
--- objectives: [1] creatures { {id, text}, ... }, [3] items { {id, text}, ... },
--- [5] kill credit { {ids}, baseId, baseText, icon } (QuestieDB src/meta/normalize.lua:191).
-local function Build(questId)
-    local names = { Item = {}, Npc = {} }
-    for _, obj in ipairs(QuestFields(questId, "objectives", 10)) do
-        for _, e in ipairs(type(obj[1]) == "table" and obj[1] or {}) do
-            if type(e) == "table" then AddName(names, "Npc", e[1]) end
-        end
-        for _, e in ipairs(type(obj[3]) == "table" and obj[3] or {}) do
-            if type(e) == "table" then AddName(names, "Item", e[1]) end
-        end
-        local credit = obj[5]
-        if type(credit) == "table" then
-            local list = type(credit[1]) == "table" and type(credit[1][1]) == "table" and credit or { credit }
-            for _, e in ipairs(list) do
-                if type(e) == "table" then
-                    for _, id in ipairs(type(e[1]) == "table" and e[1] or {}) do AddName(names, "Npc", id) end
-                    AddName(names, "Npc", e[2])
-                end
-            end
-        end
-    end
-    for _, list in ipairs(QuestFields(questId, "requiredSourceItems", 21)) do
-        for _, id in ipairs(list) do AddName(names, "Item", id) end
-    end
-    return names
-end
-
-local function QuestNames(questId)
-    if builtFor ~= N.version then perQuest, builtFor = {}, N.version end
-    local names = perQuest[questId]
-    if not names then
-        names = Build(questId)
-        perQuest[questId] = names
-    end
-    return names
-end
-
--- ── Objective lines ───────────────────────────────────────────────────────────────────────────
-
-local KIND = { item = "Item", monster = "Npc" }
-
-local function Complete()
-    local l10n = L.Questie_l10n()
-    return " " .. l10n("(") .. l10n("Complete") .. l10n(")")
-end
-
--- "0/8 Witchwing Talon" -> "0/8 Кіготь ...", "0/15 Defias Pillager slain" -> "0/15 убито: ...",
--- "Witchwing Talon: 0/8" -> "...: 0/8". Anything else, or a name we do not know: nil.
-function T.Objective(questId, objectiveType, text)
-    if type(questId) ~= "number" or not Text(text) then return nil end
-    local core, done = text:match("^(.-)%s*(%(Complete%))$")
-    core = core or text
-    local names, kind = QuestNames(questId), KIND[objectiveType]
-    local function Name(en)
-        local mob = en:match("^(.-) slain$")
-        if mob then return names.Npc[mob] or nil, true end
-        return kind and names[kind][en] or nil, false
-    end
-    local out
-    local counter, rest = core:match("^(%d+/%d+)%s+(.+)$")
-    if counter then
-        local uk, slain = Name(rest)
-        out = uk and (counter .. (slain and " убито: " or " ") .. uk)
-    else
-        local head, count = core:match("^(.-)%s*:%s*(%d[%d/%s]*)$")
-        local uk, slain = head and Name(head)
-        out = uk and (uk .. (slain and " (убито): " or ": ") .. count)
-    end
-    if out and done then out = out .. Complete() end
-    return out
-end
-
--- ── The wrappers ──────────────────────────────────────────────────────────────────────────────
-
-local function QuestTitle(displayQuest)
-    local id = type(displayQuest) == "table" and displayQuest.Id
-    return type(id) == "number" and N.maps.Quest and Text(N.maps.Quest[id])
-end
-
-local function ZoneName(options)
-    if type(options) ~= "table" or options.collapsedText ~= nil or options.text ~= options.key then return nil end
-    local l10n = L.Questie_l10n()
-    local entry = l10n and type(options.text) == "string" and l10n.translations[options.text]
-    local uk = type(entry) == "table" and entry[L.LOCALE]
-    return L.SafeName(uk) and uk or nil
-end
-
--- Our own part never breaks Questie: any error in it means "no translation".
+-- Our own part never breaks Questie: any error in it means "no change".
 local function Try(fn, ...)
     local ok, result = pcall(fn, ...)
     return ok and result or nil
 end
 
-local function ColoredQuestName(original)
-    return function(displayQuest, ...)
-        local uk = Try(function() return Active() and QuestTitle(displayQuest) end)
-        if not uk then return original(displayQuest, ...) end
-        local en = displayQuest.name
-        displayQuest.name = uk               -- for this one call only, so the level and suffixes stay Questie's
-        local ok, text = pcall(original, displayQuest, ...)
-        displayQuest.name = en
-        if ok then return text end
-        return original(displayQuest, ...)
-    end
+-- ── English while the tracker is drawn ────────────────────────────────────────────────────────
+
+local DRAW = { "Update", "UpdateFormatting", "UpdateQuestLines", "UpdateScenarioLines" }
+
+-- The l10n module when Questie speaks our language now, else nil.
+local function Ours()
+    if L.state ~= "on" then return nil end
+    local l10n = L.Questie_l10n()
+    local ok, current = pcall(function() return l10n:GetUILocale() end)
+    return ok and current == L.LOCALE and l10n or nil
 end
 
-local function ObjectiveText(original)
-    return function(objective, ...)
-        local text = original(objective, ...)
-        return Try(function()
-            local desc = Active() and type(objective) == "table" and Text(objective.Description)
-            if not desc or not UADD.Plain(text) or text:sub(-#desc) ~= desc then return nil end
-            local uk = T.Objective(objective.questId, objective.Type, desc)
-            return uk and (text:sub(1, #text - #desc) .. uk)
-        end) or text
-    end
+local function Finish(l10n, ok, ...)
+    pcall(l10n.SetUILocale, l10n, L.LOCALE)
+    if not ok then error((...), 0) end          -- Questie's own error stays Questie's
+    return ...
 end
 
-local function Header(original)
-    return function(options, ...)
-        local uk = Try(function() return Active() and ZoneName(options) end)
-        if not uk then return original(options, ...) end
-        local copy = {}
-        for k, v in pairs(options) do copy[k] = v end
-        copy.text = uk                       -- key stays English
-        return original(copy, ...)
+local function English(original)
+    return function(...)
+        local l10n = Ours()
+        if not l10n or not pcall(l10n.SetUILocale, l10n, "enUS") then return original(...) end
+        return Finish(l10n, pcall(original, ...))
     end
 end
 
@@ -230,42 +87,42 @@ local function InstallSuffix()
     end
 end
 
-local wrapped = {}
+-- ── Fonts an older UADD switched ──────────────────────────────────────────────────────────────
+-- UADD used to switch the tracker fonts to "UADD Cyrillic" (the old Font.lua). UALL Forever now
+-- picks the font for each tracker line, so we put back, once, the fonts we switched (Questie's
+-- settings: Modules/Options/QuestieOptionsDefaults.lua:126-133) and forget the old saved data.
+-- A font the player picked again since then is left as it is.
+local FONT_FIELDS = { "trackerFontHeader", "trackerFontZone", "trackerFontQuest", "trackerFontObjective" }
 
-local function Wrap(moduleName, key, make)
-    local mod = Module(moduleName)
-    local original = mod and mod[key]
-    if type(original) ~= "function" then return false end
-    local wrapper = make(original)
-    mod[key] = wrapper
-    wrapped[#wrapped + 1] = { mod = mod, key = key, original = original, wrapper = wrapper }
-    return true
+function T.RestoreFonts(db)
+    local backup = db.fontBackup
+    db.fontBackup, db.fontAuto, db.fontHint = nil, nil, nil
+    if type(backup) ~= "table" then return end
+    local profile = Questie.db.profile
+    local n = 0
+    for _, field in ipairs(FONT_FIELDS) do
+        if profile[field] == UADD.FONT_NAME then
+            profile[field] = backup[field] or "Friz Quadrata TT"  -- Questie's own default
+            n = n + 1
+        end
+    end
+    local tracker = n > 0 and Module("QuestieTracker")
+    if tracker and type(tracker.Update) == "function" then pcall(tracker.Update, tracker) end
 end
 
--- At our ADDON_LOADED, before the tracker is first drawn. Returns how many wrappers are in.
+local drawDone
+-- At our ADDON_LOADED, before the tracker is first drawn. Returns how many draw functions are wrapped.
 function T.Install()
     InstallSuffix()
-    if #wrapped > 0 then return #wrapped end
-    Wrap("TrackerData", "GetColoredQuestName", ColoredQuestName)
-    Wrap("TrackerData", "GetObjectiveText", ObjectiveText)
-    Wrap("LineBuilder", "AddHeader", Header)
-    return #wrapped
-end
-
--- /uadd questie off: put Questie's functions back (unless someone wrapped them after us).
-function T.Uninstall()
-    for i = #wrapped, 1, -1 do
-        local w = wrapped[i]
-        if w.mod[w.key] == w.wrapper then w.mod[w.key] = w.original end
-        wrapped[i] = nil
+    if drawDone then return drawDone end
+    local tracker = Module("QuestieTracker")
+    local n = 0
+    for _, key in ipairs(DRAW) do
+        if tracker and type(tracker[key]) == "function" then
+            tracker[key] = English(tracker[key])
+            n = n + 1
+        end
     end
-    perQuest, builtFor = {}, nil
-end
-
--- Redraw the tracker now (Questie skips it in combat and draws again later).
-function T.Refresh()
-    pcall(function()
-        local tracker = Module("QuestieTracker")
-        if tracker and type(tracker.Update) == "function" then tracker:Update() end
-    end)
+    if n > 0 then drawDone = n end
+    return n
 end

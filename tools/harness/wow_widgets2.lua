@@ -108,7 +108,8 @@ end
 
 -- The guard: shown FontStrings with Ukrainian letters in a font file that has none (the game
 -- draws them as squares). The fonts with Ukrainian letters are UADD/Font.lua's list (UADD.IsCyrFont).
--- Returns { "frame font: text", ... }, at most `limit` (default 10).
+-- Returns { "frame font: text", ... }, at most `limit` (default 10). Text that UALL Forever put
+-- there (its ns.replacements) is marked "UALLF frame".
 -- Skipped: text in a top frame nothing ever placed or showed. AceGUI makes its dropdown lists
 -- like that (AceGUIWidget-DropDown.lua: SetPoint and Show() come only when the list opens); the
 -- game draws no frame without a point, but frames here start shown, so they only look shown.
@@ -121,6 +122,7 @@ end
 function H.cyrBoxes(limit)
     local out, isCyr = {}, rawget(_G, "UADD") and UADD.IsCyrFont
     if not isCyr then return out end
+    local uall = H.ns.UALLF and H.ns.UALLF.replacements or {}
     for _, w in ipairs(H.widgets()) do
         local t = w.__type == "FontString" and w.__text
         if type(t) == "string" and t:find("[\208\209]") and w:IsVisible() and (w.__alpha or 1) > 0
@@ -129,6 +131,7 @@ function H.cyrBoxes(limit)
             if not isCyr(font) and #out < (limit or 10) then
                 local p, name = w, nil
                 while p and not name do name = p.__name p = p.__parent end
+                if uall[w] then name = "UALLF " .. tostring(name) end  -- UALL Forever put this text there
                 out[#out + 1] = ("%s %s: %s"):format(name or "?", tostring(font), t:sub(1, 60))
             end
         end

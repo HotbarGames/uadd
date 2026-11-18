@@ -7,15 +7,13 @@ for **Dialogue UI**, one for **ForeverXP Bar**, one for **Auctionator** and one 
 
 ## What you get
 
-- Questie's menus, options, tracker and tooltips in Ukrainian. We wrote this translation ourselves.
-- Quest, NPC, item and zone names in Ukrainian, taken from
+- Questie's interface in Ukrainian: menus, settings, tooltips, My Journey and so on. We wrote this translation
+  ourselves. The main Questie translation (the tracker on screen, and quest titles and texts) comes from
+  UALL Forever.
+- Quest, NPC, item and zone names in Questie's map pins, tooltips and windows in Ukrainian, taken from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization) while you play.
   If UALL Forever has no translation for a name, the English name stays. Without UALL Forever, all names stay
   English and the menus are still Ukrainian.
-- Questie's tracker (the quest list on the screen) with Ukrainian quest titles and zone headers. Item and NPC
-  names in lines like "0/8 Witchwing Talon" are Ukrainian too, when known. Lines with a task in words, like
-  "Find Mankrik's Wife", stay English.
-- A font with Cyrillic letters for Questie's tracker, if you want it.
 - Dungeon Journal in Ukrainian: its menus, and dungeon, boss, quest and item names from UALL Forever.
   Quest objectives, notes and warnings are Ukrainian too. «Українська» is picked in the journal's language menu
   by itself.
@@ -67,8 +65,6 @@ Questie builds that list only once, when it starts.
 | `/uadd` | Lists the modules and their status. |
 | `/uadd questie` | Shows the status and the commands. |
 | `/uadd questie on` / `off` | Turns the Questie translation on or off. Then type `/reload`. |
-| `/uadd questie font` | Uses a font with Cyrillic letters for all of Questie's tracker. This happens by itself for fonts you did not pick. |
-| `/uadd questie font off` | Brings back the old font and stops the automatic switch. |
 | `/uadd questie rebuild` | Collects the names from UALL Forever again. |
 | `/uadd questie test` | Checks the link to UALL Forever. |
 | `/uadd dj` | Shows the journal module's status and commands. |

@@ -21,6 +21,21 @@ function F.spyReset()
     end
 end
 
+-- A logged quest whose title UALL Forever does not have, while its target does:
+-- The Return of Korrak (7381), a Skull of Korrak (18148) that Korrak the Bloodrager (12159) drops.
+F.extraId = 7381
+function F.addExtraQuest()
+    local log = {}
+    for i, e in ipairs(F.questLog) do log[i] = e end
+    log[#log + 1] = { title = "The Return of Korrak", level = 60, questID = F.extraId, objectives = {
+        { text = "0/1 Skull of Korrak", type = "item", numFulfilled = 0, numRequired = 1, finished = false } } }
+    H.keys.SHIFT = true                    -- UALL says "not now", so the collection waits meanwhile
+    H.questLog = log
+    H.fire("QUEST_LOG_UPDATE")
+    H.pump(400, nil, 0.05)
+    H.keys.SHIFT = false
+end
+
 -- Pumps until Questie's rebuild is over, then 5 s more for the tracker update it queues.
 function F.settle()
     local QQ = M("QuestieQuest")
@@ -53,31 +68,19 @@ function F.questieNames()
     return out
 end
 
--- Combat starts the moment the collection ends: the end of a collection first redraws the
--- tracker (Module.lua, CollectNames), and that is where combat begins, once.
+-- Combat starts the moment the collection ends, once: the first combat question asked after the
+-- job is gone is the end's own (Module.lua, TryApply), just before it asks Questie to rebuild.
 function F.combatAtFinish()
-    local T = H.ns.UADD_Questie.Tracker
-    local real = T.Refresh
-    T.Refresh = function(...)
-        H.combat = true
-        T.Refresh = real
+    local N, real = H.ns.UADD_Questie.Names, InCombatLockdown
+    local running = N.Progress() ~= nil
+    InCombatLockdown = function(...)
+        if N.Progress() ~= nil then
+            running = true
+        elseif running then                 -- the job is gone: this is the end's own question
+            InCombatLockdown, H.combat = real, true
+        end
         return real(...)
     end
-end
-
--- A logged quest whose title UALL Forever does not have, while its target does:
--- The Return of Korrak (7381), a Skull of Korrak (18148) that Korrak the Bloodrager (12159) drops.
-F.extraId = 7381
-function F.addExtraQuest()
-    local log = {}
-    for i, e in ipairs(F.questLog) do log[i] = e end
-    log[#log + 1] = { title = "The Return of Korrak", level = 60, questID = F.extraId, objectives = {
-        { text = "0/1 Skull of Korrak", type = "item", numFulfilled = 0, numRequired = 1, finished = false } } }
-    H.keys.SHIFT = true                    -- UALL says "not now", so the collection waits meanwhile
-    H.questLog = log
-    H.fire("QUEST_LOG_UPDATE")
-    H.pump(400, nil, 0.05)
-    H.keys.SHIFT = false
 end
 
 -- What Questie's quest log holds for one quest: its title, the names in its objectives' spawn
@@ -128,13 +131,13 @@ function F.notStarted(on)
     end
 end
 
--- The end of the next collection fails once, in its tracker redraw.
+-- The end of the next collection fails once: Questie's rebuild raises an error.
 function F.failAtFinish()
-    local T = H.ns.UADD_Questie.Tracker
-    local real = T.Refresh
-    T.Refresh = function()
-        T.Refresh = real
-        error("harness: tracker redraw failed")
+    local QQ = M("QuestieQuest")
+    local real = QQ.SmoothReset
+    QQ.SmoothReset = function()
+        QQ.SmoothReset = real
+        error("harness: Questie's rebuild failed")
     end
 end
 

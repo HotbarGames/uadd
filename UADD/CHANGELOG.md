@@ -19,6 +19,11 @@
   and fishing skill. "Tirisfal Glades (1-10)" shows the zone's Ukrainian name with "(1-10)", and
   "Fishing 25" is «Риболовля 25». The zone's name is UALL Forever's own; a zone without one stays
   whole English.
+- Questie: UADD no longer translates the tracker (the quest list on the screen). UALL Forever does that, with
+  its own font for each line. UADD now only keeps Questie's own words in the tracker English, so UALL Forever
+  can translate each whole line. The `/uadd questie font` and `font off` commands are gone. If an older UADD
+  switched the tracker fonts to "UADD Cyrillic", the fonts it switched come back (Friz Quadrata TT by default).
+  Menus, settings, tooltips, My Journey, map pins and the names from UALL Forever are still Ukrainian.
 
 ## 1.0.0
 

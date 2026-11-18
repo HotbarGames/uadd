@@ -92,7 +92,7 @@ class Engine(unittest.TestCase):
 
     def _run(self, translate):
         got = []
-        halves.run(lambda name, ok, detail="": got.append((name, ok, detail)), "UADD_Questie", self.TPLS, translate)
+        halves.run(lambda name, ok, detail="": got.append((name, ok, detail)), "UADD_Attune", self.TPLS, translate)
         self.assertEqual(len(got), 1)
         return got[0]
 
@@ -136,14 +136,14 @@ class Engine(unittest.TestCase):
         self.assertIn("'c'", str(detail))
 
     def test_known_unfit_passes(self):
-        with mock.patch.dict(C.UNFIT, {"UADD_Questie": {"c": "a made-up reason, long enough"}}):
+        with mock.patch.dict(C.UNFIT, {"UADD_Attune": {"c": "a made-up reason, long enough"}}):
             name, ok, detail = self._run(self._strict_but_c)
         self.assertTrue(ok, detail)
         self.assertIn("1 unfit", name)
 
     def test_stale_unfit_fails(self):
         for known in ({"c": "it fits now, so this entry is stale"}, {"zz": "no such template any more"}):
-            with mock.patch.dict(C.UNFIT, {"UADD_Questie": known}):
+            with mock.patch.dict(C.UNFIT, {"UADD_Attune": known}):
                 name, ok, detail = self._run(self._strict)
             self.assertFalse(ok, known)
             self.assertIn("stale", str(detail))
@@ -151,7 +151,7 @@ class Engine(unittest.TestCase):
     def test_fit_is_a_change(self):
         """A translation with no Ukrainian letters ("7 — 7") still fits: the text changed."""
         got = []
-        halves.run(lambda n, ok, d="": got.append(ok), "UADD_Questie", [halves.tpl("e", "%s in %s")],
+        halves.run(lambda n, ok, d="": got.append(ok), "UADD_Attune", [halves.tpl("e", "%s in %s")],
                    lambda tp, t: "7 — 7" if t == "7 in 7" else None)
         self.assertEqual(got, [True])
 

@@ -31,8 +31,6 @@ F.fullLog = {
 
 F.questLog = F.fullLog
 
--- A smaller log (the unknown zone, then Lost in Battle), so Questie reuses its lines.
-function F.useSmallLog() F.questLog = { F.fullLog[10], F.fullLog[11], F.fullLog[5] } end
 function F.resetQuestLog() F.questLog = F.fullLog end
 
 local function Pool() return QuestieLoader:ImportModule("TrackerLinePool") end

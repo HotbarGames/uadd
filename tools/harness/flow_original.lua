@@ -50,18 +50,6 @@ function F.toldReset() F.told = {} end
 function F.toldText() return table.concat(F.told) end
 function F.polling() return UADD.originalPoll ~= nil end
 
--- Counts our tracker redraws from now on.
-function F.spyRefresh()
-    local T = H.ns.UADD_Questie.Tracker
-    if F.refreshes then F.refreshes = 0 return end
-    F.refreshes = 0
-    local real = T.Refresh
-    T.Refresh = function(...)
-        F.refreshes = F.refreshes + 1
-        return real(...)
-    end
-end
-
 -- What Questie shows for quest `id` now: its coloured name with the level, and an l10n string.
 function F.shown(id)
     return M("QuestieLib"):GetColoredQuestName(id, true, false), M("l10n")("General")
@@ -74,11 +62,6 @@ function F.publishedNames()
         for id, name in pairs(maps[kind] or {}) do out[#out + 1] = kind .. " " .. id .. "=" .. tostring(name) end
     end
     return out
-end
-
--- Questie's tracker frame shown (true) or hidden (false), as when Questie hides it itself.
-function F.showTracker(show)
-    if show then Questie_BaseFrame:Show() else Questie_BaseFrame:Hide() end
 end
 
 function F.setOriginalKey(key)

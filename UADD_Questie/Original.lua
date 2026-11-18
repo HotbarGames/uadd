@@ -5,8 +5,6 @@
 -- Questie's l10n() looks the language up on every call (Localization/l10n.lua, SetUILocale and
 -- GetUILocale), so we switch it to enUS and back. Its menus, messages and tooltip lines that are
 -- built from now on are English. On top of that we redraw what can be seen:
---   the tracker: our wrappers pass Questie's English through (Tracker.lua, Active) and we redraw
---                it out of combat (it may hold secure item buttons; Questie skips it in combat);
 --   a map or minimap pin tooltip under the mouse: shown again from the start, the way Questie
 --                refreshes it (MapIconTooltip.lua, _RefreshTooltip): the "!" and "?" pin titles
 --                are built when it is shown, so redrawing it (_Rebuild) would keep them Ukrainian;
@@ -14,6 +12,7 @@
 --                the Ukrainian name is swapped for QuestieDB's English one.
 -- Not switched: NPC, item and object names inside Questie's data (QuestieDB keeps its own
 -- copies; changing its language is too heavy for a key press), and windows drawn earlier.
+-- The tracker is always drawn in English (Tracker.lua), so the key never redraws it.
 -- No item or unit tooltip is touched, so Shift still compares items.
 --
 -- Shift is also Questie's own key: held over a map pin it shows a fuller tooltip. With Shift as
@@ -23,7 +22,7 @@
 
 local _, ns = ...
 local U = UADD
-local L, T, N = ns.Locale, ns.Tracker, ns.Names
+local L, N = ns.Locale, ns.Names
 local O = { held = false }
 ns.Original = O
 
@@ -123,54 +122,6 @@ function O.RebuildPinTooltip()
     return true
 end
 
-local drawn = false                     -- the key state the tracker was last redrawn for (nil: unknown)
-local waiter = CreateFrame("Frame")
-local hooked = false
-local RedrawTracker
-
--- A hidden tracker is not redrawn (each redraw costs a few ms). Its lines may then be in the other
--- language, so the first time it is shown again it is redrawn once, a frame later (not inside
--- the Show that Questie's own redraw may be making).
-local function OnTrackerShow()
-    C_Timer.After(0, function()
-        if drawn ~= O.held then U.SafeCall(RedrawTracker) end
-    end)
-end
-
-local function TrackerHidden()
-    local f = _G.Questie_BaseFrame
-    if type(f) ~= "table" or type(f.IsShown) ~= "function" then return false end
-    if not hooked and f.HookScript then
-        hooked = true
-        f:HookScript("OnShow", OnTrackerShow)
-    end
-    return not f:IsShown()
-end
-
-RedrawTracker = function()
-    if InCombatLockdown and InCombatLockdown() then
-        waiter:RegisterEvent("PLAYER_REGEN_ENABLED")
-        return
-    end
-    if TrackerHidden() then drawn = nil return end
-    drawn = O.held
-    T.Refresh()
-end
-
-waiter:SetScript("OnEvent", function(self)
-    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    if drawn ~= O.held then U.SafeCall(RedrawTracker) end
-end)
-
--- Questie draws its tracker at most every 0.1 s and puts off a redraw asked for sooner. If combat
--- starts before the put-off redraw, Questie drops it and the tracker would stay English. So a
--- moment after the key comes up: in combat, draw again once combat ends.
-local function AfterRelease()
-    if O.held or not (InCombatLockdown and InCombatLockdown()) then return end
-    drawn = nil
-    waiter:RegisterEvent("PLAYER_REGEN_ENABLED")
-end
-
 -- ── The key ───────────────────────────────────────────────────────────────────────────────────
 
 function O.Changed(show)
@@ -187,8 +138,6 @@ function O.Changed(show)
         SetLocale(L.LOCALE)
     end
     U.SafeCall(O.RebuildPinTooltip)
-    U.SafeCall(RedrawTracker)
-    if not show then C_Timer.After(0.15, function() U.SafeCall(AfterRelease) end) end
 end
 
 if U.OnOriginal then U.OnOriginal(O.Changed, "Questie") end

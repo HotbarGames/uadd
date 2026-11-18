@@ -27,10 +27,11 @@ COVERED = {
     "UADD_Auctionator": ("flow_auc_more.py", "auc"),
     "UADD_Attune": ("flow_att_fix.py", "att"),
     "UADD_OpenMap": ("flow_openmap.py", "openmap"),
-    "UADD_Questie": ("flow.py", "questie"),
     "UADD_DungeonJournal": ("flow_dj_summon.py", "dj"),
 }
 NO_SLOTS = {
+    "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
+                    "(the tracker's objective lines are left to UALL Forever, Tracker.lua)",
 }
 UNFIT = {
     "UADD_ForeverXPBar": {
@@ -155,15 +156,11 @@ def _openmap():
     return [(en, i) for en, ii in openmap_free().items() for i in ii if en not in keys or not s_slot(en, i)]
 
 
-def _questie():
-    return []        # Tracker.lua's three shapes have no free slot
-
-
 def marks():
     """module -> (problems, note)."""
     out = {}
     for mod, fn in (("UADD_ForeverXPBar", _fxpb), ("UADD_DialogueUI", _dui), ("UADD_Auctionator", _auc),
-                    ("UADD_Attune", _att), ("UADD_OpenMap", _openmap), ("UADD_Questie", _questie)):
+                    ("UADD_Attune", _att), ("UADD_OpenMap", _openmap)):
         bad = fn()
         out[mod] = ([], SKIP) if bad is None else (bad, "")
     return out

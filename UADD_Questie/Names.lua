@@ -21,8 +21,7 @@ ns.Names = N
 N.KINDS = { "Quest", "Npc", "Item" }
 local OWNER, SLOT = "UADD", "Names"
 N.counts = { Quest = 0, Npc = 0, Item = 0, zones = 0 }
-N.maps = {}                          -- [kind] = { [id] = "назва" } as published now (read by Tracker.lua)
-N.version = 0                        -- goes up on every publish, so readers know the maps changed
+N.maps = {}                          -- [kind] = { [id] = "назва" } as published now (read by Original.lua)
 N.changed = {}                       -- [kind] = { [id] = true }: names changed since Questie last saw them
 
 local function Lib()
@@ -64,7 +63,7 @@ function N.Publish(dt, map)
         for id in pairs(N.maps[dt] or {}) do changed[id] = true end
         for id in pairs(rows or {}) do changed[id] = true end
         N.changed[dt] = changed
-        N.counts[dt], N.maps[dt], N.version = n, map, N.version + 1
+        N.counts[dt], N.maps[dt] = n, map
     end
     return ok
 end

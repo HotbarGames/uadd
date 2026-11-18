@@ -12,22 +12,21 @@ Close the game, then run `install.bat` (or copy `UADD`, `UADD_Questie` and `UADD
 
 1. Log in. `/uadd` lists the modules "Questie" and "Dungeon Journal" with their status.
 2. `/uadd questie` shows the status line and the commands.
-3. Questie's options (`/questie`), the minimap button tooltip, the tracker headers and the quest tooltips are in
+3. Questie's options (`/questie`), the minimap button tooltip and the quest tooltips are in
    Ukrainian. Questie's language setting shows «Українська».
 4. With UALL Forever: the chat says names are being collected. Wait for the message that the names are ready
    and shown. Do not `/reload`. The map pins vanish for a moment and come back. Now quest, NPC, item and zone
    names on Questie's map pins and in its tooltips are Ukrainian where UALL Forever has them. The rest stays
    English. Check a quest you already have in your quest log: its map pins and tooltip are Ukrainian too.
    Only the continent list in "My Journey" stays English until the next login.
-   Questie's tracker (the quest list on the screen) after the names are ready: quest titles and zone headers
-   are Ukrainian, with Questie's level in front and its colours. In lines like "0/8 Witchwing Talon" or
-   "Witchwing Talon: 0/8", the item or NPC name is Ukrainian when UALL Forever has it. Lines with a task in
-   words, like "Find Mankrik's Wife", stay English. No line shows English first and then changes.
-   Check a quest that is done ("(Complete)"), a "... slain" line, and a zone you folded up.
+   Questie's tracker (the quest list on the screen) is UALL Forever's work, not UADD's. UADD only keeps
+   Questie's own words in it English, so UALL Forever can translate each whole line. Check that its lines,
+   its zone headers and its title ("Questie Tracker: 7/20") show no boxes, also a quest that is done
+   ("(Complete)") and a dungeon quest ("[34D]", a Latin letter after the level).
 5. Without UALL Forever: the menus are still Ukrainian, the names stay English, and there are no errors.
-6. The tracker uses a font with Cyrillic letters by itself (a font you picked there stays).
-   `/uadd questie font off` brings back the old font; `/uadd questie font` switches all four.
-7. `/uadd questie off`: the tracker is English at once. Then `/reload`: Questie is fully English. `/uadd questie on`, then `/reload`: Ukrainian
+6. If an older UADD switched the tracker fonts to "UADD Cyrillic", the first login with this version puts back
+   the fonts it switched (Friz Quadrata TT by default). A font you picked yourself stays.
+7. `/uadd questie off`, then `/reload`: Questie is fully English. `/uadd questie on`, then `/reload`: Ukrainian
    again. A second login uses the saved names and does not collect them again.
 8. `/uadd questie rebuild` collects the names again in the background. `/uadd questie test` checks the link to
    UALL Forever.
@@ -166,13 +165,9 @@ These need Attune on an English client. UALL Forever is needed for the names.
 - Whether every Questie window shows the translated names.
 - Whether the names show at once after the first collection in every Questie window, with no `/reload`:
   map pins, tooltips, "My Journey", quest details. The test harness checks Questie's quest, NPC and item
-  data and the tracker, not what the map and tooltips draw.
+  data, not what the map and tooltips draw.
 - How long the map pins are gone while Questie puts the new names in, with a full quest log.
 - How big the saved name cache gets in `WTF\Account\<ACCOUNT>\SavedVariables\UADD.lua`.
-- Whether the tracker redraws with the new font right away.
-- The game's own wording of objective lines in Forever, and how "(Complete)" looks at the end of them.
-- The tracker with Questie options we did not try: quest IDs shown, sorting not by zone, folded zones.
-- Whether the tracker feels as fast as before with many quests.
 - Questie's options tabs as the game draws them: since Questie 12.8 a tab scrolls in the game's scroll box
   and its dropdowns use the game's menu. The harness builds the real tabs, but on simple stand-ins for
   those game parts. A Questie error printed in chat (`[ERROR]`) counts as a Lua error in the checks.
@@ -187,8 +182,8 @@ These need Attune on an English client. UALL Forever is needed for the names.
 `python3 -m unittest discover -s tools` checks the repo, the tools and the Lua syntax.
 `python3 tools/harness/run.py` loads the real Questie, QuestieDB and UALL Forever on a fake game and checks
 the whole flow. It also fills a fake quest log with real quests and lets Questie's real tracker draw it. It
-checks that titles, zone headers and known names are Ukrainian, that other lines are left as they were, that
-a reused line gets fresh text, and that `/uadd questie off` gives back the exact English.
+checks that Questie hands the tracker to UALL Forever in its exact English (with UADD on, off and after
+`/reload`), that UALL Forever then translates it, and that old UADD tracker fonts come back as they were.
 Then it loads the real Dungeon Journal with UALL Forever and checks the journal module: the language
 menu, names on each page change (boss, tab, dungeon, search result), fonts, Shift, Русский and
 `/uadd dj off`/`on`. It prints how many dungeon, boss, quest and item names are Ukrainian.

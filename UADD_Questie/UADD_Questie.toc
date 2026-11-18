@@ -1,7 +1,7 @@
 ## Interface: 16001, 16000
 ## Title: UADD - Questie
 ## IconTexture: Interface\AddOns\UADD\Logo
-## Notes: Questie in Ukrainian: menus, plus quest, NPC, item and zone names from UALL Forever. Type /uadd questie.
+## Notes: Questie's menus and settings in Ukrainian. The quest tracker and quest texts come from UALL Forever. Type /uadd questie.
 ## Author: HotbarGames
 ## Version: 1.0.0
 ## Dependencies: UADD, Questie, QuestieDB
@@ -15,7 +15,6 @@ Locale.lua
 Names.lua
 Tracker.lua
 Original.lua
-Font.lua
 ControlFont.lua
 HeaderFont.lua
 Module.lua

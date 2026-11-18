@@ -54,7 +54,8 @@ def session(saved=None, locale="enUS", ready_frames=4000):
 def cyr_boxes(client):
     """The guard: shown FontStrings whose Ukrainian text is in a font without Ukrainian letters
     (squares in the game), as "frame font: text" lines. client: a loader.Client.
-    UALL Forever's own windows (UALLF...) are left out: that Ukrainian is UALL's, not UADD's."""
+    UALL Forever's own windows (UALLF...) and the texts it translated in other windows (marked
+    "UALLF frame" by H.cyrBoxes) are left out: that Ukrainian is UALL's, not UADD's."""
     from loader import txt
     lines = [txt(x) for x in client.lines(client.H.cyrBoxes(200))]
     return [x for x in lines if not x.startswith("UALLF")]

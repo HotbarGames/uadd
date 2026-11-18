@@ -9,7 +9,6 @@ import os
 import time
 
 import flow_controls
-import halves_mods
 import session
 from flow_dropdown import dropdown
 from flow_live import Live
@@ -17,7 +16,7 @@ from flow_header import BLIZZ_TAB, OPTIONS_TITLE, POPUP_TAB, header, late_header
 from flow_original import Original
 from flow_reverse import reverse, reverse_login
 from flow_routes import ARNAK, route_off
-from flow_tracker import Tracker, uall_held
+from flow_tracker import DEFAULT_FONT, Tracker, old_fonts
 from loader import read_text, txt, lua_str
 
 Check = collections.namedtuple("Check", "name ok detail")
@@ -30,10 +29,7 @@ L10N = {
     "Auto Accept Quests": "Автоприйняття завдань",
     "Auto Complete": "Автоздача",
 }
-COMMANDS = ["", "questie", "questie on", "questie font", "questie font off", "questie font",
-            "questie rebuild", "questie test", "questie nonsense", "nonsense"]
-FONT = "UADD Cyrillic"
-DEFAULT_FONT = "Friz Quadrata TT"
+COMMANDS = ["", "questie", "questie on", "questie rebuild", "questie test", "questie nonsense", "nonsense"]
 # Globals our files may write: our own, the slash command and Questie's documented override.
 OUR_WRITES = {"UADD", "UADD_DB", "SLASH_UADD1", "QUESTIE_LOCALES_OVERRIDE"}
 
@@ -133,24 +129,20 @@ def run():
     f.check("names: SetCorrection called", c.F.setCorrection >= 3, str(c.F.setCorrection))
     live.first(c, c.chat)          # 4a. shown in this session: no /reload
     live.extra(c, "live", after=True)
-    f.check("font: tracker fonts switched", list(c.F.fonts()) == [FONT] * 4, str(list(c.F.fonts())))
+    f.check("font: tracker fonts left as Questie's", list(c.F.fonts()) == [DEFAULT_FONT] * 4, str(list(c.F.fonts())))
     qid, uk, en = c.F.ukQuest()
     f.check("names: QuestieDB has a Ukrainian quest name", qid, f"{qid}: {txt(en)} -> {txt(uk)}")
     f.check("names: quest found by a spelling variant", *_ok_text(c.F.questName(5147), ARNAK))
-    T.translated(c, "collection")
-    halves_mods.questie(f.check, c)          # made-up English in an objective: never half translated
-    T.reused(c, "collection")
+    T.stays_english(c, "collection")       # UALL Forever translates the tracker, not UADD
     f.no_errors(c, "collection")
     O = Original(f, T)                           # 4c. the "[34D]" letter; the show-original key
     O.dungeon(c, "collection")
     O.font_safe(c, "collection")
     O.hold(c, "show original", 867, "Harpy Raiders")
     O.pin(c, "show original")
-    O.combat(c, "show original, combat")
     O.combat_key(c, "show original, combat key")
     O.other_key(c, "show original")
     reverse(O, c, "show original, UALLF reverse")
-    O.hidden(c, "show original, tracker hidden")
     O.perf(c, "show original")
     f.no_errors(c, "show original")
     header(f, c, "first login", BLIZZ_TAB, True)
@@ -161,15 +153,16 @@ def run():
     f.no_errors(c, "options header")
 
     # 4b. /reload: the saved names are back before Questie builds its data, no new collection.
-    c2 = f.start(c.dump_saved())
+    saved = c.dump_saved()
+    c2 = f.start(saved)
     f.check("reload: Questie ready", c2.ev("Questie.API.isReady"))
     f.check("reload: no second collection", c2.H.ns.UADD_Questie.Names.Progress() is None)
     f.check("reload: QuestieDB name Ukrainian", *_ok_text(c2.F.questName(qid), txt(uk)))
-    f.check("reload: fonts kept", list(c2.F.fonts()) == [FONT] * 4, str(list(c2.F.fonts())))
-    T.translated(c2, "reload")
+    T.stays_english(c2, "reload")
     live.same_after_reload(c2)
     f.no_errors(c2, "reload")
     reverse_login(f)                           # UALLF reverse mode saved: English from the start
+    old_fonts(f, saved)                        # the old UADD's tracker fonts go back
 
     # 5. Every /uadd command. The rebuild runs without the Questie function the live path needs.
     for cmd in COMMANDS:
@@ -189,9 +182,8 @@ def run():
     c2.slash("questie off")
     header(f, c2, "off", BLIZZ_TAB, False)
     flow_controls.after_off(f, c2, controls_before, "off")
-    f.check("off: fonts restored at once", list(c2.F.fonts()) == [DEFAULT_FONT] * 4, str(list(c2.F.fonts())))
-    T.english_again(c2, "off")
-    uall_held(c2, lambda: O.dungeon(c2, "off", "A Vengeful Fate"))   # UALL's own Ukrainian held back
+    T.stays_english(c2, "off", on=False)
+    O.dungeon(c2, "off")
     c2.F.key("SHIFT", True)
     f.check("off: show-original key does nothing", not c2.H.ns.UADD_Questie.Original.held
             and txt(c2.F.l10n(lua_str("General"))) == "General")
@@ -200,25 +192,20 @@ def run():
     c3 = f.start(c2.dump_saved())
     f.check("off+reload: l10n English", *_ok_text(c3.F.l10n(lua_str("General")), "General"))
     f.check("off+reload: QuestieDB name English", *_ok_text(c3.F.questName(qid), txt(en)))
-    f.check("off+reload: fonts stay default", list(c3.F.fonts()) == [DEFAULT_FONT] * 4, str(list(c3.F.fonts())))
-    T.english_again(c3, "off+reload")
+    T.stays_english(c3, "off+reload", on=False)
     header(f, c3, "off+reload", BLIZZ_TAB, False)
-    c3.ev("Questie.db.profile").trackerFontZone = "Arial Narrow"   # the player picks a font
     c3.slash("questie on")
     f.no_errors(c3, "off+reload")
     c4 = f.start(c3.dump_saved())
     f.check("on+reload: l10n Ukrainian", *_ok_text(c4.F.l10n(lua_str("General")), L10N["General"]))
     f.check("on+reload: QuestieDB name Ukrainian", *_ok_text(c4.F.questName(qid), txt(uk)))
-    picked = [FONT, "Arial Narrow", FONT, FONT]
-    f.check("on+reload: fonts switched, the picked one kept", list(c4.F.fonts()) == picked, str(list(c4.F.fonts())))
-    T.same_as_before(c4, "on+reload")
+    T.stays_english(c4, "on+reload")
     c4.slash("questie rebuild")                  # off while collecting: Questie is not rebuilt
     c4.ev("function(n) return HARNESS.pump(n, nil, 0.05) end")(20)
     c4.slash("questie off")
     c4.F.collect(400)
     f.check("off while collecting: no rebuild, no 'ready'", c4.F.resets == 0
             and not any("назви готові" in x for x in c4.chat()), str(c4.F.resets))
-    f.check("off again: picked font still kept", list(c4.F.fonts())[1] == "Arial Narrow", str(list(c4.F.fonts())))
     f.no_errors(c4, "on+reload")
 
     # 7. Combat pauses the collection; it goes on after combat.

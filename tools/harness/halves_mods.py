@@ -187,20 +187,6 @@ def openmap(check, lua):
     run(check, "UADD_OpenMap", tps, lambda tp, t: _t((Lb.Text if tp.get("label") else Wd.Line)(lua_str(t))), hard=every)
 
 
-# Tracker.lua's objective shapes (the counter, "slain", "name: N/M"), each on a quest that has that
-# kind: quest 867's item, quest 7's creature.
-ITEM, MOB = (867, "Witchwing Talon"), (7, "Kobold Vermin")
-QUESTIE_SHAPES = (("%d/%d %s", "item", 3, ITEM), ("%d/%d %s slain", "monster", 3, MOB),
-                  ("%s: %d/%d", "item", 1, ITEM), ("%d/%d %s (Complete)", "item", 3, ITEM))
-
-
-def questie(check, c):
-    """Questie: Tracker.Objective, each shape on its quest's own item or creature."""
-    T = c.H.ns.UADD_Questie.Tracker
-    tps = [tpl(en, en, {}, {k: good}, what=what, quest=q) for en, what, k, (q, good) in QUESTIE_SHAPES]
-    run(check, "UADD_Questie", tps, lambda tp, t: _t(T.Objective(tp["quest"], tp["what"], lua_str(t))))
-
-
 def _parts(en, text):
     """The slot values of `text` read back by the English template `en` (all %s), or None."""
     m = re.match("^" + "(.*?)".join(re.escape(p) for p in en.split("%s")) + "$", text, re.S)

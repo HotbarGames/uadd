@@ -100,6 +100,16 @@ class Coverage(unittest.TestCase):
         r = coverage.report(data["keys"], coverage.read_strings(coverage.STRINGS))
         self.assertEqual(r["bad"], [], "these would be skipped in the game")
 
+    def test_tracker_words_stay_left_to_uallf(self):
+        strings = coverage.read_strings(coverage.STRINGS)
+        back = sorted(k for k in coverage.LEFT_TO_UALLF if k in strings)
+        self.assertEqual(back, [], "UALL Forever translates the tracker: leave these out of strings.lua")
+        data = json.loads(coverage.KEYS.read_text(encoding="utf-8"))
+        gone = sorted(k for k in coverage.LEFT_TO_UALLF if k not in data["keys"])
+        self.assertEqual(gone, [], "no longer Questie keys: drop them from coverage.LEFT_TO_UALLF")
+        r = coverage.report({"Questie Tracker": "Localization/Translations/TrackerUI.lua"}, {})
+        self.assertEqual((r["missing"], r["left"]), ([], ["Questie Tracker"]))
+
 
 def lua_files():
     return sorted(p for d in ("UADD", "UADD_Questie") for p in (REPO / d).rglob("*.lua"))

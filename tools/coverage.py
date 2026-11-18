@@ -2,7 +2,7 @@
 
 python3 tools/coverage.py                       summary (keys from data/questie-keys.json)
 python3 tools/coverage.py --questie PATH        read the keys from a Questie folder instead
-python3 tools/coverage.py --list missing        also print keys with no translation (or: extra, bad)
+python3 tools/coverage.py --list missing        also print keys with no translation (or: extra, bad, left)
 python3 tools/coverage.py --strict              exit 1 when an entry is bad or not a Questie key
 
 A "bad" entry would be skipped in the game (UADD_Questie/Locale.lua, L.Compatible): its %s/%d
@@ -28,6 +28,16 @@ KEYS = REPO / "data" / "questie-keys.json"
 SPEC = re.compile(r"%(%|[-+ #0]*\d*\.?\d*([A-Za-z])?)")
 VALID = set("cdeEfgGioqsuxX")
 ESCAPES = "crTtHhn"
+
+# Keys only Questie's quest tracker uses (Questie 12.10). UALL Forever translates the tracker, and UADD
+# draws it in English for it (UADD_Questie/Tracker.lua; docs/LESSONS.md, lesson 3). So these stay out
+# of strings.lua: they are "left to UALL Forever", not missing.
+LEFT_TO_UALLF = frozenset({
+    "Questie Tracker", "Quest Complete!", "Quest Failed!", "Blizzard Timer Active!", "Time's up!",
+    "Quests (By %% Complete)", "Quests (By %% Complete Reversed)", "Quests (By Level)",
+    "Quests (By Level Reversed)", "Quests (By Proximity)", "Quests (By Proximity Reversed)",
+    "Achievements", "Recipes", "Challenge Mode",
+})
 
 
 def specs(text):
@@ -74,7 +84,8 @@ def report(keys, strings):
     """Numbers and lists. keys: {key: file}; strings: {key: ukrainian}."""
     covered = [k for k in keys if k in strings and compatible(k, strings[k])]
     bad = sorted(k for k in keys if k in strings and not compatible(k, strings[k]))
-    missing = sorted(k for k in keys if k not in strings)
+    missing = sorted(k for k in keys if k not in strings and k not in LEFT_TO_UALLF)
+    left = sorted(k for k in keys if k in LEFT_TO_UALLF)
     extra = sorted(k for k in strings if k not in keys)
     by_area = collections.defaultdict(lambda: [0, 0])
     for k, f in keys.items():
@@ -83,7 +94,7 @@ def report(keys, strings):
         by_area[area][1] += 1
         if k in strings and compatible(k, strings[k]):
             by_area[area][0] += 1
-    return {"total": len(keys), "covered": len(covered), "bad": bad, "missing": missing, "extra": extra,
+    return {"total": len(keys), "covered": len(covered), "bad": bad, "missing": missing, "extra": extra, "left": left,
             "byArea": dict(sorted(by_area.items()))}
 
 
@@ -92,7 +103,7 @@ def main(argv=None):
     ap.add_argument("--strings", default=str(STRINGS))
     ap.add_argument("--keys", default=str(KEYS))
     ap.add_argument("--questie", help="read keys from this Questie folder instead of --keys")
-    ap.add_argument("--list", choices=["missing", "extra", "bad"], action="append", default=[])
+    ap.add_argument("--list", choices=["missing", "extra", "bad", "left"], action="append", default=[])
     ap.add_argument("--json", action="store_true", help="print the whole report as JSON")
     ap.add_argument("--strict", action="store_true", help="exit 1 when there are bad or extra entries")
     args = ap.parse_args(argv)
@@ -108,7 +119,7 @@ def main(argv=None):
         print(f"Questie {data.get('questieVersion')}: {r['covered']} of {r['total']} keys translated ({pct:.1f}%)")
         print(f"  strings file: {where}, {len(strings)} entries")
         print(f"  missing {len(r['missing'])}, bad (skipped in game) {len(r['bad'])}, "
-              f"not a Questie key {len(r['extra'])}")
+              f"not a Questie key {len(r['extra'])}, left to UALL Forever (tracker) {len(r['left'])}")
         for area, (done, total) in r["byArea"].items():
             print(f"    {area:<20} {done:>5} / {total}")
         for name in args.list:

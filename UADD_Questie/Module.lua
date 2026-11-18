@@ -6,7 +6,7 @@
 
 local ADDON, ns = ...
 local U = UADD
-local L, N, F, T = ns.Locale, ns.Names, ns.Font, ns.Tracker
+local L, N, T = ns.Locale, ns.Names, ns.Tracker
 local HF = ns.HeaderFont
 local db
 
@@ -141,11 +141,9 @@ end
 
 local readyDone = false
 
--- The tracker reads our own names, so it shows them right away; Questie redraws it again after
--- its rebuild (QuestieQuest.lua:441). Any error here still ends with the /reload message.
+-- Any error here still ends with the /reload message.
 local function EndOfCollection(a)
     db.collectedOnce = true
-    T.Refresh()
     TryApply(a)
 end
 
@@ -165,6 +163,7 @@ end
 local function OnReady()
     if readyDone then return end
     readyDone = true
+    U.SafeCall(T.RestoreFonts, db)
     if L.state ~= "on" then return end
     if HF then U.SafeCall(HF.Scan) end                     -- the options tabs exist now
     if not L.IsActive() then
@@ -174,8 +173,6 @@ local function OnReady()
     -- UALLF's reverse mode: the core may have said "English" before Questie had its language.
     if U.originalShown and ns.Original then U.SafeCall(ns.Original.Changed, true) end
     CollectNames(false)
-    F.Auto(db)
-    F.MaybeHint(db, Say)
 end
 
 local function WhenQuestieReady()
@@ -201,7 +198,6 @@ local function Init()
     if state == "on" then
         T.Install()
         N.PublishCached(cache)
-        F.Auto(db)
         if HF then U.SafeCall(HF.Start) end
         WhenQuestieReady()
     elseif state == "conflict" then
@@ -235,7 +231,6 @@ local function Status()
         if asked then parts[#parts + 1] = ("збираю: %d з %d"):format(asked, total) end
     end
     if readyDone and not L.IsActive() then parts[#parts + 1] = "Questie показує іншу мову" end
-    if F.IsOn() then parts[#parts + 1] = "шрифт UADD" end
     return table.concat(parts, "; ")
 end
 
@@ -244,15 +239,13 @@ end
 local HELP = {
     "/uadd questie on - увімкнути (потім /reload)",
     "/uadd questie off - вимкнути, Questie знову англійською",
-    "/uadd questie font - шрифт з кирилицею для списку завдань",
-    "/uadd questie font off - повернути старий шрифт",
     "/uadd questie rebuild - заново зібрати назви з UALL Forever",
     "/uadd questie test - перевірити зв'язок з UALL Forever",
 }
 
 local function Command(args)
     if not db then return Say("ще не завантажено.") end
-    local cmd, rest = args:lower():match("^(%S*)%s*(.-)$")
+    local cmd = args:lower():match("^(%S*)")
     if cmd == "on" then
         db.enabled = true
         if L.state == "on" then return Say("вже увімкнено.") end
@@ -263,15 +256,10 @@ local function Command(args)
         N.Stop()
         CancelApply()
         N.WithdrawAll()
-        T.Uninstall()
-        F.Off(db)
         if HF then U.SafeCall(HF.Stop) end
         L.SwitchOff()
         L.state = "off"
-        T.Refresh()                             -- the tracker is English again at once
         Say("вимкнено. Введіть /reload, щоб уся англійська повернулась у кожне вікно.")
-    elseif cmd == "font" then
-        if rest == "off" then F.Off(db, Say) else F.On(db, Say) end
     elseif cmd == "rebuild" then
         if L.state ~= "on" then return Say("спершу увімкніть: /uadd questie on, потім /reload.") end
         local started, why = CollectNames(true)
