@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1
 
 - The addon list shows the UADD logo as the icon of UADD and of each module, instead of a red question mark.
 - "Instance" is now «підземелля» everywhere, not «інстанс»: in the settings of Questie, Dialogue UI and

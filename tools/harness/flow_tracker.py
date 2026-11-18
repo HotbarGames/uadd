@@ -109,5 +109,17 @@ def old_fonts(f, saved):
     f.check("old fonts: switched fonts back, the player's pick kept", fonts == want, str(fonts))
     f.check("old fonts: old font data forgotten",
             db.fontBackup is None and db.fontAuto is None and db.fontHint is None)
+    # Questie's settings not ready yet: the saved fonts are kept for the next login, not lost.
+    kept = c.lua.execute("""
+        local db, q = UADD_DB.modules.questie, Questie.db
+        db.fontBackup = { trackerFontZone = "Morpheus" }
+        Questie.db = nil
+        local ok = pcall(HARNESS.ns.UADD_Questie.Tracker.RestoreFonts, db)
+        Questie.db = q
+        local b = db.fontBackup
+        db.fontBackup = nil
+        return ok and type(b) == "table" and b.trackerFontZone == "Morpheus"
+    """)
+    f.check("old fonts: saved fonts kept while Questie's settings are not ready", kept is True)
     f.no_errors(c, "old fonts")
 

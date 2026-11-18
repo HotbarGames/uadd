@@ -96,9 +96,14 @@ local FONT_FIELDS = { "trackerFontHeader", "trackerFontZone", "trackerFontQuest"
 
 function T.RestoreFonts(db)
     local backup = db.fontBackup
+    if type(backup) ~= "table" then
+        db.fontBackup, db.fontAuto, db.fontHint = nil, nil, nil
+        return
+    end
+    -- Read Questie's settings first: if they are not ready, keep the backup for the next login.
+    local profile = Questie and Questie.db and Questie.db.profile
+    if type(profile) ~= "table" then return end
     db.fontBackup, db.fontAuto, db.fontHint = nil, nil, nil
-    if type(backup) ~= "table" then return end
-    local profile = Questie.db.profile
     local n = 0
     for _, field in ipairs(FONT_FIELDS) do
         if profile[field] == UADD.FONT_NAME then

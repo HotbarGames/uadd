@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Dungeon Journal in Ukrainian: its menus, plus dungeon, boss, quest and item names from UALL Forever. Type /uadd dj.
 ## Author: HotbarGames
-## Version: 1.0.0
+## Version: 1.0.1
 ## Dependencies: UADD, ForeverDungeonJournal
 ## OptionalDeps: UALLF
 ## X-Category: Localization
