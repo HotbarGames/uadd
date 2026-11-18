@@ -222,6 +222,7 @@ W.Quick = Quick
 
 -- One of ForeverXP Bar's exact English texts (translated or not).
 function W.Known(t) return knownIdx:Exact(t) ~= nil end
+function W.Index() return idx, knownIdx end   -- for U.Missed: our templates, then the kept ones
 
 -- One of ForeverXP Bar's texts with 12+ bytes of its own English: not a short common word another
 -- addon shows too (Screen.lua finds its nameless frames by it).

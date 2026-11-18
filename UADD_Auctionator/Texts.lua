@@ -27,6 +27,7 @@ local back, backSize = {}, 0    -- our Ukrainian -> its English, any FontString
 local hookCalls = 0             -- for the checks: how often the SetText hook ran
 local only = {}                -- FontString -> { [English] = true }: only these change on it
 local by = {}                  -- FontString -> its own translate function (T.Hook's third argument)
+local quiet = {}               -- FontString -> true: its texts are names, never noted as missed
 
 local function Put(fs, text)
     guard = true
@@ -59,7 +60,10 @@ function T.Apply(fs, quick, combat)
             if by[fs] then uk = by[fs](orig[fs], fs, combat)
             else uk = (combat and ns.Words.Quick or ns.Words.Text)(orig[fs], fs) end
             if only[fs] and not only[fs][orig[fs] or ""] then uk = nil end
-            if not uk then return ns.Fonts.Back(fs) end    -- an English text: its own font again
+            if not uk then                                  -- an English text: its own font again
+                if not combat and not quiet[fs] and not only[fs] then U.Missed("auctionator", orig[fs], fs) end
+                return ns.Fonts.Back(fs)
+            end
             Put(fs, uk)
             mine[fs] = uk
             Remember(fs, uk, orig[fs])
@@ -81,8 +85,10 @@ local function OnText(fs)
     U.SafeCall(T.Apply, fs, false, ns.Screen.WaitCombat())
 end
 
-function T.Hook(fs, set, fn)
+-- quiet: its texts are names (an item column), never noted as missed (UADD/Missed.lua).
+function T.Hook(fs, set, fn, q)
     if set then only[fs] = set end
+    if q then quiet[fs] = true end
     if fn then by[fs] = fn end
     if hooked[fs] then return end
     hooked[fs] = true

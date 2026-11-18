@@ -20,6 +20,7 @@ local function Line(text)
     if not ns.WordsWanted() then return text end
     local msg = text:sub(#PREFIX + 1)
     local uk = ns.Words.Text(msg)
+    if not uk then UADD.Missed("layerswap", msg) end
     return uk and PREFIX .. uk or text
 end
 

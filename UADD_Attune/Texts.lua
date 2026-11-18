@@ -57,7 +57,10 @@ function T.Apply(fs, quick, combat)
     if ns.WordsWanted() then
         if not mine[fs] then
             local uk = (combat and ns.Words.Quick or ns.Words.Text)(orig[fs], fs)
-            if not uk then return ns.Fonts.Back(fs) end    -- an English text: its own font again
+            if not uk then                                  -- an English text: its own font again
+                if not combat then U.Missed("attune", orig[fs], fs) end
+                return ns.Fonts.Back(fs)
+            end
             Put(fs, uk)
             mine[fs] = uk
             Remember(fs, uk, orig[fs])

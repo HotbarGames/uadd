@@ -72,6 +72,14 @@ local function Ready()
     if ready or not db or not Loaded(TARGET) or not EnglishClient() then return end
     ready = true
     U.SafeCall(ns.Words.Build)
+    -- English texts it shows without our words are noted (UADD/Missed.lua); fixed ones go now.
+    -- Names from Attune's own tables (quests, items, NPCs, zones, attunements) are not misses.
+    local own
+    U.SafeCall(U.MissedModule, "attune", { addon = TARGET, test = function(t) return ns.Words.Text(t) end,
+        keep = function(_, c)
+            own = own or N.Own()
+            return own[c:match("^%s*(.-)%s*$")] == true
+        end })
     U.SafeCall(function() N.Use(N.LoadCache(db)) end)
     Begin()
 end

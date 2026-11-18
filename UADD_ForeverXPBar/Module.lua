@@ -54,6 +54,9 @@ local function Ready()
     if ready or not db or not Loaded(TARGET) then return end
     ready = true
     U.SafeCall(ns.Words.Build)
+    -- English texts it shows without our words are noted (UADD/Missed.lua); fixed ones go now.
+    U.SafeCall(U.MissedModule, "fxpb", { addon = TARGET, test = function(t) return ns.Words.Text(t) end,
+        index = function() return ns.Words.Index() end })
     Begin()
 end
 

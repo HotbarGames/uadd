@@ -70,6 +70,7 @@ local function Translate()
             lines[fs], any = { en = en, uk = uk }, true
         else
             lines[fs] = nil
+            UADD.Missed("fxpb", en, fs)
         end
         local now = UADD.Plain(fs:GetText())
         if now and now:find(CYR) then UADD.AceFont.Set(fs, APP) end

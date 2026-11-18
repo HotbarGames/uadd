@@ -47,11 +47,32 @@ local function End()
     if not ns.Screen.WaitCombat() then ns.Screen.Restore() end   -- else when combat ends
 end
 
+-- True for a text that is not one of DialogueUI's L values lacking our Ukrainian (made on first use).
+local lacking
+function ns.NotOurs(t, plain)   -- plain: t without colour codes
+    if not lacking then
+        lacking = {}
+        for key, s in pairs(ns.DUI_HASH or {}) do
+            local g = type(s) == "table" and s.g and rawget(_G, s.g)
+            if type(g) == "string" then s = ns.Words.Shape(g) or s end
+            if type(s) == "table" and (ns.UA or {})[key] == nil then
+                for _, f in ipairs({ "e", "p", "u" }) do if s[f] then lacking[s[f]] = true end end
+            end
+        end
+    end
+    local function Lacks(x) return type(x) == "string" and lacking[#x .. ":" .. (U.Hash(x) or "")] end
+    return not (Lacks(t) or Lacks(plain))
+end
+
 -- DialogueUI is there (loaded before us, or now): build the word tables once and start.
 local function Ready()
     if ready or not db or not Loaded("DialogueUI") then return end
     ready = true
     U.SafeCall(ns.Words.Build)
+    -- Its L values with no Ukrainian at all are noted when shown in English (UADD/Missed.lua); a
+    -- false one stays English on purpose, and other texts on its frames are not ours to translate.
+    U.SafeCall(U.MissedModule, "dialogueui", { addon = "DialogueUI", keep = ns.NotOurs,
+        test = function(t) return ns.Words.Text(t) end })
     Begin()
 end
 

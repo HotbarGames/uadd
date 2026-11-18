@@ -30,6 +30,7 @@ local function Init()
     Locale.Sync()                 -- before OpenMap builds its options from L
     U.AceFont.Register("OpenMap", ns.On)   -- the options window's fonts (UADD/AceFont.lua)
     ns.Popup.Install()            -- its StaticPopup questions (Popup.lua)
+    U.SafeCall(U.MissedModule, "openmap", { addon = "OpenMap", test = function(t) return ns.Words.Text(t) end })
 end
 
 -- Our words in L and on the shown texts, as they should be now (hold key, on, off).

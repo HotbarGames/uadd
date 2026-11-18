@@ -257,6 +257,7 @@ function W.Quick(t, fs) return Plural(Quick(t, fs), true) end
 
 -- One of LayerSwap's exact English texts (translated or not).
 function W.Known(t) return knownIdx:Exact(t) ~= nil end
+function W.Index() return idx, knownIdx end   -- for U.Missed: our templates, then the kept ones
 
 -- For the status line: how many texts we can show in Ukrainian.
 function W.Count() return count end

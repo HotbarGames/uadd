@@ -105,7 +105,7 @@ local function Translate(tip)
         if had and s == had.uk then return end
         local en = (had and s == had.en) and had.en or s
         local uk = type(en) == "string" and not en:find(CYR) and ns.Words.Text(en)
-        if uk then Put(tip, fs, en, uk) any = true else t.lines[fs] = nil end
+        if uk then Put(tip, fs, en, uk) any = true else t.lines[fs] = nil UADD.Missed("auctionator", en, fs) end
     end)
     return any
 end

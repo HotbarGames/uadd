@@ -58,8 +58,23 @@ Questie builds that list only once, when it starts.
 | `/uadd attune on` / `off` | Turns the Attune translation on or off, at once. Off gives Attune back as it is without UADD (after the fight, if you are in one). |
 | `/uadd attune rebuild` | Collects Attune's names from UALL Forever again. |
 | `/uadd combat off` / `on` | Off: the hold key (Shift) works in a fight too. On (the default): in a fight it does nothing. |
+| `/uadd missed` | Shows, per module, how many texts stayed English because UADD has no Ukrainian for them yet. |
+| `/uadd missed on` / `off` | A tool for testers, off unless you turn it on. On: UADD notes each text it shows in English. Off (the default) costs nothing. The list stays on your PC; nothing is sent. |
+| `/uadd missed clear` | Empties the list. `/uadd missed clear fxpb` empties one module's part (the names are in `/uadd missed`). |
 
 If Questie shows a different language, open Questie's options and pick «Українська».
+
+## For contributors: what changed, what stayed English
+
+Two tools tell you what needs work. They need no network.
+
+- `python3 tools/drift.py`: run it after the addons update. It says which addons changed since our data was
+  built, and which of their texts are new, gone or changed. "no drift" means there is nothing to do. The texts
+  are in `local/drift/`. After you rebuild the data, run `python3 tools/drift.py --update-versions`.
+- `python3 tools/missed.py`: type `/uadd missed on` in the game, play, log out, then run it. It lists, per
+  module, the texts that stayed English in the game. All of them are in `local/missed/`.
+
+`local/` is git-ignored, because these files hold the addons' English. Never commit them.
 
 ## Rules for contributors
 

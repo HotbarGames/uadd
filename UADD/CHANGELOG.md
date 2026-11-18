@@ -14,6 +14,15 @@
   the loot search, "can also spawn here" on the map, why a dungeon is hidden).
   Dungeon Journal: оновлено для 2.0.11; його нові написи українською (зміна розміру журналу, нагороди за
   завдання в пошуку здобичі, «Може з'явитися й тут» на мапі, чому підземелля сховано).
+- New command for testers: `/uadd missed`. It is off unless you turn it on with `/uadd missed on`; off, it
+  costs nothing. On, UADD notes each text a module shows in English because it has no Ukrainian for it yet.
+  `/uadd missed` shows how many per module. The list stays on your PC, in UADD's saved settings; nothing is
+  sent. `/uadd missed off` stops it, `/uadd missed clear` empties the list.
+  Нова команда для тестувальників: `/uadd missed`. Вона вимкнена, доки ви не ввімкнете її: `/uadd missed on`;
+  вимкнена, нічого не коштує. Увімкнена, UADD записує кожен напис, який модуль показує англійською, бо ще
+  не має для нього перекладу. `/uadd missed` показує, скільки їх у кожному модулі. Список лишається на вашому
+  комп'ютері, у збережених налаштуваннях UADD; нікуди не надсилається. `/uadd missed off` зупиняє запис,
+  `/uadd missed clear` стирає список.
 - Dialogue UI: updated for 1.0.7 c; its new "Restart" quest button is «Почати знову».
   Dialogue UI: оновлено для 1.0.7 c; його нова кнопка завдання «Restart» тепер «Почати знову».
 

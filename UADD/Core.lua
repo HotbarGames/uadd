@@ -126,6 +126,7 @@ local function ListModules()
     U.Print("Більше: /uadd <модуль>, наприклад /uadd " .. U.order[1])
     U.Print("  /uadd perf — скільки мс забрав останній показ оригіналу (клавіша вниз / вгору)")
     U.Print("  /uadd combat on|off — чи діє клавіша оригіналу в бою (типово ні)")
+    U.Print("  /uadd missed — скільки написів лишилося англійською (on|off|clear)")
 end
 
 -- /uadd combat on: the show-original key does nothing in a fight (the default); off: it works there too.
@@ -165,6 +166,8 @@ SlashCmdList.UADD = function(msg)
         Perf()
     elseif first == "combat" and not spec then
         CombatKey(rest)
+    elseif first == "missed" and not spec and U.MissedCommand then
+        U.MissedCommand(rest)
     elseif spec and type(spec.Command) == "function" then
         U.SafeCall(spec.Command, rest or "")
     else

@@ -50,8 +50,12 @@ function T.Apply(fs, quick)
     end
     if ns.WordsWanted() then
         if not mine[fs] then
-            local uk = ns.Words.Text(orig[fs], ns.Screen.IsBody(fs))
-            if not uk then return end
+            local body = ns.Screen.IsBody(fs)
+            local uk = ns.Words.Text(orig[fs], body)
+            if not uk then                -- quest and book text is the game's prose: never noted
+                if not body then U.Missed("dialogueui", orig[fs], fs) end
+                return
+            end
             Put(fs, uk)
             mine[fs] = uk
             Remember(fs, uk, orig[fs])

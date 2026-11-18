@@ -7,3 +7,5 @@ tools/dj_prose/en_*.lua
 tools/.cache/
 # review files with the target addons' English, made locally by the tools/make_*.py generators
 local/
+# the cost and quality ledger of the translation skills (tools/ledger.py): stays on this PC
+.claude/ledger.tsv

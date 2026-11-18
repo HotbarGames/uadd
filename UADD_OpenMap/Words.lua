@@ -233,6 +233,7 @@ function W.Apply(fs, fresh)
         local uk = mine[fs]
         if not (uk and Whole(uk)) then uk = W.Text(orig[fs]) or uk and orig[fs] end
         if uk and uk ~= now then Put(fs, uk) end
+        if not uk and fresh then U.Missed("openmap", orig[fs], fs) end   -- English: noted (UADD/Missed.lua)
         mine[fs] = uk ~= orig[fs] and uk or nil
     elseif mine[fs] then
         if orig[fs] ~= now then Put(fs, orig[fs]) end

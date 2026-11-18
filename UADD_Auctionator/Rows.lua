@@ -120,7 +120,7 @@ local function OnCell(cell)
     local item = ItemText(cell)
     for _, g in ipairs({ cell:GetRegions() }) do
         if g.GetObjectType and g:GetObjectType() == "FontString" then
-            ns.Texts.Hook(g, nil, g == item and ItemName or nil)
+            ns.Texts.Hook(g, nil, g == item and ItemName or nil, g == item)
             cells = cells + 1
         end
     end
@@ -241,7 +241,7 @@ function R.Item(f)
             for i = 3, #n do g = type(g) == "table" and rawget(g, n[i]) or nil end
             if type(g) ~= "table" or not (g.GetObjectType and g:GetObjectType() == "FontString") then return end
             named[f] = true
-            ns.Texts.Hook(g, nil, ItemName)
+            ns.Texts.Hook(g, nil, ItemName, true)
             names = names + 1
             return
         end
