@@ -60,6 +60,18 @@ end
 function M.hooked(name) return NS().Texts.Hooked(S().texts[name]) end
 function M.stale(name) return NS().Texts.Stale(S().texts[name]) end
 function M.uk(en) return NS().Words.Text(en) end
+
+-- UALL Forever's zone names (UADD.UALL.Zone, UADD/uall.lua) as a stand-in that knows one name:
+-- en -> ua. With `wait` it answers "not now", as in combat. No en: the real one back.
+function M.zoneStub(en, ua, wait)
+    local A = UADD.UALL
+    A.__zone = A.__zone or A.Zone
+    if en == nil then A.Zone = A.__zone return end
+    A.Zone = function(name)
+        if wait then return nil, true end
+        if name == en then return ua end
+    end
+end
 function M.fontCount() return NS().Fonts.Count() end
 function M.textCount() return NS().Texts.Count() end
 function M.wordCount() return NS().Words.Count() end

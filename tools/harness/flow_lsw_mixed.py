@@ -74,9 +74,48 @@ def glued(check, M):
     check(f"{name} ({n})", n and not bad, bad[:2])
 
 
+def dashed(check, M):
+    """The lines LayerSwap glues with a wide dash ("  -  "), built from the installed addon's texts:
+    a layer row (its name, the dash, its id) and the menu row made of one, all Ukrainian; the panel's
+    zone line (id, dash, the game's zone name) takes the name from UALL Forever, stays whole English
+    when UALL has none, and is asked again after a "not now" (docs/LESSONS.md, lessons 6 and 7)."""
+    import make_lsw_data
+    name = "the dashed layer rows and zone line"
+    if not make_lsw_data.have_addon():
+        return check(f"{name} (LayerSwap not installed)", True, "")
+    kept, _ = make_lsw_data.collect()
+    by_key = {hashtext.key(en): en for _, en in make_lsw_data.texts(kept)}
+    dash, bad = "  -  ", []
+    label = halves.fill(by_key["8:ebb2717a"], lambda k, _: "C")
+    row = label + dash + "6864-5"
+    want = txt(M.uk(lua_str(label)) or "") + "  —  6864-5"
+    got = txt(M.uk(lua_str(row)) or "")
+    if got != want or _english_left(got):
+        bad.append((row, got, want))
+    menus = [en for en in by_key.values() if en.startswith("%s" + dash) and re.search("[A-Za-z]", en[6:])]
+    for en in menus:
+        text = halves.fill(en, lambda k, _: row)
+        got = M.uk(lua_str(text))
+        if not got or _english_left(txt(got)) or want not in txt(got):
+            bad.append((text, got and txt(got), want))
+    check(f"{name}: rows all Ukrainian ({1 + len(menus)})", menus and not bad, bad[:2])
+
+    zone, known, ua, unknown = "7102-8", "Wobbly Gizmo Vale", "Хитка долина", "Other Gizmo Glen"
+    line, other = lua_str(zone + dash + known), lua_str(zone + dash + unknown)
+    M.zoneStub(lua_str(known), lua_str(ua), True)        # "not now" first: nothing may be kept
+    waited = M.uk(line)
+    M.zoneStub(lua_str(known), lua_str(ua), False)
+    got, miss = M.uk(line), M.uk(other)
+    M.zoneStub(None, None, False)
+    check(f"{name}: zone line from UALL, whole English without it",
+          waited is None and got is not None and txt(got) == zone + "  —  " + ua and miss is None,
+          (waited and txt(waited), got and txt(got), miss and txt(miss)))
+
+
 def checks(check, eq, M, EN, UK, Cyr, c):
     halves_mods.lsw(check, M)
     glued(check, M)
+    dashed(check, M)
     M.menu(True, 3)
     M.wait(0.1)
     _same(check, "before Shift: Ukrainian", _all(M, EN, UK, "uk", "D"))

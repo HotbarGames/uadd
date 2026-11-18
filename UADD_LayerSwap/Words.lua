@@ -8,6 +8,8 @@
 --   * A text in one colour (|cff..text|r) is translated inside the colour.
 --   * A text glued from several of the addon's own (a help line, a title and a dash) is split at its
 --     first joining mark (Parts); every piece must be one of its texts.
+--   * The panel's zone line (a layer's id, a wide dash, the game's zone name): the name from UALL
+--     Forever (ZoneLine); a name it does not know keeps the whole line English.
 --   * Plural forms: our Ukrainian may hold {one|few|many}, e.g. "5 {гравець|гравці|гравців}". The form
 --     is picked by the last number before the mark (Plural). A mark with no number before it inside a
 --     piece is kept until the whole line is put together, then picked; with no number at all, "many".
@@ -204,7 +206,7 @@ end
 -- Ukrainian letters may have no bullet. The help line's wide bar comes first (before the wide gap).
 local SEPS = { { "   |   ", "   |   " }, { "\n", "\n" }, { "  |  ", "  |  " },
     { "   \226\128\162   ", "   —   " }, { "  \226\128\162  ", "  —  " }, { " \226\128\162 ", " — " },
-    { " - ", " — " }, { "   ", "   " } }
+    { "  -  ", "  —  " }, { " - ", " — " }, { "   ", "   " } }
 
 -- A piece: no letters stays as it is; the rest goes through Text, so a piece, found or not, is kept.
 local function Piece(t, depth)
@@ -226,14 +228,31 @@ Parts = function(t, depth)
     return nil
 end
 
+-- The panel's zone line (a layer's id, a wide dash, the zone's name from the game) with the name from
+-- UALL Forever (lesson 6), or nil: a name it does not know keeps the whole line English. Second
+-- return true: UALL said "not now" (combat, the hold key), so the answer must not be kept.
+local function ZoneLine(t)
+    local id, zone = t:match("^([%d%-]+)  %-  (.+)$")
+    local A = U.UALL
+    if not id or zone:find(CYR) or not (A and A.Zone) then return nil end
+    local ok, uk, wait = pcall(A.Zone, zone)
+    if not ok then return nil end
+    if wait then return nil, true end
+    return uk and (id .. "  —  " .. uk) or nil
+end
+
 -- A text LayerSwap showed, in Ukrainian (plural marks with a number before them picked), or nil.
 -- A text with no letters returns at once and is not kept.
 Text = function(t, fs, depth)
     if type(t) ~= "string" or not t:find("%a") then return nil end
     local hit = memo[t]
     if hit ~= nil then return hit or nil end
-    local uk
+    local uk, wait
     if not t:find(CYR) then uk = Plural(One(t, fs, depth or 0), false) end
+    if not uk and not depth then
+        uk, wait = ZoneLine(t)
+        if wait then return nil end   -- asked again at the panel's next refresh (every second)
+    end
     if memoSize >= MEMO_MAX then wipe(memo) memoSize = 0 end
     memo[t], memoSize = uk or false, memoSize + 1
     return uk

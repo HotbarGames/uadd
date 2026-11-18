@@ -7,6 +7,7 @@
   event names, paths, slash-only help lines, the addon's own name; each text is listed once;
 - every template has a slot and a few known texts are there;
 - each Ukrainian keeps its English's % slots, | codes and the spaces at its ends;
+- the texts of the panel's fixed boxes (status box, host line) are not much longer than the English;
 - data/words.lua keeps one record per line (the tool reads it back without a Lua parser);
 - the scanner, the rules and the data writer work on a small made-up addon (no game folder needed).
 
@@ -23,6 +24,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+import fxpb_scan as S  # noqa: E402
 import glossary  # noqa: E402
 import hashtext as H  # noqa: E402
 import luatok  # noqa: E402
@@ -115,6 +117,57 @@ class Data(unittest.TestCase):
                                      "other | codes or % signs")
                 self.assertEqual((en[:1] == " ", en[-1:] == " "), (value[:1] == " ", value[-1:] == " "),
                                  "leading/trailing space differs")
+
+    def test_box_texts_not_much_longer_than_english(self):
+        """Texts in the panel's fixed boxes fit (docs/LESSONS.md, lesson 5): the status box (2 lines: what
+        statusLine returns, its constants, setNotice) and the host line (3 lines: askLine, the hosting
+        counts). The Ukrainian may be at most 10% longer than the English, or up to CAP letters. Letters
+        are counted with no colour codes or % slots, and a plural mark counts as its longest form."""
+        CAP = {"status": 50, "host": 75}
+        src = luatok.read(M.addon_dir() / M.MAIN)
+        lines = src.split("\n")
+        toks = list(luatok.tokens(src))
+
+        def body(pattern):   # the lines of a local function, by its keywords' depth
+            start = next(n for n, s in enumerate(lines, 1) if re.search(pattern, s))
+            depth = 0
+            for t in toks:
+                if t[0] != luatok.NAME or t[2] < start:
+                    continue
+                if t[1] in ("function", "if", "do", "repeat"):
+                    depth += 1
+                elif t[1] in ("end", "until"):
+                    depth -= 1
+                    if depth == 0:
+                        return set(range(start, t[2] + 1))
+            self.fail(f"no end for {pattern}")
+
+        status = body(r"^local function statusLine\(") | {
+            n for n, s in enumerate(lines, 1) if re.search(r"\b(HOST_OFF_LINE|PENDING_TEXT|FLASH_LINE)\s*=\s*\"", s)}
+        status |= {it.line for it in S.scan(src) if it.sink.startswith("call:setNotice")}
+        host = body(r"^local function askLine\(") | {
+            n for n, s in enumerate(lines, 1) if re.search(r"hostLine:SetText\(string\.format\(", s)}
+        self.assertTrue(len(status) > 100 and len(host) > 20)
+
+        def letters(s):
+            s = re.sub(r"\|c[0-9a-fA-F]{8}|\|r|%[-.\d]*[sd]", "", s)
+            return len(re.sub(r"\{([^{}|]*)\|([^{}|]*)\|([^{}|]*)\}", lambda m: max(m.groups(), key=len), s))
+
+        g = glossary.Glossary()
+        seen = 0
+        for area, _, _ in M.AREAS:
+            for kind, en, where in self.kept[area]:
+                at = {int(w[1:]) for w in where if w[:1] == "L" and w[1:].isdigit()}
+                box = "status" if at & status else "host" if at & host else None
+                value = box and W.text_of(W.ukrainian([(kind, en)], self.data).get(en), g)
+                if not value:
+                    continue
+                seen += 1
+                ua, eng = letters(value), letters(en)
+                with self.subTest(key=H.key(en), box=box):
+                    self.assertLessEqual(ua, max(eng * 1.10, CAP[box]),
+                                         f"{ua} letters, English {eng}: use shorter words, never a smaller font")
+        self.assertGreater(seen, 40)
 
 
 class DataFile(unittest.TestCase):

@@ -109,8 +109,12 @@ Ukrainian may be at most 2 letters longer than its English; a longer one gets a 
 the full words) or goes in `LONG` with a reason. It was added after the Selling tab cut «Рівень предмета»
 to «Рівень пред...». Everything else is manual: in the game, make the window or bar as narrow as it goes
 and look at each row with two texts. `python3 tools/harness/run.py` only checks that the module keeps the
-addon's font size and outline ("keeps its own size and outline, also on resize"); no script measures
-other texts' length yet. This is a gap.
+addon's font size and outline ("keeps its own size and outline, also on resize").
+LayerSwap's fixed boxes: `python3 -m unittest tools.test_lsw_strings` (`test_box_texts_not_much_longer_than_english`).
+Each text of the panel's status box (2 lines) and host line (3 lines) may be at most 10% longer than its
+English (read from the installed addon), or up to 50 / 75 letters. It was added after the help line
+«Хост вимкнено до виходу з гри. Увімкнений хост допомагає гравцям LayerSwap змінити ша...» was cut.
+Other modules' texts are not measured yet. This is a gap.
 
 ## 6. A name with extra text glued on
 
@@ -148,3 +152,7 @@ free slot at the start or end of a template gets a name glued to made-up English
 or " - "; an output that changed and still has the made-up English fails.
 LayerSwap's flow also builds its real glued lines from the installed addon (`glued()` in
 `tools/harness/flow_lsw_mixed.py`) and wants each one all Ukrainian, each half as it is alone.
+`dashed()` there does the same for the lines glued with a wide dash ("  -  "): a layer row («Шар C  —
+6864-5») stayed English because Words.lua split it at " - " and kept a space on the name. A new joining
+mark goes in `SEPS` (Words.lua), wider marks before narrower ones. The panel's zone line (id, dash, zone)
+takes the zone's name from UALL Forever (lesson 6) and stays whole English when UALL has none.
