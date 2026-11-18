@@ -22,6 +22,7 @@ M.SEED = {
     ["Time this level: %s"] = "Час на цьому рівні: %s",
     ["%s XP/Hour"] = "%s досвіду/год",
     ["Leveling in: %s (%s)"] = "Новий рівень через: %s (%s)",
+    ["Leveling in: %s (%s XP/Hour)"] = "Новий рівень через: %s (%s/год)",   -- the whole line beats the nested one
     ["-- XP/Hour"] = "-- досвіду/год",
     ["Left-click: settings"] = "Ліва кнопка: налаштування",
     ["Right-click: lock/unlock bar"] = "Права кнопка: закріпити панель",
@@ -112,6 +113,45 @@ function M.uk(en) return NS().Words.Text(en) end
 function M.memo() return NS().Words.MemoSize() end
 function M.hookCalls() return NS().Texts.HookCalls() end
 function M.fontCount() return NS().Fonts.Count() end
+
+-- ForeverXP Bar's own resize (Fx._applyFonts: the player moved a text size slider): SetFont again.
+local function Resize(name, size, flags)
+    local f = S().fonts[name]
+    f[2], f[3] = size, flags
+    S().texts[name]:SetFont(f[1], size, flags)
+end
+
+-- Every stand-in text in our font: the size and flags ForeverXP Bar gave it (its SetFont, else its font
+-- object's), checked as it is, then with underLeft resized to 15 OUTLINE (put back after). Returns how
+-- many were checked, the ones that differ ("name size/flags want size/flags"), and underLeft's resized font.
+local function Kept(n, bad)
+    for name, fs in pairs(S().texts) do
+        local p, size, flags = fs:GetFont()
+        if UADD.IsCyrFont(p) then
+            local own = S().fonts[name]
+            local _, wsize, wflags
+            if own then wsize, wflags = own[2], own[3]
+            elseif fs:GetFontObject() then _, wsize, wflags = fs:GetFontObject():GetFont() end
+            n = n + 1
+            if size ~= wsize or (flags or "") ~= (wflags or "") then
+                bad[#bad + 1] = ("%s %s/%s want %s/%s"):format(name, tostring(size), tostring(flags),
+                    tostring(wsize), tostring(wflags))
+            end
+        end
+    end
+    return n
+end
+function M.fontsKept()
+    local bad = {}
+    local n = Kept(0, bad)
+    local was = { unpack(S().fonts.underLeft) }
+    Resize("underLeft", 15, "OUTLINE")
+    local p, size, flags = M.font("underLeft")
+    n = Kept(n, bad)
+    Resize("underLeft", was[2], was[3])
+    table.sort(bad)
+    return n, table.concat(bad, "; "), p, size, flags
+end
 function M.extras() return #NS().Screen.Extras() end
 function M.tipLine(i, side) return _G["GameTooltipText" .. (side or "Left") .. i]:GetText() end
 function M.tipFont(i) return (_G["GameTooltipTextLeft" .. i]:GetFont()) end
@@ -134,7 +174,8 @@ function M.want(i, mode)
     local left = ("Leveling in: %s (%s)"):format(("%dh %02dm"):format(i % 5, i % 60), rate)
     if mode == "uk" then   -- the time in Ukrainian too (Time.lua): "4 год 03 хв"
         local r = (i % 50 == 0) and M.SEED["-- XP/Hour"] or M.SEED["%s XP/Hour"]:format(Short(20000 + i * 13))
-        left = M.SEED["Leveling in: %s (%s)"]:format(("%d год %02d хв"):format(i % 5, i % 60), r)
+        local t = ("%d год %02d хв"):format(i % 5, i % 60)
+        left = M.SEED["Leveling in: %s (%s XP/Hour)"]:format(t, (i % 50 == 0) and "--" or Short(20000 + i * 13))
         rate = r
     end
     return rate, left

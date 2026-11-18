@@ -85,6 +85,9 @@ TEXT_FIELDS = {"text", "label", "name", "button1", "button2", "title", "desc", "
 JOINED = [
     ["|cFFFF9A8A~%s", "8:2d527dd2", " |cFFFFFFFF•|r |cFFFFD27A~%s", "9:ed130558"],   # kills and quests to level, each in its colour
     ["13:583cea8f", "%s  (%s", "7:7610643f"],   # XP gained with the hourly rate
+    # Time to level with the hourly rate, under the bar: its own short Ukrainian, so the big left line
+    # stays clear of the Completed/Rested line on a narrow bar (the nested "%s XP/Hour" is longer).
+    ["13:6fe4bc8c", "%s (%s", "8:380b5d7a", ")"],
     ["6:c08d2fdd", "%d • %.1f%%"],   # text styles: level and percent
     ["%s", "6:58e93956", " • ", "10:5684dfcc", "%s • %.1f%%"],   # text styles: rate, time to level, percent
     ["%s", "6:58e93956", " • %.1f%%"],   # text styles: rate and percent

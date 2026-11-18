@@ -16,10 +16,12 @@ local PREFIX = "|cff8ee6deForeverXP Bar|r "
 S.PREFIX, S.OWN_FONT, S.BAR_FONT = PREFIX, OWN_FONT, BAR_FONT
 S.sent = {}      -- what it sent to other players: { kind, text }
 S.texts = {}     -- name -> FontString
+S.fonts = {}     -- name -> { file, size, flags }: the font it set (the checks compare ours with it)
 
 local function Text(parent, name, font, size, flags, text)
     local fs = parent:CreateFontString(nil, "OVERLAY")
     fs:SetFont(font, size, flags)
+    S.fonts[name] = { font, size, flags }
     if text then fs:SetText(text) end
     S.texts[name] = fs
     return fs

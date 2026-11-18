@@ -92,6 +92,8 @@ def game_a(check, facts):
     flow_fxpb_mixed.checks(check, _eq, M, S)   # hints; never a half-translated line
     p, size, flags = M.font("underLeft")
     check("own Latin font -> Cyrillic font, size and flags kept", Cyr(p) and size == 14 and flags == "", f"{p} {size} {flags!r}")
+    n, bad, p, size, flags = M.fontsKept()   # all its texts, also after its own resize of one (15, OUTLINE)
+    check("every text keeps its own size and outline, also on resize", n >= 3 and not txt(bad) and Cyr(p) and (size, txt(flags)) == (15, "OUTLINE"), f"{n}; {bad}; {p} {size} {flags!r}")
     p = M.font("lock")[0]
     check("ARIALN label keeps its own font", txt(p) == "Fonts\\ARIALN.TTF", p)
     check("guard (no Ukrainian in a font without Ukrainian letters)", not session.cyr_boxes(c), session.cyr_boxes(c)[:3])
