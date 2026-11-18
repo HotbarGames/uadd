@@ -1,5 +1,11 @@
 # UADD
 
+## Lessons (read first)
+
+@docs/LESSONS.md
+
+When a new kind of problem is found, add a lesson there and a check in the same commit as the fix.
+
 ## Other addons' texts
 
 **Rule.** Never commit another addon's text or code in bulk unless its licence allows it.
