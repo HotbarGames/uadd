@@ -33,7 +33,7 @@
 | Warning: | Увага: |
 | inn | корчма |
 | auction house | аукціон |
-| the instance portal | портал інстансу |
+| the instance portal | портал підземелля |
 | corpse | тіло |
 | job (rogue contract) | замовлення |
 | English mob/object names not in placeholders | kept as written, plural included (8 Ragefire Troggs) |

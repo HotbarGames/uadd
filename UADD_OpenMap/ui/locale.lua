@@ -283,7 +283,7 @@ local MAP = {
     ["Waypoint"] = G"map.waypoint",
     ["When reopening the map"] = "Коли карта відкривається знову",
     ["You aren't on the world map here (an instance or a place it doesn't cover)."] =
-        "Тут вас немає на карті світу (інстанс чи місце поза нею).",
+        "Тут вас немає на карті світу (підземелля чи місце поза нею).",
     ["Zone"] = G"game.zone",
     ["Always remember"] = "Завжди пам'ятати",
     ["Center on player"] = "Центр на гравці",
@@ -436,7 +436,7 @@ local MAP = {
     ["Fold your buttons away"] = "Згорнути ваші кнопки",
     ["Follow new pins"] = "Стежити за новими позначками",
     ["Full-screen map fills the width"] = "Карта на весь екран — на всю ширину",
-    ["Hide world markers in instances"] = "Сховати мітки світу в інстансах",
+    ["Hide world markers in instances"] = "Сховати мітки світу в підземеллях",
     ["How far in the map zooms, in times the whole-world view (cities go half as far again). Past about 48 the art is only enlarged."] =
         "Наскільки карта наближається, у разах від вигляду всього світу (міста — ще в півтора раза). Після приблизно 48 зображення лише збільшується.",
     ["Icon size"] = "Розмір значків",

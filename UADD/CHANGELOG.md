@@ -3,6 +3,8 @@
 ## Unreleased
 
 - The addon list shows the UADD logo as the icon of UADD and of each module, instead of a red question mark.
+- "Instance" is now «підземелля» everywhere, not «інстанс»: in the settings of Questie, Dialogue UI and
+  OpenMap, in the Dungeon Journal and in Attune's notes.
 
 ## 1.0.0
 

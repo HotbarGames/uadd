@@ -24,7 +24,7 @@ Phrases:
 Nouns:
 - quilboar → свинобраз; highborne → високородний; centaur → кентавр; giants → велетні; screechers → верескуни
 - arcane elementals / orbs → таємні елементалі / сфери
-- instance portal → портал інстансу; outer cave(s) → зовнішня печера (зовнішні печери)
+- instance portal → портал підземелля; outer cave(s) → зовнішня печера (зовнішні печери)
 - pylon → пілон; power source → джерело енергії; power stones → енергетичні камені; construct → конструкт
 - reward voucher → талон на нагороду; vial → флакон; brazier → жаровня; conduit → канал; mould → ливарна форма
 - necklace → намисто; gems → самоцвіти; tablet → табличка; chain (quest chain) → ланцюжок

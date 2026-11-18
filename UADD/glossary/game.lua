@@ -22,7 +22,7 @@ E{ id = "game.class", en = "Class", uk = "Клас", note = "Character class (wa
 E{ id = "game.group", en = { "Group", "Party" }, uk = "Група", note = "A party of up to five players; a group quest tag; the party chat channel." }
 E{ id = "game.raid", en = "Raid", uk = "Рейд", note = "A big group, a raid instance, a raid quest tag." }
 E{ id = "game.dungeon", en = { "Dungeon", "Dungeons" }, uk = "Підземелля", note = "Five-player instance (one or many: same word); a dungeon quest tag." }
-E{ id = "game.instance", en = "Instance", uk = "Інстанс", note = "A private copy of a dungeon or raid." }
+E{ id = "game.instance", en = "Instance", uk = "Підземелля", note = "A private copy of a dungeon or raid." }
 E{ id = "game.scenario", en = "Scenario", uk = "Сценарій", note = "Scenario: a short instanced story for a few players." }
 E{ id = "game.scenarios", en = "Scenarios", uk = "Сценарії", note = "Many scenarios; a category." }
 E{ id = "game.battlegrounds", en = "Battlegrounds", uk = "Поля бою", note = "PvP battlegrounds; a category." }

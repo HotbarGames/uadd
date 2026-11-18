@@ -33,4 +33,5 @@ All six `uk_*.lua` files follow this list. Order of choice: the glossary first, 
 | Site / product names (Forever, Classic, Mobalytics, Wowhead) | stay English, no «» | they are not game names |
 | BRD / UBRS / LBRS | Глибини Блекрок / Верхній Шпиль Блекрок / Нижній Шпиль Блекрок | UALLF dungeon names |
 
-Kept as they were: Зброярня / Собор / крило «Library» for Scarlet Monastery wings, допуск (attunement), інстанс, Орда, Альянс.
+Kept as they were: Зброярня / Собор / крило «Library» for Scarlet Monastery wings, допуск (attunement), Орда, Альянс.
+Instance → підземелля: поза підземеллям, портал підземелля; when the dungeon is named just before, «перед його порталом».

@@ -208,7 +208,7 @@ ns.UA = {
     ["Maintain Camera Position Desc"] = "Ненадовго зберігати позицію камери після кінця розмови з НІП.\n\nЦе зменшить різкі рухи камери через затримку між діалогами.",
     ["Change FOV"] = "Змінювати поле зору", -- LONG
     ["Change FOV Desc"] = "Зменшувати поле зору камери, щоб наблизитися до НІП.",
-    ["Disable Camera Movement Instance"] = "Вимкнути в інстансі",
+    ["Disable Camera Movement Instance"] = "Вимкнути в підземеллі",
     ["Disable Camera Movement Instance Desc"] = "Вимикати рух камери в підземеллі чи рейді.",
     ["Maintain Offset While Mounted"] = "Зберігати зсув верхи",
     ["Maintain Offset While Mounted Desc"] = "Намагатися зберігати позицію вашого персонажа на екрані, коли ви верхи.\n\nДля великих верхових тварин зсув по горизонталі може вийти завеликим.",
@@ -291,7 +291,7 @@ ns.UA = {
     ["Nameplate Dialog"] = "Діалог на табличці імені",
     ["Nameplate Dialog Desc"] = "Показувати діалог на табличці імені НІП, якщо він не пропонує вибору.\n\nЦей параметр змінює CVar \"SoftTarget Nameplate Interact\".",
     ["Compatibility"] = "Сумісність",
-    ["Disable DUI In Instance"] = "Стандартний інтерфейс в інстансі",
+    ["Disable DUI In Instance"] = "Стандартний інтерфейс у підземеллі",
     ["Disable DUI In Instance Desc"] = "Вимикати Dialogue UI і використовувати стандартний інтерфейс WoW у підземеллі чи рейді.",
 
     ["Disable UI Motions"] = "Менше руху інтерфейсу",
