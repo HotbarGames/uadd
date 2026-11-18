@@ -533,3 +533,20 @@ ns.UA_MADE = {
     { key = "AUCTION_DURATION_12", from = "12", to = "2", uk = "2 год" },
     { key = "AUCTION_DURATION_24", from = "24", to = "8", uk = "8 год" },
 }
+
+-- Bag group titles on the Selling tab: the game's item class names, by their Enum.ItemClass name.
+-- Words.lua reads the English from GetItemClassInfo at run time.
+ns.UA_CLASS = {
+    Weapon = G"gear.weapon",
+    Armor = G"gear.armor",
+    Container = G"item.bag",
+    Consumable = G"item.consumable",
+    Tradegoods = G"vendor.trade_goods",
+    Projectile = G"gear.projectile",
+    Quiver = G"item.quiver",
+    Recipe = G"item.recipe",
+    Reagent = G"item.reagent_class",
+    Miscellaneous = G"item.misc",
+    Questitem = G"game.quest",
+    Key = G"item.key",
+}

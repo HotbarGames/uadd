@@ -11,6 +11,8 @@
     (Rows.lua asks those cells again);
   * the hold key let go in a fight: tooltip and menu back in Ukrainian when combat ends;
   * the cost of a text with a blank line that is not in the memo yet (facts);
+  * the Selling tab (number box label, bag group titles, headers of its hidden history tables) and
+    the Cancelling list's item names from UALL Forever (selling_cancelling);
   * what a template's %s may hold (slots): made-up English in a slot leaves the line English
     (halves_mods.auc, on every real template; its free-slot marks: tools/test_halves.py).
 The expected Ukrainian is read from the module's data (flow_auc.lua), not from the module's answers.
@@ -144,7 +146,111 @@ def run(check, c, M, u, uo, facts):
     facts["nl_miss_ms_en"] = round(M.missCost(MISSES, "en"), 4)
     facts["line_miss_ms_en"] = round(M.missCost(MISSES, "line"), 4)
     check("blank-line texts kept in the memo (found or not)", M.memo() - memo0 >= 2 * MISSES, f"{memo0} -> {M.memo()}")
+    selling_cancelling(check, c, M, u)
     slots(check, c, M, u)
+
+
+# The bag view's groups after Favourites, in the stand-in's order (Enum.ItemClass names).
+CLASSES = ("Weapon", "Armor", "Container", "Consumable", "Tradegoods", "Projectile", "Quiver", "Recipe",
+           "Reagent", "Miscellaneous", "Questitem", "Key")
+# Made-up answers of UALL Forever's item names (the test only needs some Ukrainian back).
+UALL = {"Heavy Hide": "Важка шкура", "Revenant Girdle of Fire Protection": "Пояс вогнезахисту",
+        "Rugged Hide": "Груба шкура"}
+
+
+def selling_cancelling(check, c, M, u):
+    """The Selling tab and the Cancelling list:
+      * the number box's label (it sits inside its edit box), the box's own number untouched;
+      * the bag group titles: Favourites and the game's item class names (ns.UA_CLASS);
+      * the hidden history tables: headers named at load, Ukrainian while hidden and when shown;
+      * item names from UALL Forever (stubbed): colour and item level kept, a name with no answer
+        English, "not now" asked again later, in combat only names found before;
+      * Shift: all of them exact English, and Ukrainian again when it is let go."""
+    lua = c.lua
+    en = M.standInEN()
+
+    def eq(name, got, want):
+        got = txt(got)
+        check(name, got == want, f"{got!r} | want {want!r}")
+
+    def lstr(s):
+        return s.encode("utf-8").decode("latin-1")
+
+    def owned(rows):
+        M.owned(lua.table_from([lua.table_from([lstr(n), q]) for n, q in rows]))
+
+    eq("selling: quantity label Ukrainian", M.text("text", "quantityLabel"), u("QUANTITY"))
+    eq("selling: quantity box number untouched", M.boxText(), "1")
+
+    M.bagView()
+    eq("selling: group Favourites Ukrainian", M.text("group", 1), u("FAVOURITES"))
+    for i, k in enumerate(CLASSES, 2):
+        eq(f"selling: group {k} Ukrainian", M.text("group", i), txt(M.uaClass(k)))
+    check("selling: group titles hooked", M.groupsHooked() == len(CLASSES) + 1, M.groupsHooked())
+    M.bagView()                                     # named again from the pool
+    eq("selling: group named again Ukrainian", M.text("group", 2), txt(M.uaClass("Weapon")))
+
+    eq("history table hidden: price header Ukrainian", M.text("header", "realmPrice"), u("UNIT_PRICE"))
+    eq("history table hidden: date header Ukrainian", M.text("header", "realmDate"), u("DATE"))
+    M.toggleHistory(True)
+    eq("history table shown: price header Ukrainian", M.text("header", "realmPrice"), u("UNIT_PRICE"))
+    eq("history table shown: date header Ukrainian", M.text("header", "realmDate"), u("DATE"))
+
+    M.uallStub(lua.table_from({lstr(k): lstr(v) for k, v in UALL.items()}))
+    M.wait(1.1)                                     # Rows.lua asks if UALL is there once a second
+    green, purple, white = "|cff1eff00", "|cffa335ee", "|cffffffff"
+    rows = [(green + "Heavy Hide|r", "5"), (purple + "Revenant Girdle of Fire Protection|r (35)", "1"),
+            (white + "Pristine Hide|r", "2")]
+    owned(rows)
+    eq("cancelling: item name Ukrainian, colour kept", M.text("cell", "cancel", 1, 1),
+       green + UALL["Heavy Hide"] + "|r")
+    eq("cancelling: item name Ukrainian, item level kept", M.text("cell", "cancel", 2, 1),
+       purple + UALL["Revenant Girdle of Fire Protection"] + "|r (35)")
+    eq("cancelling: item with no Ukrainian stays English", M.text("cell", "cancel", 3, 1), rows[2][0])
+    eq("cancelling: quantity untouched", M.text("cell", "cancel", 1, 2), "5")
+    asked = M.uallAsked()
+    owned(rows)
+    check("cancelling: names asked once (memo)", M.uallAsked() == asked, f"{asked} -> {M.uallAsked()}")
+
+    M.key(True)
+    M.wait(HELD)
+    eq("Shift: quantity label exact English", M.text("text", "quantityLabel"), txt(en["QUANTITY"]))
+    eq("Shift: group Favourites exact English", M.text("group", 1), txt(en["FAVOURITES"]))
+    eq("Shift: group Weapon exact English", M.text("group", 2), txt(M.className("Weapon")))
+    eq("Shift: history header exact English", M.text("header", "realmPrice"), txt(en["UNIT_PRICE"]))
+    eq("Shift: item name exact English", M.text("cell", "cancel", 2, 1), rows[1][0])
+    M.key(False)
+    M.wait(HELD)
+    eq("Shift up: quantity label Ukrainian", M.text("text", "quantityLabel"), u("QUANTITY"))
+    eq("Shift up: group Weapon Ukrainian", M.text("group", 2), txt(M.uaClass("Weapon")))
+    eq("Shift up: history header Ukrainian", M.text("header", "realmPrice"), u("UNIT_PRICE"))
+    eq("Shift up: item name Ukrainian", M.text("cell", "cancel", 1, 1), green + UALL["Heavy Hide"] + "|r")
+
+    rugged = green + "Rugged Hide|r"
+    M.setUallWait(True)
+    owned([(rugged, "3")] + rows)
+    eq("UALL 'not now': item name English for now", M.text("cell", "cancel", 1, 1), rugged)
+    M.setUallWait(False)
+    M.wait(1.1)
+    eq("UALL ready again: item name Ukrainian", M.text("cell", "cancel", 1, 1), green + UALL["Rugged Hide"] + "|r")
+
+    M.combat(True)
+    thick = green + "Thick Hide|r"
+    owned([(thick, "1")] + rows)
+    eq("combat: new item name stays English", M.text("cell", "cancel", 1, 1), thick)
+    eq("combat: known item name Ukrainian", M.text("cell", "cancel", 2, 1), green + UALL["Heavy Hide"] + "|r")
+    M.combat(False)
+    owned(rows)
+    M.toggleHistory(False)
+
+
+def selling_off(check, M):
+    """'/uadd auctionator off': the Selling tab's texts and the Cancelling item names exact English."""
+    en = M.standInEN()
+    for where, want in ((("text", "quantityLabel"), en["QUANTITY"]), (("header", "realmPrice"), en["UNIT_PRICE"]),
+                        (("group", 2), M.className("Weapon")), (("cell", "cancel", 1, 1), "|cff1eff00Heavy Hide|r")):
+        got, want = txt(M.text(*where)), txt(want)
+        check(f"off: {where[0]} {where[1]} exact English", got == want, f"{got!r} | want {want!r}")
 
 
 def slots(check, c, M, u):

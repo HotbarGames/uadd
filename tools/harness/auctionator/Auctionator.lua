@@ -4,9 +4,11 @@
 --   * texts given when a frame is made (XML text="..."), a label set in OnLoad from a KeyValue,
 --     SetText(AUCTIONATOR_L_X) later, and :format templates;
 --   * results lists whose rows and cells are made only when first needed, string cells that call
---     AuctionatorCellMixin.Populate through the global table, column headers with Button:SetText;
+--     AuctionatorCellMixin.Populate through the global table, column headers with Button:SetText,
+--     item cells (the Cancelling list) with the item's coloured name;
 --   * chat lines with the coloured "Auctionator: " prefix, "/atr help", a StaticPopup question,
---     tooltip price lines and a column menu (its own dialogs and purchase dialogs: Dialogs.lua).
+--     tooltip price lines and a column menu (its own dialogs and purchase dialogs: Dialogs.lua;
+--     the Selling tab: Selling.lua).
 -- Its fonts are its own (StandIn.ttf 13 OUTLINE), not the font UADD puts in, so "off" can be checked.
 local S = { texts = {}, lists = {}, headers = {}, cellsMade = 0, setTexts = 0 }
 AuctionatorStandIn = S
@@ -102,6 +104,14 @@ function AuctionatorStringCellTemplateMixin:Populate(rowData, index)
     self.text:SetText(rowData[self.columnName])
 end
 
+-- The item column (ItemKeyCell.lua): the item's name in its colour, next to its icon.
+AuctionatorItemKeyCellTemplateMixin = CreateFromMixins(AuctionatorCellMixin)
+function AuctionatorItemKeyCellTemplateMixin:Init() self.Text:SetJustifyH("LEFT") end
+function AuctionatorItemKeyCellTemplateMixin:Populate(rowData, index)
+    AuctionatorCellMixin.Populate(self, rowData, index)
+    self.Text:SetText(rowData.itemName or "")
+end
+
 AuctionatorResultsRowTemplateMixin = {}
 function AuctionatorResultsRowTemplateMixin:Populate(rowData, dataIndex)
     self.rowData = rowData
@@ -158,9 +168,17 @@ local function Row(l, i)
     local r = Mixin(CreateFrame("Button", nil, l.ScrollArea), AuctionatorResultsRowTemplateMixin)
     r.cells = {}
     for c, column in ipairs(l.columns) do
-        local cell = Mixin(CreateFrame("Frame", nil, r), AuctionatorStringCellTemplateMixin)
-        cell.text = Text(cell)
-        cell:Init(column)
+        local cell
+        if column == "item" then                         -- AuctionatorItemKeyCellTemplate
+            cell = Mixin(CreateFrame("Frame", nil, r), AuctionatorItemKeyCellTemplateMixin)
+            cell.Icon = cell:CreateTexture()
+            cell.Text = Text(cell)
+            cell:Init()
+        else
+            cell = Mixin(CreateFrame("Frame", nil, r), AuctionatorStringCellTemplateMixin)
+            cell.text = Text(cell)
+            cell:Init(column)
+        end
         r.cells[c] = cell
         S.cellsMade = S.cellsMade + 1
     end
@@ -222,6 +240,9 @@ function S.Total(onSale, pending)
     cancel.Total:SetText(text)
 end
 
+-- Its list of the player's auctions: the item column, then the quantity (Cancelling DataProvider).
+List("cancel", cancel, { "item", "quantity" })
+
 -- The item history: a list with a date column (PostingHistory/Mixin.lua).
 local history = Tab("AuctionatorItemHistoryFrame")
 List("history", history, { "date", "price" })
@@ -259,12 +280,12 @@ function S.ColumnMenu()
 end
 
 -- The auction house opens and closes.
-local tabs = { shop, export, cancel, history }
+S.tabs = { shop, export, cancel, history }                        -- Selling.lua adds its tab
 local events = CreateFrame("Frame")
 events:RegisterEvent("AUCTION_HOUSE_SHOW")
 events:RegisterEvent("AUCTION_HOUSE_CLOSED")
 events:SetScript("OnEvent", function(_, event)
-    for _, f in ipairs(tabs) do
+    for _, f in ipairs(S.tabs) do
         if event == "AUCTION_HOUSE_SHOW" then f:Show() else f:Hide() end
     end
 end)

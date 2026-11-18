@@ -5,12 +5,14 @@
 --     labels it set before we loaded are put right when Screen.lua first looks at them.
 --   * The results tables set their cells many times a second during a scan. The hook is cheap: a
 --     price or number costs one test in Words.lua; a text we already know, one memo lookup.
---   * A text is changed only when Words.lua knows it. Item names, player names, prices and any text
---     with Ukrainian letters stay as set.
+--   * A text is changed only when Words.lua knows it. Player names, prices, any text with Ukrainian
+--     letters and item names (but those in the item column: Rows.lua) stay as set.
 --   * Auctionator reads back only edit boxes (never touched) and the export list's check boxes
 --     (Screen.lua never enters that list), so what it saves, compares and exports stays English.
 --   * T.Hook(fs, only): that FontString is not Auctionator's own (the auction house title); only the
 --     English texts in the set `only` change on it, everything else the game puts there stays.
+--   * T.Hook(fs, nil, by): this FontString's words come from by(text, fs, combat), not Words.lua
+--     (Rows.lua: item names, bag group titles). by gives the Ukrainian or nil.
 local _, ns = ...
 local U = UADD
 local T = {}
@@ -24,6 +26,7 @@ local lastUk, lastEn = {}, {}   -- per FontString: the last Ukrainian we put the
 local back, backSize = {}, 0    -- our Ukrainian -> its English, any FontString
 local hookCalls = 0             -- for the checks: how often the SetText hook ran
 local only = {}                -- FontString -> { [English] = true }: only these change on it
+local by = {}                  -- FontString -> its own translate function (T.Hook's third argument)
 
 local function Put(fs, text)
     guard = true
@@ -52,7 +55,9 @@ function T.Apply(fs, quick, combat)
     end
     if ns.WordsWanted() then
         if not mine[fs] then
-            local uk = (combat and ns.Words.Quick or ns.Words.Text)(orig[fs], fs)
+            local uk
+            if by[fs] then uk = by[fs](orig[fs], fs, combat)
+            else uk = (combat and ns.Words.Quick or ns.Words.Text)(orig[fs], fs) end
             if only[fs] and not only[fs][orig[fs] or ""] then uk = nil end
             if not uk then return ns.Fonts.Back(fs) end    -- an English text: its own font again
             Put(fs, uk)
@@ -76,8 +81,9 @@ local function OnText(fs)
     U.SafeCall(T.Apply, fs, false, ns.Screen.WaitCombat())
 end
 
-function T.Hook(fs, set)
+function T.Hook(fs, set, fn)
     if set then only[fs] = set end
+    if fn then by[fs] = fn end
     if hooked[fs] then return end
     hooked[fs] = true
     hooksecurefunc(fs, "SetText", OnText)

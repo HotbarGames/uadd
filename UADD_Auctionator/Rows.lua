@@ -9,11 +9,25 @@
 --     that very first SetText already shows our words.
 --   * Column headers: AuctionatorStringColumnHeaderTemplateMixin:Init sets the header's name with the
 --     button's SetText (which does not call the FontString's SetText). A header made after the hook
---     gets it from the mixin; the hook hooks its FontString and puts our words on it at once.
+--     gets it from the mixin; the hook hooks its FontString and puts our words on it at once. A
+--     header named before its window was a root (or before this hook) gets our words when
+--     Screen.lua's walk meets it (R.Header), shown or hidden.
 -- Cost: a cell or header seen before costs one table lookup per fill (the weak table `looked`). A new
 -- one: a walk up its parents (Screen.Inside) and one hook per FontString, once. Never a walk over
 -- frames. A cell found outside our roots is asked again only after Screen.lua finds a new root
 -- (R.Forget): its window may be made after its first cells.
+-- Item names: the item column (AuctionatorItemKeyCellTemplate: its Text next to its Icon; Shopping
+-- and Cancelling lists) shows the item's name in its quality colour. That FontString asks UALL
+-- Forever for the name (UADD.UALL.Item: UADD/uall.lua), the colour and a tail with no letters (an
+-- item level " (35)") kept. No answer: the name stays English. "Not now" from UALL: English for now,
+-- asked again RETRY seconds later (never kept). In combat: names already found only. UALL Forever
+-- itself never touches Auctionator's frames, so a name is never translated twice.
+-- Bag group titles (Selling tab): AuctionatorGroupsViewGroupMixin:SetName sets a pooled group's
+-- title with the button's SetText, so a post-hook on it puts our words on the title's FontString:
+-- the game's item class names (Class: ns.UA_CLASS keeps our Ukrainian by the Enum.ItemClass name,
+-- the English comes from GetItemClassInfo), else Auctionator's own texts (its Favourites group).
+-- A number box's label (Selling tab: "Label" inside the edit box): Screen.lua never enters edit
+-- boxes, so it hands the box here (R.BoxLabel); only that FontString changes, never what is typed.
 
 local _, ns = ...
 local U = UADD
@@ -21,19 +35,134 @@ local R = {}
 ns.Rows = R
 
 local looked = setmetatable({}, { __mode = "k" })   -- cell or header -> true: hooked; false: outside our roots
-local installed, cells, headers = false, 0, 0
+local installed, cells, headers, groups = false, 0, 0, 0
+local CYR = "[\208-\210]"
+local RETRY, ITEM_MAX = 1, 2000
+local items, itemCount = {}, 0                       -- a cell's item text -> its Ukrainian, or false
+local waiting = setmetatable({}, { __mode = "k" })   -- FontStrings UALL said "not now" for
+local retrying, availAt, avail = false, -10, false
+local headInit                                       -- the header mixin's Init before our hook
+
+-- Is UALL Forever there and on? Asked at most once a second (a row redraw must stay cheap).
+local function Available()
+    local now = GetTime()
+    if now - availAt >= 1 then
+        availAt = now
+        local A = U.UALL
+        local ok, yes = pcall(function() return A and A.IsAvailable and A.IsAvailable() end)
+        avail = ok and yes == true
+    end
+    return avail
+end
+
+local Retry
+-- The item column's text in Ukrainian, or nil (Texts.lua calls it in place of Words.lua).
+local function ItemName(text, fs, combat)
+    if type(text) ~= "string" or text == "" then return nil end
+    local hit = items[text]
+    if hit ~= nil then return hit or nil end
+    if combat or not Available() then return nil end
+    local c, name, rest = text:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r(.*)$")
+    if not c then name, rest = text, "" end
+    local uk, wait
+    if name ~= "" and not name:find("|", 1, true) and not name:find(CYR) and not rest:find("[%a|\128-\255]") then
+        local ok
+        ok, uk, wait = pcall(U.UALL.Item, name)
+        if not ok then uk, wait = nil, nil end
+    end
+    if wait then
+        waiting[fs] = true
+        Retry()
+        return nil
+    end
+    local out = type(uk) == "string" and uk ~= "" and ((c and (c .. uk .. "|r") or uk) .. rest) or false
+    if itemCount >= ITEM_MAX then wipe(items) itemCount = 0 end
+    items[text], itemCount = out, itemCount + 1
+    return out or nil
+end
+
+-- UALL said "not now" (a loot window open, Shift held, combat): those names are asked again later.
+Retry = function()
+    if retrying then return end
+    retrying = true
+    C_Timer.After(RETRY, function()
+        retrying = false
+        if not ns.On() then return end
+        local list = {}
+        for fs in pairs(waiting) do list[#list + 1] = fs end
+        wipe(waiting)
+        for _, fs in ipairs(list) do
+            if fs:IsVisible() then U.SafeCall(ns.Texts.Apply, fs, false, ns.Screen.WaitCombat()) end
+        end
+    end)
+end
+
+-- The item column's FontString: its Text, with an Icon next to it (the string cells have neither).
+local function ItemText(cell)
+    local t = rawget(cell, "Text")
+    return rawget(cell, "Icon") and type(t) == "table" and t or nil
+end
 
 -- A new cell: hook its FontStrings (its own SetText comes right after this hook).
 local function OnCell(cell)
     if looked[cell] ~= nil or not ns.On() then return end
     looked[cell] = ns.Screen.Inside(cell)
     if not looked[cell] or not cell.GetRegions then return end
+    local item = ItemText(cell)
     for _, g in ipairs({ cell:GetRegions() }) do
         if g.GetObjectType and g:GetObjectType() == "FontString" then
-            ns.Texts.Hook(g)
+            ns.Texts.Hook(g, nil, g == item and ItemName or nil)
             cells = cells + 1
         end
     end
+end
+
+-- The game's item class name -> our Ukrainian, made on first use.
+local classes
+local function Classes()
+    if classes then return classes end
+    classes = {}
+    local IC = type(Enum) == "table" and Enum.ItemClass
+    local info = (type(C_Item) == "table" and C_Item.GetItemClassInfo) or rawget(_G, "GetItemClassInfo")
+    for name, uk in pairs(type(IC) == "table" and type(info) == "function" and ns.UA_CLASS or {}) do
+        local ok, en = pcall(info, IC[name])
+        if ok and type(en) == "string" and en ~= "" and type(uk) == "string" and uk ~= "" and uk ~= en then
+            classes[en] = uk
+        end
+    end
+    return classes
+end
+
+-- A class name as Auctionator shows it ("Name", or "Name2" when two classes share a name), in
+-- Ukrainian; nil for any other text. One lookup.
+local function Class(t)
+    local c = Classes()
+    if c[t] then return c[t] end
+    local base, n = t:match("^(.-)(%d+)$")
+    return base and c[base] and (c[base] .. n) or nil
+end
+
+-- A bag group's title: the game's item class name, else one of Auctionator's texts.
+local function GroupName(text, fs, combat)
+    if type(text) ~= "string" then return nil end
+    return Class(text) or (combat and ns.Words.Quick or ns.Words.Text)(text, fs)
+end
+
+-- A group was given its name: our words on its title now.
+local function OnGroup(group)
+    if not ns.On() then return end
+    local b = rawget(group, "GroupTitle")
+    local fs = type(b) == "table" and (b.GetFontString and b:GetFontString() or b) or nil
+    if type(fs) ~= "table" or not (fs.GetObjectType and fs:GetObjectType() == "FontString") then return end
+    if looked[group] == nil then
+        looked[group] = ns.Screen.Inside(group)
+        if not looked[group] then return end
+        ns.Texts.Hook(fs, nil, GroupName)
+        groups = groups + 1
+    elseif not looked[group] then
+        return                                     -- a group outside our roots
+    end
+    ns.Texts.Apply(fs, false, ns.Screen.WaitCombat())
 end
 
 -- A header was given its name: our words on it now (and its next names through the hook).
@@ -53,6 +182,32 @@ local function OnHeader(header)
     ns.Texts.Apply(fs, false, ns.Screen.WaitCombat())
 end
 
+-- Screen.lua's walk met f inside a root: when f is a column header, our words on it now, even while
+-- it is hidden. A header gets its name once (Init, when its table is built), often before its window
+-- is one of our roots or inside a hidden panel (the Selling tab's two history tables): with no later
+-- SetText, a hook alone would leave it English when that panel shows.
+function R.Header(f)
+    if looked[f] or not headInit then return end
+    local i = rawget(f, "Init")
+    if i == nil or (i ~= headInit and i ~= rawget(AuctionatorStringColumnHeaderTemplateMixin, "Init")) then return end
+    local fs = f.GetFontString and f:GetFontString()
+    if type(fs) ~= "table" or not fs.SetText then return end
+    looked[f] = true
+    ns.Texts.Hook(fs)
+    headers = headers + 1
+    ns.Texts.Apply(fs, false, ns.Screen.WaitCombat())
+end
+
+-- Screen.lua's walk met an edit box f (it never enters one): its own "Label" FontString only gets
+-- our words (hooked; shown now if it is shown).
+function R.BoxLabel(f)
+    if not (f.IsObjectType and f:IsObjectType("EditBox")) or (f.IsProtected and f:IsProtected()) then return end
+    local g = rawget(f, "Label")
+    if type(g) ~= "table" or not (g.GetObjectType and g:GetObjectType() == "FontString") then return end
+    ns.Texts.Hook(g)
+    if g:IsVisible() then ns.Texts.Apply(g) end
+end
+
 -- Once Auctionator is loaded and the module is on. The hooks stay; while the module is off they
 -- return at once.
 function R.Install()
@@ -65,7 +220,13 @@ function R.Install()
     end
     if type(head) == "table" and type(rawget(head, "Init")) == "function" then
         installed = true
+        headInit = rawget(head, "Init")
         hooksecurefunc(head, "Init", function(self) U.SafeCall(OnHeader, self) end)
+    end
+    local group = rawget(_G, "AuctionatorGroupsViewGroupMixin")
+    if type(group) == "table" and type(rawget(group, "SetName")) == "function" then
+        installed = true
+        hooksecurefunc(group, "SetName", function(self) U.SafeCall(OnGroup, self) end)
     end
 end
 
@@ -78,3 +239,5 @@ end
 
 -- For the checks: FontStrings of new cells and headers hooked here.
 function R.Count() return cells, headers end
+-- For the checks: bag group titles hooked here.
+function R.Groups() return groups end

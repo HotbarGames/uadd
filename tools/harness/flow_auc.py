@@ -45,7 +45,8 @@ def _addon(name):
 
 def _game(addons, locale="enUS"):
     c = Client(addons, None, locale)
-    c.lua.execute(read_text(os.path.join(HERE, "flow_auc.lua")))
+    for f in ("flow_auc.lua", "flow_auc_sell.lua"):
+        c.lua.execute(read_text(os.path.join(HERE, f)))
     c.start()
     c.H.pump(60)
     return c, c.H.auc
@@ -227,6 +228,7 @@ def game_a(check, facts):
                       (("cell", "history", 1, 1), "Tuesday, February 25"), (("text", "shopStatus"), "No results found.")):
         _eq(check, f"off: {where[1]} exact English", M.text(*where), en)
         check(f"off: {where[1]} exact font", _font(M, *where) == FONT, M.font(*where))
+    flow_auc_more.selling_off(check, M)
     M.results(4)
     _eq(check, "off: new draw stays English", M.text("cell", "shop", 2, 2), "Yes")
     check("off: no font of ours left", M.fontCount() == 0, M.fontCount())

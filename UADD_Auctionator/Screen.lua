@@ -5,9 +5,9 @@
 --     dialogs: nameless, read with rawget), its own dialogs AuctionatorDialog1..N, its ten pages in
 --     the game's Settings window, and the crafting search frames (when Forever has them);
 --   * the auction house title: only Auctionator's four tab headers change there (Texts.Hook "only").
--- Never entered: edit boxes (what the player types), secure frames, and three lists whose text
--- Auctionator reads back or that hold the player's own words: the export list's check boxes, the
--- shopping lists and the recent searches.
+-- Never entered: edit boxes (what the player types; a box's own Label: Rows.lua), secure frames, and
+-- three lists whose text Auctionator reads back or that hold the player's own words: the export
+-- list's check boxes, the shopping lists and the recent searches.
 -- When we look: a root shows (OnShow, now and again one frame later, when Auctionator has filled
 -- it), and after the auction house sends new results (at most every RESULTS_GAP seconds, shown
 -- roots only): pooled result rows get hooked then. Once hooked, each FontString's SetText swaps
@@ -165,7 +165,8 @@ end
 local function Walk(f, parent)
     if seen[f] or (not parent and not Visible(f)) then return end
     seen[f] = true
-    if Skipped(f) then return end
+    if Skipped(f) then return not skip[f] and ns.Rows.BoxLabel(f) end   -- an edit box: its Label only
+    ns.Rows.Header(f)                          -- a column header: our words now, shown or not
     if parent then
         for key in pairs(GROW) do
             if rawget(parent, key) == f then grow[f] = true break end

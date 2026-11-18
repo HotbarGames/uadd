@@ -5,6 +5,11 @@
 - The addon list shows the UADD logo as the icon of UADD and of each module, instead of a red question mark.
 - "Instance" is now «підземелля» everywhere, not «інстанс»: in the settings of Questie, Dialogue UI and
   OpenMap, in the Dungeon Journal and in Attune's notes.
+- Auctionator: more of its Selling and Cancelling tabs is in Ukrainian. The "Quantity" label next to the
+  number box, the bag group titles (Favourites, Consumable, Trade Goods, Recipe and the rest), and the
+  column headers of tables that were hidden when they were built (the price history tables under the
+  Selling tab's price boxes). The item names in the Cancelling list come from UALL Forever when it is on,
+  in their quality colour; a name it does not know stays English.
 
 ## 1.0.0
 

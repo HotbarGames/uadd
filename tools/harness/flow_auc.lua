@@ -88,15 +88,16 @@ function M.menuHide() menu:Hide() end
 -- ── Reading what is shown ───────────────────────────────────────────────────────────────────────
 -- A FontString by kind: text (stand-in key), header (key), cell (list, row, column), dialog
 -- (n, "text" / "acceptButton" / "cancelButton"), popup ("text" / "button1" / "button2"),
--- tip (line, "Left" / "Right"), menu (row).
+-- tip (line, "Left" / "Right"), menu (row), group (bag group n: its title).
 local function Find(kind, a, b, c)
     local s = S()
     if kind == "text" then return s.texts[a] end
     if kind == "header" then return s.headers[a] and s.headers[a]:GetFontString() end
     if kind == "cell" then
         local r = s.lists[a].rows[b]
-        return r and r.cells[c].text
+        return r and (r.cells[c].text or r.cells[c].Text)
     end
+    if kind == "group" then return s.groups[a] and s.groups[a].GroupTitle:GetFontString() end
     if kind == "dialog" then
         local d = rawget(_G, "AuctionatorDialog" .. a)
         if not d then return nil end
