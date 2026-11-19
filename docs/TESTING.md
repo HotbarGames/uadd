@@ -31,7 +31,7 @@ Close the game, then run `install.bat` (or copy `UADD`, `UADD_Questie` and `UADD
 8. `/uadd questie rebuild` collects the names again in the background. `/uadd questie test` checks the link to
    UALL Forever.
 9. Fight while names are being collected: no stutter, and collection pauses until the fight ends. If the
-   collection ends during a fight, the "ready" message and the new names come only after the fight.
+   collection ends during a fight, the "ready" message and the new names come only once the fight ends.
    `/uadd questie off` before that: nothing is put into Questie.
 10. No Lua errors. Log out once and back in: everything works again.
 
@@ -104,7 +104,7 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 37. `/uadd dialogueui off` with the window open: English at once, in Dialogue UI's own fonts. Its chat lines are
     English too. `/uadd dialogueui on`: Ukrainian again.
 38. Talk to an NPC in a fight, and type `/uadd dialogueui off` in a fight: no Lua errors, no blocked action. The
-    words change after the fight.
+    words change once the fight ends.
 39. In Dialogue UI's settings change the font and the font size: the words stay Ukrainian, with no boxes.
 40. With Dialogue UI - UALL: its quest titles, NPC names and option texts keep its words and its fonts.
 41. Log in without Dialogue UI: `/uadd dialogueui` says it waits for Dialogue UI, and there are no errors.
@@ -130,7 +130,7 @@ These need Auctionator on an English client, and an auction house to stand at.
 51. Hold Shift with the auction house open: Auctionator's words turn English. Let go: Ukrainian.
 52. `/uadd auctionator off` with the auction house open: English at once, in Auctionator's own fonts; chat
     and tooltip lines are English too. `/uadd auctionator on`: Ukrainian again.
-53. Type `/uadd auctionator off` in a fight: no Lua errors, no blocked action. The words change after the fight.
+53. Type `/uadd auctionator off` in a fight: no Lua errors, no blocked action. The words change once the fight ends.
 54. Log in without Auctionator: `/uadd auctionator` says it waits for Auctionator, and there are no errors.
 
 ### Attune
@@ -154,7 +154,7 @@ These need Attune on an English client. UALL Forever is needed for the names.
 63. Hold Shift with the window and a tooltip open: Attune's words turn English. Let go: Ukrainian.
 64. `/uadd attune off` with the window open: English at once, in Attune's own fonts; tooltips, dialogs and chat
     are English too. `/uadd attune on`: Ukrainian again.
-65. Type `/uadd attune off` in a fight: no Lua errors, no blocked action. The words change after the fight.
+65. Type `/uadd attune off` in a fight: no Lua errors, no blocked action. The words change once the fight ends.
 66. Log in without Attune: `/uadd attune` says it waits for Attune, and there are no errors. Log in without
     UALL Forever: Attune's own words are Ukrainian, the names stay English.
 

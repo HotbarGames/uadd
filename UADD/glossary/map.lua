@@ -10,7 +10,7 @@ E{ id = "map.waypoint", en = "Waypoint", uk = "Точка маршруту", not
 E{ id = "map.zoom", en = "Zoom", uk = "Наближення", note = "how far in the map is; «масштаб» is the window's scale" }
 E{ id = "map.deepest_zoom", en = "Deepest zoom", uk = "Найбільше наближення", note = "slider: how far in the map can go" }
 E{ id = "map.floor", en = "Floor %d", uk = "Поверх %d", note = "a level of a dungeon's map" }
-E{ id = "map.layer", en = "Layer", uk = "Шар", note = "a drawn layer of the map, not a server layer" }
+E{ id = "map.layer", en = "Layer", uk = "Шар", note = "a drawn layer of the map, not a server layer (that is game.server_layer, «лейер»)" }
 E{ id = "map.coordinates", en = "Coordinates", uk = "Координати", note = "x, y on the map" }
 E{ id = "map.continent", en = "Continent", uk = "Континент", note = "Kalimdor, Eastern Kingdoms: the map level above a zone" }
 E{ id = "map.unexplored", en = "Unexplored areas", uk = "Недосліджені місця", note = "parts of a zone the character has not visited" }

@@ -19,7 +19,8 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
 2. Check the addon's licence (`CLAUDE.md` "Other addons' texts").
 3. Read what UALL Forever already translates in this addon (lesson 3). Leave those parts out.
 4. Look up each game word in the glossary (`UADD/glossary/*.lua`, `docs/GLOSSARY.md`). Do not use a word
-   from the banned list (lesson 4).
+   from the banned list (lesson 4). When the owner picks a word, add it to the glossary and ban the word
+   it replaces in the same turn (lesson 8).
 5. Open every window and tab of the addon. Write down every English text you see, not only the texts in
    its locale tables (lesson 1).
 6. If the module changes a font, test that the change really shows, also in windows made later (lesson 2).
@@ -133,7 +134,7 @@ in the harness (as `tools/harness/flow_openmap_label.py` does), then run `python
 ## 7. A free slot that swallows glued text
 
 **What went wrong.** LayerSwap's one-line mini bar is the layer's name, a wide gap, then its status
-(«Шар B   Пауза 4:59»). The status template starts with a slot that only holds a colour code, and that
+(«Лейер B   Пауза 4:59»). The status template starts with a slot that only holds a colour code, and that
 slot was marked free. A free slot keeps any English, so on another split the whole name could land in it,
 and the line would come out half Ukrainian. It came out right only because an older guard (no wide gap
 inside a `%s`) said no first. The half-translation check never fed glued text into free slots, so nobody
@@ -152,7 +153,25 @@ free slot at the start or end of a template gets a name glued to made-up English
 or " - "; an output that changed and still has the made-up English fails.
 LayerSwap's flow also builds its real glued lines from the installed addon (`glued()` in
 `tools/harness/flow_lsw_mixed.py`) and wants each one all Ukrainian, each half as it is alone.
-`dashed()` there does the same for the lines glued with a wide dash ("  -  "): a layer row («Шар C  —
+`dashed()` there does the same for the lines glued with a wide dash ("  -  "): a layer row («Лейер C  —
 6864-5») stayed English because Words.lua split it at " - " and kept a space on the name. A new joining
 mark goes in `SEPS` (Words.lua), wider marks before narrower ones. The panel's zone line (id, dash, zone)
 takes the zone's name from UALL Forever (lesson 6) and stays whole English when UALL has none.
+
+## 8. A word the owner picked, lost in chat
+
+**What went wrong.** On 2026-11-18 the owner picked «лейер» for a server layer in LayerSwap («Змінити
+лейер»). The choice lived only in the chat. The module shipped «шар» 145 times («Змінити шар», «ВАШ ШАР»),
+the word OpenMap uses for a drawn map layer. Nothing in the repo knew about the choice, so no check failed.
+
+**Rule.** When the owner picks a word, in the same turn:
+
+- add it to the glossary (`UADD/glossary/*.lua`), with a note that says it is the owner's choice and the date;
+  if the same English has another meaning elsewhere, add a row to "Is it the same meaning?" in
+  `docs/GLOSSARY.md`;
+- ban the word it replaces: in `BANNED` (`tools/test_banned_words.py`) when it is wrong everywhere, or in
+  `BANNED_IN` for the modules where it is wrong when it is right elsewhere («шар» is banned only in
+  `UADD_LayerSwap`, since OpenMap's map layer is «шар»).
+
+**Check.** `python3 -m unittest tools.test_banned_words`. `BANNED_IN` reads only the files that the module's
+TOC loads, and its TOC lines. `python3 tools/test_banned_words.py` lists each hit as file:line: text.

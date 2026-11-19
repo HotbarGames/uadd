@@ -13,6 +13,7 @@ E{ id = "game.objects", en = "Objects", uk = "Об'єкти", note = "Many world
 E{ id = "game.objective", en = "Objective", uk = "Ціль", note = "One step a quest asks for (kill 10 boars). Careful: ціль is also 'target'." }
 E{ id = "game.objectives", en = "Objectives", uk = "Цілі", note = "The steps of a quest; also a heading." }
 E{ id = "game.zone", en = "Zone", uk = "Зона", note = "An area of the world map (Elwynn Forest). Zone names themselves come from UALLF." }
+E{ id = "game.server_layer", en = "Layer", uk = "Лейер", note = "A copy of the server's world: players on another layer do not see you (LayerSwap). Owner's word, 2026-11-18, for now: keep it one term so it can be swapped. Not «шар»: that is a drawn map layer (map.layer)." }
 E{ id = "game.level", en = "Level", uk = "Рівень", note = "Character, NPC or quest level (a number). Not sound volume." }
 E{ id = "game.level_n", en = "Level %s", uk = "Рівень %s", note = "Level with its number." }
 E{ id = "game.item_level", en = "Item Level", uk = "Рівень предмета", note = "An item's level (a number): a heading, a search range, a tooltip line. A narrow column header: game.item_level_short." }

@@ -47,7 +47,7 @@ Link two strings to one entry only when **all** of these are true:
 
 If one is false, make a second entry with its own id and a note that says how it differs.
 
-Real cases from Questie:
+Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 
 | English | Meaning | Entry |
 | --- | --- | --- |
@@ -58,6 +58,8 @@ Real cases from Questie:
 | Legendary | a quest tag ("Легендарне") | `quest.tag_legendary` |
 | Legendary | item quality ("Легендарний") | would be a new entry |
 | Drink, Repair | what a vendor sells (nouns) | `vendor.drink`, `vendor.repair` |
+| Layer | a drawn layer of the map, OpenMap ("Шар") | `map.layer` |
+| Layer | a copy of the server's world, LayerSwap ("Лейер": the owner's word, 2026-11-18) | `game.server_layer` |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.
 
