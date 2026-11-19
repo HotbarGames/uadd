@@ -24,5 +24,9 @@ with `python3 tools/make_zip.py` and upload `dist/UADD-<version>.zip` on the pro
 
 While Actions are off, steps 5 and 6 do nothing. Instead, `python3 tools/make_zip.py` builds the same zip into
 `dist/`; upload it on the project's Files page: release type Release, game version Forever (as the TOC's
-`## Interface`), the new `UADD/CHANGELOG.md` section as the changelog, and the `optional-dependencies` from
-`.pkgmeta` as Optional Dependency relations.
+`## Interface`), the new `UADD/CHANGELOG.md` section as the changelog.
+
+Relations: only UALL Forever, as an Optional Dependency (owner, 2026-11-20). The addons we translate are not
+listed: a player needs none of them for UADD, and the list would grow with every module. The project's Default
+Relations (project settings) hold only UALL Forever, so a new file gets it by itself; check it on the file's
+edit page after the upload.
