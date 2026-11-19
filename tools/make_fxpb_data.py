@@ -37,7 +37,8 @@ DATA = REPO / "UADD_ForeverXPBar" / "data" / "words.lua"
 REVIEW = REPO / "local" / "foreverxpbar.txt"
 WOW_DIR = "/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/ForeverXPbar"
 MAIN = "ForeverXPBar.lua"
-# Fonts.lua (font names) and Compat70006.lua (no text) are not read; CampData.lua holds only match names.
+# Fonts.lua (font names), Compat70006.lua (no text) and FlightData.lua (flight times, and node names used
+# only to match the game's own taxi names, never shown) are not read; CampData.lua holds only match names.
 FILES = ["ForeverXPBarSounds.lua", "ForeverXPBarCampData.lua", "ForeverXPBarFlightTiming.lua", MAIN]
 # Screen areas: (id, title, [(file, first line, last line)]). The first area that holds a line wins;
 # lines of the main file that no range holds go to "misc". Only the review file shows them.

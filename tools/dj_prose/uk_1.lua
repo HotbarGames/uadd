@@ -1,6 +1,5 @@
 -- uk_1.lua: Ukrainian for en_1.lua (Forever Dungeon Journal long texts).
 return {
-  -- Hall of Thanes
   ["a3f04017"] = "Упокойте дух «Faldrim Anvilmar».",
   ["3ea9ba68"] = "Зберіть «{item:Dwarven Heirloom}»: 8 шт. у підземеллі «{zone:The Hall of Thanes}».",
   ["5bafb465"] = "Убийте 15 розлючених привидів і 10 змучених душ, а потім упокойте дух Анвілмара.",
@@ -10,8 +9,6 @@ return {
   ["a2e7e73b"] = "Табличка лежить в одному зі сховищ у місцевості «{zone:Reliquary of Kings}», у залі останнього боса «Durgen Dirgehammer». Відчиніть сховища й взаємодійте з табличкою, перш ніж покинути підземелля.",
   ["29e98766"] = "Доставте предмет «{item:Dark Iron Map}» до НІП «{npc:Earthseer Farsen}» у локації «{zone:Dun Morogh}».",
   ["fae3ab71"] = "Предмет «{item:Dark Iron Map}» починає це завдання і веде прямо до завдання «{quest:Old Ironforge Incursion}».",
-
-  -- Ragefire Chasm
   ["1d886bba"] = "Убийте «{npc:Ragefire Trogg}»: 8 і «{npc:Ragefire Shaman}»: 8 у підземеллі «{zone:Ragefire Chasm}».",
   ["d2aa22a6"] = "Знайдіть тіло НІП «{npc:Maur Grimtotem}» у підземеллі «{zone:Ragefire Chasm}» і перевірте, чи немає при ньому чогось цікавого.",
   ["99d9c98d"] = "На першій великій розвилці на три шляхи оберіть правий тунель, ідіть ним угору до глухого кута, а тоді зайдіть до невеликої бічної кімнати ліворуч. Там взаємодійте з тілом НІП «Маур».",
@@ -24,8 +21,6 @@ return {
   ["d9ba00a6"] = "Перший обов’язковий крок завдання «{quest:Hidden Enemies}» для ланцюжка підземелля «{zone:Ragefire Chasm}».",
   ["0ad9c486"] = "Поговоріть з НІП «{npc:Neeru Fireblade}» у місцевості «{zone:Cleft of Shadow}», а потім поверніться до НІП «{npc:Thrall}».",
   ["a3c82037"] = "НІП «Ніру» перебуває в місцевості «{zone:Cleft of Shadow}» біля входу до підземелля «{zone:Ragefire Chasm}».",
-
-  -- Ruins of Lordaeron
   ["df5459f7"] = "Здобудьте предмет «{item:Head of the Baron}» у підземеллі «{zone:Ruins of Lordaeron}».",
   ["bfa438b6"] = "Доставте предмет «{item:Abominable Head}» до міста «{zone:Undercity}».",
   ["507b0750"] = "Предмет на вибір видають у наступному кроці, «{quest:Unending Torment}», у місті «{zone:Undercity}».",
@@ -47,8 +42,6 @@ return {
   ["81e185ef"] = "Принесіть 6 зразків предмета «{item:Lake Creeper Moss}», 6 зразків предмета «{item:Lake Skulker Moss}» і предмет «{item:Hardened Tumor}» до НІП «{npc:Master Apothecary Faranell}» у місті «{zone:Undercity}».",
   ["42aab8bd"] = "Убийте НІП «{npc:Riptear}» на північному сході локації «{zone:Tirisfal Glades}» і принесіть предмет «{item:Riptear's Heart}» до НІП «{npc:Deathguard Linnea}».",
   ["34030fef"] = "Групове завдання: НІП «{npc:Riptear}» — елітний ворог 13-го рівня.",
-
-  -- The Deadmines
   ["1c6a2f47"] = "Зберіть «{item:Red Silk Bandana}»: 10 шт. з Дефіасів у підземеллі «{zone:Deadmines}».",
   ["51c37d3c"] = "Потрібно виконати крок ланцюжка «{quest:The Defias Brotherhood}» із супроводом.",
   ["6bb232df"] = "Зберіть «{item:Miners' Union Card}»: 4 шт. із шахтарів-нежиті в тунелях поза підземеллям.",
@@ -114,8 +107,6 @@ return {
   ["611dc182"] = "Подивіться, як «{npc:Ott}» кує ваш клинок.",
   ["e7a911d0"] = "Принесіть предмет «{item:Ott's Masterwork}» до НІП «{npc:Trevan Rol}» у локації «{zone:Silverpine Forest}».",
   ["e03edfc6"] = "Супроводьте НІП «{npc:Lumina Windsinger}» і допоможіть їй утекти з місцевості «{zone:Fenris Keep}».",
-
-  -- Wailing Caverns
   ["d7748c90"] = "Принесіть «{item:Deviate Hide}»: 20 шт. НІП «{npc:Nalpak}».",
   ["264ba073"] = "Принесіть «{item:Wailing Essence}»: 6 шт. НІП «{npc:Mebok Mizzyrix}».",
   ["ae72c421"] = "Заберіть «99-Річний Портвейн» у НІП «{npc:Mad Magglish}» у підземеллі «{zone:Wailing Caverns}».",
@@ -137,8 +128,6 @@ return {
   ["deff02cf"] = "Наступне обов’язкове дослідження оази після завдання «{quest:The Forgotten Pools}».",
   ["822b8215"] = "Принесіть «{item:Altered Snapjaw Shell}»: 8 шт. до НІП «{npc:Tonga Runetotem}» у місцевості «{zone:The Crossroads}».",
   ["4f11a4cc"] = "Виконання завдання «{quest:Altered Beings}» відкриває доступ до завдання «{quest:Hamuul Runetotem}».",
-
-  -- Shadowfang Keep
   ["cbd15fef"] = "Знайдіть НІП «{npc:Deathstalker Adamant}» і «{npc:Deathstalker Vincent}» у підземеллі «{zone:Shadowfang Keep}».",
   ["0e92a7e4"] = "Знайдіть «{item:Soran'ruk Fragment}»: 3 шт. і 1 предмет «{item:Large Soran'ruk Fragment}» та поверніть їх до НІП «{npc:Doan Karhan}».",
   ["ddc03ca3"] = "Класове завдання чорнокнижника. Уламки випадають у підземеллях «{zone:Shadowfang Keep}» і «{zone:Blackfathom Deeps}».",
@@ -152,8 +141,6 @@ return {
   ["6482a7cc"] = "Класове завдання розбійника. Лист від «C» приходить на 20-му рівні в столиці; візьміть замовлення в «Dead Drop» біля місцевості «{zone:Pyrewood Village}». Залиште вільне місце в сумці.",
   ["6baae808"] = "Одиночне замовлення: виконайте його самі, поза будь-якою групою.",
   ["e9878d04"] = "Знайдіть предмет «{item:Horn of Xelthos}» у підземеллі «{zone:Shadowfang Keep}». Потім поверніть його до схованки «C» біля місцевості «{zone:Pyrewood Village}». Замовлення треба виконати самостійно.",
-
-  -- Blackfathom Deeps
   ["623f186e"] = "Здобудьте предмет «{item:Lorgalis Manuscript}» у підземеллі «{zone:Blackfathom Deeps}».",
   ["67d96388"] = "Предмет «{item:Lorgalis Manuscript}» лежить у скрині «Pitted Iron Chest» під водою в місцевості «{zone:The Pool of Ask'ar}», у північній ніші одразу за кімнатою черепахи «{npc:Ghamoo-ra}».",
   ["590370bc"] = "Вирушайте до НІП «{npc:Gershala Nightwhisper}» у місцевості «{zone:Auberdine}» (локація «{zone:Darkshore}»).",
@@ -179,8 +166,6 @@ return {
   ["d41ca256"] = "Класове завдання паладина для людей і дворфів. У цьому підземеллі предмет «{item:Corrupted Kor Gem}» випадає з блекфатомських морських відьом усередині, а також із блекфатомських жриць припливу та оракулів біля входу в локації «{zone:Ashenvale}». НІП «{npc:Thundris Windweaver}» у місцевості «{zone:Auberdine}» очищає його. Інші частини: «{item:Whitestone Oak Lumber}» («{zone:The Deadmines}»), «{item:Jordan's Smithing Hammer}» («{zone:Shadowfang Keep}») і партія руди НІП «Джордан» («{zone:Loch Modan}»).",
   ["4b03ee0c"] = "Це ланцюжок завдань із кроком у підземеллі «{zone:Blackfathom Deeps}»",
   ["730d0c48"] = "Класове завдання паладина для нежиті й тауренів. У цьому підземеллі предмет «{item:Corrupted Kor Gem}» випадає з блекфатомських морських відьом усередині, а також із блекфатомських жриць припливу та оракулів біля входу в локації «{zone:Ashenvale}», щойно ви візьмете завдання «Seeking the Kor Gem» у НІП «{npc:Ulric Frostveil}» у місцевості «{zone:Zoram'gar Outpost}». Він і очищає камінь. Інші частини: «{item:Whitestone Oak Lumber}» («{zone:The Deadmines}») і «{item:Enchanted Silver Ingot}» («{zone:Shadowfang Keep}»).",
-
-  -- Excavation Site: Wetlands
   ["22569790"] = "Здолайте 2 диверсантів і 4 вартових із клану Драконячої Пащі, заберіть предмет «{item:Dragonmaw Dispatch}» і поверніться з доповіддю до НІП «{npc:Deathstalker Agent}» поза підземеллям.",
   ["f5b1710e"] = "Пов’язане вступне завдання: «{quest:Dragonmaw Rumors}». Предмет «{item:Dragonmaw Dispatch}» забирають у сил Драконячої Пащі в підземеллі.",
   ["5db68d9b"] = "Увійдіть до «Excavation Sites» у локації «{zone:Wetlands}» і принесіть «{item:Thicket Raptor Meat}»: 4 шт.",
@@ -198,8 +183,6 @@ return {
   ["714f2fc5"] = "Убийте «{npc:Mosshide Gnoll}»: 15 і «{npc:Mosshide Mongrel}»: 10, а потім поверніться до НІП «{npc:Rethiel the Greenwarden}».",
   ["4e8f86a5"] = "Другий обов’язковий крок перед завданням «{quest:Horrors in the Highland}».",
   ["c15ef2e1"] = "Принесіть «{item:Crude Flint}»: 9 шт. НІП «{npc:Rethiel the Greenwarden}».",
-  ["40b64864"] = "Третій обов’язковий крок перед завданням «{quest:Horrors in the Highland}».",
-  ["629c3a8e"] = "Знайдіть НІП «{npc:Rethiel the Greenwarden}» у локації «{zone:Wetlands}».",
   ["7f5ebaf1"] = "Перший обов’язковий крок перед завданням «{quest:Horrors in the Highland}».",
   ["2895ec1a"] = "Здобудьте «{item:Young Crocolisk Skin}»: 4 шт. для НІП «{npc:James Halloran}» у місцевості «{zone:Menethil Harbor}».",
   ["294abaf6"] = "Потрібне перед завданням «{quest:Highland Hides}». Завдання «{quest:Daily Delivery}» у Forever не потрібне.",
@@ -207,4 +190,39 @@ return {
   ["45a75f9f"] = "Потрібне перед завданням «{quest:Open the Maw}».",
   ["a07fb8e9"] = "Віднесіть предмет «{item:Titan Relic}» до місцевості «{zone:Elder Rise}» у місті «{zone:Thunder Bluff}» і пошукайте того, хто розповість про нього більше.",
   ["51ce180b"] = "Доставте предмет «{item:Titan Relic}» до НІП «{npc:Prospector Whelgar}» на місці розкопок у локації «{zone:Wetlands}».",
+  ["d224d2a2"] = "Убийте боса «{npc:Targorr the Dread}» у підземеллі «{zone:The Stockade}» і віднесіть його голову до НІП «{npc:Guard Berton}».",
+  ["a23b8090"] = "Убийте боса «{npc:Dextren Ward}» у підземеллі «{zone:The Stockade}» і віднесіть його руку до НІП «{npc:Councilman Millstipe}».",
+  ["4d678e4a"] = "Убийте «{npc:Defias Prisoner}»: 10, «{npc:Defias Convict}»: 8 і «{npc:Defias Insurgent}»: 8 у підземеллі «{zone:The Stockade}».",
+  ["3981d599"] = "Зберіть «{item:Red Wool Bandana}»: 10 шт. з в’язнів Дефіасу в підземеллі «{zone:The Stockade}».",
+  ["113633f2"] = "Убийте боса «{npc:Kam Deepfury}» у підземеллі «{zone:The Stockade}» і віднесіть його голову до НІП «{npc:Motley Garmason}».",
+  ["58d2cec4"] = "Щоб це завдання стало доступним, потрібне завдання «{quest:The Dark Iron War}».",
+  ["230844b2"] = "Убийте боса «{npc:Bazil Thredd}» у підземеллі «{zone:The Stockade}» і принесіть його голову назад до НІП «{npc:Warden Thelwater}».",
+  ["9396c367"] = "Частина ланцюжка, що починається із завдання «{quest:The Unsent Letter}» від НІП «{npc:Edwin VanCleef}» у підземеллі «{zone:The Deadmines}».",
+  ["b8158b0b"] = "Убийте дворфів Темного Заліза: 10, «{npc:Dark Iron Tunneler}»: 5, «{npc:Dark Iron Saboteur}»: 5 і «{npc:Dark Iron Demolitionist}»: 5 у місцевості «{zone:Dun Modr}».",
+  ["9f5fdc4d"] = "Виконайте завдання «{quest:The Dark Iron War}», щоб відкрити завдання «{quest:The Fury Runs Deep}».",
+  ["4d242629"] = "Віднесіть предмет «{item:An Unsent Letter}» від НІП «{npc:Edwin VanCleef}» до НІП «{npc:Baros Alexston}» у місті «{zone:Stormwind}».",
+  ["468d89af"] = "Перший обов’язковий крок до завдання «{quest:The Stockade Riots}».",
+  ["312c74c0"] = "Поговоріть з НІП «{npc:Warden Thelwater}» біля входу в підземелля «{zone:The Stockade}».",
+  ["e039aee3"] = "Другий обов’язковий крок до завдання «{quest:The Stockade Riots}».",
+  ["1de0aff9"] = "Здобудьте предмет «{item:Fel Infused Blossom}» із центрального саду міста «{zone:Dalaran}».",
+  ["37061ce6"] = "Дані завдання записано в беті; вхід до підземелля може бути недоступний.",
+  ["ddb98824"] = "Убийте «Arcanic Enigma» («{npc:Mana Elemental}») у підземеллі «{zone:City of Dalaran}» і поверніться до НІП «{npc:High Sorcerer Andromath}» у місті «{zone:Stormwind City}».",
+  ["f1f7cd60"] = "Здолайте 8 шукальних залишків, 8 насичених залишків і 8 відлунь мани у підземеллі «{zone:City of Dalaran}» для НІП «{npc:Archmage Modera}» біля міста «{zone:Dalaran}».",
+  ["831c813a"] = "Цих ворогів усередині може не вистачити, щоб виконати завдання за один прохід.",
+  ["c3454a11"] = "Зберіть предмет «{item:Arcane Mote}» для НІП «{npc:Image of Archmage Modera}» біля підземелля «{zone:City of Dalaran}».",
+  ["d05f32f8"] = "Зберіть предмет «{item:Arcane Mote}» у підземеллі «{zone:City of Dalaran}» для НІП «{npc:Magus Wordeen Voidglare}» у місцевості «{zone:Tarren Mill}».",
+  ["e6e00e7e"] = "Допуск Орди до міста «{zone:Dalaran}». «Stone Tokens» і «Bracers of Binding» можна виконувати паралельно з ланцюжком, але вони необов’язкові й для допуску не потрібні.",
+  ["0e1e4a2b"] = "Знайдіть предмет «{item:The Founding of Dalaran}» і віднесіть його до НІП «Rexxie Copperclutch».",
+  ["a9de45d4"] = "Зберіть «{item:Cracked Sentry Core}»: 6 шт. з конструктів у місті «{zone:Dalaran}».",
+  ["d7c58ed8"] = "Здолайте боса «Atrexis the Grave Knight» у місцевості «Dalaran Underbelly».",
+  ["61d67d20"] = "Знайдіть чотирьох зрадників-Відступників у таборі «{zone:Lordamere Internment Camp}», заберіть їхні артефакти «Bloodstone» і поверніться до НІП «{npc:Magus Wordeen Voidglare}».",
+  ["ee825a72"] = "Заодно візьміть предмет «{item:Key to the City}» у НІП «{npc:Magus Wordeen Voidglare}».",
+  ["82546669"] = "Убийте «{npc:Dalaran Summoner}»: 6 і «{npc:Elemental Slave}»: 12, потім поверніться до НІП «{npc:Magus Wordeen Voidglare}» у місцевості «{zone:Tarren Mill}».",
+  ["27c61a0f"] = "Доступне після завдання «{quest:Prison Break In}».",
+  ["c1c46763"] = "Зверніться до НІП «{npc:Image of Archmage Modera}» біля підземелля «{zone:City of Dalaran}».",
+  ["02add697"] = "Вступне завдання, що веде до завдань «{quest:Heart of Disruption}» і «{quest:Starving Arcane}».",
+  ["7e5e8fbc"] = "Знайдіть шлях до міста «{zone:Dalaran}» уздовж озера «{zone:Lordamere Lake}».",
+  ["b9b27ca2"] = "Потрібні завдання НІП «Magus Wordeen Voidglare» у місті «{zone:Dalaran}». «Stone Tokens» і «Bracers of Binding» від НІП «{npc:Keeper Bel'varil}» необов’язкові й для допуску не потрібні.",
+  ["5657e515"] = "Здобудьте предмет «{item:Grimy Key}» для НІП «{npc:Magus Wordeen Voidglare}» у місцевості «{zone:Tarren Mill}».",
+  ["2193b95c"] = "Це завдання можна взяти разом із завданням «{quest:Prison Break In}».",
 }

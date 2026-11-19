@@ -41,7 +41,7 @@ STAY = {"10:b5edbda6", "12:5308eb38", "12:a591ba3b", "12:b382e5d0", "13:57b5d71b
         "8:7dc6d75e"}
 # Some texts that must be found: three labels and three templates (race code, flight time, error line).
 MUST_HAVE = {("exact", "13:31708c51"), ("exact", "21:e6303353"), ("exact", "8:ee507a83"),
-             ("format", "21:8e4caf38"), ("format", "35:8eeefe7c"), ("format", "57:e6ae55c5")}
+             ("format", "22:1cb05d92"), ("format", "35:8eeefe7c"), ("format", "57:e6ae55c5")}
 
 
 @unittest.skipUnless(HAVE_ADDON, f"ForeverXP Bar not found in {M.addon_dir()} (set FXPB_DIR)")

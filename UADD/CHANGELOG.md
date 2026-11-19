@@ -6,14 +6,27 @@
   lines in Ukrainian. Its layer channel, whispers, invites and addon messages stay English.
   Новий модуль UADD_LayerSwap: панель, мала панель, меню, налаштування, підказки й рядки в чаті LayerSwap
   українською.
-- ForeverXP Bar: updated for 0.9.2; its new texts are in Ukrainian (the "What's new" page, the What's New
-  button, the /fxpb help line). The new /fxpb blizzdebug lines stay English: they are for bug reports.
-  ForeverXP Bar: оновлено для 0.9.2; його нові написи українською (сторінка «Що нового», кнопка
-  «Що нового», довідка /fxpb). Нові рядки /fxpb blizzdebug лишаються англійською: вони для звітів про помилки.
-- Dungeon Journal: updated for 2.0.11; its new texts are in Ukrainian (resizing the journal, quest rewards in
-  the loot search, "can also spawn here" on the map, why a dungeon is hidden).
-  Dungeon Journal: оновлено для 2.0.11; його нові написи українською (зміна розміру журналу, нагороди за
-  завдання в пошуку здобичі, «Може з'явитися й тут» на мапі, чому підземелля сховано).
+- LayerSwap: updated for 1.14.35; its new texts are in Ukrainian (flight paths, hosts that do not answer,
+  inviting in a group). A server layer is now «лейер» everywhere in the module.
+  LayerSwap: оновлено для 1.14.35; його нові написи українською (польоти, хости, що не відповідають,
+  запрошення в групі). Серверний шар тепер скрізь «лейер».
+- ForeverXP Bar: updated for 0.9.3; its new texts are in Ukrainian (the "What's new" page, the What's New
+  button, the /fxpb help line, flight times, gold per hour, the settings rows that still showed English).
+  The new /fxpb blizzdebug lines stay English: they are for bug reports.
+  ForeverXP Bar: оновлено для 0.9.3; його нові написи українською (сторінка «Що нового», кнопка
+  «Що нового», довідка /fxpb, час польоту, золото за годину, рядки налаштувань, що ще були англійською).
+  Нові рядки /fxpb blizzdebug лишаються англійською: вони для звітів про помилки.
+- Dungeon Journal: updated for 2.0.12; its new texts are in Ukrainian (resizing the journal, quest rewards in
+  the loot search, "can also spawn here" on the map, why a dungeon is hidden, a Blackrock Depths quest).
+  Dungeon Journal: оновлено для 2.0.12; його нові написи українською (зміна розміру журналу, нагороди за
+  завдання в пошуку здобичі, «Може з'явитися й тут» на мапі, чому підземелля сховано, завдання в Глибинах
+  Чорної Скелі).
+- Questie: updated for 12.11.0; its new texts are in Ukrainian ("Also for active quests", the share
+  shortcut, "Share Quest", the QuestieTrace messages).
+  Questie: оновлено для 12.11.0; його нові тексти українською («Також для активних завдань», комбінація
+  «Поділитися / Посилання», «Поділитися завданням», повідомлення QuestieTrace).
+- Attune: checked for 16001-43; its new texts are quest, NPC and item names, which UALL Forever translates.
+  Attune: перевірено для 16001-43; його нові написи — назви завдань, НІП і предметів, їх перекладає UALL Forever.
 - New command for testers: `/uadd missed`. It is off unless you turn it on with `/uadd missed on`; off, it
   costs nothing. On, UADD notes each text a module shows in English because it has no Ukrainian for it yet.
   `/uadd missed` shows how many per module. The list stays on your PC, in UADD's saved settings; nothing is

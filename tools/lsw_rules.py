@@ -50,7 +50,7 @@ CODE_KEYS = {"18:61e92f0c", "31:ac9f1aa4", "10:24e3843b", "10:709c04e0", "11:27d
              "16:f7f0f2ee", "17:6ae9a69f", "17:b26450fd", "19:319d252f", "19:ad72ae5c", "24:f9fac8b6",
              "25:156dbaef", "33:9291c290", "4:7c887790", "5:0e063143", "6:1062517c", "6:c320d7b4",
              "7:50bf5a03", "7:da158e07", "8:462701f3", "8:bd515302", "9:4356a313", "9:667e3f5f",
-             "9:9d1db0de", "9:dff36733"}
+             "9:9d1db0de", "9:dff36733", "11:dedf4143", "8:bd4d9cc1"}
 TEXT_CALLS = F.TEXT_CALLS | {"say", "setNotice", "setButtonText", "addText", "makeButton", "addCheckbox", "check"}
 TEXT_FIELDS = F.TEXT_FIELDS
 # Whole texts glued at run time from pieces (see tools/fxpb_rules.py JOINED): "<bytes>:<hash>" keys of

@@ -1,33 +1,5 @@
 -- uk_3.lua: Ukrainian for en_3.lua (Dungeon Journal long texts).
 return {
-  -- Razorfen Downs
-  ["730f4010"] = "Супроводьте НІП «{npc:Belnistrasz}» до ідола свинобразів у підземеллі «{zone:Razorfen Downs}». Захищайте НІП «{npc:Belnistrasz}», поки він виконує ритуал, щоб вимкнути ідол.",
-  ["c756c365"] = "Під час ритуалу нападають хвилі нежиті. Потім поговоріть із жаровнею біля ідола, щоб завершити.",
-  ["52db9756"] = "Убийте «{npc:Razorfen Battleguard}»: 8, «{npc:Razorfen Thornweaver}»: 8 і «{npc:Death's Head Cultist}»: 8 та поверніться до НІП «{npc:Myriam Moonsinger}» біля входу в підземелля «{zone:Razorfen Downs}».",
-  ["e0a8478e"] = "Ці вороги поза підземеллям, навколо входу.",
-  ["bfce1490"] = "НІП «{npc:Andrew Brownell}» просить вас убити боса «{npc:Amnennar the Coldbringer}» і принести його череп.",
-  ["6bc317c7"] = "НІП «{npc:Archbishop Benedictus}» просить вас убити боса «{npc:Amnennar the Coldbringer}» у підземеллі «{zone:Razorfen Downs}».",
-  ["c246e9c5"] = "НІП «{npc:Ambassador Malcin}» — у наметах зовнішнього тернового лабіринту, перед порталом підземелля. Починається з предмета «{item:Small Scroll}», що випадає з боса «{npc:Charlga Razorflank}» у підземеллі «{zone:Razorfen Kraul}».",
-  ["ac134e38"] = "Здобудьте предмет «{item:The Coldbringer's Eye}» у підземеллі «{zone:Razorfen Downs}».",
-  ["fbf0ccfe"] = "Вирушайте до підземелля «{zone:Razorfen Downs}», здобудьте предмет «{item:Virulent Blood of Agamaggan}» і поверніть його до НІП «Kog'thug the Brave» у місцевості «{zone:Bristleback Retreat}».",
-  ["f13ac14a"] = "Клацніть на казан «Cauldron of Agamaggan's Blood», щоб викликати «{item:Virulent Blood of Agamaggan}», і вбийте його заради крові. Один казан — у наметі найближче до останнього боса (може бути й в інших наметах). Кров із підземелля «{zone:Razorfen Kraul}» не зараховується.",
-  ["6bb17222"] = "Якщо погоджуєтеся допомогти НІП «{npc:Belnistrasz}», поговоріть із ним знову й поверніть йому «Oathstone», який він вам дав.",
-  ["81dff696"] = "Дослідіть місцевість «{zone:Shen'dralas}», щоб знайти інші пілони, схожі на той, що ви знайшли.",
-  ["a40f5d31"] = "Інші пілони: на сході, у точці 73, 23 (там ще таємні елементалі, і вас спішує) і на півдні, у точці 47, 78, усередині великої будівлі в місцевості «{zone:Shen'dralas}».",
-  ["9cd73439"] = "Поговоріть з НІП «Mordent Evenshade» у місцевості «{zone:Shen'dralas}» про кристали, які ви полагодили.",
-  ["ec3c455c"] = "Дослідіть місцевість «{zone:Forlorn Gardens}» біля місцевості «{zone:Shen'dralas}», а потім поверніться до НІП «Mithera» в храм неподалік.",
-  ["6596d341"] = "Знайдіть НІП «Magister Kirandis» у храмі в місцевості «{zone:Shen'dralas}».",
-  ["4818689a"] = "Це відкриває завдання в місцевості «{zone:Shen'dralas}», зокрема завдання НІП «Mithera».",
-  ["0ec1cb7f"] = "Завдання підземелля «{zone:Maraudon}» (див. «{zone:Maraudon}»). Використайте флакон на палаючому дереві поруч із «Woodwyrd», а не на самому «Woodwyrd».",
-  ["3865ced2"] = "Знайдіть НІП «Woodwyrd» у місцевості «{zone:Forlorn Gardens}» біля місцевості «{zone:Shen'dralas}».",
-  ["313845c1"] = "НІП «Mithera» пропонує його, щойно ви здасте завдання «Forlorn Gardens».",
-  ["4c7c7f3e"] = "Знайдіть впливового свинобраза в місцевості «{zone:Bristleback Retreat}».",
-  ["ce9cd066"] = "Здобудьте осколки й уламки пілонів, що їх охороняють у селищах Маґрамів і Ґелкісів. Поверніть їх до НІП «Mordent Evenshade».",
-  ["509194c7"] = "По одному кристалу в кожному таборі кентаврів у локації «{zone:Desolace}».",
-  ["f78f2485"] = "Здобудьте предмет «{item:Mana Sieve}» у храмі в місцевості «{zone:Shen'dralas}» і зберіть ним «Ancient Mana Crystals», потім зарядіть пілони й поверніться до НІП «Mordent Evenshade».",
-  ["9a28394f"] = "Предмет «{item:Mana Sieve}» — на верхньому поверсі великого храму. Візьміть 8 мани з таємних сфер довкола «{zone:Shen'dralas}», потім використайте частини пілонів, по 4 мани на кожен пілон.",
-
-  -- Uldaman
   ["f99a3bb7"] = "Знайдіть НІП «{npc:Baelog}» у підземеллі «{zone:Uldaman}».",
   ["8ac68f3b"] = "Вступний крок до завдання «{quest:The Hidden Chamber}».",
   ["a03d3c01"] = "Прочитайте «Baelog's Journal», дослідіть приховану кімнату, потім поверніться з доповіддю до НІП «{npc:Prospector Stormpike}».",
@@ -82,8 +54,6 @@ return {
   ["b755b52a"] = "Знайдіть «Agmond».",
   ["93425648"] = "Убийте вбивцю «Agmond» — НІП «{npc:Murdaloc}». Убийте «{npc:Stonevault Bonesnapper}»: 12. Поверніться з доповіддю до НІП «{npc:Prospector Ironband}» у локації «{zone:Loch Modan}».",
   ["b611df01"] = "Убийте ворога «{npc:Ambassador Infernus}» у фортеці «{zone:Angor Fortress}» і принесіть доказ його смерті до НІП «{npc:Advisor Belgrum}» у місті «{zone:Ironforge}».",
-
-  -- Krol'dok Stronghold
   ["da15ba29"] = "Проникніть у підземелля «{zone:Krol'dok Stronghold}» і поверніться до НІП «{npc:Krom'rosh}» із доказом загибелі їхнього ватажка.",
   ["c6b43cd5"] = "Здобудьте предмет «{item:Tome of Twilight}» у підземеллі «{zone:Krol'dok Stronghold}».",
   ["ed33cabf"] = "Зберіть «{item:Cultist Ear}»: 15 шт. з членів культу «{npc:Twilight's Hammer}» у підземеллі «{zone:Krol'dok Stronghold}».",
@@ -100,12 +70,9 @@ return {
   ["a7554640"] = "Убийте 8 жерців і 12 розвідників Фаргольда на південь від річки.",
   ["374d01ec"] = "Потрібне перед завданнями культу «{npc:Twilight's Hammer}» (за повідомленням гравця в Discord аддона Dungeon Journal).",
   ["b9c31cdd"] = "Здолайте 8 сутінкових рейдерів, 8 сутінкових тіньомантів і 8 сутінкових неофітів у місцевості «{zone:Sunnyglade}» для НІП «Tran'gul» у місцевості «{zone:Rog'mar}».",
-  ["88f2fa4c"] = "Початок ланцюжків Орди (Mobalytics); що веде від нього до «Clugfist's Decree», ще не підтверджено.",
   ["864a8a9e"] = "Знайдіть НІП «Da'grosh» на пагорбах на захід від місцевості «{zone:Rog'mar}».",
   ["557bb950"] = "Здолайте сутінкових фанатиків: 8, «{npc:Twilight Corrupter}»: 8 і сутінкових чемпіонів: 8 у місцевості «{zone:Twilight's Shroud}» для НІП «Da'grosh».",
-  ["df02ae12"] = "Виконується разом із «Break Their Chains» і «Rise Up!».",
   ["045e3ac4"] = "Врятуйте 5 розвідників із Роґ’мару в місцевості «{zone:Twilight's Shroud}» для НІП «Da'grosh».",
-  ["fd79d4b3"] = "Виконується разом із «Carving a Path» і «Rise Up!».",
   ["8b7985df"] = "Здолайте боса «Overlord Kilgar» у місцевості «{zone:Twilight's Shroud}» і принесіть його голову до НІП «Da'grosh».",
   ["f1962ae0"] = "Версія для Орди. Коли здасте його НІП «Da'grosh», відкриється завдання «A Token of Vengeance».",
   ["0405f013"] = "Здолайте 8 сутінкових рейдерів, 8 сутінкових тіньомантів і 8 сутінкових неофітів у місцевості «{zone:Sunnyglade}» для НІП «{npc:Demar Brant}».",
@@ -132,9 +99,6 @@ return {
   ["b33ea3d8"] = "Після здачі відкриваються «{item:Eye of Mugg}» (НІП «{npc:Krom'rosh}») і «{item:Tome of Twilight}» (НІП «Tran'gul»).",
   ["fcf5d914"] = "Поверніться з доповіддю до НІП «{npc:Krom'rosh}» у місцевості «{zone:Rog'mar}».",
   ["1714cdc1"] = "Завербуйте 5 огрів-рудокопів",
-  ["ab3272b1"] = "Виконується разом із «Break Their Chains» і «Carving a Path».",
-
-  -- Zul'Farrak
   ["0e6338ec"] = "Поговоріть з НІП «{npc:Wizzle Brassbolts}» у місцевості «{zone:The Shimmering Flats}».",
   ["420c41c1"] = "Вступний крок до завдання «{quest:Gahz'rilla}».",
   ["0af04878"] = "Принесіть предмет «{item:Gahz'rilla's Electrified Scale}» до НІП «{npc:Wizzle Brassbolts}» у місцевості «{zone:The Shimmering Flats}».",
@@ -165,8 +129,6 @@ return {
   ["00e5d48c"] = "Перевірте вершину місцевості «{zone:The Altar of Zul}», потім поверніться до НІП «{npc:Gryphon Master Talonaxe}».",
   ["25566d61"] = "Принесіть предмет «{item:Sharpbeak's Feather}» до НІП «{npc:Thadius Grimshade}» у локації «{zone:Blasted Lands}».",
   ["3504ba35"] = "Захопіть духів 3 верескунів у локації «{zone:Feralas}», потім поверніться до НІП «{npc:Yeh'kinya}» у місцевості «{zone:Steamwheedle Port}».",
-
-  -- Maraudon
   ["fb33a03a"] = "Прочитайте «Pariah's Instructions». Потім здобудьте предмет «{item:Amulet of Union}» у підземеллі «{zone:Maraudon}» і поверніть його до НІП «{npc:Centaur Pariah}» на півдні локації «{zone:Desolace}».",
   ["441a4db3"] = "Візьміть предмет «{item:Amulet of Spirits}» з тіла НІП «{npc:The Nameless Prophet}» у зовнішніх печерах, потім з ним бийтеся з п’ятьма ханами: троє у зовнішніх печерах, один на фіолетовому маршруті й один на помаранчевому. Об’єднайте їхні самоцвіти з амулетом.",
   ["b10b01a0"] = "Зберіть «{item:Shadowshard Fragment}»: 10 шт. у підземеллі «{zone:Maraudon}» і віднесіть їх до НІП «{npc:Uthel'nay}» у місті «{zone:Orgrimmar}».",

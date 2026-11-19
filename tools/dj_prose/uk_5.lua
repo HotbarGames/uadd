@@ -1,6 +1,5 @@
 -- uk_5.lua: Ukrainian for en_5.lua (Forever Dungeon Journal long texts).
 return {
-  -- Lower Blackrock Spire
   ["e2d4cdbd"] = "Знайдіть три самоцвіти командування: «{item:Gemstone of Smolderthorn}», «{item:Gemstone of Spirestone}» і «{item:Gemstone of Bloodaxe}». Принесіть їх разом із предметом «{item:Unadorned Seal of Ascension}» до НІП «{npc:Vaelan}». Генерали: «{npc:War Master Voone}» із клану Тліючого Шипа, «{npc:Highlord Omokk}» із клану Шпилекаменя і «{npc:Overlord Wyrmthalak}» із клану Кривавої Сокири.",
   ["958e536b"] = "Знайдіть предмет «{item:Bijou's Belongings}» і поверніть його власниці. Хай щастить!",
   ["4dcabca9"] = "НІП «{npc:Bijou}» ховається в ніші за першими мостами. Її речі з’являються в одному з кількох місць біля залів тролів та орків.",
@@ -29,8 +28,6 @@ return {
   ["06c9546a"] = "Принесіть третю й четверту таблички Мош’ару до НІП «{npc:Prospector Ironboot}» у локації «{zone:Tanaris}».",
   ["0ef6a95f"] = "Поговоріть із НІП «{npc:Warlord Goretooth}», щоб вступити до лав «{npc:Kargath Expeditionary Force}».",
   ["ce72ca7f"] = "Нове у WoW Forever: це завдання йде перед завданням «{quest:Warlord's Command}».",
-
-  -- Upper Blackrock Spire
   ["cff4b6fb"] = "Вирушайте до місцевості «{zone:Wyrmbog}» у локації «{zone:Dustwallow Marsh}». Знайдіть стародавнього дрейка «{npc:Emberstrife}» і бийте його, доки не зламаєте його волю. Покладіть перед ним предмет «{item:Unforged Seal of Ascension}», потім застосуйте до нього предмет «{item:Orb of Draconic Energy}» і змусьте його спрямувати «Flames of the Black Dragonflight» на предмет «{item:Unforged Seal of Ascension}».",
   ["48327f09"] = "Віднесіть «Unforged Seal» і предмет «{item:Orb of Draconic Energy}» до дрейка «{npc:Emberstrife}» у місцевості «{zone:Wyrmbog}» у локації «{zone:Dustwallow Marsh}». Викувана печатка відчиняє двері Верхнього Шпиля Блекрок.",
   ["5095ea12"] = "Знайдіть тавро, яке охороняє бос «{npc:General Drakkisath}», і отримайте «Mark of Drakkisath», щоб користуватися «Orb of Command».",
@@ -78,8 +75,6 @@ return {
   ["85bdaa81"] = "Місцевість «{zone:Caverns of Time}» у пустелі Танаріс охороняє дрейк «{npc:Chronalis}», нащадок Ноздорму. Знищте його й віднесіть його череп до дрейка «{npc:Emberstrife}».",
   ["b2a161b0"] = "Вирушайте до місцевості «{zone:Grim Batol}» і вистежте дрейка «{npc:Axtroz}», чемпіона червоного роду. Знищте його й заберіть його череп. Віднесіть череп до дрейка «{npc:Emberstrife}».",
   ["2b78ba16"] = "Схоже, виставу закінчено. Ви знаєте, що предмет «{item:Amulet of Draconic Subversion}», який зробила для вас НІП «{npc:Myranda the Hag}», не діятиме в підземеллі «{zone:Blackrock Spire}». Можливо, варто знайти НІП «{npc:Rexxar}» і пояснити, у якій ви скруті. Покажіть йому предмет «{item:Dull Drakefire Amulet}». Сподіваймося, він знатиме, що робити далі.",
-
-  -- Dire Maul: East
   ["8dac25e4"] = "Вирушайте до підземелля «{zone:Dire Maul}» і знайдіть біса «{npc:Pusillin}». Будь-якими засобами переконайте біса «{npc:Pusillin}» віддати вам «Azj'Tordin's Book of Incantations». Якщо здобудете предмет «{item:Book of Incantations}», поверніться до НІП «{npc:Azj'Tordin}» у місцевості «{zone:Lariss Pavilion}» у локації «{zone:Feralas}».",
   ["70724029"] = "Наздоганяйте біса «{npc:Pusillin}» крилом і говоріть із ним, доки він не почне бій, тоді вбийте його заради книги. З нього також випадає предмет «{item:Crescent Key}».",
   ["25704102"] = "Поговоріть із НІП «{npc:Latronicus Moonspear}» у місцевості «{zone:Feathermoon Stronghold}» у локації «{zone:Feralas}».",
@@ -93,8 +88,6 @@ return {
   ["94fabbc4"] = "Вирушайте до «Warpwood Quarter» у підземеллі «{zone:Dire Maul}» і вбийте водяного елементаля «{npc:Hydrospawn}». Поверніться з предметом «{item:Hydrospawn Essence}» до НІП «{npc:Lorekeeper Lydros}» у залі «{zone:Athenaeum}».",
   ["7c2f50ac"] = "Класове завдання мага. Лідрос перебуває в залі «{zone:Athenaeum}» (північне/західне крило); предмет «{item:Hydrospawn Essence}» випадає з боса «{npc:Hydrospawn}» у східному крилі. Нагорода: Conjure Water (ранг 7).",
   ["fe7a8ff0"] = "Вирушайте до локації «{zone:Silithus}» і пошукайте предмет «{item:Reliquary of Purity}» серед руїн місцевості «{zone:Southwind Village}». Якщо знайдете його, повертайтеся з ним до НІП «{npc:Rabine Saturna}» у місцевості «{zone:Nighthaven}» (локація «{zone:Moonglade}»).",
-
-  -- Dire Maul: West
   ["22e7e9a0"] = "Знищте вартових біля 5 пілонів, які живлять місцевість «{zone:Prison}» демона «{npc:Immol'thar}». Коли пілони вимкнуться, силове поле навколо демона «{npc:Immol'thar}» зникне. Увійдіть до місцевості «{zone:Prison}» демона «{npc:Immol'thar}» і знищте мерзенного демона в її серці. Нарешті, зійдіться в бою з босом «{npc:Prince Tortheldrin}» у залі «{zone:Athenaeum}». Виконавши завдання, поверніться до НІП «{npc:Shen'dralar Ancient}» у дворі.",
   ["800fdc5b"] = "Убийте вартових усіх п’яти пілонів, потім боса «{npc:Immol'thar}», потім боса «{npc:Prince Tortheldrin}». Поверніться до Прадавнього Шен’дралара, візьміть завдання «The Treasure of the Shen'dralar» і відкрийте скриню під сходами бібліотеки, щоб отримати нагороду.",
   ["ba7be09d"] = "Пошукайте сліди «Kariel Winthalus» у підземеллі «{zone:Dire Maul}». Повідомте все, що дізнаєтеся, НІП «{npc:Sage Korolusk}» у місцевості «{zone:Camp Mojache}».",

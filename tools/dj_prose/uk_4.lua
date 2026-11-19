@@ -1,6 +1,5 @@
 -- uk_4.lua: Ukrainian for en_4.lua (Dungeon Journal long texts).
 return {
-  -- Alcaz Prison
   ["7ae370b0"] = "Здобудьте предмет «{item:Zarla's Journal}» з глибин підземелля «{zone:Alcaz Prison}».",
   ["c41dcb40"] = "Передайте НІП «{npc:Thrall}» у місті «{zone:Orgrimmar}» звістку про долю НІП «{npc:Varian Wrynn}».",
   ["2818f7d7"] = "Увійдіть до підземелля «{zone:Alcaz Prison}» і зберіть «{item:Blood Red Bandana}»: 8 шт. з тамтешніх вартових-людей.",
@@ -24,8 +23,6 @@ return {
   ["05d41a54"] = "Пошукайте короля Варіана Рінна в підземеллі «{zone:Alcaz Prison}».",
   ["ebaf4eba"] = "Заберіть «Alcaz Shackle Key» в НІП «The Questioner» у підземеллі «{zone:Alcaz Prison}».",
   ["52ed8626"] = "Розкажіть НІП «Commander Folkar», що ви знайшли.",
-
-  -- Sunken Temple
   ["e9e9b918"] = "Зберіть «{item:Atal'ai Tablet}»: 10 шт. для НІП «{npc:Brohann Caskbelly}» у місті «{zone:Stormwind}».",
   ["00610f1d"] = "Зберіть «{item:Atal'ai Tablet}»: 10 шт. по всьому храму; таблички в зовнішній частині храму теж зараховуються.",
   ["4452c915"] = "Зберіть «{item:Fetish of Hakkar}»: 20 шт. і принесіть їх до НІП «Фел’зерул» у місцевості «{zone:Stonard}».",
@@ -107,8 +104,6 @@ return {
   ["0136caca"] = "Перебийте «Shadowsworn» у локації «{zone:Blasted Lands}» і поверніться до НІП «{npc:Fallen Hero of the Horde}».",
   ["e780f0e7"] = "Вдарте дияволозавра предметом «{item:Devilsaur Barb}». Виконавши це, поверніться до НІП «{npc:Torwa Pathfinder}» у локації «{zone:Un'Goro Crater}».",
   ["a66f96da"] = "Зберіть «Bloodcap»: 8 шт. і «{item:Gorishi Sting}»: 8 шт. та поверніться до НІП «{npc:Torwa Pathfinder}» у локації «{zone:Un'Goro Crater}».",
-
-  -- Blackrock Depths
   ["f53ba3c0"] = "Убийте боса «{npc:Fineous Darkvire}» і заберіть великий молот «{item:Ironfel}». Віднесіть предмет «{item:Ironfel}» до місцевості «{zone:Shrine of Thaurissan}» і покладіть його на статую НІП «{npc:Franclorn Forgewright}».",
   ["2745b5b8"] = "Поговоріть із привидом Франклорна у вигляді духа. Убийте боса «{npc:Fineous Darkvire}» заради предмета «{item:Ironfel}» і покладіть молот на пам’ятник Франклорну біля «Ring of Law». Предмет «{item:Shadowforge Key}» відкриває скорочені шляхи в Глибинах Блекрок.",
   ["13bc2b2d"] = "Принесіть «Heart of the Mountain» до НІП «{npc:Maxwort Uberglint}» у локації «{zone:Burning Steppes}».",
@@ -144,7 +139,6 @@ return {
   ["5fbf9fb7"] = "Вирушайте до підземелля «{zone:Blackrock Depths}» і вбийте боса «{npc:General Angerforge}»! Виконавши завдання, поверніться до НІП «{npc:Warlord Goretooth}».",
   ["f4def4c0"] = "Спершу потрібні обидва завдання «KILL ON SIGHT» і супровід НІП «{npc:Grark Lorkrub}».",
   ["df6c8b66"] = "Вирушайте до підземелля «{zone:Blackrock Depths}» і вбийте боса «{npc:Bael'Gar}». Використайте предмет «{item:Altered Black Dragonflight Molt}» на рештках боса «{npc:Bael'Gar}», щоб уловити «Fiery Essence». Принесіть предмет «{item:Encased Fiery Essence}» до НІП «{npc:Cyrus Therepentous}».",
-  ["c303e3b6"] = "Спершу покажіть Сайрусові предмет «{item:Black Dragonflight Molt}» (завдання «{quest:A Taste of Flame}» або вбийте дракона, якого він викликає). Потім убийте боса «{npc:Bael'Gar}» і використайте предмет «{item:Altered Black Dragonflight Molt}» на його рештках, щоб отримати предмет «{item:Encased Fiery Essence}».",
   ["a608498f"] = "Поверніться до підземелля «{zone:Blackrock Depths}» і врятуйте НІП «{npc:Princess Moira Bronzebeard}» з лихих пазурів НІП «{npc:Emperor Dagran Thaurissan}».",
   ["62f3a5b7"] = "Не дайте принцесі Мойрі загинути й поговоріть із нею після смерті імператора Даґрана Тауріссана. Її завдання «The Princess's Surprise» відправить вас по нагороду назад до Маґні.",
   ["a967f5bf"] = "Убийте боса «{npc:Emperor Dagran Thaurissan}» і звільніть НІП «{npc:Princess Moira Bronzebeard}» від його лихих чарів.",
@@ -155,12 +149,6 @@ return {
   ["3fc0f20d"] = "Предмет «{item:Core Fragment}» лежить на камені біля порталу в рейд «{zone:Molten Core}» далеко в Глибинах Блекрок. Відкриває телепорт від Лотоса в рейд «{zone:Molten Core}».",
   ["7af16034"] = "Здайте предмет «{item:Thorium Brotherhood Contract}» НІП «{npc:Lokhtos Darkbargainer}», якщо хочете отримати креслення Сульфуронового молота.",
   ["9e2451d0"] = "Ковальство. Принесіть предмет «{item:Sulfuron Ingot}» (бос «Golemagg», рейд «{zone:Molten Core}») до НІП «Lokhtos» у місцевості «{zone:The Grim Guzzler}», щоб отримати контракт, а потім здайте його назад за креслення «{item:Sulfuron Hammer}».",
-  ["5850fd82"] = "Принесіть до НІП «{npc:Private Rocknot}» дві «Dark Iron Ale Mugs».",
-  ["f38bcfc3"] = "Купуйте «Dark Iron Ale Mugs» у НІП «{npc:Plugger Spazzring}» і віддавайте їх НІП «Рядовий Рокнот». П’яна подія відкриває шлях через бар і може зробити НІП «{npc:Phalanx}» ворожим.",
-  ["5ab594a6"] = "Здобудьте предмет «{item:Fragment of the Firelands}» у підземеллі «{zone:Blackrock Depths}» для НІП «{npc:Alaana Stormwalker}» у локації «{zone:Mulgore}».",
-  ["cad9f960"] = "Здобудьте уламок з елементалів Вогняних Просторів у підземеллі «{zone:Blackrock Depths}». З кого саме він випадає, поки не підтверджено; повідомте, будь ласка, у Discord аддона Dungeon Journal. Завдання брали на рівні 49.",
-  ["255ce47a"] = "Використайте предмет «{item:Banner of Provocation}» у центрі «Ring of Law», коли НІП «{npc:High Justice Grimstone}» виносить вам вирок, убийте боса «{npc:Theldren}» і його гладіаторів та принесіть предмет «{item:Top Piece of Lord Valthalak's Amulet}» до НІП «{npc:Anthion Harmon}» у локації «{zone:Eastern Plaguelands}».",
-  ["4bfe4df4"] = "Встановіть прапор, перш ніж вийде звичайний суперник. Тоді з вами битимуться НІП «{npc:Theldren}» і його гладіатори, а після бою з’явиться скриня «{item:Arena Spoils}». Прапор лишається у вас (відновлення 10 хв), щоб викликати його знову.",
   ["31e0b7de"] = "Вирушайте до місцевості «{zone:Ruins of Thaurissan}» («{zone:Burning Steppes}») і зберіть відомості з «Thaurissan Relics». Зібравши їх, поверніться до НІП «{npc:Royal Historian Archesonus}».",
   ["b68cb47f"] = "Вислухайте, як НІП «{npc:Royal Historian Archesonus}» переказує історію Тауріссана.",
   ["b7af21dd"] = "Поговоріть з НІП «{npc:Franclorn Forgewright}», якщо хочете отримати ключ від міста.",
@@ -188,8 +176,6 @@ return {
   ["633ca92d"] = "Вирушайте до підземелля «{zone:Blackrock Depths}» і знайдіть НІП «{npc:Kharan Mighthammer}». Король згадував, що Карана тримають там у полоні, — можливо, варто пошукати в’язницю.",
   ["6ea61767"] = "Вислухайте розповідь НІП «{npc:Kharan Mighthammer}».",
   ["32bcb16a"] = "Поверніться до міста «{zone:Ironforge}» і повідомте погану новину НІП «{npc:King Magni Bronzebeard}».",
-  ["5ba85f4f"] = "Віднесіть незавершений предмет «{item:Banner of Provocation}» до НІП «{npc:Falrin Treeshaper}» у бібліотеці в підземеллі «{zone:Dire Maul}».",
-  ["d83bee16"] = "Частина завдань Антіона Гармона для «Dungeon Set 2»: попередні завдання відкривають цей крок.",
-  ["f3c74149"] = "Зберіть «{item:Ogre Warbeads}»: 25 шт. з огрів у підземеллі «{zone:Dire Maul}» або «{zone:Blackrock Spire}».",
-  ["f67e395c"] = "Принесіть 1 предмет «{item:Jeering Spectre's Essence}», «{item:Dark Rune}»: 4 шт. і «{item:Large Brilliant Shard}»: 8 шт. до НІП «{npc:Falrin Treeshaper}» у підземеллі «{zone:Dire Maul}».",
+  ["338a1d87"] = "Поговоріть із НІП «Rugged Traveler».",
+  ["014f15e9"] = "Перейдіть мостом, що трохи на схід від «Ring of Law» і веде на північ над лавою, та зачистіть його. З лівого боку, біля невеликої жаровні, зістрибніть із перил на платформу біля стіни, дійдіть нею до кута і тримайтеся лівим плечем стіни, доки не зістрибнете на кам’яний виступ внизу: там стоїть НІП «Rugged Traveler». Двері на виступі ведуть на виступ над НІП «{npc:Lord Incendius}»; дороги назад немає. Не можна поділитися.",
 }

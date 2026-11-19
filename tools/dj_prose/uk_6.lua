@@ -1,6 +1,10 @@
 -- uk_6.lua: Ukrainian for en_6.lua (Dungeon Journal long texts).
 return {
-  -- Dire Maul: North
+  ["629c3a8e"] = "Знайдіть НІП «{npc:Rethiel the Greenwarden}» у локації «{zone:Wetlands}».",
+  ["5ba85f4f"] = "Віднесіть незавершений предмет «{item:Banner of Provocation}» до НІП «{npc:Falrin Treeshaper}» у бібліотеці в підземеллі «{zone:Dire Maul}».",
+  ["d83bee16"] = "Частина завдань Антіона Гармона для «Dungeon Set 2»: попередні завдання відкривають цей крок.",
+  ["f3c74149"] = "Зберіть «{item:Ogre Warbeads}»: 25 шт. з огрів у підземеллі «{zone:Dire Maul}» або «{zone:Blackrock Spire}».",
+  ["f67e395c"] = "Принесіть 1 предмет «{item:Jeering Spectre's Essence}», «{item:Dark Rune}»: 4 шт. і «{item:Large Brilliant Shard}»: 8 шт. до НІП «{npc:Falrin Treeshaper}» у підземеллі «{zone:Dire Maul}».",
   ["a0bcde1d"] = "Поговоріть із дружнім НІП «{npc:Captain Kromcrush}», коли станете королем Ґордоків. Предмет «{item:Gauntlet of Gordok Might}» лежить у скрині біля НІП «{npc:Prince Tortheldrin}» у західному крилі підземелля «{zone:Dire Maul}».",
   ["a834d46a"] = "Знайдіть предмет «{item:Gordok Shackle Key}» на ограх крила Ґордоків і звільніть ним НІП «{npc:Knot Thimblejack}».",
   ["b81c3d1c"] = "Здобудьте предмет «{item:Gordok Shackle Key}» з огрів північного крила і звільніть Нота; у його схованці є здобич.",
@@ -22,28 +26,19 @@ return {
   ["2eac173f"] = "Повторюване. Спершу треба здати завдання «{quest:Elven Legends}» вашої фракції.",
   ["6bdbd351"] = "Принесіть предмет «{item:Libram of Focus}», 1 предмет «{item:Pristine Black Diamond}», «{item:Large Brilliant Shard}»: 4 шт. і «{item:Skin of Shadow}»: 2 шт. НІП «{npc:Lorekeeper Lydros}» у підземеллі «{zone:Dire Maul}», щоб отримати предмет «{item:Arcanum of Focus}».",
   ["65e15f65"] = "Принесіть предмет «{item:Libram of Protection}», 1 предмет «{item:Pristine Black Diamond}», «{item:Large Brilliant Shard}»: 2 шт. і 1 предмет «{item:Frayed Abomination Stitching}» НІП «{npc:Lorekeeper Lydros}» у підземеллі «{zone:Dire Maul}», щоб отримати предмет «{item:Arcanum of Protection}».",
-
-  -- Blackmaw Hold
   ["2c3e7ae6"] = "Зберіть «{item:Nordrassil Root Cap}»: 10 шт. у підземеллі «{zone:Blackmaw Hold}».",
   ["3e23bb96"] = "Здобудьте предмет «{item:Blackmaw Ritual Totem}» з ворога «Elder Shaman Bloodmane» у підземеллі «{zone:Blackmaw Hold}».",
-  ["72e60cf2"] = "Хто видає завдання, поки невідомо.",
   ["883baf73"] = "Принесіть предмети «{item:Claws of the Great Bear}» і «{item:Tusks of the Unbroken}» до НІП «{npc:Ogtinc}» у локації «{zone:Azshara}».",
   ["3275e953"] = "«Withermaw» і «Bonesnout» ходять різними шляхами: пройдіть обидва.",
   ["e8aa7b9f"] = "Знайдіть власника предмета «{item:Feathered Charm Necklace}».",
-  ["c87d4d20"] = "Завдання починається з предмета. Намисто — саморобна пам’ятна річ фурболгів. Який саме НІП і де здавати, ще з’ясовують.",
   ["ca0ebee2"] = "Увійдіть у підземелля «{zone:Blackmaw Hold}» і здобудьте «{item:Blackmaw Pouch}»: 5 шт. для НІП «Ekkal» біля «{zone:Ruins of Eldarath}» у локації «{zone:Azshara}».",
   ["89f0e428"] = "Потім НІП «Ekkal» приймає ще торбинки як повторюване завдання («{zone:Timbermaw Hold}» +100).",
   ["b3b3a0f4"] = "Знайдіть предмети «{item:Totem of Ursoc}» і «{item:Totem of Ursol}» у підземеллі «{zone:Blackmaw Hold}». Потім поверніть їх до НІП «Lorekeeper Nok» у місцевості «{zone:Ursolan}».",
-  ["7efe4d54"] = "Потрібна щонайменше нейтральна репутація з «{zone:Timbermaw Hold}». Потрібний рівень ще не підтверджено.",
   ["74195c4a"] = "Принесіть голову «Varrox Bleakhoof» до НІП «{npc:Gatekeeper Rageroar}» у місцевості «{zone:Ursolan}».",
-  ["90cf9b22"] = "Голова — у Варрокса Блікгуфа, останнього боса. Потрібна щонайменше нейтральна репутація з «{zone:Timbermaw Hold}». Потрібний рівень ще не підтверджено.",
   ["88183d28"] = "Повторюване, після перших «Blackmaw Pouches».",
   ["1e691724"] = "Принесіть предмет «{item:Fel-Tainted Flesh}».",
-  ["4aa7c1ac"] = "Повторюване. Текст завдання посилає вас на сатирів Леґаші. Хто його видає, поки невідомо; повідомте про це в Discord аддона Dungeon Journal.",
   ["3a5728ae"] = "Поговоріть з НІП «{npc:Mathrengyl Bearwalker}» у місцевості «{zone:Cenarion Enclave}» у місті «{zone:Darnassus}».",
   ["f3c6e9b2"] = "Поговоріть з НІП «{npc:Nara Wildmane}» у місцевості «{zone:Elder Rise}» у місті «{zone:Thunder Bluff}».",
-
-  -- Stratholme: Living
   ["bf3d943b"] = "Вирушайте до підземелля «{zone:Stratholme}» і знайдіть НІП «{npc:Archivist Galford}» з ордену «Scarlet Crusade». Знищте його і спаліть «Scarlet Archive».",
   ["773a0ce1"] = "Убийте боса «{npc:Archivist Galford}» у місцевості «{zone:The Scarlet Bastion}» і спаліть архіви.",
   ["d4819af9"] = "Віднесіть предмет «{item:Head of Balnazzar}» до НІП «{npc:Duke Nicholas Zverenhoff}» у локації «{zone:Eastern Plaguelands}».",
@@ -68,8 +63,6 @@ return {
   ["cc77c527"] = "Вирушайте до місцевості «{zone:The Undercroft}» у найпівденнішій частині локації «{zone:Eastern Plaguelands}» і здобудьте предмет «{item:Taelan's Hammer}». Виконавши це, поверніться до НІП «{npc:Tirion Fordring}».",
   ["fddfaca7"] = "Вирушайте до місцевості «{zone:Northdale}» у північно-східній частині «{zone:Eastern Plaguelands}» і здобудьте предмет «{item:Symbol of Lost Honor}». Виконавши це, поверніться до НІП «{npc:Tirion Fordring}».",
   ["e71c0a85"] = "Вирушайте на острів «{zone:Caer Darrow}» у південно-центральній частині Чумних Земель і пошукайте будь-які підказки, де може бути картина.",
-
-  -- Stratholme: Undead
   ["c9060e87"] = "Вирушайте до підземелля «{zone:Stratholme}» і знищте боса «{npc:Baron Rivendare}». Заберіть його голову і поверніться до НІП «{npc:Duke Nicholas Zverenhoff}».",
   ["d7ec74a1"] = "Потім НІП «{npc:Lord Maxwell Tyrosus}» і «The Argent Hold» у місцевості «{zone:Light's Hope Chapel}» дають нагороду: зброю або щит.",
   ["d5d4248b"] = "Вирушайте до підземелля «{zone:Stratholme}» і обшукайте зикурати. Знайдіть свіжий предмет «{item:Scourge Data}» і принесіть його до НІП «{npc:Betina Bigglezink}».",
@@ -89,8 +82,6 @@ return {
   ["3e5122bd"] = "Вирушайте до північних кордонів локації «{zone:Eastern Plaguelands}» і здобудьте предмет «{item:Quel'Thalas Registry}». Він десь у мисливському будинку «Quel'Lithien». Також убийте «{npc:Ranger}»: 8, «{npc:Pathstrider}»: 8 і «{npc:Woodsman}»: 8.",
   ["b2b5e874"] = "Знайдіть і вбийте «{npc:Duskwing}». Заберіть із тіла предмет «{item:Patch of Duskwing's Fur}» і поверніть його до НІП «{npc:Nathanos Blightcaller}». Кажуть, цей звір блукає околицями на північ від «Marris Stead».",
   ["504b452a"] = "Знайдіть НІП «{npc:Borelgore}» у північних пустищах локації «{zone:Eastern Plaguelands}» і знищте його. Виконавши це, поверніться до НІП «{npc:Nathanos Blightcaller}».",
-
-  -- Scholomance
   ["383a526f"] = "Поверніться до підземелля «{zone:Scholomance}» з предметом «{item:Blood of Innocents}». Знайдіть ґанок і покладіть предмет «{item:Blood of Innocents}» у жаровню. Кіртонос прийде поласувати вашою душею. Бийтеся відважно, не відступайте ні на крок! Знищте Кіртоноса й поверніться до НІП «{npc:Eva Sarkhoff}».",
   ["989df5ad"] = "Використайте предмет «{item:Blood of Innocents}» біля жаровні на ґанку підземелля «{zone:Scholomance}». Нагорода — предмет «{item:Spectral Essence}».",
   ["43d211ab"] = "Знайдіть боса «{npc:Jandice Barov}» у підземеллі «{zone:Scholomance}» і знищте її. Заберіть із її тіла предмет «{item:Krastinov's Bag of Horrors}». Поверніть торбу до НІП «{npc:Eva Sarkhoff}».",
@@ -118,19 +109,12 @@ return {
   ["9ee56a8b"] = "Поверніться з предметом «{item:Blessed Arcanite Barding}» до НІП «{npc:Lord Grayson Shadowbreaker}» у кварталі «Cathedral District» міста «{zone:Stormwind}».",
   ["7efb687b"] = "Принесіть предмети «{item:Azerothian Diamond}» і «{item:Pristine Black Diamond}» до НІП «{npc:Lord Grayson Shadowbreaker}» у кварталі «Cathedral District» міста «{zone:Stormwind}».",
   ["29c2fdff"] = "Якщо хочете допомогти НІП «Sagorne Crestrider» у місцевості «{zone:Valley of Wisdom}» міста «{zone:Orgrimmar}», принесіть йому предмети «{item:Azerothian Diamond}» і «{item:Pristine Black Diamond}».",
-
-  -- Shaper's Terrace
   ["f610ec2f"] = "Принесіть до НІП «Mayena Earthseeker» предмети «{item:Moist Crystal}», «{item:Charged Crystal}», «{item:Noxious Crystal}» і «{item:Fiery Crystal}» з підземелля «{zone:Shaper's Terrace}».",
   ["431c892c"] = "Зберіть «{item:Seeping Slime Essence}»: 8 шт. у підземеллі «{zone:Shaper's Terrace}».",
   ["cd312431"] = "Знайдіть безбарвний предмет «{item:Drained Crystal Fragment}» біля «Achromatic Crystal» у підземеллі «{zone:Shaper's Terrace}».",
   ["23131580"] = "Убийте НІП «Venomridge», «{npc:Ravasaur Matriarch}»: 6 і залізношкурих равазаврів: 8 у підземеллі «{zone:Shaper's Terrace}».",
-  ["56962e1f"] = "Хто видає завдання, поки невідомо. Текст завдання просить 9 залізношкурих равазаврів, а ціль рахує 8.",
   ["51f9254a"] = "Знайдіть цікаві орієнтири в підземеллі «{zone:Shaper's Terrace}» і біля кожного заповніть карту дослідника: «{zone:Pillar of Assimilation}», «Achromatic Crystal», «Western Gates», «{zone:Regrowth Vestibule}» і відкопаний Кам’яний вартовий.",
-  ["97f78ad6"] = "Хто видає завдання, поки невідомо. Наносять їх на карту за допомогою предмета «{item:Explorers' League Cartographer's Kit}».",
   ["1f29fa1f"] = "Зберіть «{item:Partially Digested Journal Page}»: 15 шт. у підземеллі «{zone:Shaper's Terrace}».",
-  ["d7ad4f1e"] = "Хто видає завдання, поки невідомо (за його текстом, почати його може подертий щоденник).",
-
-  -- Cozy Sleeping Bag
   ["a31fda8a"] = "Обшукайте «Hastily Rolled-Up Satchel» під «Messenger Bag» біля «{zone:Thoradin's Wall}».",
   ["b9864f2b"] = "Ідіть за обгорілою запискою з локації «{zone:Westfall}» до місця-двійника: «Burned-Out Remains» біля згорілої вежі на південь від «{zone:Camp Taurajo}» у локації «{zone:The Barrens}».",
   ["dcdb2e13"] = "Знайдіть затишне місце в горах між «{zone:The Barrens}» і «{zone:Desolace}»: «Pocket Litter» у покинутому таборі в локації «{zone:Stonetalon Mountains}».",
@@ -141,17 +125,11 @@ return {
   ["9e3cb4ca"] = "Залізьте на «{zone:Thoradin's Wall}» з воза з боку «{zone:Hillsbrad}» (87.3, 49.6), пройдіть крізь кімнату в стіні й подивіться назовні праворуч: там висить торба.",
   ["28691bad"] = "Відрахуйте сто кроків точно на північ від табору і знайдіть «Mound of Dirt» під скелею.",
   ["9e50b7e8"] = "Ідіть прямо на північ від табору, підніміться на пагорб і зістрибніть із його краю до «Mound of Dirt». Обережно, дивіться під ноги.",
-
-  -- Onyxia Attunement
   ["e73effb2"] = "Кожен учасник рейду має мати в сумках предмет «{item:Drakefire Amulet}», щоб увійти до рейду «{zone:Onyxia's Lair}»; носити його не обов’язково. Останній крок — у підземеллі «Верхній Шпиль Блекрок»: кров боса «{npc:General Drakkisath}».",
-
-  -- Mallet of Zul'Farrak
   ["b0d4caf6"] = "Застосуйте предмет «{item:Sacred Mallet}» біля вівтаря на самій вершині «{zone:Jintha'Alor}»: він перетвориться на предмет «{item:Mallet of Zul'Farrak}».",
   ["1ab2fd8e"] = "Локація «{zone:Jintha'Alor}» повна тролів 45-50 рівня: візьміть групу або підкрадіться. Предмет «{item:Sacred Mallet}» можна використати в бою. Одного молота на групу досить, і він викликає боса «{npc:Gahz'rilla}» і в усіх наступних проходженнях.",
   ["f7c180a5"] = "Убийте НІП «{npc:Qiaga the Keeper}» на вершині місцевості «{zone:The Altar of Zul}» і заберіть предмет «{item:Sacred Mallet}».",
   ["46db9d5f"] = "«{npc:Qiaga the Keeper}» і «{npc:Morta'gya the Keeper}» — елітні вороги 50 рівня, а навколо них заклиначі. Кожен у групі може забрати предмет «{item:Sacred Mallet}».",
-
-  -- (other prereq steps)
   ["bb38ae3d"] = "Розшукайте НІП «{npc:Argent Guard Thaelrid}» у підземеллі «{zone:Blackfathom Deeps}».",
   ["89d48181"] = "Необов’язковий вступ до версії Альянсу завдання «{quest:Blackfathom Villainy}»: здайте його до того, як візьмете завдання «{quest:Blackfathom Villainy}», інакше його вже не вдасться виконати.",
   ["95d1ea21"] = "Принесіть «{item:Red Leather Bandana}»: 15 шт. НІП «{npc:Scout Galiaan}» у місцевості «{zone:Sentinel Hill}».",
@@ -171,8 +149,6 @@ return {
   ["5a746a60"] = "Останній крок. НІП «Old Fire-Eye» чекає в місцевості «{zone:The Greymane Wall}» на півдні локації «{zone:Silverpine Forest}». Нагорода — «Wolfsbane».",
   ["ba3d70aa"] = "Потрібне перед завданням «{quest:Heartwoven}».",
   ["0708bdac"] = "Останній крок. Виберіть один із предметів: «{item:Rage of the Storm}», «{item:Lightning's Grasp}» або «{item:Tidebringer's Claw}»; шамани Альянсу також отримують предмет «{item:Elementalist's Guard}».",
-
-  -- (journal templates): %s is an English quest title
   ["3a08ada7"] = "Попередження: приймайте це завдання лише після виконання завдання «%s», інакше те завдання буде втрачено.",
   ["cf5059d1"] = "Попередження: якщо не виконати це завдання до прийняття завдання «%s», воно стане недоступним.",
   ["90eabe36"] = "Прийміть завдання «%s» раніше за завдання «%s». Якщо завдання «%s» зникне, покиньте завдання «%s», і воно з’явиться знову.",

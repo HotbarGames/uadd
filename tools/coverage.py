@@ -33,7 +33,7 @@ ESCAPES = "crTtHhn"
 # draws it in English for it (UADD_Questie/Tracker.lua; docs/LESSONS.md, lesson 3). So these stay out
 # of strings.lua: they are "left to UALL Forever", not missing.
 LEFT_TO_UALLF = frozenset({
-    "Questie Tracker", "Quest Complete!", "Quest Failed!", "Blizzard Timer Active!", "Time's up!",
+    "Questie Tracker", "Quest Complete!", "Quest Failed!", "Time's up!",
     "Quests (By %% Complete)", "Quests (By %% Complete Reversed)", "Quests (By Level)",
     "Quests (By Level Reversed)", "Quests (By Proximity)", "Quests (By Proximity Reversed)",
     "Achievements", "Recipes", "Challenge Mode",
