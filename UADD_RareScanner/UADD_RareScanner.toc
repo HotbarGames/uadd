@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: RareScanner in Ukrainian: its words, settings and pop-ups. Part of UADD.
 ## Author: HotbarGames
-## Version: 1.0.1
+## Version: 1.1.0
 ## Dependencies: UADD, RareScanner
 ## OptionalDeps: UALLF
 ## X-Category: Localization

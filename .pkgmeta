@@ -34,11 +34,12 @@ optional-dependencies:
   - attune
   # LayerSwap: no CurseForge page found (2026-11-18), so no line for it
   - auto-potion   # project 312940, as its TOC says (checked 2026-11-19)
-  - bagnon        # its TOC names no project id; slug not checked on its page yet (2026-11-19)
-  - mastercraft   # slug not checked on its page yet (2026-11-19); Mastercraft_Inbox ships with it, needs nothing
-  - whats-training   # CurseForge project 324944; slug not checked on its page yet (2026-11-19)
-  - tomtom   # slug not checked on its page yet (2026-11-19)
-  - rarescanner   # slug not checked on its page yet (2026-11-20)
+  # the slugs below were checked with CurseForge's project search on 2026-11-20
+  - bagnon        # project 1592
+  - mastercraft-forever   # project 1711528 (Mastercraft by Shadowblade); Mastercraft_Inbox ships with it
+  - whats-training   # project 324944
+  - tomtom   # project 18808, as its TOC says
+  - rarescanner   # project 84208
   # names come from UALL Forever when it is installed; without it the menus are still Ukrainian
   - uall-forever-ukrainian-localization
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0
 
 - New module UADD_RareScanner: RareScanner's settings, map menus, explorer, pop-ups, tooltips and chat lines in
   Ukrainian. Lines with a game name stay English for now; the default custom group names stay English.
