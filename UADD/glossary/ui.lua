@@ -21,6 +21,10 @@ E{ id = "ui.reload_ui_short", en = "Reload UI", uk = "Перезавантажи
 E{ id = "ui.dont_show_again", en = "Don't show again", uk = "Більше не показувати", note = "Checkbox or button on a notice." }
 E{ id = "ui.more_info", en = "More Info", uk = "Докладніше", note = "Link or label that leads to more details." }
 
+-- Things an addon makes or is
+E{ id = "ui.macro", en = { "Macro", "Macros" }, uk = "Макрос", note = "A game macro (/macro); many: макроси. UALL: «Загальні макроси» (first used by UADD_AutoPotion)." }
+E{ id = "ui.addon", en = { "Addon", "AddOn", "Addons" }, uk = "Аддон", note = "A game addon (many: аддони); used by every module." }
+
 -- States
 E{ id = "ui.enabled", en = "Enabled", uk = "Увімкнено", note = "State: a feature is on. Also a choice in a drop-down." }
 E{ id = "ui.disabled", en = "Disabled", uk = "Вимкнено", note = "State: a feature is off. Also a choice in a drop-down." }

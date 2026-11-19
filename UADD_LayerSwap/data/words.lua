@@ -1,4 +1,4 @@
--- Made by tools/make_lsw_data.py from LayerSwap 1.14.35. Do not edit: change the review file
+-- Made by tools/make_lsw_data.py from LayerSwap 1.14.36. Do not edit: change the review file
 -- (local/layerswap.txt) and run the tool again. No English here: only hashes of it (UADD/Hash.lua)
 -- and our Ukrainian. Words.lua builds its tables from it. Over the 300-line budget on purpose: data.
 local _, ns = ...
@@ -238,6 +238,7 @@ ns.LSW = {
         { len = { 34, 29 }, hash = { "8a9fa56d", "c4b160f4" }, kinds = { "s" }, free = { 1 }, uk = { "гра відмовила в цьому сеансі (", 1, ") — /ls guild питає вашу гільдію" } },
         { len = { 58, 3 }, hash = { "2ec67757", "0b874a06" }, kinds = { "s" }, uk = { "На останній запит хости мовчали — спитати знову можна за ", 1, " с." } },
         { len = { 17, 44 }, hash = { "2b560eb4", "fac2cf39" }, kinds = { "s" }, free = { 1 }, uk = { "гра заблокувала ", 1, " — у цьому клієнті ця дія потребує клацання." } },
+        { len = { 27, 32 }, hash = { "e17d022c", "4f7f0ee1" }, kinds = { "s" }, uk = { "Гра повернула вас: ", 1, ". Натисніть «Змінити лейер» знову." } },
         { len = { 0, 0, 58 }, hash = { "00001505", "00001505", "128d7fa4" }, kinds = { "s", "s" }, blank = { 2 }, uk = { "Почули з LayerSwap: ", 1, 2, ", але хостів немає. Спробуйте за мить." } },
         { len = { 41, 17 }, hash = { "8a74c3ad", "14cc90f8" }, kinds = { "s" }, uk = { "Хост на паузі в бою — знову запрошуватиме ", 1, " після бою." } },
         { len = { 38, 16, 3 }, hash = { "8bbc58dc", "08a93488", "0b874a06" }, kinds = { "s", "s" }, free = { 1 }, uk = { "На ваш останній запит у ", 1, " не відповів жоден хост — спитайте знову за ", 2, " с." } },
@@ -415,6 +416,7 @@ ns.LSW = {
         { len = { 34, 29 }, hash = { "8a9fa56d", "c4b160f4" }, kinds = { "s" }, uk = {} },
         { len = { 17, 44 }, hash = { "2b560eb4", "fac2cf39" }, kinds = { "s" }, uk = {} },
         { len = { 58, 3 }, hash = { "2ec67757", "0b874a06" }, kinds = { "s" }, uk = {} },
+        { len = { 27, 32 }, hash = { "e17d022c", "4f7f0ee1" }, kinds = { "s" }, uk = {} },
         { len = { 0, 0, 58 }, hash = { "00001505", "00001505", "128d7fa4" }, kinds = { "s", "s" }, uk = {} },
         { len = { 41, 17 }, hash = { "8a74c3ad", "14cc90f8" }, kinds = { "s" }, uk = {} },
         { len = { 38, 16, 3 }, hash = { "8bbc58dc", "08a93488", "0b874a06" }, kinds = { "s", "s" }, uk = {} },

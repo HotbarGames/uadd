@@ -9,6 +9,7 @@ UADD_ForeverXPBar's checks run next, on a stand-in for ForeverXP Bar (flow_fxpb.
 UADD_Auctionator's checks run next, on a stand-in for Auctionator (flow_auc.py).
 UADD_Attune's checks run next, on a stand-in for Attune (flow_att.py).
 UADD_LayerSwap's checks run next, on a stand-in for LayerSwap (flow_lsw.py).
+UADD_AutoPotion's checks run next, on a stand-in for Auto Potion (flow_autopotion.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the same stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
@@ -42,6 +43,7 @@ def run_all():
     import flow
     import flow_att
     import flow_auc
+    import flow_autopotion
     import flow_dialogueui
     import flow_dj_module
     import flow_fxpb
@@ -79,6 +81,10 @@ def run_all():
     lsw_checks, lsw_facts = flow_lsw.run_checks()
     checks += lsw_checks
     facts["lsw"] = lsw_facts
+    gc.collect()
+    ap_checks, ap_facts = flow_autopotion.run_checks()
+    checks += ap_checks
+    facts["ap"] = ap_facts
     gc.collect()
     miss_checks, miss_facts = flow_missed.run_checks()
     checks += miss_checks

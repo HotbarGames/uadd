@@ -1,4 +1,4 @@
-"""Repo guard: a size ratchet for tracked text files, a leak guard for claude-config files, and a TOC check.
+"""Repo guard: a size ratchet for text files, a leak guard for claude-config files, and a TOC check.
 
 python3 tools/check_repo.py            check (exit 0 = ok, 1 = problems)
 python3 tools/check_repo.py --update   lower the numbers in size-budget.json / drop entries (never raises or adds)
@@ -7,7 +7,7 @@ python3 tools/check_repo.py --init     create size-budget.json from today's over
 size-budget.json: {"files": {"<path>": {"lines": n, "bytes": n, "maxLine": n}}, "ignore": [{"glob": "data/*.csv",
 "reason": "why this is not hand-written code"}]}. Only the numbers over the limits are recorded.
 
-TOC check: for every tracked addon folder X/X.toc, each file the TOC lists is tracked, each tracked .lua/.xml
+TOC check: for every addon folder X/X.toc, each file the TOC lists is there (tracked or new), each .lua/.xml
 in X/ is listed, and all TOCs share one ## Version and one ## Interface.
 
 Glossary check (when UADD/Glossary.lua exists): the problems tools/glossary.py finds fail the check too;
@@ -17,8 +17,11 @@ Copy check (tools/copy_check.py): no bulk copies of an all-rights-reserved addon
 in README.md and CLAUDE.md). Reads the installed addons ($UADD_ADDONS_DIR, else the WoW folder); one that is
 not installed is a note.
 
-Standard library only. Reads tracked files only (`git ls-files -z`), from the git repo in the current folder.
-Tests: python3 -m unittest discover -s tools
+Files read: the tracked ones and the untracked ones git does not ignore (`git ls-files --others
+--exclude-standard`): those get committed next, so a new file is checked before its first commit, not first
+by the pre-push hook on a clean export (docs/LESSONS.md, lesson 10). The leak guard reads tracked files only:
+an untracked claude-config file is a normal local file. Run in the git repo in the current folder.
+Standard library only. Tests: python3 -m unittest discover -s tools
 """
 import fnmatch
 import json
@@ -68,6 +71,13 @@ def git_root():
 def tracked(root):
     out = subprocess.run(["git", "ls-files", "-z"], cwd=root, capture_output=True, check=True)
     return [p for p in out.stdout.decode("utf-8", "surrogateescape").split("\0") if p]
+
+
+def checked(root):
+    """The tracked files, then the untracked ones git does not ignore (they get committed next)."""
+    paths = tracked(root)
+    seen = set(paths)
+    return paths + [p for p in copy_check.untracked(root) if p not in seen]
 
 
 def is_leak(path):
@@ -138,12 +148,12 @@ def save_budget(root, budget):
 
 
 def scan(root, budget):
-    """Returns (leaks, sizes): leak paths and {path: metrics} for every size-checked tracked file."""
+    """Returns (leaks, sizes): tracked leak paths, and {path: metrics} for every size-checked file, tracked or
+    untracked and not ignored."""
     globs = ignore_globs(budget)
-    leaks, sizes = [], {}
-    for path in tracked(root):
-        if is_leak(path):
-            leaks.append(path)
+    leaks = [p for p in tracked(root) if is_leak(p)]
+    sizes = {}
+    for path in checked(root):
         full = os.path.join(root, path)
         if skip_reason(path, globs) or os.path.islink(full) or not os.path.isfile(full):
             continue
@@ -158,8 +168,8 @@ def over_limits(m):
 
 
 def toc_problems(root, paths):
-    """Each addon folder X with a tracked X/X.toc: the TOC's file list matches the tracked .lua/.xml files,
-    and every TOC has the same ## Version and ## Interface."""
+    """Each addon folder X with an X/X.toc in paths (tracked and new files): the TOC's file list matches the
+    .lua/.xml files in paths, and every TOC has the same ## Version and ## Interface."""
     problems, seen = [], {"Version": {}, "Interface": {}}
     tracked_set = set(paths)
     for toc in sorted(p for p in paths if p.count("/") == 1 and p.endswith(".toc")
@@ -195,7 +205,7 @@ def check(root, budget):
     """Returns (problems, notes) as printable lines."""
     leaks, sizes = scan(root, budget)
     problems = [f"{p}: claude-config file must never be committed (git rm --cached '{p}')" for p in leaks]
-    paths = tracked(root)
+    paths = checked(root)
     problems += toc_problems(root, paths)
     problems_c, notes = copy_check.check(root, paths, lambda p: os.path.splitext(p)[1].lower() in BINARY_EXT)
     problems += problems_c

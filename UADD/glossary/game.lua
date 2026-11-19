@@ -21,6 +21,8 @@ E{ id = "game.item_level_short", en = "Item Level", uk = "Рівень", note = 
 E{ id = "game.experience", en = "Experience", uk = "Досвід", note = "Experience points (XP)." }
 E{ id = "game.reputation", en = "Reputation", uk = "Репутація", note = "Standing with a faction." }
 E{ id = "game.health", en = "Health", uk = "Здоров'я", note = "Hit points of a character or NPC." }
+E{ id = "game.spell", en = { "Spell", "Spells" }, uk = "Закляття", note = "A spell or ability you cast (one or many: same word). UALL's word (about 1190 uses against 12 of «заклинання»)." }
+E{ id = "game.cooldown", en = "Cooldown", uk = "Перезарядка", note = "The wait before a spell or item can be used again." }
 E{ id = "game.class", en = "Class", uk = "Клас", note = "Character class (warrior, mage...). Also a category of class quests." }
 E{ id = "game.group", en = { "Group", "Party" }, uk = "Група", note = "A party of up to five players; a group quest tag; the party chat channel." }
 E{ id = "game.raid", en = "Raid", uk = "Рейд", note = "A big group, a raid instance, a raid quest tag." }

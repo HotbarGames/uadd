@@ -158,6 +158,22 @@ These need Attune on an English client. UALL Forever is needed for the names.
 66. Log in without Attune: `/uadd attune` says it waits for Attune, and there are no errors. Log in without
     UALL Forever: Attune's own words are Ukrainian, the names stay English.
 
+### Auto Potion
+
+These need Auto Potion on an English client. UALL Forever is not needed (it has no hooks for Auto Potion).
+
+67. Log in. `/uadd` lists "Auto Potion". `/uadd autopotion` shows "увімкнено" with the word count.
+68. Open Auto Potion's settings (`/ap`, or game Settings, AddOns): its six pages, check boxes and the Reset
+    button are Ukrainian, with no boxes, and fit. Spell, item and class names stay as the game shows them.
+69. Point at a check box: its tooltip is Ukrainian. Other tooltips (bags, spells) do not change.
+70. Open Key Bindings: the "Auto Potion" category's five lines are Ukrainian.
+71. Type `/ap` with a word after it, and `/ap debug`: the lines after "AutoPotion:" are Ukrainian; the debug
+    log lines stay English. The five macros keep their English names.
+72. Hold Shift with the settings and a tooltip open: the words turn English. Let go: Ukrainian.
+73. `/uadd autopotion off` with the settings open: English at once, in Auto Potion's own fonts; Key Bindings
+    and chat are English too. `/uadd autopotion on`: Ukrainian again.
+74. Log in without Auto Potion: `/uadd autopotion` says it waits for Auto Potion, and there are no errors.
+
 ## Not checked outside the game
 
 - Whether `Fonts\FRIZQT___CYR.TTF` exists in the Forever client (the addon falls back to `Fonts\ARIALN.TTF`).

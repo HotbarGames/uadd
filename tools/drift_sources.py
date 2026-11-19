@@ -47,6 +47,11 @@ def ex_lsw(path):
     return _hashed(make_lsw_data)(path)
 
 
+def ex_ap(path):
+    import make_ap_text as P
+    return [("X", None, en, f"{kind} {where}") for _, kind, en, where in P.texts(path)]
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -105,6 +110,7 @@ def old_openmap():
 MODULES = {
     "UADD_Attune": ("Attune", ex_att, None, ()),
     "UADD_Auctionator": ("Auctionator", ex_auc, None, ()),
+    "UADD_AutoPotion": ("AutoPotion", ex_ap, None, ()),
     "UADD_DialogueUI": ("DialogueUI", ex_dui, None, ()),
     "UADD_DungeonJournal": ("ForeverDungeonJournal", ex_dj, None, ("tools/dj_prose",)),
     "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),

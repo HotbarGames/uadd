@@ -175,3 +175,44 @@ the word OpenMap uses for a drawn map layer. Nothing in the repo knew about the 
 
 **Check.** `python3 -m unittest tools.test_banned_words`. `BANNED_IN` reads only the files that the module's
 TOC loads, and its TOC lines. `python3 tools/test_banned_words.py` lists each hit as file:line: text.
+
+## 9. A game name we wrote ourselves
+
+**What went wrong.** The first AutoPotion module shipped our own Ukrainian for six texts that name game
+things UALL Forever does not have: two potions, an engineering injector, an option and its tooltip with
+the warlock spell Soulburn, and a tooltip with two example items. The owner's rule is that game names come
+from UALL Forever, but the Ukrainian looked fine, so nobody saw it. The six now stay English, or say the
+same without the names.
+
+**Rule.** Items, spells, NPCs, zones and quests are UALL Forever's to name (`Items.lua`, `Spells.lua`,
+`NpcNames.lua`, `World.lua`, `Quests.lua` in its folder). We write none.
+
+- A name UALL Forever has: use its Ukrainian exactly.
+- A name it lacks: leave the text English, or say the same without the name (no half translations).
+- Plain game words in the glossary that match UALL Forever (Healthstone «Камінь Здоров'я», Soul Shard)
+  are fine.
+
+**Check.** `python3 -m unittest tools.test_game_names` (AutoPotion and LayerSwap). For each text we ship,
+it reads the English from the installed addon. A UALL Forever name in it must be in our Ukrainian as UALL
+Forever has it. A word with a capital letter mid-sentence that the addon never writes in small letters,
+and that our Ukrainian does not keep as it is, looks like a name UALL Forever lacks: the test fails. A text
+a person read and found clean goes in `ALLOW` in that file, with the hash of its Ukrainian, so a later
+change is read again. It would have caught all six texts above. It misses a name made of plain words
+the addon also writes in small letters, a name at a sentence start, and modules not in its list
+(`MODULES` in `tools/game_names_src.py`; ForeverXPBar gives too many false hits yet). Manual: read every
+capitalised word of the English.
+
+## 10. Checks that passed because the files were new
+
+**What went wrong.** The AutoPotion module was checked before its first commit. `python3 tools/check_repo.py`
+passed. Then the push failed: the pre-push hook checks a clean copy of the commit, and there the module's
+TOC said version 1.0.0 (the others said 1.0.1), and two new Python files were over 300 lines. The check
+had read only tracked files (`git ls-files`), and the module's new files were not tracked yet, so it never
+looked at them.
+
+**Rule.** A check of the repo reads the files that the next commit will hold: the tracked ones and the
+untracked ones git does not ignore. A file that must never be committed goes in `.gitignore`.
+
+**Check.** `python3 -m unittest tools.test_check_repo` (`test_untracked_new_file_over_budget_fails`,
+`test_untracked_new_toc_must_share_version`). `tools/check_repo.py` reads `git ls-files` and
+`git ls-files --others --exclude-standard` for the size, TOC and copy checks.

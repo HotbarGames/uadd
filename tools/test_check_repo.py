@@ -38,12 +38,13 @@ class Guard(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def write(self, path, text):
+    def write(self, path, text, add=True):
         full = os.path.join(self.root, path)
         os.makedirs(os.path.dirname(full), exist_ok=True)
         with open(full, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
-        subprocess.run(["git", "add", "-f", path], cwd=self.root, check=True)
+        if add:
+            subprocess.run(["git", "add", "-f", path], cwd=self.root, check=True)
 
     def budget(self, files, ignore=()):
         self.write("size-budget.json", json.dumps({"files": files, "ignore": list(ignore)}))
@@ -184,13 +185,29 @@ class Guard(unittest.TestCase):
         self.assertIn("TOCs disagree on ## Version", out.stdout)
         self.assertIn("TOCs disagree on ## Interface", out.stdout)
 
-    def test_untracked_files_do_not_count(self):
-        with open(os.path.join(self.root, "local.lua"), "w") as f:
-            f.write("x\n" * 999)
-        os.makedirs(os.path.join(self.root, ".claude"))
-        with open(os.path.join(self.root, ".claude", "x"), "w") as f:
-            f.write("x\n")
-        self.assertEqual(run(self.root).returncode, 0)
+    # A new file is checked before its first commit (docs/LESSONS.md, lesson 10): the pre-push hook checks a
+    # clean export where every file is tracked, so an untracked, not ignored file must count here too.
+    def test_untracked_new_file_over_budget_fails(self):
+        self.write("new/flow.py", "x\n" * 301, add=False)
+        out = run(self.root)
+        self.assertEqual(out.returncode, 1)
+        self.assertIn("new/flow.py: lines (301 > 300)", out.stdout)
+
+    def test_untracked_new_toc_must_share_version(self):
+        self.toc("A", [])
+        self.write("B/B.toc", "## Interface: 16001, 16000\n## Version: 1.0.1\n\nB.lua\n", add=False)
+        self.write("B/B.lua", "x\n", add=False)
+        out = run(self.root)
+        self.assertEqual(out.returncode, 1)
+        self.assertIn("TOCs disagree on ## Version: 1.0.0 in A/A.toc; 1.0.1 in B/B.toc", out.stdout)
+
+    def test_ignored_files_and_untracked_claude_config_do_not_count(self):
+        self.write(".gitignore", "local/\n")
+        self.write("local/big.lua", "x\n" * 999, add=False)
+        self.write(".claude/x", "x\n", add=False)
+        self.write("CLAUDE.local.md", "x\n", add=False)
+        out = run(self.root)
+        self.assertEqual(out.returncode, 0, out.stdout)
 
 
 if __name__ == "__main__":

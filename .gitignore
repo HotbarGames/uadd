@@ -9,3 +9,6 @@ tools/.cache/
 local/
 # the cost and quality ledger of the translation skills (tools/ledger.py): stays on this PC
 .claude/ledger.tsv
+# the CurseForge page text and its pictures: they go on CurseForge, never in this repo
+docs/curseforge-listing.md
+docs/media/

@@ -697,6 +697,96 @@
    },
    "ids": "7dd4cd720aa27e9e36aace3019914558eb062229"
   },
+  "UADD_AutoPotion": {
+   "addon": "AutoPotion",
+   "version": "4.1.0",
+   "interface": "120105, 120107",
+   "files": [
+    "Bindings.lua",
+    "Bindings.xml",
+    "Core/Bandages.lua",
+    "Core/Bandages/Cata.lua",
+    "Core/Bandages/Classic.lua",
+    "Core/Bandages/Forever.lua",
+    "Core/Bandages/Mists.lua",
+    "Core/Bandages/Retail.lua",
+    "Core/Bandages/TBC.lua",
+    "Core/Bandages/Wrath.lua",
+    "Core/Constants.lua",
+    "Core/DB.lua",
+    "Core/Drink.lua",
+    "Core/Drink/Cata.lua",
+    "Core/Drink/Classic.lua",
+    "Core/Drink/Forever.lua",
+    "Core/Drink/Mists.lua",
+    "Core/Drink/Retail.lua",
+    "Core/Drink/TBC.lua",
+    "Core/Drink/Wrath.lua",
+    "Core/Food.lua",
+    "Core/Food/Cata.lua",
+    "Core/Food/Classic.lua",
+    "Core/Food/Forever.lua",
+    "Core/Food/Mists.lua",
+    "Core/Food/Retail.lua",
+    "Core/Food/TBC.lua",
+    "Core/Food/Wrath.lua",
+    "Core/FoodBuff.lua",
+    "Core/Item.lua",
+    "Core/ManaPotions.lua",
+    "Core/ManaPotions/Cata.lua",
+    "Core/ManaPotions/Classic.lua",
+    "Core/ManaPotions/Forever.lua",
+    "Core/ManaPotions/Mists.lua",
+    "Core/ManaPotions/Retail.lua",
+    "Core/ManaPotions/TBC.lua",
+    "Core/ManaPotions/Wrath.lua",
+    "Core/Player.lua",
+    "Core/Potions.lua",
+    "Core/Potions/Cata.lua",
+    "Core/Potions/Classic.lua",
+    "Core/Potions/Forever.lua",
+    "Core/Potions/Mists.lua",
+    "Core/Potions/Retail.lua",
+    "Core/Potions/TBC.lua",
+    "Core/Potions/Wrath.lua",
+    "Core/Spell.lua",
+    "Core/SpellGroup.lua",
+    "Core/Spells.lua",
+    "Core/Spells/Cata.lua",
+    "Core/Spells/Classic.lua",
+    "Core/Spells/Forever.lua",
+    "Core/Spells/Mists.lua",
+    "Core/Spells/Retail.lua",
+    "Core/Spells/TBC.lua",
+    "Core/Spells/Wrath.lua",
+    "FrameXML/BandageOptionsFrame.lua",
+    "FrameXML/DrinkOptionsFrame.lua",
+    "FrameXML/FoodOptionsFrame.lua",
+    "FrameXML/InfoOptionsFrame.lua",
+    "FrameXML/InterfaceOptionsFrame.lua",
+    "FrameXML/ManaPotionOptionsFrame.lua",
+    "FrameXML/PreviewRow.lua",
+    "Locales/Locales.xml",
+    "Locales/deDE.lua",
+    "Locales/enUS.lua",
+    "Locales/esES.lua",
+    "Locales/esMX.lua",
+    "Locales/frFR.lua",
+    "Locales/itIT.lua",
+    "Locales/koKR.lua",
+    "Locales/ptBR.lua",
+    "Locales/ruRU.lua",
+    "Locales/zhCN.lua",
+    "Locales/zhTW.lua",
+    "code.lua",
+    "embeds.xml"
+   ],
+   "count": 89,
+   "tags": {
+    "X": 89
+   },
+   "ids": "257cb3129e216b6c1b24bbd9288cccdd655afd4d"
+  },
   "UADD_DialogueUI": {
    "addon": "DialogueUI",
    "version": "1.0.7 c",
@@ -927,16 +1017,16 @@
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
-   "version": "1.14.35",
+   "version": "1.14.36",
    "interface": "11509, 16001, 20506",
    "files": [
     "LayerSwap.lua"
    ],
-   "count": 361,
+   "count": 362,
    "tags": {
-    "X": 361
+    "X": 362
    },
-   "ids": "77712e6fb09a9891a04c1032fd8ef47c82c731f5"
+   "ids": "34b11477adf90ff439d9d40bfac093993882b3e9"
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
@@ -1020,7 +1110,7 @@
   },
   "UADD_Questie": {
    "addon": "Questie",
-   "version": "12.11.0",
+   "version": "12.11.1",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1302,6 +1392,7 @@
     "Modules/Tracker/TrackerQuestTooltip.lua",
     "Modules/Tracker/TrackerQuestieBehavior.lua",
     "Modules/Tracker/TrackerRecipes.lua",
+    "Modules/Tracker/TrackerShortcuts.lua",
     "Modules/Tracker/TrackerSuperTrack.lua",
     "Modules/Tracker/TrackerUtils.lua",
     "Modules/Tutorial/ChooseObjectiveType.lua",
@@ -1320,11 +1411,11 @@
     "Questie.lua",
     "embeds.xml"
    ],
-   "count": 3554,
+   "count": 3550,
    "tags": {
-    "L": 3554
+    "L": 3550
    },
-   "ids": "c7414d4747fc128ab0010322984d39633682ba44"
+   "ids": "02ee76b1c579cc7ec436019da8cb7f9ddcb2b729"
   }
  }
 }

@@ -120,6 +120,7 @@ def _att_never(path):
 STAY_LISTS = {
     "attune": ("Attune", lambda: (), lambda: (), _att_never),
     "auctionator": ("Auctionator", lambda: (), lambda: (), None),
+    "autopotion": ("AutoPotion", lambda: (), lambda: (), None),       # Keep (Module.lua) keeps them quiet in Lua
     "dialogueui": ("DialogueUI", lambda: (), lambda: (), None),        # ns.NotOurs keeps them quiet in Lua
     "fxpb": ("ForeverXPbar", lambda: _attr("test_fxpb_strings", "STAY"), lambda: _attr("fxpb_rules", "STAY_ENGLISH"),
              None),

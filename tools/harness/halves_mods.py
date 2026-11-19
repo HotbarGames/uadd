@@ -60,6 +60,23 @@ def lsw(check, M):
     run(check, "UADD_LayerSwap", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
 
 
+def ap(check, M):
+    """Auto Potion: Words.Text and Words.Bare (the flow's M.uk, M.bare); free slots from
+    make_ap_text.FREE, or "(slot free)" in texts(). M None: Auto Potion is not installed."""
+    import make_ap_text
+    if M is None:
+        return run(check, "UADD_AutoPotion", [], None, SKIP)
+    if not M.count():
+        return run(check, "UADD_AutoPotion", [], None, "skipped: data/words.lua has no Ukrainian yet")
+    tps = []
+    for k, kind, en, where in make_ap_text.texts(make_ap_text.addon_dir()):
+        if kind == "template":
+            slots = make_ap_text.FREE.get(k) or ([1] if "(slot free)" in where else [])
+            tps.append(tpl(k, en, {i: NAME for i in slots}))
+    run(check, "UADD_AutoPotion", tps, lambda tp, t: [_t(M.uk(lua_str(t))), _t(M.bare(lua_str(t)))],
+        glue=True)
+
+
 DUI_FREE = {"item": "|cff1eff00|Hitem:2140::::::::60:::::|h[Quix]|h|r", "key": "QUIX"}
 
 

@@ -114,6 +114,12 @@ E{ id = "item.consumable", en = "Consumable", uk = "Витратний пред�
 E{ id = "item.potion", en = "Potion", uk = "Зілля", note = "Item type: a potion." }
 E{ id = "item.food", en = "Food", uk = "Їжа", note = "Item type: food (vendor.food is what a vendor sells)." }
 E{ id = "item.drink", en = "Drink", uk = "Напій", note = "Item type: one drink (vendor.drink is the vendor kind)." }
+E{ id = "item.bandage", en = { "Bandage", "Bandages" }, uk = "Пов'язка", note = "Item: a first aid bandage (one; many: пов'язки). UALL names them «... Пов'язка» (first used by UADD_AutoPotion)." }
+E{ id = "item.healthstone", en = { "Healthstone", "Healthstones" }, uk = "Камінь Здоров'я", note = "Warlock-made healing item, as UALL names it (many: Камені Здоров'я)." }
+E{ id = "item.mana_potion", en = "Mana Potion", uk = "Зілля мани", note = "A potion that restores mana (a kind, not one item name: UALL's item is «Зілля Мани»)." }
+E{ id = "item.mana_gem", en = "Mana Gem", uk = "Самоцвіт мани", note = "Mage-made item that restores mana, as UALL names it." }
+E{ id = "item.soul_shard", en = "Soul Shard", uk = "Уламок душі", note = "Warlock reagent, as UALL names it." }
+E{ id = "item.conjured", en = "Conjured", uk = "Прикликаний", note = "Made by a spell (conjured food: прикликана їжа); UALL's verb is прикликати." }
 E{ id = "item.quest", en = "Quest Item", uk = "Предмет завдання", note = "Item type: needed for a quest." }
 E{ id = "item.key", en = "Key", uk = "Ключ", note = "Item type: opens a door or chest. Not a keyboard key." }
 E{ id = "item.reagent", en = "Crafting Reagent", uk = "Реагент для ремесла", note = "Item type: used to make other items." }

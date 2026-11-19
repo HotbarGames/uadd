@@ -31,6 +31,7 @@ RESTRICTED = {
     "ForeverXPbar": "no licence, so all rights reserved",
     "ForeverDungeonJournal": "no licence, so all rights reserved",
     "LayerSwap": "no licence, so all rights reserved",
+    "AutoPotion": "no licence, so all rights reserved",
 }
 ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT"}
 THREADS = 32   # for reading the installed addons
