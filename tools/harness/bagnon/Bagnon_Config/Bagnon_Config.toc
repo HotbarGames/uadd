@@ -1,0 +1,8 @@
+## Interface: 16001, 16000
+## Title: Bagnon Config (harness stand-in)
+## Notes: Not Bagnon_Config. A small stand-in for tools/harness/flow_bagnon.py: six settings pages with a title, a subtitle and a few rows, shaped like Bagnon's. It holds none of its English: the flow runs Bagnon's own config locale file from the installed addon first.
+## LoadOnDemand: 1
+## Dependencies: Bagnon
+## Version: 0
+
+Config.lua

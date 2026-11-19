@@ -21,7 +21,8 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
 
 **Rule.** Never commit another addon's text or code in bulk unless its licence allows it.
 
-- Not allowed (all rights reserved): Auctionator (LICENSE: All Rights Reserved), Attune, DialogueUI,
+- Not allowed (all rights reserved): Auctionator (LICENSE: All Rights Reserved), Bagnon and BagBrother
+  (TOC: All Rights Reserved; Bagnon's texts are in BagBrother), Attune, DialogueUI,
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file).
 - Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 
@@ -71,6 +72,7 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
 - ForeverXPBar: `FREE` and `BLANK` in `tools/fxpb_words.py`.
 - LayerSwap: `FREE` and `BLANK` in `tools/lsw_words.py`.
 - AutoPotion: `FREE` and `GLUED` in `tools/make_ap_text.py`.
+- Bagnon: `FREE` in `tools/make_bgn_text.py` (`VALUE`: slots that hold only a number or money).
 - DialogueUI: `SLOTS` in `UADD_DialogueUI/Slots.lua` (what each `%s` holds).
 - Auctionator: `FREE` in `UADD_Auctionator/Words.lua`; code texts: `SLOTS` in `tools/make_auc_text.py`.
 - Attune: `KIND`, `BYKEY` and `FREE` in `UADD_Attune/Pairs.lua`.

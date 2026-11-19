@@ -1,7 +1,7 @@
 ## Interface: 16001, 16000
 ## Title: UADD - Ukrainian for Addons
 ## IconTexture: Interface\AddOns\UADD\Logo
-## Notes: Ukrainian translations for other addons. Modules: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion. Type /uadd for the list.
+## Notes: Ukrainian translations for other addons. Modules: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon. Type /uadd for the list.
 ## Author: HotbarGames
 ## Version: 1.0.1
 ## SavedVariables: UADD_DB

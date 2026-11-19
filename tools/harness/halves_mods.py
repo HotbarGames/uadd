@@ -254,3 +254,32 @@ def dj(check, s):
         v = _parts(tp["en"], t)
         return _t(paths[tp["id"]](v)) if v else None
     run(check, "UADD_DungeonJournal", tps, tr)
+
+
+def _bgn_value(s):
+    """A number, or money as the game writes it (digits and coin icons, maybe coloured)."""
+    s = re.sub(r"\|T[^|]*\|t|\|c[0-9a-fA-F]{8}|\|r", "", s)
+    return re.fullmatch(r"[\d\s.,]+", s) is not None
+
+
+def bgn(check, M, rows):
+    """Bagnon: the module only puts our words into Bagnon's AceLocale tables, and Bagnon formats them
+    itself (L[key]:format(values)). So a text is read back into its values by the English template and
+    formatted with the table's word now (the flow's M.shows). Free slots: make_bgn_text.FREE. A VALUE slot
+    (make_bgn_text.VALUE: a number or money, Bagnon's own code passes nothing else) holding no digit is
+    not a text Bagnon ever shows: it stays as it is. rows: make_bgn_text.texts(); None: not installed."""
+    import make_bgn_text
+    if M is None or not rows:
+        return run(check, "UADD_Bagnon", [], None, SKIP)
+    tps = [tpl(k, en, {i: NAME for i in make_bgn_text.FREE.get(k, [])}) for k, kind, en, _ in rows
+           if kind == "template"]
+
+    def tr(tp, t):
+        v = _parts(tp["en"], t)
+        if v is None:
+            return None
+        if tp["id"] in make_bgn_text.VALUE and not all(_bgn_value(x) for x in v):
+            return t
+        which, _, key = tp["id"].partition(":")
+        return _t(M.shows(which, key, *v))
+    run(check, "UADD_Bagnon", tps, tr)

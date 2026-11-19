@@ -1,6 +1,6 @@
 # CurseForge / BigWigs packager (https://github.com/BigWigsMods/packager).
-# One zip with ten addon folders: UADD (the core) and its nine modules (Questie, Dungeon Journal, OpenMap,
-# DialogueUI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion). This is the same list tools/make_zip.py ships. The repo is
+# One zip with eleven addon folders: UADD (the core) and its ten modules (Questie, Dungeon Journal, OpenMap,
+# DialogueUI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon). This is the same list tools/make_zip.py ships. The repo is
 # checked out into UADD/, so move each folder up: the zip then holds UADD/UADD.toc, UADD_Questie/UADD_Questie.toc
 # and so on. Nothing is a required dependency: each module loads only when its own addon is there, and the core
 # alone changes nothing. The addons it translates, and UALL Forever (for names), are optional dependencies.
@@ -17,6 +17,7 @@ move-folders:
   UADD/UADD_Attune: UADD_Attune
   UADD/UADD_LayerSwap: UADD_LayerSwap
   UADD/UADD_AutoPotion: UADD_AutoPotion
+  UADD/UADD_Bagnon: UADD_Bagnon
 
 # CurseForge slugs, each checked on its project page on 2026-11-14
 optional-dependencies:
@@ -29,6 +30,7 @@ optional-dependencies:
   - attune
   # LayerSwap: no CurseForge page found (2026-11-18), so no line for it
   - auto-potion   # project 312940, as its TOC says (checked 2026-11-19)
+  - bagnon        # its TOC names no project id; slug not checked on its page yet (2026-11-19)
   # names come from UALL Forever when it is installed; without it the menus are still Ukrainian
   - uall-forever-ukrainian-localization
 

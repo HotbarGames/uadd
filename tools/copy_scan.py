@@ -26,12 +26,9 @@ DEFAULT_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interfac
 # folder name -> why it may not be copied
 RESTRICTED = {
     "Auctionator": "All Rights Reserved in its LICENSE",
-    "Attune": "no licence, so all rights reserved",
-    "DialogueUI": "no licence, so all rights reserved",
-    "ForeverXPbar": "no licence, so all rights reserved",
-    "ForeverDungeonJournal": "no licence, so all rights reserved",
-    "LayerSwap": "no licence, so all rights reserved",
-    "AutoPotion": "no licence, so all rights reserved",
+    "Bagnon": "All Rights Reserved in its TOC", "BagBrother": "All Rights Reserved in its TOC (Bagnon's texts)",
+    **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion"),
+                    "no licence, so all rights reserved"),
 }
 ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT"}
 THREADS = 32   # for reading the installed addons

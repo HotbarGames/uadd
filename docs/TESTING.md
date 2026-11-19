@@ -131,7 +131,8 @@ These need Auctionator on an English client, and an auction house to stand at.
 52. `/uadd auctionator off` with the auction house open: English at once, in Auctionator's own fonts; chat
     and tooltip lines are English too. `/uadd auctionator on`: Ukrainian again.
 53. Type `/uadd auctionator off` in a fight: no Lua errors, no blocked action. The words change once the fight ends.
-54. Log in without Auctionator: `/uadd auctionator` says it waits for Auctionator, and there are no errors.
+54. Log in without Auctionator: the game does not load UADD - Auctionator (a required dependency), `/uadd`
+    does not list it, and there are no errors.
 
 ### Attune
 
@@ -155,7 +156,8 @@ These need Attune on an English client. UALL Forever is needed for the names.
 64. `/uadd attune off` with the window open: English at once, in Attune's own fonts; tooltips, dialogs and chat
     are English too. `/uadd attune on`: Ukrainian again.
 65. Type `/uadd attune off` in a fight: no Lua errors, no blocked action. The words change once the fight ends.
-66. Log in without Attune: `/uadd attune` says it waits for Attune, and there are no errors. Log in without
+66. Log in without Attune: the game does not load UADD - Attune (a required dependency), `/uadd` does not
+    list it, and there are no errors. Log in without
     UALL Forever: Attune's own words are Ukrainian, the names stay English.
 
 ### Auto Potion
@@ -172,7 +174,30 @@ These need Auto Potion on an English client. UALL Forever is not needed (it has 
 72. Hold Shift with the settings and a tooltip open: the words turn English. Let go: Ukrainian.
 73. `/uadd autopotion off` with the settings open: English at once, in Auto Potion's own fonts; Key Bindings
     and chat are English too. `/uadd autopotion on`: Ukrainian again.
-74. Log in without Auto Potion: `/uadd autopotion` says it waits for Auto Potion, and there are no errors.
+74. Log in without Auto Potion: the game does not load UADD - Auto Potion (a required dependency), `/uadd`
+    does not list it, and there are no errors.
+
+### Bagnon
+
+These need Bagnon (with BagBrother, Bagnon_Config, Bagnon_Bank and Bagnon_GuildBank) on an English client.
+
+75. Log in. `/uadd` lists "Bagnon". `/uadd bagnon` shows "увімкнено" with the word and font counts.
+76. Open the bags: the title («Інвентар: <name>»), the buttons' tooltips and the right-click menus are
+    Ukrainian, with no boxes, and fit. Item names and item tooltips stay as the game shows them.
+77. Open the bank at a banker: its title («Банк: <name>»), tooltips and menus are Ukrainian. Then the guild
+    bank: its title is the guild's name; the tabs' tooltips and «Кошти гільдії» are Ukrainian. Numbers and
+    money stay as the game writes them. These lines stay English on purpose (Bagnon glues them to the
+    game's own English word): the title tooltip's search line, the guild money tooltip's withdraw line, and
+    a guild tab's remaining-withdrawals line.
+78. Open Bagnon's settings (game Settings, AddOns, Bagnon): every page (general, windows, display, slot
+    colours, help, patrons) is Ukrainian and fits; the help page's questions and answers too. The page
+    names in the game's Settings list are Ukrainian (after a `/reload` if Bagnon_Config loaded first).
+79. Open Key Bindings: the "Bagnon" lines are Ukrainian.
+80. Hold Shift with the bags and a tooltip open: Bagnon's words turn English. Let go: Ukrainian.
+81. `/uadd bagnon off` with the bags open: English at once, in Bagnon's own fonts. The page names in the
+    game's Settings list stay until `/reload`. `/uadd bagnon on`: Ukrainian again.
+82. Log in without Bagnon: the game does not load UADD - Bagnon (Bagnon is a required dependency), `/uadd`
+    does not list it, and there are no errors.
 
 ## Not checked outside the game
 
@@ -192,6 +217,8 @@ These need Auto Potion on an English client. UALL Forever is not needed (it has 
 - Dialogue UI's real frames: whether every text fits after it turns Ukrainian (Dialogue UI may size a frame
   before our words go in), and whether its alerts, tutorials and the Blizzard tooltip option are covered
   (they are not walked now).
+- Bagnon's real frames: the harness runs Bagnon's real locale files, but on stand-in windows and pages. Its
+  item slots, Sushi pop-ups, right-click menus and the game's Settings list are not drawn there.
 
 ## Without the game
 

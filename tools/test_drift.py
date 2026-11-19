@@ -10,7 +10,8 @@ in code), so no game folder and no real English are needed:
   --update-versions refuses (exit 2) and leaves the record as it was;
 - the cache stamp follows the UALLF files (DungeonJournal only) and lupa; what drift.py cannot see is printed
   and in --help;
-- tools/addon_versions.json covers every UADD_* module that has addon data, holds hashes only, and is small.
+- tools/addon_versions.json covers every UADD_* module that has addon data, holds hashes only, is small, and
+  has a version for each (lesson 11).
 
 python3 -m unittest tools.test_drift
 """
@@ -192,6 +193,12 @@ class Coverage(unittest.TestCase):
             self.assertIsInstance(rec["count"], int, mod)
             self.assertEqual(sum(rec["tags"].values()), rec["count"], mod)
             self.assertTrue(all(re.fullmatch(r"[A-Z]", t) for t in rec["tags"]), mod)
+
+    def test_every_version_recorded(self):
+        # Lesson 11: a null version hides an addon update (BagBrother.toc has no Version: VERSION_FROM).
+        recorded = json.loads(drift.VERSIONS.read_text(encoding="utf-8"))["modules"]
+        for mod, rec in recorded.items():
+            self.assertTrue(rec.get("version"), f"{mod}: no version recorded (see VERSION_FROM in drift_sources.py)")
 
 
 if __name__ == "__main__":

@@ -78,6 +78,27 @@ def autopotion():
     return rows, set(AP.MACROS)
 
 
+def bagnon():
+    """(rows, own words) for UADD_Bagnon, or None without Bagnon. Our Ukrainian: data/<table>.lua, by key."""
+    import make_bgn_text as B
+    texts, _ = B.texts(B.addon_dir())
+    if not texts:
+        return None
+    uk = {}
+    for path in sorted(B.DATA.glob("*.lua")):
+        which = None
+        for line in path.read_text(encoding="utf-8").splitlines():
+            m = re.match(r"B\.(\w+) = \{$", line)
+            if m:
+                which = m.group(1)
+                continue
+            m = re.match(r'\s*\[("(?:[^"\\]|\\.)*"|\d+)\] = ("(?:[^"\\]|\\.)*"),$', line)
+            if which and m:
+                k = m.group(1)
+                uk["%s:%s" % (which, FW.unlua(k) if k.startswith('"') else k)] = FW.unlua(m.group(2))
+    return [(k, en, uk.get(k, "")) for k, _, en, _ in texts], {"Bagnon"}
+
+
 def _fxpb_like(maker):
     """(rows, own words) for a module built by make_fxpb_data / make_lsw_data, or None without its addon."""
     import glossary
@@ -105,4 +126,6 @@ def foreverxpbar():
 
 
 # ForeverXPBar is not here yet: its many Title Case labels and key names give about 50 false hits.
+# Bagnon neither: its Title Case labels ("Border Color") give 73 hits (2026-11-19), none a game name we wrote
+# ("At the Auction House" is the glossary's «аукціон», the place, not UALLF's zone name).
 MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap}

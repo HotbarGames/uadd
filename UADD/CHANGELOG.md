@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- New module UADD_Bagnon: Bagnon's bag, bank and guild bank windows, menus, tooltips, Key Bindings names
+  and settings pages in Ukrainian. Item names stay the game's.
+  Новий модуль UADD_Bagnon: вікна сумок, банку й банку гільдії, меню, підказки, назви в Key Bindings і
+  сторінки налаштувань Bagnon українською. Назви предметів лишаються такими, як у грі.
 - New module UADD_AutoPotion: Auto Potion's settings, tooltips, chat lines and Key Bindings names in
   Ukrainian. Macro, spell and item names stay English.
   Новий модуль UADD_AutoPotion: налаштування, підказки, рядки в чаті й назви в Key Bindings Auto Potion

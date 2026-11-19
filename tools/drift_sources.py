@@ -52,6 +52,11 @@ def ex_ap(path):
     return [("X", None, en, f"{kind} {where}") for _, kind, en, where in P.texts(path)]
 
 
+def ex_bgn(path):
+    import make_bgn_text as B
+    return [("X", None, en, f"{kind} {where}") for _, kind, en, where in B.texts(path)[0]]
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -111,6 +116,7 @@ MODULES = {
     "UADD_Attune": ("Attune", ex_att, None, ()),
     "UADD_Auctionator": ("Auctionator", ex_auc, None, ()),
     "UADD_AutoPotion": ("AutoPotion", ex_ap, None, ()),
+    "UADD_Bagnon": ("BagBrother", ex_bgn, None, ()),          # Bagnon's texts live in BagBrother
     "UADD_DialogueUI": ("DialogueUI", ex_dui, None, ()),
     "UADD_DungeonJournal": ("ForeverDungeonJournal", ex_dj, None, ("tools/dj_prose",)),
     "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),
@@ -132,6 +138,10 @@ def toc(folder):
             i = re.search(r"^## Interface:\s*(.*?)\s*$", s, re.M)
             return v.group(1), i.group(1) if i else None
     return None, None
+
+
+# Addons whose texts live in a folder whose TOC has no Version: the folder whose TOC has it.
+VERSION_FROM = {"UADD_Bagnon": "Bagnon"}   # BagBrother.toc has none; Bagnon.toc loads BagBrother's core
 
 
 def code_files(folder, files):
@@ -157,6 +167,8 @@ def tools_stamp(mod, addons):
         paths += [p for p in (REPO / d).rglob("*") if p.is_file()]
     if mod == "UADD_DungeonJournal":
         paths += [Path(addons) / "UALLF" / f for f in UALLF_FILES]
+    if mod in VERSION_FROM:
+        paths += list((Path(addons) / VERSION_FROM[mod]).glob("*.toc"))
     h = hashlib.sha1(lupa_state().encode())
     for p in sorted(paths):
         try:
@@ -176,6 +188,8 @@ def scan(mod, folder, cache, pool):
     if hit and hit.get("stamp") == stamp:
         return hit
     version, interface = toc(folder)
+    if version is None and mod in VERSION_FROM:
+        version, interface = toc(folder.parent / VERSION_FROM[mod])
     try:
         rows = [list(r) for r in MODULES[mod][1](folder)]
     except Exception as e:  # noqa: BLE001 - shown as a note; --update-versions refuses

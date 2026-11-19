@@ -1,0 +1,17 @@
+## Interface: 16001, 16000
+## Title: UADD - Bagnon
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Bagnon's own words in Ukrainian: its bag, bank and guild bank windows, their menus and tooltips, its key binding names and its settings pages. Item names stay the game's. Type /uadd bagnon.
+## Author: HotbarGames
+## Version: 1.0.1
+## Dependencies: UADD, Bagnon
+## OptionalDeps: BagBrother
+## X-Category: Localization
+## X-License: GPL-3.0
+
+data/core.lua
+data/config.lua
+data/faq.lua
+Locale.lua
+Fonts.lua
+Module.lua

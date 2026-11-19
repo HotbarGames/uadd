@@ -216,3 +216,19 @@ untracked ones git does not ignore. A file that must never be committed goes in 
 **Check.** `python3 -m unittest tools.test_check_repo` (`test_untracked_new_file_over_budget_fails`,
 `test_untracked_new_toc_must_share_version`). `tools/check_repo.py` reads `git ls-files` and
 `git ls-files --others --exclude-standard` for the size, TOC and copy checks.
+
+## 11. An addon update that drift could not see
+
+**What went wrong.** The new Bagnon module reads its texts from the BagBrother folder. BagBrother's TOC has
+no `## Version:` line (Bagnon's TOC has it), so `tools/addon_versions.json` recorded version null for
+UADD_Bagnon. A new Bagnon version would not have shown as a version change. In the same review,
+`docs/TESTING.md` told the tester that `/uadd <module>` says it waits for its addon when that addon is
+missing. For a module whose TOC has the addon in `## Dependencies:` that cannot happen: the game does not
+load the module at all, so `/uadd` does not list it.
+
+**Rule.** Each module's record in `tools/addon_versions.json` has a version. When the folder with the texts
+has no Version, name the folder that has it in `VERSION_FROM` (`tools/drift_sources.py`). A test step says
+only what the real client can show: a module with a required dependency is not loaded without it.
+
+**Check.** `python3 -m unittest tools.test_drift` (`test_every_version_recorded`). Test steps: manual, read
+each "without <addon>" step against the module's TOC.

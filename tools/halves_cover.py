@@ -30,6 +30,7 @@ COVERED = {
     "UADD_OpenMap": ("flow_openmap.py", "openmap"),
     "UADD_DungeonJournal": ("flow_dj_summon.py", "dj"),
     "UADD_AutoPotion": ("flow_autopotion.py", "ap"),
+    "UADD_Bagnon": ("flow_bagnon.py", "bgn"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -173,11 +174,21 @@ def _openmap():
     return [(en, i) for en, ii in openmap_free().items() for i in ii if en not in keys or not s_slot(en, i)]
 
 
+def _bgn():
+    import make_bgn_text
+    rows, _ = make_bgn_text.texts(make_bgn_text.addon_dir())
+    if not rows:
+        return None
+    real = {k: en for k, _, en, _ in rows}
+    return [(k, i) for k, ii in make_bgn_text.FREE.items() for i in ii if not s_slot(real.get(k), i)]
+
+
 def marks():
     """module -> (problems, note)."""
     out = {}
     for mod, fn in (("UADD_ForeverXPBar", _fxpb), ("UADD_DialogueUI", _dui), ("UADD_Auctionator", _auc),
-                    ("UADD_Attune", _att), ("UADD_OpenMap", _openmap), ("UADD_LayerSwap", _lsw)):
+                    ("UADD_Attune", _att), ("UADD_OpenMap", _openmap), ("UADD_LayerSwap", _lsw),
+                    ("UADD_Bagnon", _bgn)):
         bad = fn()
         out[mod] = ([], SKIP) if bad is None else (bad, "")
     return out
