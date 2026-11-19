@@ -1,0 +1,24 @@
+## Interface: 16001, 16000
+## Title: UADD - RareScanner
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: RareScanner in Ukrainian: its words, settings and pop-ups. Part of UADD.
+## Author: HotbarGames
+## Version: 1.0.1
+## Dependencies: UADD, RareScanner
+## OptionalDeps: UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# One line per data file that tools/make_rs_text.py writes (FILES there), in order, before Module.lua.
+# The last ones may be empty: room for an addon update (tools/test_rs_text.py checks the count).
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+data/text05.lua
+data/text06.lua
+data/text07.lua
+data/text08.lua
+Module.lua
+Options.lua
+Fonts.lua

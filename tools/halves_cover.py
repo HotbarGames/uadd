@@ -34,6 +34,7 @@ COVERED = {
     "UADD_Mastercraft": ("flow_mastercraft.py", "mc"),
     "UADD_WhatsTraining": ("flow_whatstraining.py", "wt"),
     "UADD_TomTom": ("flow_tomtom.py", "tomtom"),
+    "UADD_RareScanner": ("flow_rarescanner.py", "rs"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "

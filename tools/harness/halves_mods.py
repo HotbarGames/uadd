@@ -252,3 +252,14 @@ def mc(check, M, src, temps):
 
 def tomtom(check, M, tps, note=""):  # Words.Translate on whole lines; tps: flow_tomtom_texts.templates()
     run(check, "UADD_TomTom", tps, M and (lambda tp, t: _t(M.uk(lua_str(t)))), note, glue=True)
+
+
+def rs(check, M, note=""):
+    """RareScanner: the lines it read at load (settings, pop-ups) are read back by Options.Translate with
+    the English template of each key the module put into its locale table (M.templates(): English and
+    slot kinds, f free). Keys with an n slot are never put in, so they are not here."""
+    if M is None:
+        return run(check, "UADD_RareScanner", [], None, note or SKIP)
+    tps = [tpl(k, txt(row[1]), {i: NAME for i, c in enumerate(txt(row[2]), 1) if c == "f"})
+           for k, row in M.templates().items()]
+    run(check, "UADD_RareScanner", tps, lambda tp, t: _t(M.tr(lua_str(t))), note)

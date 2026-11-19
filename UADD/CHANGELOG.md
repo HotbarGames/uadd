@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- New module UADD_RareScanner: RareScanner's settings, map menus, explorer, pop-ups, tooltips and chat lines in
+  Ukrainian. Lines with a game name stay English for now; the default custom group names stay English.
+  Новий модуль UADD_RareScanner: налаштування, меню на мапі, провідник, спливні вікна, підказки та рядки в чаті
+  RareScanner українською. Рядки з назвами з гри поки лишаються англійською, як і типові назви власних груп.
 - LayerSwap: updated for 1.14.38; its new texts are in Ukrainian (swap limit, mini bar, nameplate help).
   LayerSwap: оновлено для 1.14.38; його нові тексти українською (ліміт змін, мала панель, підказка табличок).
 - New module UADD_TomTom: TomTom's settings, arrow, menus, pop-ups, tooltips and chat lines in Ukrainian.

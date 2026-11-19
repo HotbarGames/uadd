@@ -21,6 +21,9 @@ flowchart LR
   - `quests.lua` – quest states, quest tags, quest messages, tracker actions.
   - `professions.lua` – professions, trainers, ranks, weapon skills.
   - `world.lua` – town NPCs, vendor types, holidays, auction house words (lot, bid, buyout, undercut, stack).
+  - `journal.lua` – Dungeon Journal words: loot filters, item stats, gear slots, favourites.
+  - `map.lua` – map pins, waypoints, zoom, floors, TomTom's arrow and coordinates.
+  - `rares.lua` – RareScanner: rares, treasures, the explorer, collections, its filters.
 - `tools/glossary.py` – the checker.
 
 ## One entry
@@ -63,6 +66,12 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Camping | UALL Forever's camp system, Mastercraft ("Табір": lead's choice, 2026-11-19) | `game.camping` |
 | Camping | waiting at a spawn for a mob | not this entry («чатування» is banned in UADD_Mastercraft) |
 | Lure | a fishing lure, Mastercraft ("приманка", never «принада») | `prof.lure` |
+| Map Icons | marks an addon draws on the map, RareScanner's too ("Значки") | `map.map_pins` |
+| Vignettes | the game's own map marks for rares and treasures ("Ігрові позначки") | `rare.vignettes` |
+| Map pin | a pin the player drops, OpenMap ("Позначка") | `map.pin` |
+| Repeatable | a quest tag ("Повторюване") | `quest.tag_repeatable` |
+| Repeatable | a rare that comes back, RareScanner ("Що з'являється знову") | `rare.repeatable` |
+| Nameplates | the name bars over units' heads ("Таблички імен", never «індикатор імені») | `game.nameplates` |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.
 

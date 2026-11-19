@@ -26,15 +26,13 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
 6. If the module changes a font, test that the change really shows, also in windows made later (lesson 2).
 7. Look for lines that share a row with another text, and for names the addon glues extra text onto
    (lessons 5, 6 and 7).
-8. Before you call the module done, run all checks:
-   `python3 tools/check_repo.py`, `python3 -m unittest discover -s tools -p 'test_*.py'`,
-   `python3 tools/harness/run.py`.
+8. Before you call the module done, run all checks: `python3 tools/check_repo.py`,
+   `python3 -m unittest discover -s tools -p 'test_*.py'`, `python3 tools/harness/run.py`.
 
 ## 1. Text made in code or taken from the game is easy to miss
 
-**What went wrong.** In Auctionator, the "Quantity" column and the headers of the bag categories stayed
-English. These texts are not in the addon's locale tables: the addon builds them in its code, or takes them
-from the game.
+**What went wrong.** In Auctionator, the "Quantity" column and the headers of the bag categories stayed English.
+These texts are not in the addon's locale tables: the addon builds them in its code, or takes them from the game.
 
 **Rule.** Before you call a module done, list every English text that its windows show, not only the
 texts in its locale tables. Translate each one, or write down why it stays English.
@@ -52,12 +50,11 @@ letter). Our own Cyrillic font object was never used, but the code said it worke
 change). It must also cover windows that the game builds later (for example the canvases of the Blizzard
 Settings window), not only the windows that exist when the addon loads.
 
-**Check.** `tools/test_font_chars.py` checks only that our strings use letters the fonts can draw. It does
-not test the font change itself. Check: `python3 tools/harness/run.py`. Its font objects return
-nothing from `SetFont`, as in the game, so code that trusts that return fails. The step "header of a
-canvas made after OnReady" (`late_header` in `tools/harness/flow_header.py`) builds a Questie options canvas
-after the addon is ready, opens it two ways (the Settings window shown, a category picked) and reads the
-font back.
+**Check.** `tools/test_font_chars.py` checks only that our strings use letters the fonts can draw. It does not test
+the font change itself. Check: `python3 tools/harness/run.py`. Its font objects return nothing from `SetFont`, as in
+the game, so code that trusts that return fails. The step "header of a canvas made after OnReady" (`late_header` in
+`tools/harness/flow_header.py`) builds a Questie options canvas after the addon is ready, opens it two ways (the
+Settings window shown, a category picked) and reads the font back.
 
 **Again in What's Training? (2026-11-19).** On Forever its main window (`WhatsTrainingFloatingFrame`) is
 made on first open, from a template, and shown at once. The module scanned its windows only at login, and
@@ -108,10 +105,9 @@ banned word as file:line: text. `python3 tools/test_banned_words.py` prints the 
 font bug, but the addon draws that line big (size 15) on purpose. The fix was shorter words:
 «До рівня: 3 год 59 хв (16.5k/год)».
 
-**Rule.** A text that shares a row with another text, or sits in a fixed-size box (a button, a column, a
-bar), must fit at the addon's own font size on a narrow window. Make the words shorter. Never make the font
-smaller: the size is the addon's and the player's choice. Try to keep such texts no longer than the
-English.
+**Rule.** A text that shares a row with another text, or sits in a fixed-size box (a button, a column, a bar), must
+fit at the addon's own font size on a narrow window. Make the words shorter. Never make the font smaller: the size
+is the addon's and the player's choice. Try to keep such texts no longer than the English.
 
 **Check.** Auctionator's column headers: `python3 -m unittest tools.test_auc_headers`. Each header's
 Ukrainian may be at most 2 letters longer than its English; a longer one gets a short form in
@@ -143,37 +139,34 @@ in the harness (as `tools/harness/flow_openmap_label.py` does), then run `python
 ## 7. A free slot that swallows glued text
 
 **What went wrong.** LayerSwap's one-line mini bar is the layer's name, a wide gap, then its status
-(«Лейер B   Пауза 4:59»). The status template starts with a slot that only holds a colour code, and that
-slot was marked free. A free slot keeps any English, so on another split the whole name could land in it,
-and the line would come out half Ukrainian. It came out right only because an older guard (no wide gap
-inside a `%s`) said no first. The half-translation check never fed glued text into free slots, so nobody
-saw it. Six more free marks were the same kind (a colour code or a clock). The minimap tooltip's first line
-(name, gap, host mark) stayed all English: the host mark is a text that starts with the gap, so the split
-at the gap never finds it.
+(«Лейер B   Пауза 4:59»). The status template starts with a slot that only holds a colour code, and that slot was
+marked free. A free slot keeps any English, so on another split the whole name could land in it, and the line would
+come out half Ukrainian. It came out right only because an older guard (no wide gap inside a `%s`) said no first.
+The half-translation check never fed glued text into free slots, so nobody saw it. Six more free marks were the same
+kind (a colour code or a clock). The minimap tooltip's first line (name, gap, host mark) stayed all English: the
+host mark is a text that starts with the gap, so the split at the gap never finds it.
 
 **Rule.** Mark a slot free only when it holds one name. Never mark a slot free that holds a colour code, a
 number or a clock: those pass as values anyway. A free slot keeps one name, never a line break or " - "
 with more text after it (Words.lua says no then). When an addon glues two of its texts with a gap, the
 whole line must be ours: check it, and add a JOINED recipe when a piece carries the gap itself.
 
-**Check.** `python3 tools/harness/run.py`. In the half-translation check of each module that finds whole
-lines on screen (ForeverXPBar, LayerSwap: `glue=True`; `halves.glued` in `tools/harness/halves.py`), every
-free slot at the start or end of a template gets a name glued to made-up English with "   ", a line break
-or " - "; an output that changed and still has the made-up English fails.
-LayerSwap's flow also builds its real glued lines from the installed addon (`glued()` in
-`tools/harness/flow_lsw_mixed.py`) and wants each one all Ukrainian, each half as it is alone.
-`dashed()` there does the same for the lines glued with a wide dash ("  -  "): a layer row («Лейер C  —
-6864-5») stayed English because Words.lua split it at " - " and kept a space on the name. A new joining
-mark goes in `SEPS` (Words.lua), wider marks before narrower ones. The panel's zone line (id, dash, zone)
-takes the zone's name from UALL Forever (lesson 6) and stays whole English when UALL has none.
+**Check.** `python3 tools/harness/run.py`. In the half-translation check of each module that finds whole lines on
+screen (ForeverXPBar, LayerSwap: `glue=True`; `halves.glued` in `tools/harness/halves.py`), every free slot at the
+start or end of a template gets a name glued to made-up English with "   ", a line break or " - "; an output that
+changed and still has the made-up English fails. LayerSwap's flow also builds its real glued lines from the
+installed addon (`glued()` in `tools/harness/flow_lsw_mixed.py`) and wants each one all Ukrainian, each half as it
+is alone. `dashed()` there does the same for the lines glued with a wide dash ("  -  "): a layer row
+(«Лейер C  — 6864-5») stayed English because Words.lua split it at " - " and kept a space on the name. A new joining
+mark goes in `SEPS` (Words.lua), wider marks before narrower ones. The panel's zone line (id, dash, zone) takes the
+zone's name from UALL Forever (lesson 6) and stays whole English when UALL has none.
 
-**Again in Mastercraft (2026-11-19).** Its Words.lua splits a text into lines and translates each piece
-alone. A free slot at a piece's start or end then took a name with English glued after it (a wide gap, a
-line break), and a short "from %s" template took a whole English phrase as its "name". Rule: a free slot
-also says no to any word in small letters (a name is capitalised; a phrase is not), and a text of several
-lines stays all English when one line with English words has no Ukrainian. A `|cff%s` slot is always a
-value, never free (`tools/mc_rules.py`, `test_colour_slot_never_free`). Check: Mastercraft is in the same
-glued feed in `tools/harness/halves_mods.py`.
+**Again in Mastercraft (2026-11-19).** Its Words.lua splits a text into lines and translates each piece alone. A
+free slot at a piece's start or end then took a name with English glued after it (a wide gap, a line break), and a
+short "from %s" template took a whole English phrase as its "name". Rule: a free slot also says no to any word in
+small letters (a name is capitalised; a phrase is not), and a text of several lines stays all English when one line
+with English words has no Ukrainian. A `|cff%s` slot is always a value, never free (`tools/mc_rules.py`,
+`test_colour_slot_never_free`). Check: Mastercraft is in the same glued feed in `tools/harness/halves_mods.py`.
 
 ## 8. A word the owner picked, lost in chat
 
@@ -195,11 +188,10 @@ TOC loads, and its TOC lines. `python3 tools/test_banned_words.py` lists each hi
 
 ## 9. A game name we wrote ourselves
 
-**What went wrong.** The first AutoPotion module shipped our own Ukrainian for six texts that name game
-things UALL Forever does not have: two potions, an engineering injector, an option and its tooltip with
-the warlock spell Soulburn, and a tooltip with two example items. The owner's rule is that game names come
-from UALL Forever, but the Ukrainian looked fine, so nobody saw it. The six now stay English, or say the
-same without the names.
+**What went wrong.** The first AutoPotion module shipped our own Ukrainian for six texts that name game things UALL
+Forever does not have: two potions, an engineering injector, an option and its tooltip with the warlock spell
+Soulburn, and a tooltip with two example items. The owner's rule is that game names come from UALL Forever, but the
+Ukrainian looked fine, so nobody saw it. The six now stay English, or say the same without the names.
 
 **Rule.** Items, spells, NPCs, zones and quests are UALL Forever's to name (`Items.lua`, `Spells.lua`,
 `NpcNames.lua`, `World.lua`, `Quests.lua` in its folder). We write none.
@@ -209,23 +201,21 @@ same without the names.
 - Plain game words in the glossary that match UALL Forever (Healthstone «Камінь Здоров'я», Soul Shard)
   are fine.
 
-**Check.** `python3 -m unittest tools.test_game_names` (AutoPotion and LayerSwap). For each text we ship,
-it reads the English from the installed addon. A UALL Forever name in it must be in our Ukrainian as UALL
-Forever has it. A word with a capital letter mid-sentence that the addon never writes in small letters,
-and that our Ukrainian does not keep as it is, looks like a name UALL Forever lacks: the test fails. A text
-a person read and found clean goes in `ALLOW` in that file, with the hash of its Ukrainian, so a later
-change is read again. It would have caught all six texts above. It misses a name made of plain words
-the addon also writes in small letters, a name at a sentence start, and modules not in its list
-(`MODULES` in `tools/game_names_src.py`; ForeverXPBar gives too many false hits yet). Manual: read every
-capitalised word of the English.
+**Check.** `python3 -m unittest tools.test_game_names` (AutoPotion and LayerSwap). For each text we ship, it reads
+the English from the installed addon. A UALL Forever name in it must be in our Ukrainian as UALL Forever has it. A
+word with a capital letter mid-sentence that the addon never writes in small letters, and that our Ukrainian does
+not keep as it is, looks like a name UALL Forever lacks: the test fails. A text a person read and found clean goes
+in `ALLOW` in that file, with the hash of its Ukrainian, so a later change is read again. It would have caught all
+six texts above. It misses a name made of plain words the addon also writes in small letters, a name at a sentence
+start, and modules not in its list (`MODULES` in `tools/game_names_src.py`; ForeverXPBar gives too many false hits
+yet). Manual: read every capitalised word of the English.
 
 ## 10. Checks that passed because the files were new
 
 **What went wrong.** The AutoPotion module was checked before its first commit. `python3 tools/check_repo.py`
-passed. Then the push failed: the pre-push hook checks a clean copy of the commit, and there the module's
-TOC said version 1.0.0 (the others said 1.0.1), and two new Python files were over 300 lines. The check
-had read only tracked files (`git ls-files`), and the module's new files were not tracked yet, so it never
-looked at them.
+passed. Then the push failed: the pre-push hook checks a clean copy of the commit, and there the module's TOC said
+version 1.0.0 (the others said 1.0.1), and two new Python files were over 300 lines. The check had read only tracked
+files (`git ls-files`), and the module's new files were not tracked yet, so it never looked at them.
 
 **Rule.** A check of the repo reads the files that the next commit will hold: the tracked ones and the
 untracked ones git does not ignore. A file that must never be committed goes in `.gitignore`.
@@ -236,12 +226,11 @@ untracked ones git does not ignore. A file that must never be committed goes in 
 
 ## 11. An addon update that drift could not see
 
-**What went wrong.** The new Bagnon module reads its texts from the BagBrother folder. BagBrother's TOC has
-no `## Version:` line (Bagnon's TOC has it), so `tools/addon_versions.json` recorded version null for
-UADD_Bagnon. A new Bagnon version would not have shown as a version change. In the same review,
-`docs/TESTING.md` told the tester that `/uadd <module>` says it waits for its addon when that addon is
-missing. For a module whose TOC has the addon in `## Dependencies:` that cannot happen: the game does not
-load the module at all, so `/uadd` does not list it.
+**What went wrong.** The new Bagnon module reads its texts from the BagBrother folder. BagBrother's TOC has no
+`## Version:` line (Bagnon's TOC has it), so `tools/addon_versions.json` recorded version null for UADD_Bagnon. A
+new Bagnon version would not have shown as a version change. In the same review, `docs/TESTING.md` told the tester
+that `/uadd <module>` says it waits for its addon when that addon is missing. For a module whose TOC has the addon
+in `## Dependencies:` that cannot happen: the game does not load the module at all, so `/uadd` does not list it.
 
 **Rule.** Each module's record in `tools/addon_versions.json` has a version. When the folder with the texts
 has no Version, name the folder that has it in `VERSION_FROM` (`tools/drift_sources.py`). A test step says
@@ -283,3 +272,29 @@ never by what the name says.
 
 **Check.** `python3 tools/harness/run.py`, TomTom's "review 1": a profile named exactly like a settings text
 stays as typed, and the installed TomTom still names its profile settings that way.
+
+## 14. The addon's own text saved into the player's data
+
+**What went wrong.** RareScanner (2026-11-20) names the first custom NPC group and the first custom item group
+with its locale texts and saves the names in the player's data. Our draft translated both: the Ukrainian name
+would stay saved with the module off, and would no longer match the text RareScanner compares it with.
+
+**Rule.** A locale text the addon writes into its saved data stays English (the module's STAY list). Before
+translating, search the addon's code for locale texts passed to its database setters or saved tables.
+
+**Check.** `python3 -m unittest tools.test_rs_text` (`SavedData`) finds such texts in the installed RareScanner, also
+over a call that spans lines and through a variable saved later (the "treasure" text as a nameless container's name,
+now in STAY); each must be in STAY (`tools/rs_rules.py`). `python3 tools/harness/run.py` ("1 STAY keys") keeps them
+English. Other modules: manual, read the addon's saves.
+
+## 15. Words set after load, and slots the addon fills with its own English
+
+**What went wrong.** The RareScanner review (2026-11-20): the explorer's labels, set when it first opens, and a page
+built by a function that keeps what it built, kept our Ukrainian with the module off. A slot holding a time ("1h 5m",
+in RareScanner's English units) or another of its texts made half lines.
+
+**Rule.** Words set once are switched both ways on every on/off and on the hold key, or built with the English in.
+A line whose slot the addon fills with its own English stays English unless that text is ours (`u`, `INNER`).
+
+**Check.** `python3 tools/harness/run.py`, RareScanner steps "5" and "7"; `python3 -m unittest tools.test_rs_text`
+(`Slots`: `u` and `INNER` in `tools/rs_rules.py` match the installed code). Each fails with its fix taken out.

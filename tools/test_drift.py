@@ -186,8 +186,8 @@ class Coverage(unittest.TestCase):
 
     def test_hashes_only(self):
         recorded = json.loads(drift.VERSIONS.read_text(encoding="utf-8"))["modules"]
-        self.assertLess(drift.VERSIONS.stat().st_size, 80000)      # file names are most of it
         for mod, rec in recorded.items():
+            self.assertLess(len(json.dumps(rec)), 40000, mod)       # per module: file names are most of it
             self.assertNotIn("texts", rec, mod)
             self.assertRegex(rec["ids"], r"^[0-9a-f]{40}$", mod)
             self.assertIsInstance(rec["count"], int, mod)
