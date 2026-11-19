@@ -170,3 +170,26 @@ These need RareScanner on an English client. Type `/uadd missed on` first, then 
 114. `/uadd rarescanner off`: English again (page names after `/reload`); `on`: Ukrainian. The default custom
     group names are English both ways.
 115. Log in without RareScanner: the game does not load UADD - RareScanner, `/uadd` does not list it, no errors.
+
+### Pawn
+
+These need Pawn on an English client. Type `/uadd missed on` first, then `/reload`. Scale names and spec names
+stay English on purpose.
+116. Log in. `/uadd` lists "Pawn". `/uadd pawn` shows "увімкнено" with the text counts.
+117. Open the Pawn window (`/pawn`, or its key binding) and click each tab: Scale, Weights, Compare, Options,
+    Help (Getting started), About. Headers, labels, buttons and tooltips are Ukrainian, with no boxes, and each
+    text fits its box. Open the Gems tab too if your client shows it.
+118. Open the game's Settings, AddOns, "Pawn": the page rows and tooltips are Ukrainian.
+119. Point at an item: the scale lines Pawn adds to the tooltip (value, upgrade lines) are Ukrainian; the
+    numbers line up and the scale name stays as it is. Do the same on an item you could wear in place of yours.
+120. Loot a gear item, open a bag with an upgrade, and look at a quest reward: the upgrade advisors (arrow,
+    header, lines) are Ukrainian.
+121. Type `/pawn` with no word, and with a wrong word, in chat: the usage lines are Ukrainian; the commands
+    and scale names inside stay as they are.
+122. In the Scale tab open the dialogs to copy, rename, delete, import and export a scale: their prompts are
+    Ukrainian; the scale name you type stays as you typed it, and the export string stays as it is.
+123. Hold Shift with the window and a tooltip open: English; let go: Ukrainian.
+124. `/uadd pawn off` with the window open: English at once, also the tab names and header; `on`: Ukrainian again.
+    Scales and their values stay the same both ways.
+125. Log in without Pawn: the game does not load UADD - Pawn (Pawn is a required
+    dependency), `/uadd` does not list it, no errors.

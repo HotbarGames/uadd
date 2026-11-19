@@ -24,6 +24,7 @@ flowchart LR
   - `journal.lua` – Dungeon Journal words: loot filters, item stats, gear slots, favourites.
   - `map.lua` – map pins, waypoints, zoom, floors, TomTom's arrow and coordinates.
   - `rares.lua` – RareScanner: rares, treasures, the explorer, collections, its filters.
+  - `gear.lua` – Pawn: scales, stat weights, upgrades, gems and sockets, more item stats.
 - `tools/glossary.py` – the checker.
 
 ## One entry
@@ -71,6 +72,8 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Map pin | a pin the player drops, OpenMap ("Позначка") | `map.pin` |
 | Repeatable | a quest tag ("Повторюване") | `quest.tag_repeatable` |
 | Repeatable | a rare that comes back, RareScanner ("Що з'являється знову") | `rare.repeatable` |
+| Scale | Pawn: a set of stat weights that values an item ("Шкала") | `gear.scale` |
+| Scale | the size of a window or the UI (UALL's «Масштаб») | not this entry («масштаб» is banned in UADD_Pawn) |
 | Nameplates | the name bars over units' heads ("Таблички імен", never «індикатор імені») | `game.nameplates` |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.

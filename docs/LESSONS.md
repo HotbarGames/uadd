@@ -262,16 +262,16 @@ unit's tooltip runs no `debugstack`. Each fails with its fix taken out.
 
 ## 13. The player's own names inside the addon's list
 
-**What went wrong.** In the same review: TomTom's profile dropdown lists the profiles the player named. The
-module translated every dropdown entry, so a profile named like one of TomTom's texts would show our
-Ukrainian, not what the player typed.
+**What went wrong.** In the same review: TomTom's profile dropdown lists the profiles the player named, and the
+module translated every entry, so a profile named like one of TomTom's texts showed our Ukrainian. Pawn
+(2026-11-20): the window scan changed the label that shows the chosen scale's name the same way, both ways.
 
-**Rule.** Text the player wrote stays as typed, also inside a list or a menu the addon builds. Tell the
-player's entries apart by where they come from (TomTom: the profile settings, named `TOMTOM_PROFILE_*`),
-never by what the name says.
+**Rule.** Text the player wrote stays as typed, also in a list, menu or label the addon builds. Tell it apart by
+where it comes from (TomTom: the `TOMTOM_PROFILE_*` settings; Pawn: `PawnUIFrame_ScaleNameLabel`, unless it
+shows Pawn's own "no scale" text), never by what the name says.
 
-**Check.** `python3 tools/harness/run.py`, TomTom's "review 1": a profile named exactly like a settings text
-stays as typed, and the installed TomTom still names its profile settings that way.
+**Check.** `python3 tools/harness/run.py`: TomTom's "review 1" (also: the installed TomTom still names its
+profile settings that way) and Pawn's "4 lesson 13" step.
 
 ## 14. The addon's own text saved into the player's data
 

@@ -1320,6 +1320,47 @@
    },
    "ids": "f7318b1ec4279766bf89eab896c762aea81b9b2d"
   },
+  "UADD_Pawn": {
+   "addon": "Pawn",
+   "version": "2.14.4",
+   "interface": "16001",
+   "files": [
+    "AskMrRobot.lua",
+    "Bindings.xml",
+    "ClassicHawsJon.lua",
+    "Core.lua",
+    "Gems.lua",
+    "GemsBurningCrusade.lua",
+    "GemsCataclysm.lua",
+    "GemsClassic.lua",
+    "GemsMists.lua",
+    "GemsWrath.lua",
+    "ItemIDs.lua",
+    "Localization.deDE.lua",
+    "Localization.es.lua",
+    "Localization.frFR.lua",
+    "Localization.itIT.lua",
+    "Localization.koKR.lua",
+    "Localization.lua",
+    "Localization.ptBR.lua",
+    "Localization.ruRU.lua",
+    "Localization.zhCN.lua",
+    "Localization.zhTW.lua",
+    "Pawn.lua",
+    "PawnBags.lua",
+    "PawnUI.lua",
+    "PawnUI.xml",
+    "ScaleTemplates.lua",
+    "TooltipParsing.lua",
+    "UIStrings.lua",
+    "VgerCore/VgerCore.lua"
+   ],
+   "count": 367,
+   "tags": {
+    "L": 367
+   },
+   "ids": "3e64dfaa3d18a31a26ddc1d294a9e9fb26ae4c8b"
+  },
   "UADD_Questie": {
    "addon": "Questie",
    "version": "12.11.1",

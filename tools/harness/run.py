@@ -15,6 +15,7 @@ UADD_Mastercraft's checks run next, on a stand-in for Mastercraft (flow_mastercr
 UADD_WhatsTraining's checks run next, on a stand-in for What's Training? (flow_whatstraining.py).
 UADD_TomTom's checks run next, on a stand-in for TomTom (flow_tomtom.py).
 UADD_RareScanner's checks run next, on a stand-in for RareScanner (flow_rarescanner.py).
+UADD_Pawn's checks run next, on a stand-in for Pawn that runs Pawn's own locale files (flow_pawn.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the same stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
@@ -53,6 +54,7 @@ def run_all():
     import flow_mastercraft
     import flow_tomtom
     import flow_rarescanner
+    import flow_pawn
     import flow_dialogueui
     import flow_dj_module
     import flow_fxpb
@@ -115,6 +117,10 @@ def run_all():
     rs_checks, rs_facts = flow_rarescanner.run_checks()
     checks += rs_checks
     facts["rs"] = rs_facts
+    gc.collect()
+    pawn_checks, pawn_facts = flow_pawn.run_checks()
+    checks += pawn_checks
+    facts["pawn"] = pawn_facts
     gc.collect()
     miss_checks, miss_facts = flow_missed.run_checks()
     checks += miss_checks

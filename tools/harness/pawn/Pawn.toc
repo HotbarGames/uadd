@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: Pawn (harness stand-in)
+## Notes: Not Pawn. A small stand-in for tools/harness/flow_pawn.py: its window, settings page, scale selector, labels set on first open and tooltip lines, shaped like Pawn's. It holds none of Pawn's English: the flow runs Pawn's own Localization.lua and UIStrings.lua from the installed addon first.
+## Version: 0
+
+Pawn.lua

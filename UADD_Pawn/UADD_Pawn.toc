@@ -1,0 +1,25 @@
+## Interface: 16001, 16000
+## Title: UADD - Pawn
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Pawn in Ukrainian: its window, settings, stat names and tooltip lines. Part of UADD.
+## Author: HotbarGames
+## Version: 1.1.0
+## Dependencies: UADD, Pawn
+## OptionalDeps: UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# One line per data file that tools/make_pawn_text.py writes (FILES there), in order, before Module.lua.
+# The last ones may be empty: room for an addon update (tools/test_pawn_text.py checks the count).
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+data/text05.lua
+data/text06.lua
+data/text07.lua
+data/text08.lua
+data/names.lua
+Swap.lua
+Fonts.lua
+Module.lua

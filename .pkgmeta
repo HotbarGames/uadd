@@ -1,6 +1,6 @@
 # CurseForge / BigWigs packager (https://github.com/BigWigsMods/packager).
-# One zip with fifteen addon folders: UADD (the core) and its fourteen modules (Questie, Dungeon Journal, OpenMap,
-# DialogueUI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner). This is the same list tools/make_zip.py ships. The repo is
+# One zip with sixteen addon folders: UADD (the core) and its fifteen modules (Questie, Dungeon Journal, OpenMap,
+# DialogueUI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn). This is the same list tools/make_zip.py ships. The repo is
 # checked out into UADD/, so move each folder up: the zip then holds UADD/UADD.toc, UADD_Questie/UADD_Questie.toc
 # and so on. Nothing is a required dependency: each module loads only when its own addon is there, and the core
 # alone changes nothing. The only relation is UALL Forever (for names), as an optional dependency: the addons we
@@ -23,6 +23,7 @@ move-folders:
   UADD/UADD_WhatsTraining: UADD_WhatsTraining
   UADD/UADD_TomTom: UADD_TomTom
   UADD/UADD_RareScanner: UADD_RareScanner
+  UADD/UADD_Pawn: UADD_Pawn
 
 # names come from UALL Forever when it is installed; without it the menus are still Ukrainian
 optional-dependencies:

@@ -111,7 +111,7 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 
 ### The other addons
 
-Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom and RareScanner (steps 42
+Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner and Pawn (steps 42
 and on): `docs/TESTING-ADDONS.md`.
 
 ## Not checked outside the game
@@ -142,6 +142,9 @@ and on): `docs/TESTING-ADDONS.md`.
 - RareScanner's real windows: the settings page names on real category IDs, the world map menus, the pin
   tooltips (LibQTip) and their widths, the scanner button's fonts in a fight, the export window and the custom
   NPC options are only seen in the real client.
+- Pawn's real windows: whether every text fits its tabs and buttons, the Settings page, the tooltip lines
+  and their number alignment, the loot, bag and quest upgrade advisors, the scale dialogs, and whether the
+  tab names and headers switch back on `/uadd pawn off` are only seen in the real client.
 
 ## Without the game
 

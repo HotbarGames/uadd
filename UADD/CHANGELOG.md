@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- New module UADD_Pawn: Pawn's window, settings page, item tooltip lines, upgrade advisors and chat lines in
+  Ukrainian. Names from the game (scale names, spec names) stay English, and a few lines with game names stay English.
+  Новий модуль UADD_Pawn: вікно, сторінка налаштувань, рядки підказок предметів, поради щодо покращень та рядки в
+  чаті Pawn українською. Назви з гри (назви шкал, спеціалізацій) лишаються англійською, як і кілька рядків з назвами з гри.
+
 ## 1.1.0
 
 - New module UADD_RareScanner: RareScanner's settings, map menus, explorer, pop-ups, tooltips and chat lines in

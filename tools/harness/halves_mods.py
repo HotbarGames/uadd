@@ -263,3 +263,38 @@ def rs(check, M, note=""):
     tps = [tpl(k, txt(row[1]), {i: NAME for i, c in enumerate(txt(row[2]), 1) if c == "f"})
            for k, row in M.templates().items()]
     run(check, "UADD_RareScanner", tps, lambda tp, t: _t(M.tr(lua_str(t))), note)
+
+
+def pawn(check, M, en=None, note=""):
+    """Pawn: the module swaps whole templates; a text Pawn builds is read back as our template (M.fmt) with
+    its values. pawn_rules.SORTS: f free, v a value (English in a v %s is no text Pawn builds: kept as it
+    is); a template with an n slot is never taken (M.usable)."""
+    if M is None:
+        return run(check, "UADD_Pawn", [], None, note or SKIP)
+    import re
+    import pawn_rules
+    tps = []
+    for p, e in sorted(en.items()):
+        s = pawn_rules.sorts(p, e)
+        if halves_cover.kinds(e) and None not in s and M.usable(lua_str(p)) is not None:
+            tps.append(tpl(p, e, {i: NAME for i, c in enumerate(s, 1) if c == "f"}, sorts=s))
+
+    def tr(tp, t):
+        toks = hashtext.tokens(tp["en"])
+        pat = "".join(re.escape(x[1]) if x[0] == "lit" else "(.*?)" if x[2][0] == "arg" else "(?:.*?)"
+                      for x in toks)
+        m = re.fullmatch(pat, t, re.S)
+        if not m:
+            return None
+        slots = [x for x in toks if x[0] == "slot" and x[2][0] == "arg"]
+        args = [None] * len(slots)
+        try:
+            for (_, kind, (_, n)), v, sort in zip(slots, m.groups(), tp["sorts"]):
+                if kind == "s" and sort == "v" and not bgn_value(v):
+                    return t
+                args[n - 1] = int(v) if kind == "d" else float(v) if kind == "f" else int(v, 16) if kind[0] == "x" \
+                    else lua_str(v)
+        except ValueError:
+            return t
+        return _t(M.fmt(lua_str(tp["id"]), *args))
+    run(check, "UADD_Pawn", tps, tr, note)
