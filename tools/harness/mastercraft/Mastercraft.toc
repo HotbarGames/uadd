@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: Mastercraft (harness stand-in)
+## Notes: Not Mastercraft. A small stand-in for tools/harness/flow_mastercraft.py: font strings made the way Mastercraft makes its own, two named windows (one made later), tooltip lines and chat lines from its own code. It holds no English of Mastercraft's: the flow gives it the texts, read from the installed addon.
+## Version: 0
+
+Mastercraft.lua

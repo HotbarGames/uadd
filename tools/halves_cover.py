@@ -31,6 +31,7 @@ COVERED = {
     "UADD_DungeonJournal": ("flow_dj_summon.py", "dj"),
     "UADD_AutoPotion": ("flow_autopotion.py", "ap"),
     "UADD_Bagnon": ("flow_bagnon.py", "bgn"),
+    "UADD_Mastercraft": ("flow_mastercraft.py", "mc"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "

@@ -283,3 +283,16 @@ def bgn(check, M, rows):
         which, _, key = tp["id"].partition(":")
         return _t(M.shows(which, key, *v))
     run(check, "UADD_Bagnon", tps, tr)
+
+
+def mc(check, M, src, temps):
+    """Mastercraft: Words.Translate (M.uk) on whole lines, as Screen.lua gets them (glue=True), each line of a
+    multi-line text alone. Slots by the data's sort (temps: {id: sort}): f free, b blank, n a game name."""
+    import mc_text_lib as L
+    if M is None:
+        return run(check, "UADD_Mastercraft", [], None, SKIP)
+    lines = {hashtext.key(x): x for en, kind in src if "template" in kind for x in map(L.strip, en.split("\n"))}
+    def by(k, c, v): return {i: v for i, s in enumerate(temps[k], 1) if s == c}  # noqa: E704
+    tps = [tpl(k, x, {**by(k, "f", NAME), **by(k, "b", "s")}, by(k, "n", NAME), blank=set(by(k, "b", 1)))
+           for k, x in lines.items() if k in temps and L.is_pattern(x)]
+    run(check, "UADD_Mastercraft", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)

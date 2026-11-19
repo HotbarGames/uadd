@@ -33,6 +33,11 @@ BANNED = {
 }
 # module folder: {regex: (use instead, reason)} - banned only in that module's files
 BANNED_IN = {
+    "UADD_Mastercraft": {
+        r"чатуван": ("табір (Camping is Forever's camp system: Табір)",
+                     "lead's choice 2026-11-19, Mastercraft: «чатування» is waiting at a spawn, the wrong meaning"),
+        r"принад": ("приманка (Lure)", "lead's choice 2026-11-19, Mastercraft"),
+    },
     "UADD_LayerSwap": {
         r"\bшар(?:а|у|ом|і|и|ів|ам|ами|ах|е)?\b": ("лейер (лейера, на лейері, лейерів; glossary game.server_layer)",
                    "the owner's word for a server layer, 2026-11-18; «шар» is a map layer (map.layer)"),

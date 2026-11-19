@@ -66,3 +66,13 @@ E{ id = "weapon.crossbows", en = "Crossbows", uk = "Арбалети", note = "W
 E{ id = "weapon.guns", en = "Guns", uk = "Вогнепальна зброя", note = "Weapon skill." }
 E{ id = "weapon.staves", en = "Staves", uk = "Палиці", note = "Weapon skill: two-handed staves." }
 E{ id = "weapon.polearms", en = "Polearms", uk = "Древкова зброя", note = "Weapon skill." }
+
+-- Mastercraft (lead's choices 2026-11-19)
+E{ id = "prof.guide", en = "Guide", uk = "Посібник", note = "A profession guide (leveling steps). lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.lure", en = "Lure", uk = "приманка", note = "Fishing lure. Never «принада». lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.fishing_pole", en = "Fishing pole", uk = "вудка", note = "The fishing rod item. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.bobber", en = "Bobber", uk = "поплавок", note = "The float on the fishing line. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.network", en = "Network", uk = "Мережа", note = "Mastercraft tab or heading: crafters who share with each other. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.shop", en = "Shop", uk = "Крамниця", note = "A crafter's shop (what a crafter offers to make). lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.item_tracker", en = "Item tracker", uk = "Трекер предметів", note = "List of items to collect, with counts. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "prof.trade_board", en = "Trade board", uk = "Торгова дошка", note = "Board where crafters and buyers post requests. lead's choice 2026-11-19, Mastercraft." }

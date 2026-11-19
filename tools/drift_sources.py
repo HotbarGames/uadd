@@ -57,6 +57,11 @@ def ex_bgn(path):
     return [("X", None, en, f"{kind} {where}") for _, kind, en, where in B.texts(path)[0]]
 
 
+def ex_mc(path):
+    import mc_text_lib as M
+    return [("X", None, en, f"{kind} {file}") for en, kind, _, _, file in M.source(path)]
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -121,6 +126,7 @@ MODULES = {
     "UADD_DungeonJournal": ("ForeverDungeonJournal", ex_dj, None, ("tools/dj_prose",)),
     "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),
     "UADD_LayerSwap": ("LayerSwap", ex_lsw, None, ()),
+    "UADD_Mastercraft": ("Mastercraft", ex_mc, None, ()),     # Mastercraft_Inbox has no texts of its own
     "UADD_OpenMap": ("OpenMap", ex_openmap, old_openmap, ()),
     "UADD_Questie": ("Questie", ex_questie, old_questie, ()),
 }

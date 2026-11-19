@@ -1,0 +1,47 @@
+## Interface: 16001, 16000
+## Title: UADD - Mastercraft
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Mastercraft's own words in Ukrainian: its windows, tabs, buttons, tooltips, pop-ups and chat lines. Mastercraft stays on English; item, zone and NPC names are UALL Forever's. Type /uadd mastercraft.
+## Author: HotbarGames
+## Version: 1.0.1
+## Dependencies: UADD, Mastercraft
+## X-Category: Localization
+## X-License: GPL-3.0
+
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+data/text05.lua
+data/text06.lua
+data/text07.lua
+data/text08.lua
+data/text09.lua
+data/text10.lua
+data/text11.lua
+data/text12.lua
+data/text13.lua
+data/text14.lua
+data/text15.lua
+data/text16.lua
+data/text17.lua
+data/text18.lua
+data/text19.lua
+data/text20.lua
+data/text21.lua
+data/text22.lua
+data/text23.lua
+data/text24.lua
+data/text25.lua
+data/text26.lua
+data/text27.lua
+data/text28.lua
+data/text29.lua
+data/text30.lua
+data/text31.lua
+data/text32.lua
+Words.lua
+Screen.lua
+Tooltip.lua
+Chat.lua
+Module.lua

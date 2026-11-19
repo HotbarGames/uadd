@@ -873,7 +873,7 @@ ns.uiStrings = {
     ["Brawler's Guild"] = "Гільдія забіяк",
     ["Titan-Reforged Realm"] = "Світ, перекований титанами",
     ["Pirates' Day"] = G"event.pirates_day",
-    ["Camping"] = "Табір",
+    ["Camping"] = G"game.camping",
     -- Comms.lua
     ["A Major patch for Questie exists!"] = "Вийшло велике оновлення Questie!",
     ["Please update as soon as possible!"] = "Оновіться якнайшвидше!",

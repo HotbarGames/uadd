@@ -60,6 +60,9 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Drink, Repair | what a vendor sells (nouns) | `vendor.drink`, `vendor.repair` |
 | Layer | a drawn layer of the map, OpenMap ("Шар") | `map.layer` |
 | Layer | a copy of the server's world, LayerSwap ("Лейер": the owner's word, 2026-11-18) | `game.server_layer` |
+| Camping | UALL Forever's camp system, Mastercraft ("Табір": lead's choice, 2026-11-19) | `game.camping` |
+| Camping | waiting at a spawn for a mob | not this entry («чатування» is banned in UADD_Mastercraft) |
+| Lure | a fishing lure, Mastercraft ("приманка", never «принада») | `prof.lure` |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.
 

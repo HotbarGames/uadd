@@ -61,10 +61,19 @@ def _lua_data(path):
         if m:
             out[m.group(1)] = FW.unlua(m.group(2))
             continue
-        m = re.search(r'\bid = "(\d+:[0-9a-f]{8})".*\buk = \{(.*?)\}', line)
+        m = TEMPLATE.search(line)
         if m:
-            out[m.group(1)] = "".join(FW.unlua(s) for s in re.findall(r'"(?:[^"\\]|\\.)*"', m.group(2)))
+            out[m.group(1)] = _template_uk(m)
     return out
+
+
+# A template line of a data file: its key and its uk = { "text", 1, "text" } list (slot numbers dropped). A
+# string in the list may hold braces of its own (a plural form {один|два}).
+TEMPLATE = re.compile(r'\bid = "(\d+:[0-9a-f]{8})".*?\buk = \{((?:"(?:[^"\\]|\\.)*"|[^"}])*)\}')
+
+
+def _template_uk(m):
+    return "".join(FW.unlua(s) for s in re.findall(r'"(?:[^"\\]|\\.)*"', m.group(2)))
 
 
 def autopotion():
@@ -99,6 +108,61 @@ def bagnon():
     return [(k, en, uk.get(k, "")) for k, _, en, _ in texts], {"Bagnon"}
 
 
+def mastercraft():
+    """(rows, own words) for UADD_Mastercraft, or None without Mastercraft. Our Ukrainian: data/text*.lua, by key
+    (a multi-line text: its lines' Ukrainian joined; a line we have not translated makes the whole text empty)."""
+    import make_mc_text as M
+    import mc_text_lib as L
+    rows_en = L.source(M.addon_dir())
+    if not rows_en:
+        return None
+    uk = {}
+    for path in sorted(M.DATA.glob("*.lua")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            m = re.match(r'E\["(\d+:[0-9a-f]{8})"\] = ("(?:[^"\\]|\\.)*")$', line)
+            if m:
+                uk[m.group(1)] = FW.unlua(m.group(2))
+                continue
+            m = TEMPLATE.search(line)
+            if m:
+                uk[m.group(1)] = _template_uk(m)
+    rows = []
+    for en, _, _, _, _ in rows_en:
+        parts = [uk.get(H.key(L.strip(x)), "") for x in en.split("\n") if L.strip(x)]
+        rows.append((H.key(en), en, "\n".join(parts) if parts and all(parts) else ""))
+    words = {w for _, en, _ in rows for w in re.findall(r"[A-Za-z][A-Za-z'-]*", en)}
+    ui = {w for w in words if H.key(w) in MC_UI_WORDS}
+    return rows, {"Mastercraft", "GatherMate"} | CALENDAR | LANGUAGES | glossary_ranks() | ui
+
+
+# Mastercraft's words that the check takes for names but that name no game thing: its own tabs, pages,
+# buttons, settings and styles, a placeholder, a region, and the game's UI (a frame, a list, a menu button,
+# gear slots and item types, a key). By hash (hashtext.key of the word), so its English is not kept here.
+# Reviewed 2026-11-19. Add one only after reading every text it is in: a word here is skipped in all of them.
+MC_UI_WORDS = {
+    "5:0cf9fed8", "6:a77f30fe", "7:6c0d6a8f", "8:8f1e82eb", "6:ce81b906", "4:7c85f041",   # tabs, pages, buttons
+    "6:c5eb6dfe", "4:7c8903d0", "6:c38d6fca", "7:2c46f767", "6:d9e968e8", "8:8d26dd54",   # buttons, styles
+    "7:1219c7c0", "6:b1589555",                                                         # placeholder, region
+    "6:b2d2363d", "6:b9adaf89", "4:7c84f21f", "5:0cf62e3c", "4:7c8877b0", "8:cfe37487",   # the game's UI
+    "12:69b0bb6d", "11:07a0d6d6",                                                       # item types, a key
+}
+
+# Capitalised English words that are never game names: months and days (also short), and languages.
+CALENDAR = set("January February March April May June July August September October November December "
+               "Jan Feb Mar Apr Jun Jul Aug Sep Sept Oct Nov Dec Monday Tuesday Wednesday Thursday Friday "
+               "Saturday Sunday".split())
+LANGUAGES = set("English German French Spanish Italian Portuguese Russian Polish Greek Korean Chinese Japanese "
+                "Ukrainian".split())
+
+
+def glossary_ranks():
+    """The English of the glossary's one-word profession ranks. The owner's words for them (the brief and the
+    glossary), so a UALLF item of the same English (a book) is not the rank the text names."""
+    import glossary
+    return {en for gid, e in glossary.Glossary().entries.items() if gid.startswith("prof.rank_")
+            for en in e["en"] if " " not in en}
+
+
 def _fxpb_like(maker):
     """(rows, own words) for a module built by make_fxpb_data / make_lsw_data, or None without its addon."""
     import glossary
@@ -128,4 +192,4 @@ def foreverxpbar():
 # ForeverXPBar is not here yet: its many Title Case labels and key names give about 50 false hits.
 # Bagnon neither: its Title Case labels ("Border Color") give 73 hits (2026-11-19), none a game name we wrote
 # ("At the Auction House" is the glossary's «аукціон», the place, not UALLF's zone name).
-MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap}
+MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap, "UADD_Mastercraft": mastercraft}

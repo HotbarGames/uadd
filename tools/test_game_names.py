@@ -22,7 +22,9 @@ a name at a sentence start, a name written in small letters, a UALLF name we spe
 the 3-letter test.
 
 Modules: MODULES in tools/game_names_src.py, one function each that gives [(key, English, our Ukrainian or
-"")]; that file also reads UALLF ($UALLF_DIR, $UADD_ADDONS_DIR/UALLF or the WoW _forever_ folder). An addon
+""] and the module's own words: words that name no game thing there (an addon's name, its tabs, months,
+languages; a possessive "'s" too). An own word is never taken for a name, also when UALLF has it as a
+one-word name (a book called like a profession rank). That file also reads UALLF ($UALLF_DIR, $UADD_ADDONS_DIR/UALLF or the WoW _forever_ folder). An addon
 or UALLF that is not installed skips the test.
 
 python3 -m unittest tools.test_game_names
@@ -56,6 +58,19 @@ ALLOW = {
     },
     "UADD_LayerSwap": {
         "66:9351f041": "107:3afd6b7c",   # the addon's own option name (auto-leave), not a game name
+    },
+    "UADD_Mastercraft": {   # reviewed 2026-11-19
+        "7:270fcac7": "22:40f65383",     # a button verb (a chat whisper); UALLF's item of that English is another thing
+        "27:bb19586f": "58:9909a834",    # the same verb on a help line
+        "30:b39fadc8": "32:99020882",    # the author's name, kept in Latin letters as it is
+        "164:b93e2e44": "317:b96752de",  # a plain past participle at a sentence start, not the UALLF item
+        "34:75d0dfa7": "83:f98acaca",    # an NPC's short name: our Ukrainian has UALLF's full NPC name
+        "96:e52cdf15": "288:7651ca0c",   # short specialization names: our Ukrainian has UALLF's spell names exactly
+        "36:f2e7fe21": "134:c0d81526",   # the same specializations
+        "38:7b68a52d": "151:747b7702",   # the same specializations
+        "20:4e557136": "38:6ca5c8a4",    # a holiday: UALLF's UI.lua (not read here) has this Ukrainian
+        "67:a35a4aae": "141:0881956d",   # a fishing event: UALLF's UI.lua Ukrainian; the zone is UALLF's
+        "136:db515e66": "220:f460a032",  # the auction house as a place: the glossary's «аукціон» (as in Bagnon)
     },
 }
 
@@ -114,14 +129,14 @@ def _uallf_at(en, ws, i, names):
 
 def problems(en, uk, vocab, names, own=()):
     """What looks like a game name we wrote ourselves in `uk`, the Ukrainian of `en` ([] when none)."""
-    en = COLOR.sub("", en)
+    en, uk = COLOR.sub("", en), COLOR.sub("", uk)
     ws = list(WORD.finditer(en))
     out, covered, item = [], set(), False
     i = 0
     while i < len(ws):
         name, n = _uallf_at(en, ws, i, names)
-        if not name:
-            i += 1
+        if not name or (n == 1 and name in own):
+            i += 1       # an own word (the module's list) that UALLF also has as one word: not that name here
             continue
         theirs, kind = names[name]
         covered.update(range(i, i + n))
@@ -132,7 +147,7 @@ def problems(en, uk, vocab, names, own=()):
     label = len(ws) <= LONGEST and not re.search(r"[.!?]\s|[.!?]$", en)
     for i, m in enumerate(ws):
         w = m.group(0)
-        if i in covered or not w[0].isupper() or _acronym(w) or w in own or _known(w, vocab):
+        if i in covered or not w[0].isupper() or _acronym(w) or re.sub(r"'s$", "", w) in own or _known(w, vocab):
             continue
         if re.search(r"(?<![A-Za-z])%s(?![a-z])" % re.escape(re.sub(r"'s$", "", w)), uk):
             continue      # kept as it is (an addon's name, a key): not a name we wrote

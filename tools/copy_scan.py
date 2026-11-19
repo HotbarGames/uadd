@@ -6,8 +6,7 @@ code; not the other languages, not its bundled Libs) and every attribute value a
 files (Lua in their script elements read as Lua), split at line breaks and colour codes. A restricted addon's
 own locale keys (L["Some Key"]) are not counted: our data may be keyed by them. Two kinds are kept:
   * texts: pieces that could only be copied (see meaningful());
-  * labels: short UI strings ("Buy Now", "Cancel All", "Auction House"; see label()), which prove a copy
-    only in bulk.
+  * labels: short UI strings ("Buy Now", "Cancel All", "Auction House"; see label()), which prove a copy only in bulk.
 Texts and labels that Questie (GPL-3.0) or OpenMap (MIT) also have count as shared game words (targets()).
 The scan is cached in tools/.cache/copy_check.json (git-ignored; $UADD_COPY_CACHE: another path, empty = none)
 until a file it reads (path, size, time) or this file changes; delete it for a fresh scan. Standard library only.
@@ -26,6 +25,7 @@ DEFAULT_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interfac
 # folder name -> why it may not be copied
 RESTRICTED = {
     "Auctionator": "All Rights Reserved in its LICENSE",
+    "Mastercraft": "all rights reserved in its LICENSE.txt", "Mastercraft_Inbox": "all rights reserved (Mastercraft's licence)",
     "Bagnon": "All Rights Reserved in its TOC", "BagBrother": "All Rights Reserved in its TOC (Bagnon's texts)",
     **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion"),
                     "no licence, so all rights reserved"),
@@ -70,6 +70,7 @@ WORD = re.compile(r"[A-Za-z][A-Za-z'-]*")   # "Torn-heart" is one word
 # small words that names use too ("Speak with Shoni", "Heart of the Wild"): they do not make a text a sentence
 SMALL = {"with", "from", "into", "onto", "upon", "your", "this", "that", "than", "then", "them", "they", "have",
          "will", "were", "been", "what", "when", "each", "only", "over"}
+ARTICLES = {"the", "an"}   # a copied text needs MIN_WORDS words without these: a game place with its article is a name
 
 _memo = {}
 
@@ -89,9 +90,14 @@ def meaningful(piece):
             and any(len(w) >= 4 and w[0].islower() and w not in SMALL for w in words))
 
 
+def sentence(piece):
+    """A copied text: meaningful(), with MIN_WORDS words besides ARTICLES; else it can still be a label()."""
+    return meaningful(piece) and sum(len(w) >= 2 and w.lower() not in ARTICLES for w in WORD.findall(piece)) >= MIN_WORDS
+
+
 def label(piece):
     """Is this piece a short UI string (not a text, not code)?"""
-    if len(piece) > LABEL_MAX or CODEY.search(piece) or meaningful(piece) \
+    if len(piece) > LABEL_MAX or CODEY.search(piece) or sentence(piece) \
             or sum(c.isascii() and c.isalpha() for c in piece) < LABEL_LETTERS:
         return False
     if " " not in piece:
@@ -110,8 +116,7 @@ def decode(raw):
 
 def is_key(source, m):
     """Is the string at m an index, as in L["Some Key"]?"""
-    return source[max(0, m.start() - 3):m.start()].rstrip().endswith("[") and \
-        source[m.end():m.end() + 3].lstrip().startswith("]")
+    return source[max(0, m.start() - 3):m.start()].rstrip().endswith("[") and source[m.end():m.end() + 3].lstrip().startswith("]")
 
 
 def lua_strings(source):
@@ -139,9 +144,7 @@ def xml_strings(source):
             inner = stack[-1] if stack else ""
             if inner == "script" or inner.startswith("on"):
                 v, k = lua_strings(html.unescape(between))
-                values |= v
-                label_values |= v
-                keys |= k
+                values, label_values, keys = values | v, label_values | v, keys | k
             else:
                 got = split(html.unescape(between))
                 values |= got
@@ -221,7 +224,7 @@ def scan_addon(folder, restricted, pool=None, files=None):
     else:            # all of a shared addon's words are shared
         values |= keys
         label_values |= keys | values
-    return {"texts": sorted(p for p in values if meaningful(p)),
+    return {"texts": sorted(p for p in values if sentence(p)),
             "labels": sorted(p for p in label_values if label(p)), "files": sorted(hashes)}
 
 

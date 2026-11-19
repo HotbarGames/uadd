@@ -22,7 +22,8 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
 **Rule.** Never commit another addon's text or code in bulk unless its licence allows it.
 
 - Not allowed (all rights reserved): Auctionator (LICENSE: All Rights Reserved), Bagnon and BagBrother
-  (TOC: All Rights Reserved; Bagnon's texts are in BagBrother), Attune, DialogueUI,
+  (TOC: All Rights Reserved; Bagnon's texts are in BagBrother), Mastercraft and Mastercraft_Inbox
+  (LICENSE.txt: all rights reserved), Attune, DialogueUI,
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file).
 - Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 

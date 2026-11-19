@@ -75,6 +75,8 @@ same thing, and the Questie Settings tree became a mix of the two.
 - Check again when UALLF gets a new version.
 - Where both addons change the same window, use UALLF's word when it already has one, so one window never
   shows two words for one thing.
+- Before you pick a word for an addon's feature, grep UALL Forever for it: a Forever-only feature
+  (Mastercraft's Camping) is named there, and a guess from the English word alone was wrong.
 
 **Check.** Manual: in the commit message or the module notes, list what you checked and the UALLF version
 (the `## Version:` line of `UALLF.toc`).
@@ -157,6 +159,14 @@ LayerSwap's flow also builds its real glued lines from the installed addon (`glu
 6864-5») stayed English because Words.lua split it at " - " and kept a space on the name. A new joining
 mark goes in `SEPS` (Words.lua), wider marks before narrower ones. The panel's zone line (id, dash, zone)
 takes the zone's name from UALL Forever (lesson 6) and stays whole English when UALL has none.
+
+**Again in Mastercraft (2026-11-19).** Its Words.lua splits a text into lines and translates each piece
+alone. A free slot at a piece's start or end then took a name with English glued after it (a wide gap, a
+line break), and a short "from %s" template took a whole English phrase as its "name". Rule: a free slot
+also says no to any word in small letters (a name is capitalised; a phrase is not), and a text of several
+lines stays all English when one line with English words has no Ukrainian. A `|cff%s` slot is always a
+value, never free (`tools/mc_rules.py`, `test_colour_slot_never_free`). Check: Mastercraft is in the same
+glued feed in `tools/harness/halves_mods.py`.
 
 ## 8. A word the owner picked, lost in chat
 

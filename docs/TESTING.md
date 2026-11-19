@@ -199,6 +199,33 @@ These need Bagnon (with BagBrother, Bagnon_Config, Bagnon_Bank and Bagnon_GuildB
 82. Log in without Bagnon: the game does not load UADD - Bagnon (Bagnon is a required dependency), `/uadd`
     does not list it, and there are no errors.
 
+### Mastercraft
+
+These need Mastercraft (Mastercraft_Inbox loads on demand with it and needs nothing of its own) on an
+English client. Mastercraft stays on its English; UADD changes what it shows. How to open each window is
+Mastercraft's own (its minimap button or slash command).
+
+83. Log in. `/uadd` lists "Mastercraft". `/uadd mastercraft` shows "увімкнено" with the text and font counts.
+84. Open Mastercraft and click every tab: Home («Головна»), Professions («Професії»), Codex («Кодекс»),
+    Alts («Альти»), Cooldowns («Перезарядки»), Crafters («Майстри»), Camping («Табір»), Gold («Золото»),
+    Specs («Спеціалізації»), Suggestions («Поради»), Settings («Налаштування»). Each tab name and the
+    page under it is Ukrainian, with no boxes. The side names fit; the capital-letter column headings show
+    і ї є ґ correctly. Mastercraft's own language button still lists its own languages.
+85. Open the fishing helper, the trade board and a profession guide: titles, buttons and hints are
+    Ukrainian (the fishing words: «приманка», «вудка», «поплавок»; the board: «Торгова дошка»). Item, zone and
+    NPC names stay as UALL Forever (or the game) has them; a line with a name UALL Forever lacks stays
+    wholly English.
+86. Open a crafter's shop and the Network page («Мережа»), then the Inbox part of the Crafters tab: the
+    lines are Ukrainian. Text another player typed (a request note, chat) is never changed.
+87. Point at an item and at a recipe: the lines Mastercraft adds to the tooltip are Ukrainian; the rest of
+    the tooltip is the game's. Do something Mastercraft reports in chat (learn a recipe, skill up): its chat
+    lines are Ukrainian.
+88. Hold Shift with Mastercraft and a tooltip open: Mastercraft's words turn English. Let go: Ukrainian.
+89. `/uadd mastercraft off` with a window open: English at once, in Mastercraft's own fonts; tooltips and
+    chat lines are English too. `/uadd mastercraft on`: Ukrainian again.
+90. Log in without Mastercraft: the game does not load UADD - Mastercraft (Mastercraft is a required
+    dependency), `/uadd` does not list it, and there are no errors.
+
 ## Not checked outside the game
 
 - Whether `Fonts\FRIZQT___CYR.TTF` exists in the Forever client (the addon falls back to `Fonts\ARIALN.TTF`).
@@ -219,6 +246,9 @@ These need Bagnon (with BagBrother, Bagnon_Config, Bagnon_Bank and Bagnon_GuildB
   (they are not walked now).
 - Bagnon's real frames: the harness runs Bagnon's real locale files, but on stand-in windows and pages. Its
   item slots, Sushi pop-ups, right-click menus and the game's Settings list are not drawn there.
+- Mastercraft's real windows: whether every text fits its place (side tabs, capital-letter headings, fitted
+  buttons), whether the fishing helper, trade board and pop-ups are all reached, the chat lines, and the
+  lines with item, zone and NPC names (which depend on UALL Forever) are only seen in the real client.
 
 ## Without the game
 

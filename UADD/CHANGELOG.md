@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- New module UADD_Mastercraft: Mastercraft's windows, tabs, buttons, tooltips, pop-ups and chat lines in
+  Ukrainian. Item, zone and NPC names stay the game's.
+  Новий модуль UADD_Mastercraft: вікна, вкладки, кнопки, підказки, спливні вікна й рядки в чаті Mastercraft
+  українською. Назви предметів, зон і NPC лишаються такими, як у грі.
 - New module UADD_Bagnon: Bagnon's bag, bank and guild bank windows, menus, tooltips, Key Bindings names
   and settings pages in Ukrainian. Item names stay the game's.
   Новий модуль UADD_Bagnon: вікна сумок, банку й банку гільдії, меню, підказки, назви в Key Bindings і

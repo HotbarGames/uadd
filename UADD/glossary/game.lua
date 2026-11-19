@@ -97,3 +97,8 @@ E{ id = "step.interact", en = "Interact", uk = "Взаємодіяти", note = 
 E{ id = "icon.interact", en = "Interact", uk = "Взаємодія", note = "Name of the Questie map icon for objectives where you interact with an object or NPC; a noun like 'Розмова'. A step type is step.interact." }
 E{ id = "npc.rank_boss", en = "Boss", uk = "Бос", note = "NPC rank: a dungeon or raid boss." }
 E{ id = "ui.survey", en = "Survey", uk = "Опитування", note = "Asking guild or group members for their progress; a button or tab." }
+
+-- Mastercraft (lead's choices 2026-11-19)
+E{ id = "game.rested_xp", en = "Rested XP", uk = "Досвід відпочинку", note = "Bonus experience stored while resting; the same as UADD_ForeverXPBar ships. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "game.camping", en = "Camping", uk = "Табір", note = "UALL Forever's camp system (its quests: «Табірна наука 101: ...»). Never «чатування»: that is waiting at a spawn. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "game.camp_item", en = "camp item", uk = "похідний предмет", note = "The item of the camp system, as UALL Forever names it. lead's choice 2026-11-19, Mastercraft." }
