@@ -39,7 +39,8 @@ HARNESS_TOTAL = 20
 # at least 20. A bulk copy is still hundreds (they have 200 to 8,000 labels each).
 LABEL_LIMIT = {"Auctionator": 25, "Attune": 100, "DialogueUI": 20, "ForeverXPbar": 20,
                "ForeverDungeonJournal": 115, "LayerSwap": 20, "AutoPotion": 20,
-               "Bagnon": 20, "BagBrother": 20, "Mastercraft": 20, "Mastercraft_Inbox": 20}
+               "Bagnon": 20, "BagBrother": 20, "Mastercraft": 20, "Mastercraft_Inbox": 20,
+               "TomTom": 20}
 EXAMPLES = 3
 LICENSE_NAME = re.compile(r"^(?:LICEN[CS]E|COPYING|THIRD-PARTY-NOTICES)(?:\.\w+)?$", re.I)
 EN_LOCALE_NAME = re.compile(r"^(?:en|enus|engb|en_.+)\.lua$", re.I)

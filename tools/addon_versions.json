@@ -1129,16 +1129,16 @@
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
-   "version": "1.14.36",
+   "version": "1.14.38",
    "interface": "11509, 16001, 20506",
    "files": [
     "LayerSwap.lua"
    ],
-   "count": 362,
+   "count": 379,
    "tags": {
-    "X": 362
+    "X": 379
    },
-   "ids": "34b11477adf90ff439d9d40bfac093993882b3e9"
+   "ids": "9f5d93828652422097c5f37c553c965c98915762"
   },
   "UADD_Mastercraft": {
    "addon": "Mastercraft",
@@ -1628,6 +1628,61 @@
     "L": 3550
    },
    "ids": "02ee76b1c579cc7ec436019da8cb7f9ddcb2b729"
+  },
+  "UADD_TomTom": {
+   "addon": "TomTom",
+   "version": "v4.4.1-release",
+   "interface": "120105, 120007, 120100, 11509, 16001, 20506, 38002, 40402, 50504",
+   "files": [
+    "AddonCore.lua",
+    "TomTom.xml",
+    "core/callbacks.lua",
+    "core/core.lua",
+    "core/distance.lua",
+    "core/format.lua",
+    "core/mapdata.lua",
+    "core/menu.lua",
+    "core/modules.lua",
+    "core/options.lua",
+    "core/options_controls.lua",
+    "core/pins.lua",
+    "core/position.lua",
+    "core/profiles.lua",
+    "core/settings.lua",
+    "core/suppress.lua",
+    "core/utils.lua",
+    "core/waypoint_themes.lua",
+    "core/waypoints.lua",
+    "i18n/Localization.deDE.lua",
+    "i18n/Localization.enUS.lua",
+    "i18n/Localization.frFR.lua",
+    "i18n/Localization.koKR.lua",
+    "i18n/Localization.ptBR.lua",
+    "i18n/Localization.ruRU.lua",
+    "i18n/Localization.zhCN.lua",
+    "i18n/Localization.zhTW.lua",
+    "modules/comm.lua",
+    "modules/coord_block.lua",
+    "modules/corpse.lua",
+    "modules/crazy_arrow/crazy_arrow.lua",
+    "modules/crazy_arrow/theme_classic.lua",
+    "modules/crazy_arrow/theme_modern.lua",
+    "modules/crazy_arrow/theme_modern_topdown.lua",
+    "modules/crazy_arrow/themes.lua",
+    "modules/feeds.lua",
+    "modules/map_click.lua",
+    "modules/map_coords.lua",
+    "modules/minimap_pins.lua",
+    "modules/paste.lua",
+    "modules/poi.lua",
+    "modules/slash.lua",
+    "modules/worldmap_pins.lua"
+   ],
+   "count": 321,
+   "tags": {
+    "X": 321
+   },
+   "ids": "98d74f5441b3dc48dc13578d65d60f3aaeb31dd2"
   },
   "UADD_WhatsTraining": {
    "addon": "WhatsTraining",

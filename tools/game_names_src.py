@@ -215,5 +215,30 @@ def whatstraining():
     return rows, {"What's", "Training", "WhatsTraining", "TomTom", "Broker"} | ui | glossary_ranks()
 
 
+def tomtom():
+    """(rows, own words) for UADD_TomTom, or None without TomTom. Our Ukrainian: data/text*.lua."""
+    import make_tt_text as M
+    rows_en, _ = M.source(M.addon_dir())
+    if not rows_en:
+        return None
+    uk = {}
+    for path in sorted((HERE.parent / "UADD_TomTom" / "data").glob("*.lua")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            m = re.match(r'E\["(\d+:[0-9a-f]{8})"\] = ("(?:[^"\\]|\\.)*")$', line)
+            if m:
+                uk[m.group(1)] = FW.unlua(m.group(2))
+                continue
+            m = TEMPLATE.search(line)
+            if m:
+                uk[m.group(1)] = _template_uk(m)
+    # "Red" alone and the arrow theme "Classic Gold Red Dot" are colours and a theme, not UALLF's item "Red".
+    colours = {H.key("Red"), H.key("Classic Gold Red Dot")}
+    rows = [(H.key(en), en, uk.get(H.key(en), "")) for en, _, _, _, _ in rows_en if H.key(en) not in colours]
+    # Own words and Title Case labels (colours, arrow themes, usage lines), read 2026-11-19: none is a game name.
+    own = {"TomTom", "LDB", "LibDataBroker", "Crazy", "Taxi", "Blizzard", "Ctrl", "Alt", "Shift", "TomTom-Paste",
+           "Classic", "Gold", "Dot", "Purple", "Ring", "Alpha", "Usage", "Prints", "Adds"}
+    return rows, own | glossary_ranks()
+
+
 MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap, "UADD_Mastercraft": mastercraft,
-           "UADD_WhatsTraining": whatstraining}
+           "UADD_WhatsTraining": whatstraining, "UADD_TomTom": tomtom}

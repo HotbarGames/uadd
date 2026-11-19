@@ -2,12 +2,14 @@
 slots and its translate path. Each flow named in halves_cover.COVERED calls its function here.
 The English is read from the installed addon at test time; without it the check is a note.
 Made-up names for free slots: "Quix" (an item link, a key binding "QUIX" where the module wants one).
+Shapes, made-up values and read-back helpers some modules need: halves_shapes.py.
 """
 import os
-import re
 import sys
 
 from halves import run, tpl
+from halves_shapes import (ATT_BY_KEY, ATT_FREE, ATT_LUA, DUI_FREE, OM_LABEL, OM_SHAPES, bgn_value, named,
+                           parts)
 from loader import lua_str, txt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -79,9 +81,6 @@ def ap(check, M):
         glue=True)
 
 
-DUI_FREE = {"item": "|cff1eff00|Hitem:2140::::::::60:::::|h[Quix]|h|r", "key": "QUIX"}
-
-
 def dui(check, M):
     """DialogueUI: Words.Text (M.words); a key in Slots.lua SLOTS takes a name of its kind in each %s."""
     import make_dui_data as D
@@ -137,18 +136,6 @@ def auc(check, c):
         W.Build()
 
 
-_ATT = r"""
-local ns, out = HARNESS.ns.UADD_Attune, {}
-ns.Pairs(function(en, uk, key)
-  if type(en) == "string" and type(uk) == "string" and uk ~= "" and uk ~= en
-      and (en:find("%s", 1, true) or en:find("##%u[%u%d_]*##")) then out[#out + 1] = { en, key or false } end
-end)
-return out
-"""
-ATT_FREE = {"value": "7", "player": NAME, "target": NAME}
-ATT_BY_KEY = {"WHAT": "Guild"}   # a place Attune fills with the text of one of its own keys (its real value)
-
-
 def att(check, c):
     """Attune: Words.Text on its locale texts (##PLACE## kinds in Pairs.lua ns.Slots; a %s must translate).
     Its real AttuneLang goes in for a while, then the stand-in's is put back."""
@@ -166,7 +153,7 @@ def att(check, c):
         S, faction = ns.Slots, lua.eval('select(2, UnitFactionGroup("player"))')
         good_by = {"attune": "Molten Core", "faction": faction}
         tps = []
-        for row in lua.execute(_ATT).values():
+        for row in lua.execute(ATT_LUA).values():
             en, key = txt(row[1]), row[2] or None
             free, good, k = {}, {}, 0
             for t in hashtext.tokens(en):
@@ -189,25 +176,6 @@ def att(check, c):
         ns.Words.Build()
 
 
-# Words.lua's own shapes around a name ("Level %s", the card's "Name, Name", a dungeon and its levels),
-# in colour pieces, and as OpenMap's Map/Dungeons.lua builds them: its English around L's words (ours,
-# so Ukrainian) and a level range in colour. Then the lines OpenMap builds from L's words and its own
-# parts (Parts.lua): the News title with a version, a note's and a pin's title, a pin row and the dock's
-# "To" (both forms) with a zone name.
-RFK, RANGE = "Razorfen Kraul", "|cffff804024-33|r"
-OM_SHAPES = (("Level %s", {}), ("%s, %s", {1: RFK, 2: RFK}), ("%s  %d-%d", {1: RFK}),
-             ("Floor 1 |cffffffff%s|r", {}), ("|cffffd100%s|r %s", {1: RFK, 2: RFK}),
-             ("|cffffd100%s|r  |cff998866%d / %d|r", {1: "Floor 1"}),
-             ("Level %s   |cffbbbbbb%s|r", {1: RANGE, 2: "Raid"}), ("Level %s   |cffbbbbbbРейд|r", {1: RANGE}),
-             ("Level %s  (від 20)", {}), ("|cffffd100%s  %s, %s  %s|r", {1: RFK, 2: RANGE, 3: RFK, 4: RANGE}),
-             ("|cffe6c27a%s|r  |cff998866(Questie)|r", {1: "Quests"}), ("|cff808080%s|r", {1: "done"}),
-             ("What's new in OpenMap  |cff998866%s|r", {1: "v0.8.9"}), ("Нова нотатка · %s", {1: RFK}),
-             ("Нотатка #%d · %s", {2: RFK}), ("%s · |cffffffffmy note|r |cffe6c27a(малюнок)|r", {1: RFK}),
-             ("Мітка · %s  %.1f, %.1f", {1: RFK}), ("Куди: %s", {1: RFK}), ("To %s", {1: RFK}))
-# The World Map's hover label as OpenMap writes it (Label.lua): a zone and its level range in colour.
-OM_LABEL = (("%s |cffff8040(%d-%d)|r", {1: RFK}), ("%s |cff40c040(%d)|r", {1: RFK}))
-
-
 def openmap(check, lua):
     """OpenMap: Words.Line, on ui/locale.lua's formatted texts (free slots: Locale.lua Lc.FREE) and its
     own shapes. OpenMap is MIT: its English keys are in the repo."""
@@ -221,18 +189,6 @@ def openmap(check, lua):
     every = lambda tp, t: [Wd.Line(lua_str(t)), Wd.Whole(lua_str(t)), Wd.English(lua_str(t)),  # noqa: E731
                            P.Built(lua_str(t)), P.English(lua_str(t)), Lb.Text(lua_str(t))]   # the time check: the tooltip's and label's paths too
     run(check, "UADD_OpenMap", tps, lambda tp, t: _t((Lb.Text if tp.get("label") else Wd.Line)(lua_str(t))), hard=every)
-
-
-def _parts(en, text):
-    """The slot values of `text` read back by the English template `en` (all %s), or None."""
-    m = re.match("^" + "(.*?)".join(re.escape(p) for p in en.split("%s")) + "$", text, re.S)
-    return [lua_str(v) for v in m.groups()] if m else None
-
-
-def _named(v):
-    """An item part of the joined-item line, "Name (Boss)": (name, boss or None)."""
-    m = re.match(r"^(.*) \(([^()]*)\)$", txt(v))
-    return (lua_str(m[1]), lua_str(m[2])) if m else (v, None)
 
 
 def dj(check, s):
@@ -250,18 +206,12 @@ def dj(check, s):
     paths = {"SUMMON_QUEST_NOTE": lambda v: X.summon(v[0], v[1])[0],
              "HOW_TO_SUMMON": lambda v: X.summon(v[0], item)[1],
              "LOOT_COMBINE_WITH": lambda v: X.child(own, own_boss, v[0], other_boss)[0],
-             "LOOT_MADE_FROM": lambda v: X.child(*_named(v[0]), *_named(v[1]))[1]}
+             "LOOT_MADE_FROM": lambda v: X.child(*named(v[0]), *named(v[1]))[1]}
 
     def tr(tp, t):
-        v = _parts(tp["en"], t)
+        v = parts(tp["en"], t)
         return _t(paths[tp["id"]](v)) if v else None
     run(check, "UADD_DungeonJournal", tps, tr)
-
-
-def _bgn_value(s):
-    """A number, or money as the game writes it (digits and coin icons, maybe coloured)."""
-    s = re.sub(r"\|T[^|]*\|t|\|c[0-9a-fA-F]{8}|\|r", "", s)
-    return re.fullmatch(r"[\d\s.,]+", s) is not None
 
 
 def bgn(check, M, rows):
@@ -277,10 +227,10 @@ def bgn(check, M, rows):
            if kind == "template"]
 
     def tr(tp, t):
-        v = _parts(tp["en"], t)
+        v = parts(tp["en"], t)
         if v is None:
             return None
-        if tp["id"] in make_bgn_text.VALUE and not all(_bgn_value(x) for x in v):
+        if tp["id"] in make_bgn_text.VALUE and not all(bgn_value(x) for x in v):
             return t
         which, _, key = tp["id"].partition(":")
         return _t(M.shows(which, key, *v))
@@ -298,3 +248,7 @@ def mc(check, M, src, temps):
     tps = [tpl(k, x, {**by(k, "f", NAME), **by(k, "b", "s")}, by(k, "n", NAME), blank=set(by(k, "b", 1)))
            for k, x in lines.items() if k in temps and L.is_pattern(x)]
     run(check, "UADD_Mastercraft", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
+
+
+def tomtom(check, M, tps, note=""):  # Words.Translate on whole lines; tps: flow_tomtom_texts.templates()
+    run(check, "UADD_TomTom", tps, M and (lambda tp, t: _t(M.uk(lua_str(t)))), note, glue=True)

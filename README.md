@@ -17,6 +17,7 @@ UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Fore
 - Bagnon
 - Mastercraft
 - What's Training?
+- TomTom
 - Questie: its menus and settings. The quest tracker and quest texts come from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization).
 
@@ -30,7 +31,7 @@ Hold Shift to see English. Let go, and it is Ukrainian again.
 Each module needs its addon. UALL Forever is optional.
 
 Copy the `UADD`, `UADD_Questie`, `UADD_DungeonJournal`, `UADD_OpenMap`, `UADD_DialogueUI`, `UADD_ForeverXPBar`,
-`UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft` and `UADD_WhatsTraining` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
+`UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft`, `UADD_WhatsTraining` and `UADD_TomTom` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
 is not installed stays off.
 
 The first time, UADD collects the names from UALL Forever in the background. When the chat says the names
@@ -69,6 +70,8 @@ Questie builds that list only once, when it starts.
 | `/uadd mastercraft on` / `off` | Turns the Mastercraft translation on or off, at once. Off gives Mastercraft back as it is without UADD. |
 | `/uadd whatstraining` | Shows the What's Training? module's status and commands. |
 | `/uadd whatstraining on` / `off` | Turns the What's Training? translation on or off, at once. Off gives What's Training? back as it is without UADD. |
+| `/uadd tomtom` | Shows the TomTom module's status and commands. |
+| `/uadd tomtom on` / `off` | Turns the TomTom translation on or off, at once. Off gives TomTom back as it is without UADD; its settings pages change back after `/reload`. |
 | `/uadd combat off` / `on` | Off: the hold key (Shift) works in a fight too. On (the default): in a fight it does nothing. |
 | `/uadd missed` | Shows, per module, how many texts stayed English because UADD has no Ukrainian for them yet. |
 | `/uadd missed on` / `off` | A tool for testers, off unless you turn it on. On: UADD notes each text it shows in English. Off (the default) costs nothing. The list stays on your PC; nothing is sent. |
@@ -92,7 +95,7 @@ Two tools tell you what needs work. They need no network.
 
 Do not copy another addon's text or code into this repo in bulk, unless its licence allows it.
 
-- **Not allowed** (all rights reserved): Auctionator (its LICENSE says so), Bagnon (its TOC says so), Mastercraft (its LICENSE.txt says so), and Attune, Dialogue UI,
+- **Not allowed** (all rights reserved): Auctionator (its LICENSE says so), Bagnon (its TOC says so), Mastercraft (its LICENSE.txt says so), TomTom (its TOC says so), and Attune, Dialogue UI,
   ForeverXP Bar, Dungeon Journal, LayerSwap and Auto Potion (no licence, so all rights are reserved).
 - **Allowed**: Questie (GPL-3.0), OpenMap (MIT) and What's Training? (MIT). Their notices are in `THIRD-PARTY-NOTICES.md`.
 

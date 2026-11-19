@@ -247,6 +247,20 @@ button.
 97. Log in without What's Training?: the game does not load UADD - What's Training? (it is a required
     dependency), `/uadd` does not list it, and there are no errors.
 
+### TomTom
+
+These need TomTom on an English client. Type `/uadd missed on` first, then `/reload`.
+98. Log in. `/uadd` lists "TomTom". `/uadd tomtom` shows "увімкнено" with the text counts.
+99. Open TomTom's settings pages (rows, tooltips, dropdowns): Ukrainian, no boxes, each text fits.
+100. Make a waypoint. The arrow's distance line reads «1 ярд», «2 ярди», «5 ярдів», «21 ярд».
+101. `/way 50 50 Test`: the chat line is Ukrainian; the title "Test" stays as typed.
+102. Point at a pin on the world map and on the minimap: the tooltip lines are Ukrainian.
+103. `/ttpaste` (paste window), "Remove all" (pop-up), the coordinate block and the world map's Player and
+    Cursor labels: Ukrainian, no boxes.
+104. Hold Shift with a tooltip open: English; let go: Ukrainian.
+105. `/uadd tomtom off`: English again (settings pages after `/reload`); `on`: Ukrainian.
+106. Log in without TomTom: the game does not load UADD - TomTom, `/uadd` does not list it, no errors.
+
 ## Not checked outside the game
 
 - Whether `Fonts\FRIZQT___CYR.TTF` exists in the Forever client (the addon falls back to `Fonts\ARIALN.TTF`).

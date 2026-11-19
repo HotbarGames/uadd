@@ -17,6 +17,10 @@
 --        n  a game name (item, zone, NPC): UALL Forever's Ukrainian, or the whole line stays English
 --        t  our text: translated again (empty stays empty)
 --        b  blank (an English plural ending): dropped
+--        w  only spaces (an indent): kept; any other text says no
+--        "a SEP b"  a recipe for slots that touch (the earlier ones always read empty, so the last one
+--           holds them all): no SEP, it is checked as b; one SEP, the part before as a, after as b; two
+--           or more SEP say no (TomTom: tools/tt_rules.py GROUPS)
 --      Any slot that holds English we have no Ukrainian for keeps the whole line English (no half lines).
 --   7. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural).
 -- Answers are remembered by input; a name UALL Forever cannot give yet ("wait") is not remembered.
@@ -79,9 +83,18 @@ function U.NewWords(data)
         end
         return false
     end
+    W.Name = Name   -- for a line a module reads by its shape (UADD_TomTom: the pin's coordinates line)
 
-    local function Slot(k, v, rec)
-        local sort = rec.sort and rec.sort[k] or "v"
+    local function Fits(sort, v)
+        if #sort > 1 then
+            local a, sep, b = sort:match("^(%a)(.+)(%a)$")
+            local i, j = v:find(sep, 1, true)
+            if not i then return Fits(b, v) end
+            if v:find(sep, j + 1, true) then return false end
+            local l, r = Fits(a, v:sub(1, i - 1)), Fits(b, v:sub(j + 1))
+            return l and r and (l .. sep .. r) or false
+        end
+        if sort == "w" then return not v:find("[^ ]") and v or false end
         if sort == "f" then
             if v:find("   ", 1, true) or v:find("\n", 1, true) or v:find(" - ", 1, true)
                 or v:find("%f[%a]%l%a") then return false end
@@ -97,6 +110,10 @@ function U.NewWords(data)
         end
         if not HasLatin(v) then return v end
         return Translate(v) or false
+    end
+
+    local function Slot(k, v, rec)
+        return Fits(rec.sort and rec.sort[k] or "v", v)
     end
 
     local function Lines(s)
@@ -162,5 +179,6 @@ function U.NewWords(data)
     W.Translate = Translate
 
     function W.Forget() wipe(cache) size = 0 end
+    function W.CacheSize() return size end         -- texts looked up so far (the harness reads it)
     return W
 end

@@ -14,7 +14,8 @@
 --
 -- U.ChatLines(o) -> { Install, Restore, Count, Wrapped }. The main chat window's AddMessage is wrapped
 -- once. A line changes when it starts with o.prefix (kept, the rest translated) or, with no prefix, when
--- we have Ukrainian for the whole line and the call came from o.from. "Off" puts the game's own back
+-- the call came from o.from and we have Ukrainian for the whole line. The source is looked at first: the
+-- game's and other addons' lines never reach Translate or its cache (lesson 12). "Off" puts the game's own back
 -- when nobody wrapped it after us (otherwise the wrapper stays and lets every line through as it is).
 
 local U = UADD
@@ -111,9 +112,9 @@ function U.ChatLines(o)
                     local ok, uk = pcall(W.Translate, msg:sub(N + 1))
                     if ok and uk then msg, count = prefix .. uk, count + 1 end
                 end
-            else
+            elseif From(o.from) then                -- every chat line passes here: the addon's only are matched
                 local ok, uk = pcall(W.Translate, msg)
-                if ok and uk and From(o.from) then msg, count = uk, count + 1 end
+                if ok and uk then msg, count = uk, count + 1 end
             end
         end
         return orig(self, msg, ...)

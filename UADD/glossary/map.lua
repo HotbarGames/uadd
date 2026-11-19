@@ -23,5 +23,9 @@ E{ id = "map.quill", en = "Quill", uk = "Перо", note = "OpenMap's drawing to
 E{ id = "map.notes", en = "Map notes", uk = "Нотатки на карті", note = "painted areas with a text note" }
 E{ id = "map.zone_levels", en = "Zone levels", uk = "Рівні зон", note = "the level range shown on each zone" }
 E{ id = "map.arrow", en = "Arrow", uk = "Стрілка", note = "drawing tool: a pointing arrow. Not the ammo (that is gear.arrow)" }
+E{ id = "map.waypoint_arrow", en = { "Crazy Arrow", "Waypoint Arrow" }, uk = "Стрілка", note = "TomTom's on-screen arrow that points to the waypoint. Not the drawing tool (map.arrow), not the ammo (gear.arrow)" }
+E{ id = "map.coord_block", en = "Coordinate Block", uk = "Блок координат", note = "TomTom's small movable box that shows the player's x, y" }
+E{ id = "map.paste_window", en = "Paste window", uk = "Вікно вставки", note = "TomTom's window where /way lines are pasted; never the English name in a Ukrainian line" }
+E{ id = "quest.super_tracked", en = "Super-tracked quest", uk = "Пріоритетне завдання", note = "the one quest the game's own quest arrow follows" }
 E{ id = "map.find_me", en = "Find me", uk = "Знайти мене", note = "button: move the map to the player" }
 E{ id = "map.classic_map", en = "Classic", uk = "Класична", note = "welcome-page choice of map look: the classic full map (карта, feminine). Not a style name (ui.classic_look)" }

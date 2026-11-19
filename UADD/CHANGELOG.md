@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- LayerSwap: updated for 1.14.38; its new texts are in Ukrainian (swap limit, mini bar, nameplate help).
+  LayerSwap: оновлено для 1.14.38; його нові тексти українською (ліміт змін, мала панель, підказка табличок).
+- New module UADD_TomTom: TomTom's settings, arrow, menus, pop-ups, tooltips and chat lines in Ukrainian.
+  Zone names follow UALL Forever; waypoint titles stay as they are.
+  Новий модуль UADD_TomTom: налаштування, стрілка, меню, спливні вікна, підказки та рядки в чаті TomTom
+  українською. Назви зон беруться з UALL Forever; назви точок маршруту лишаються як є.
 - New module UADD_WhatsTraining: What's Training?'s windows, buttons, tooltips (also the broker and minimap
   ones) and chat lines in Ukrainian. The broker's own text on a data bar stays English. Spell, faction and other game names follow UALL Forever or stay English. New
   shared core files UADD/Words.lua and UADD/Lines.lua.

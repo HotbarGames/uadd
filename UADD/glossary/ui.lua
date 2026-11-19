@@ -62,6 +62,8 @@ E{ id = "ui.hide_minimap_button", en = "Hide Minimap Button", uk = "Сховат
 
 -- Map pins an addon draws
 E{ id = "map.map_pins", en = "Map Icons", uk = "Значки на карті", note = "Markers an addon draws on the world map (quests, NPCs, nodes)." }
+E{ id = "ui.addon_compartment", en = "Addon Compartment", uk = "Меню аддонів", note = "The game's button by the minimap that lists addons. Not «відсік», not «панель»." }
+E{ id = "ui.data_feed", en = "Data feed", uk = "Стрічка даних", note = "A LibDataBroker (LDB) feed that a panel addon (Titan Panel, Bazooka) shows." }
 E{ id = "map.minimap_pins", en = "Minimap Icons", uk = "Значки на мінікарті", note = "Markers an addon draws on the minimap. Not the addon's own button (ui.minimap_button)." }
 
 -- Profiles (AceDB-style profile pages)

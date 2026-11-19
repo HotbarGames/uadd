@@ -67,6 +67,11 @@ def ex_wt(path):
     return [("X", None, en, f"{kind} {file}") for en, kind, _, _, file in W.source(path)[0]]
 
 
+def ex_tt(path):
+    import make_tt_text as T
+    return [("X", None, en, f"{kind} {file}") for en, kind, _, _, file in T.source(path)[0]]
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -134,6 +139,7 @@ MODULES = {
     "UADD_Mastercraft": ("Mastercraft", ex_mc, None, ()),     # Mastercraft_Inbox has no texts of its own
     "UADD_OpenMap": ("OpenMap", ex_openmap, old_openmap, ()),
     "UADD_Questie": ("Questie", ex_questie, old_questie, ()),
+    "UADD_TomTom": ("TomTom", ex_tt, None, ()),   # All Rights Reserved; our data holds hashes only
     "UADD_WhatsTraining": ("WhatsTraining", ex_wt, None, ()),   # MIT, but our data holds hashes only, so no tracked English
 }
 

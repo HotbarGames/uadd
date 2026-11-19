@@ -249,3 +249,37 @@ only what the real client can show: a module with a required dependency is not l
 
 **Check.** `python3 -m unittest tools.test_drift` (`test_every_version_recorded`). Test steps: manual, read
 each "without <addon>" step against the module's TOC.
+
+## 12. A hook on a game-wide path that translates first and asks later
+
+**What went wrong.** The review of the new TomTom module (2026-11-19) found three hooks that ran for the
+whole game, not only for TomTom:
+
+- The shared chat hook (`UADD/Lines.lua`, `ChatLines` without a prefix) sent every chat line of the game to
+  `Translate`, and only then asked if TomTom wrote it. Each line of other addons and of the game cost a
+  lookup and a cache entry. What's Training? uses the same hook.
+- The arrow's distance hook ran `Translate` on every frame, though the text is mostly the same.
+- The tooltip hook ran `debugstack` on every `GameTooltip:Show` of the game (a unit, a spell, a button).
+
+**Rule.** A hook on a path the whole game uses (all chat, every tooltip, every frame) leaves first for text
+that is not the addon's, with the cheapest test first (the source, a compare with the last text, "is there
+a line to fix at all"), before any translate work or `debugstack`. A hook that runs every frame keeps the
+last English and its Ukrainian and does no lookup when the text did not change.
+
+**Check.** `python3 tools/harness/run.py`, TomTom's "review 2", "review 3" and "review 4"
+(`tools/harness/flow_tomtom_review.py`): a chat line of other code makes no `Translate` call and does not
+grow the Words cache (`W.CacheSize`); the arrow with the same text for 50 frames calls `Translate` once; a
+unit's tooltip runs no `debugstack`. Each fails with its fix taken out.
+
+## 13. The player's own names inside the addon's list
+
+**What went wrong.** In the same review: TomTom's profile dropdown lists the profiles the player named. The
+module translated every dropdown entry, so a profile named like one of TomTom's texts would show our
+Ukrainian, not what the player typed.
+
+**Rule.** Text the player wrote stays as typed, also inside a list or a menu the addon builds. Tell the
+player's entries apart by where they come from (TomTom: the profile settings, named `TOMTOM_PROFILE_*`),
+never by what the name says.
+
+**Check.** `python3 tools/harness/run.py`, TomTom's "review 1": a profile named exactly like a settings text
+stays as typed, and the installed TomTom still names its profile settings that way.
