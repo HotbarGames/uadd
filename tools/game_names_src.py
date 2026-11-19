@@ -192,4 +192,28 @@ def foreverxpbar():
 # ForeverXPBar is not here yet: its many Title Case labels and key names give about 50 false hits.
 # Bagnon neither: its Title Case labels ("Border Color") give 73 hits (2026-11-19), none a game name we wrote
 # ("At the Auction House" is the glossary's «аукціон», the place, not UALLF's zone name).
-MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap, "UADD_Mastercraft": mastercraft}
+def whatstraining():
+    """(rows, own words) for UADD_WhatsTraining, or None without What's Training?. Our Ukrainian: data/text*.lua."""
+    import make_wt_text as M
+    rows_en, _ = M.source(M.addon_dir())
+    if not rows_en:
+        return None
+    uk = {}
+    for path in sorted((HERE.parent / "UADD_WhatsTraining" / "data").glob("*.lua")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            m = re.match(r'E\["(\d+:[0-9a-f]{8})"\] = ("(?:[^"\\]|\\.)*")$', line)
+            if m:
+                uk[m.group(1)] = FW.unlua(m.group(2))
+                continue
+            m = TEMPLATE.search(line)
+            if m:
+                uk[m.group(1)] = _template_uk(m)
+    rows = [(H.key(en), en, uk.get(H.key(en), "")) for en, _, _, _, _ in rows_en]
+    # Title Case labels and headings ("Coming Soon", "Right-click"), read 2026-11-19: none is a game name.
+    ui = {"Now", "Missing", "Yet", "Required", "Talents", "Coming", "Not", "Abilities", "Savings", "Spent",
+          "Best", "Click", "Right-click", "Settings", "Wheel", "Zone", "Note", "Object", "Crafted"}
+    return rows, {"What's", "Training", "WhatsTraining", "TomTom", "Broker"} | ui | glossary_ranks()
+
+
+MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap, "UADD_Mastercraft": mastercraft,
+           "UADD_WhatsTraining": whatstraining}

@@ -16,6 +16,8 @@ import hashtext  # noqa: E402
 
 NAME = "Quix"
 SKIP = halves_cover.SKIP
+# What's Training?: Words.Translate (M.uk) on whole lines (glue=True); tps: flow_whatstraining_texts.py.
+def wt(check, M, tps, note=""): run(check, "UADD_WhatsTraining", tps, lambda tp, t: _t(M.uk(lua_str(t))), note, glue=True)  # noqa: E704,E501
 
 
 def _s_slots(en):

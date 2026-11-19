@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- New module UADD_WhatsTraining: What's Training?'s windows, buttons, tooltips (also the broker and minimap
+  ones) and chat lines in Ukrainian. The broker's own text on a data bar stays English. Spell, faction and other game names follow UALL Forever or stay English. New
+  shared core files UADD/Words.lua and UADD/Lines.lua.
+  Новий модуль UADD_WhatsTraining: вікна, кнопки, підказки (і ті, що в брокера та
+  мінікарти) та рядки в чаті What's Training? українською. Сам текст брокера на панелі даних лишається
+  англійським. Назви заклять, фракцій та інші назви з гри беруться з UALL Forever або
+  лишаються англійськими. Нові спільні файли ядра: UADD/Words.lua і UADD/Lines.lua.
 - New module UADD_Mastercraft: Mastercraft's windows, tabs, buttons, tooltips, pop-ups and chat lines in
   Ukrainian. Item, zone and NPC names stay the game's.
   Новий модуль UADD_Mastercraft: вікна, вкладки, кнопки, підказки, спливні вікна й рядки в чаті Mastercraft

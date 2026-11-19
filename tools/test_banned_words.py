@@ -30,6 +30,8 @@ from test_ukrainian_letters import shipped_lua, tocs  # noqa: E402
 BANNED = {
     r"інстанс": ("підземелля (у підземеллі, у підземеллях, поза підземеллям, портал підземелля)",
                  "«інстанс» is slang"),
+    r"\bПКМ\b|\bЛКМ\b": ("правий клік / клік (glossary ui.right_click)",
+                         "mouse shorthand is slang; the glossary word is «Правий клік» (lead, 2026-11-19, What's Training?)"),
 }
 # module folder: {regex: (use instead, reason)} - banned only in that module's files
 BANNED_IN = {

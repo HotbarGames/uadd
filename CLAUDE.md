@@ -25,7 +25,8 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
   (TOC: All Rights Reserved; Bagnon's texts are in BagBrother), Mastercraft and Mastercraft_Inbox
   (LICENSE.txt: all rights reserved), Attune, DialogueUI,
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file).
-- Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
+- Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies), What's Training? (MIT; its
+  notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 
 For the not-allowed ones:
 
@@ -79,6 +80,7 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
 - Attune: `KIND`, `BYKEY` and `FREE` in `UADD_Attune/Pairs.lua`.
 - OpenMap: `Lc.FREE` in `UADD_OpenMap/Locale.lua`.
 - Questie: none (UALL Forever translates its tracker; UADD_Questie is in `NO_SLOTS`).
+- What's Training?: none free; what each slot holds (value, game name, our text) is in `tools/wt_rules.py`.
 
 A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
 only when the game or the addon puts a name there that has no translation; never one that holds only a

@@ -128,6 +128,7 @@ STAY_LISTS = {
     "layerswap": ("LayerSwap", lambda: _attr("test_lsw_strings", "STAY"), lambda: _attr("lsw_rules", "STAY_ENGLISH"),
                   None),
     "mastercraft": ("Mastercraft", lambda: (), lambda: (), None),     # Keep (Module.lua) keeps them quiet in Lua
+    "whatstraining": ("WhatsTraining", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
     "openmap": ("OpenMap", lambda: (), lambda: set(_attr("test_openmap_strings", "SKIP_NAMES"))
                 | set(_attr("test_openmap_strings", "SKIP_OTHER")), None),
 }

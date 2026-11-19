@@ -7,7 +7,7 @@ files (Lua in their script elements read as Lua), split at line breaks and colou
 own locale keys (L["Some Key"]) are not counted: our data may be keyed by them. Two kinds are kept:
   * texts: pieces that could only be copied (see meaningful());
   * labels: short UI strings ("Buy Now", "Cancel All", "Auction House"; see label()), which prove a copy only in bulk.
-Texts and labels that Questie (GPL-3.0) or OpenMap (MIT) also have count as shared game words (targets()).
+Texts and labels that Questie (GPL-3.0), OpenMap or What's Training? (MIT) also have count as shared game words (targets()).
 The scan is cached in tools/.cache/copy_check.json (git-ignored; $UADD_COPY_CACHE: another path, empty = none)
 until a file it reads (path, size, time) or this file changes; delete it for a fresh scan. Standard library only.
 """
@@ -30,7 +30,7 @@ RESTRICTED = {
     **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion"),
                     "no licence, so all rights reserved"),
 }
-ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT"}
+ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT", "WhatsTraining": "MIT"}
 THREADS = 32   # for reading the installed addons
 
 # What counts as a copied text. A short or generic string ("Cancel", "Drag to move", "%s - %s") is something
@@ -40,7 +40,7 @@ THREADS = 32   # for reading the installed addons
 #     (so no CONSTANT_NAMES, frame names, file paths, or pure %s / |cff colour codes), and
 #   * a word of four or more letters that starts lower-case and is not one of SMALL (so not a Title Case
 #     name or label).
-# Texts that Questie or OpenMap also have are common game or UI words, so they are dropped too.
+# Texts that Questie, OpenMap or What's Training? also have are common game or UI words, so they are dropped too.
 # A bulk copy (a locale file, English comments, English keys) still shows up as hundreds of texts.
 MIN_LEN = 16
 MIN_WORDS = 3

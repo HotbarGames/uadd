@@ -226,6 +226,27 @@ Mastercraft's own (its minimap button or slash command).
 90. Log in without Mastercraft: the game does not load UADD - Mastercraft (Mastercraft is a required
     dependency), `/uadd` does not list it, and there are no errors.
 
+### What's Training?
+
+These need What's Training? (folder WhatsTraining) on an English client. It stays on its English; UADD
+changes what it shows. Open its window with its own button or slash command (`/wt`), or its minimap
+button.
+
+91. Log in. `/uadd` lists "What's Training?". `/uadd whatstraining` shows "увімкнено" with the text counts.
+92. Open the What's Training? window and click each tab and button: the labels, headings, filters and
+    settings are Ukrainian, with no boxes (і ї є ґ draw), and each fits its box.
+93. Point at a row and at its buttons: the lines What's Training? adds to the tooltip are Ukrainian; the
+    spell text is the game's. Spell, faction, zone and NPC names are UALL Forever's, or stay English.
+    A line with a name UALL Forever lacks stays wholly English.
+94. Point at the broker (data bar) and the minimap button: their tooltips are Ukrainian. The broker's own
+    text on the bar stays English (another addon draws it). Do something it reports in
+    chat (a waypoint, a trainer lookup): its chat lines are Ukrainian.
+95. Hold Shift with What's Training? and a tooltip open: its words turn English. Let go: Ukrainian.
+96. `/uadd whatstraining off` with the window open: English at once. `/uadd whatstraining on`: Ukrainian
+    again.
+97. Log in without What's Training?: the game does not load UADD - What's Training? (it is a required
+    dependency), `/uadd` does not list it, and there are no errors.
+
 ## Not checked outside the game
 
 - Whether `Fonts\FRIZQT___CYR.TTF` exists in the Forever client (the addon falls back to `Fonts\ARIALN.TTF`).
@@ -249,6 +270,8 @@ Mastercraft's own (its minimap button or slash command).
 - Mastercraft's real windows: whether every text fits its place (side tabs, capital-letter headings, fitted
   buttons), whether the fishing helper, trade board and pop-ups are all reached, the chat lines, and the
   lines with item, zone and NPC names (which depend on UALL Forever) are only seen in the real client.
+- What's Training?'s real windows: whether every text fits its fixed boxes, that spell names stay English,
+  and whether "•" and "—" draw in the Cyrillic font are only seen in the real client.
 
 ## Without the game
 

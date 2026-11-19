@@ -51,6 +51,8 @@ E{ id = "prof.rank_grand_master", en = "Grand Master", uk = "Великий ма
 E{ id = "prof.rank_illustrious", en = "Illustrious Grand Master", uk = "Славетний великий майстер", note = "Profession rank (450-525)." }
 E{ id = "prof.rank_zen_master", en = "Zen Master", uk = "Майстер дзен", note = "Profession rank (525-600)." }
 
+E{ id = "weapon.skill", en = { "Weapon Skill", "Weapon Skills" }, uk = "Навичка зброї", note = "A skill in using one kind of weapon (plural «Навички зброї»). lead's choice 2026-11-19, What's Training?." }
+
 -- Weapon skills (plural: the kind of weapon)
 E{ id = "weapon.one_handed_swords", en = "One-Handed Swords", uk = "Одноручні мечі", note = "Weapon skill." }
 E{ id = "weapon.one_handed_maces", en = "One-Handed Maces", uk = "Одноручні булави", note = "Weapon skill." }

@@ -59,6 +59,13 @@ canvas made after OnReady" (`late_header` in `tools/harness/flow_header.py`) bui
 after the addon is ready, opens it two ways (the Settings window shown, a category picked) and reads the
 font back.
 
+**Again in What's Training? (2026-11-19).** On Forever its main window (`WhatsTrainingFloatingFrame`) is
+made on first open, from a template, and shown at once. The module scanned its windows only at login, and
+the template's texts are not made by `CreateFontString`, so the title and buttons would have stayed English.
+The independent review found it; the harness had no late window. Rule: a window the addon makes on first
+open is scanned when it appears (`NewRoot()` in `UADD_WhatsTraining/Screen.lua`), not only at login, and the
+stand-in makes it late too. Check: `python3 tools/harness/run.py` (What's Training?'s "late window" step).
+
 ## 3. The same text translated by two addons
 
 **What went wrong.** UALL Forever (UALLF) is a separate Ukrainian addon. It is installed at

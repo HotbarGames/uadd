@@ -102,3 +102,8 @@ E{ id = "ui.survey", en = "Survey", uk = "Опитування", note = "Asking 
 E{ id = "game.rested_xp", en = "Rested XP", uk = "Досвід відпочинку", note = "Bonus experience stored while resting; the same as UADD_ForeverXPBar ships. lead's choice 2026-11-19, Mastercraft." }
 E{ id = "game.camping", en = "Camping", uk = "Табір", note = "UALL Forever's camp system (its quests: «Табірна наука 101: ...»). Never «чатування»: that is waiting at a spawn. lead's choice 2026-11-19, Mastercraft." }
 E{ id = "game.camp_item", en = "camp item", uk = "похідний предмет", note = "The item of the camp system, as UALL Forever names it. lead's choice 2026-11-19, Mastercraft." }
+
+-- What's Training? (lead's choices 2026-11-19)
+E{ id = "game.spellbook", en = "Spellbook", uk = "Книга заклять", note = "The game's spellbook window, as UALL Forever names it. lead's choice 2026-11-19, What's Training?." }
+E{ id = "game.grimoire", en = "Grimoire", uk = "Гримуар", note = "A warlock pet's spell tome. lead's choice 2026-11-19, What's Training?." }
+E{ id = "game.train", en = "Train", uk = "Вивчити", note = "Learn a spell or skill from a trainer (a button, an action). lead's choice 2026-11-19, What's Training?." }

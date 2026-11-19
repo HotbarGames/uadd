@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions
-rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon and UADD_Mastercraft into the WoW Forever AddOns folder. See docs\TESTING.md.
+rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft and UADD_WhatsTraining into the WoW Forever AddOns folder. See docs\TESTING.md.
 rem
 rem   install.bat            -> _forever_
 rem
@@ -22,14 +22,14 @@ if not exist "%CLIENT%\.flavor.info" (
 )
 if not exist "%ADDONS%" mkdir "%ADDONS%"
 
-for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft) do (
+for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining) do (
     echo Installing %%A ...
     robocopy "%~dp0%%A" "%ADDONS%\%%A" /MIR /NFL /NDL /NJH /NJS /NP /R:1 /W:1
     if errorlevel 8 goto :copyfail
 )
 
 echo.
-for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft) do (
+for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining) do (
     rem a folder check: QuestieDB has only QuestieDB_Forever.toc
     if exist "%ADDONS%\%%A\" (
         echo   ok       %%A
@@ -91,6 +91,11 @@ if exist "%ADDONS%\Mastercraft\" (
     echo   ok       Mastercraft ^(for UADD_Mastercraft; Mastercraft_Inbox needs nothing^)
 ) else (
     echo   optional Mastercraft not installed: the Mastercraft module stays off
+)
+if exist "%ADDONS%\WhatsTraining\" (
+    echo   ok       WhatsTraining ^(for UADD_WhatsTraining^)
+) else (
+    echo   optional WhatsTraining not installed: the What's Training? module stays off
 )
 echo.
 echo Done: %ADDONS%

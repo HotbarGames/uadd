@@ -12,6 +12,7 @@ UADD_LayerSwap's checks run next, on a stand-in for LayerSwap (flow_lsw.py).
 UADD_AutoPotion's checks run next, on a stand-in for Auto Potion (flow_autopotion.py).
 UADD_Bagnon's checks run next, on stand-ins for Bagnon and Bagnon_Config (flow_bagnon.py).
 UADD_Mastercraft's checks run next, on a stand-in for Mastercraft (flow_mastercraft.py).
+UADD_WhatsTraining's checks run next, on a stand-in for What's Training? (flow_whatstraining.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the same stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
@@ -54,6 +55,7 @@ def run_all():
     import flow_hash
     import flow_lsw
     import flow_missed
+    import flow_whatstraining
     f = flow.run()
     checks, facts, notes = list(f.checks), dict(f.facts), []
     del f
@@ -97,6 +99,10 @@ def run_all():
     mc_checks, mc_facts = flow_mastercraft.run_checks()
     checks += mc_checks
     facts["mc"] = mc_facts
+    gc.collect()
+    wt_checks, wt_facts = flow_whatstraining.run_checks()
+    checks += wt_checks
+    facts["wt"] = wt_facts
     gc.collect()
     miss_checks, miss_facts = flow_missed.run_checks()
     checks += miss_checks
