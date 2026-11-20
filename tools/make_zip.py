@@ -54,6 +54,8 @@ def main():
         for src, name in entries:
             z.write(src, name)
     print(out, out.stat().st_size, "bytes")
+    import listing  # the CurseForge description is pasted by hand: say when the page is behind (lesson 24)
+    print(listing.reminder() or "CurseForge description: the one last pasted.")
 
 
 if __name__ == "__main__":

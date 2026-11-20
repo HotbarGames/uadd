@@ -31,6 +31,15 @@ While Actions are off, steps 5 and 6 do nothing. Instead, `python3 tools/make_zi
 `dist/`; upload it on the project's Files page: release type Release, game version Forever (as the TOC's
 `## Interface`), the new `UADD/CHANGELOG.md` section as the changelog.
 
+Description: the project page's text is `docs/curseforge-description.md`, pasted by hand (the upload cannot change
+it). `python3 tools/make_zip.py` says when it changed since the last paste. Then paste it on
+https://authors.curseforge.com/#/projects/1807250/description (Markdown), press Save, run
+`python3 tools/listing.py --pasted` and commit `tools/cf_description.sha256`. Save stays greyed out until a key is
+typed in the box; check it saved by opening the page fresh. CurseForge rewrites the Markdown a little on save
+(bullets as `*`, lines of one paragraph joined); the page looks the same. A new module is added to that file
+when it is registered (`python3 -m unittest tools.test_listing` fails until it is), and describes only what players
+can download, so paste it with the release that ships the module.
+
 Relations: only UALL Forever, as an Optional Dependency (owner, 2026-11-20). The addons we translate are not
 listed: a player needs none of them for UADD, and the list would grow with every module. The project's Default
 Relations (project settings) hold only UALL Forever, so a new file gets it by itself; check it on the file's

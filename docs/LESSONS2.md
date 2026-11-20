@@ -189,3 +189,18 @@ labels showed English, not German (harness flow `flow_mc_lang`, 2026-11-20).
 our Ukrainian, and never over a text the addon has changed since.
 
 **Check.** `python3 tools/harness/run.py`, the Mastercraft language steps (`tools/harness/flow_mc_lang.py --prove`).
+
+## 24. A project page nobody checked
+
+**What went wrong.** The CurseForge description still listed 7 modules when 18 shipped, and its "Coming next" named
+addons that were long done (the owner, 2026-11-20). Its text lived only in a git-ignored note and was pasted by hand.
+The release steps and the new-module steps never named it, so nothing failed. README kept up because a module's
+registration step names it.
+
+**Rule.** The page's text is tracked (`docs/curseforge-description.md`). Every module is named there, in README and
+in the core TOC's Notes, by its TOC Title. No "coming next" lists: they go stale. A release pastes the text when it
+changed and stamps it.
+
+**Check.** `python3 -m unittest tools.test_listing`: each list holds exactly the TOC Titles, the Thanks has a line
+per module, no "coming" line, and the paste stamp exists. `python3 tools/make_zip.py` (`tools/listing.py`) says loudly
+when the text changed since the last paste.
