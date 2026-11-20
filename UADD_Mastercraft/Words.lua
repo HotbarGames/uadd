@@ -21,7 +21,8 @@
 --   8. parts joined with " · ", a grey "  ·  " or "  -  ": each part alone; a part with English we have
 --      no Ukrainian for keeps the whole text English;
 --   9. a text with a coloured number or a skill ("286 / 300") after it: the text translated; a step with
---      its zones in grey after it: both; a coloured label and what it says ("Now:  <step>"): both;
+--      its zones in grey after it: both; a coloured label and what it says ("Now:  <step>"): both; a
+--      recipe and its grey count ("<recipe>   x51", a step row): UALL Forever's item or spell name;
 --  10. our words, ": ", then the player's own text in quotes: our words translated, the quotes never;
 --  11. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural);
 --  12. a line that is only one game name, maybe after a guild tag: UALL Forever's (a list there may be
@@ -74,7 +75,8 @@ W.HasLatin = HasLatin
 -- A list ("2 <item>, <item>", "<zone> or <zone>") is asked name by name: all of them, or false. One name
 -- may have a count before it ("2 ", "2-3 ", "2x ") or after it (" x10"), or a value after " - " (a price).
 local ROUTES = { "Text", "Zone", "Npc", "Item" }
-local BARE = { "Zone", "Npc", "Item" }   -- a line that is only a name: never the UI-word route
+-- a line that is only a name (never the UI-word route); a guide step's recipe (an enchant is only a spell)
+local BARE, RECIPE = { "Zone", "Npc", "Item" }, { "Item", "Spell" }
 local LISTS = { { ", ", ", " }, { " / ", " / " }, { " or ", " або " } }
 
 local function One(en, routes)
@@ -223,6 +225,9 @@ local function Raw(s)
         local t = Translate(text)
         if t then return t .. num end
     end
+    local recipe, count = P.Count(s)   -- 9a. a recipe, a gap, its grey count (a step row): one game name
+    local rt = recipe and Name(recipe, RECIPE, true)
+    if rt and rt ~= recipe then return rt .. count end
     -- 9b. a step and its zones in grey after it ("<step>  |cff......-  <zone>, <zone>|r"): both or none
     local step, grey, zones = P.Zones(s)
     if step then

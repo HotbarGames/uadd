@@ -10,6 +10,9 @@ key; the game names are made up and given UALL Forever's Ukrainian here (flow_mc
     "Level <profession>: <step>" and the guide's coloured "<label>:  <step>  - <zones>" line.
   * Parts joined with "  -  " (the cooking card: a colour hint, a vendor with its price) and with Home's
     grey dot; a skill after a rank ("<rank>  286 / 300"); "<count>x <fish>".
+  * A guide step's row title "<recipe>   <count in grey>" (one SetText, the row reused) takes the recipe's
+    name from UALL Forever (an enchant: its spell; in its own colour, kept); a recipe it lacks, or one that is
+    "not now", keeps the row English (asked again later), and so do two recipes or a list of herbs.
   * A bare line with a list of one-word names ("<name>, <name>") stays as it is: they may be players.
   * Long odd lines of each split shape take under 5 ms each, nothing remembered.
 """
@@ -19,12 +22,15 @@ from loader import lua_str, txt
 ZONE, ZONE_UK, ZONE_NONE = "Quixbury Hollow", "Квіксова Балка", "Blorp Fen"
 ITEM, ITEM_UK, ITEM_NONE = "Wobbly Vest", "Хиткий жилет", "Blorpy Vest"
 ITEM2, ITEM2_UK = "Quixy Thread", "Квіксова нитка"
+ITEM3, ITEM3_UK, SPELL, SPELL_UK = "Quixy Gloves", "Квіксові рукавиці", "Wobble Ward", "Хитка оберега"
 NPC, NPC_UK = "Gobbix Quill", "Ґоббікс Перо"
 GUILD = "<Wobble Club>"
 ACCENT, GREY = "|cff66ccff", "|cff8a93a6"
 PLAYERS = (("Thrallix", "Тралікс"), ("Jainix", "Джейнікс"))
 SLOW = (("coloured label", ACCENT + "a" * 10240), ("step and grey zones", ("x  " + GREY + "-  ") * 640),
-        ("link", "|H" * 5120 + "a"), ("wide gap", "a" + " " * 10240 + "b"), ("quoted note", "a" * 10240 + ': "'))
+        ("link", "|H" * 5120 + "a"), ("wide gap", "a" + " " * 10240 + "b"), ("quoted note", "a" * 10240 + ': "'),
+        ("recipe and count", "a" + " " * 10240 + GREY + "x5|r"), ("many counts", "a " + (GREY + "x5|r") * 640),
+        ("count after colours", "a " + GREY * 1000 + "x5|r"))
 KEYS = {"mats": "23:8233d78b", "level": "12:fa0b1e27", "named": "23:ba3c123a", "vendor": "10:27784c65",
         "until": "15:6e3f6556", "missing": "12:f5381934", "now": "3:0b880d79", "likely": "6:c0cf8a0f"}
 
@@ -92,6 +98,30 @@ def run(check, F, src):
     check("screens: a skill after a rank", got == want("likely") + "  286 / 300", got)
     got = put("s11", f"2x {ITEM}")
     check("screens: <count>x <fish>", got == f"2x {ITEM_UK}", got)
+    # A guide step's row title: the recipe, a gap (open row 3 spaces, closed 2) and its count in grey, on one
+    # row reused for the next step; a recipe UALL Forever lacks keeps the row English (the owner, 2026-11-20).
+    for i, (title, uk, n, wide) in enumerate(((ITEM, ITEM_UK, 51, True), (ITEM2, ITEM2_UK, 25, False),
+                                              (ITEM_NONE, ITEM_NONE, 10, True))):
+        got = txt(C.step(lua_str("row"), lua_str(title), n, wide))
+        ok = f"{uk}{'   ' if wide else '  '}{GREY}x{n}|r"
+        check(f"screens: a guide step's row title {i + 1} (recipe, count in grey, a reused row)", got == ok, got)
+    # The same rows: an enchant (only a spell's name), a recipe in its own colour, a name that is "not now" (never
+    # remembered: Ukrainian once it answers), and two recipes or a list of herbs (whole English, on purpose).
+    C.names(lua_str(SPELL), lua_str(SPELL_UK), lua_str("Spell"))
+    C.names(lua_str(ITEM3), lua_str(ITEM3_UK))
+    white = "|cffffffff"
+    for i, (title, uk) in enumerate(((SPELL, SPELL_UK), (f"{white}{ITEM}|r", f"{white}{ITEM_UK}|r"),
+                                     (f"{white}{ITEM_NONE}|r", f"{white}{ITEM_NONE}|r"),
+                                     (f"{ITEM} + {ITEM2}", f"{ITEM} + {ITEM2}"), (f"{ITEM}, {ITEM2}", f"{ITEM}, {ITEM2}"))):
+        got = txt(C.step(lua_str("row"), lua_str(title), 5, True))
+        ok = f"{uk}   {GREY}x5|r"
+        check(f"screens: a guide step's row title {i + 4} (a spell, colours, two names: whole line)", got == ok, got)
+    C.hold(lua_str(ITEM3), True)
+    got = txt(C.step(lua_str("row"), lua_str(ITEM3), 7, False))
+    check("screens: a step whose recipe is 'not now' stays English", got == f"{ITEM3}  {GREY}x7|r", got)
+    C.hold(lua_str(ITEM3), False)
+    got = txt(C.step(lua_str("row"), lua_str(ITEM3), 7, False))
+    check("screens: the same step once the recipe answers (nothing remembered)", got == f"{ITEM3_UK}  {GREY}x7|r", got)
     # A bare line with a list is never names: players may be named as NPCs (lesson 13).
     for a, b in PLAYERS:
         C.names(lua_str(a), lua_str(b))

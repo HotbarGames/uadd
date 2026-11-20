@@ -158,6 +158,10 @@ Training?'s "glue 1-3" steps (`tools/harness/flow_whatstraining_glue.py`); `pyth
 were asked from UALL Forever as one name, so they stayed English, also where UALL Forever knows every name. Rule:
 a slot or line that holds a list asks UALL Forever for each name; all Ukrainian when it names every one, else
 whole English. Check: `python3 tools/harness/run.py`, the Mastercraft code steps (`tools/harness/flow_mc_code2.py`).
+A guide step's row title is the recipe, a gap and its count in grey ("<recipe>   x51", the count in its own
+colour) in one text, so it stayed English too: no split step knew a name with a coloured count after it. Rule: a
+count the addon glues on in colour gets its own split (`P.Count` in `UADD_Mastercraft/Split.lua`), the name asked
+alone. Check: the "guide step's row title" steps in the same file (a reused row; they fail with the split taken out).
 
 ## 7. A free slot that swallows glued text
 

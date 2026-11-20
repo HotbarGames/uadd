@@ -7,18 +7,25 @@ H.mcCode = C
 local function S() return rawget(_G, "MastercraftStandIn") end
 local function NS() return H.ns.UADD_Mastercraft end
 
--- UALL Forever's Ukrainian for made-up game names; a name held says "not now" (in combat, at login).
-local names, held, stubbed = {}, {}, false
-function C.names(en, uk)
-    names[en] = uk
+-- UALL Forever's Ukrainian for made-up game names, from every route or from one (an enchant: "Spell"
+-- only); a name held says "not now" (in combat, at login).
+local names, only, held, stubbed = {}, {}, {}, false
+function C.names(en, uk, route)
+    if route then
+        only[route] = only[route] or {}
+        only[route][en] = uk
+    else
+        names[en] = uk
+    end
     if stubbed then return end
     stubbed = true
     UADD.UALL = UADD.UALL or {}
-    for _, k in ipairs({ "Text", "Zone", "Npc", "Item" }) do
+    for _, k in ipairs({ "Text", "Zone", "Npc", "Item", "Spell" }) do
         local old = UADD.UALL[k]
         UADD.UALL[k] = function(s, ...)
             if held[s] then return nil, true end
-            if names[s] then return names[s] end
+            local uk = only[k] and only[k][s] or names[s]
+            if uk then return uk end
             if old then return old(s, ...) end
         end
     end
@@ -70,6 +77,12 @@ function C.set(name, text)
     return S().texts[name]:GetText() or ""
 end
 function C.get(name) return S().texts[name]:GetText() or "" end
+-- A guide step's row title (S.Step): made on first use, then reused as Mastercraft reuses its rows.
+function C.step(name, title, count, open)
+    if not S().texts[name] then C.text(name) end
+    S().Step(name, title, count, open)
+    return S().texts[name]:GetText() or ""
+end
 
 -- The game's own setter of one of Mastercraft's strings throws once (an error inside our write).
 function C.throwOnce(name)

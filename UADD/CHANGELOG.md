@@ -21,6 +21,10 @@
   them.
   Mastercraft: більше рядків українською: зона під ім'ям, списки матеріалів, наступні кроки, назви предметів і
   риби, рядок продавця в кулінарії та ранг навички, коли UALL Forever або ClassicUA має всі назви в них.
+- Mastercraft: the guide's step names on the Professions page ("<recipe> x51") are in Ukrainian when UALL Forever
+  or ClassicUA knows the recipe.
+  Mastercraft: назви кроків посібника на сторінці професій («<рецепт> x51») українською, коли UALL Forever або
+  ClassicUA знає рецепт.
 - What's Training?: the section headers ("Available now", "Missing requirements" and the like) are in Ukrainian.
   What's Training?: заголовки розділів («Доступно зараз», «Доступно, але бракує вимог» тощо) українською.
 

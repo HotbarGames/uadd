@@ -55,6 +55,19 @@ function P.Zones(s)
     end
 end
 
+-- A name, a gap, then its count in colour ("<recipe>   |cff......x51|r": a guide step's row title; two
+-- spaces on a closed row): (name, gap and count) or nil. The count is found at the end, the gap by one walk
+-- back over its spaces. The name is asked as one name: two recipes ("A + B") or a list of herbs keep the row
+-- English on purpose (no route names them as one, and a part alone would make a half line).
+function P.Count(s)
+    if s:sub(-2) ~= "|r" then return end               -- most lines: out at once (lesson 12)
+    local c = s:match("()|c%x%x%x%x%x%x%x%xx%d+|r$")
+    if not c then return end
+    local e = c - 1
+    while e > 0 and s:byte(e) == 32 do e = e - 1 end
+    if e > 0 and e < c - 1 then return s:sub(1, e), s:sub(e + 1) end
+end
+
 -- A coloured label, then what it says ("|cff......<label>:|r  <what>"): (colour, label, what) or nil.
 function P.Label(s)
     if not s:find("^|c%x%x%x%x%x%x%x%x") then return end

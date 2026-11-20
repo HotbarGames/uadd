@@ -64,6 +64,13 @@ end
 
 function S.Set(name, text) S.texts[name]:SetText(text) end
 
+-- A leveling guide's step row (its Professions page), made by the flow with S.Text: the recipe's name,
+-- a gap (three spaces on the open row, two on a closed one) and its count in grey, one SetText. Rows are
+-- reused: a later call puts another step on the same row.
+function S.Step(name, title, count, open)
+    S.texts[name]:SetText(title .. (open and "   " or "  ") .. ("|cff8a93a6x%d|r"):format(count))
+end
+
 -- Like its RawText (text that stays as it is: a player's name, a note): no mc* fields, its own
 -- SetText / SetFont wrappers on the string.
 local function RawText(parent, size)
