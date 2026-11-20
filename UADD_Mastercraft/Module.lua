@@ -29,8 +29,10 @@ local function Loaded(name)
     return ok and yes and true or false
 end
 
-function ns.On() return ready and db ~= nil and db.enabled == true and EnglishClient() end
+-- On: turned on, an English client, and «Українська» (or nothing else) picked in Mastercraft's menu.
+function ns.On() return ready and db ~= nil and db.enabled == true and EnglishClient() and ns.Lang.Wants() end
 function ns.WordsWanted() return ns.On() and not U.originalShown end
+function ns.Ready() return ready and EnglishClient() end
 
 local function Begin()
     if not ns.On() then return end
@@ -40,12 +42,14 @@ local function Begin()
     U.SafeCall(ns.Screen.Scan)
     U.SafeCall(ns.Screen.Sync)
 end
+ns.Begin = Begin
 
 local function End()
     U.SafeCall(ns.Screen.Sync)
     U.SafeCall(ns.Tooltip.Restore)
     U.SafeCall(ns.Chat.Restore)
 end
+ns.End = End
 
 -- Texts it keeps English on purpose, for U.Missed: one word alone (a name, a game word), a number.
 local function Keep(_, plain)
@@ -73,6 +77,7 @@ frame:SetScript("OnEvent", function(_, event, name)
         end
     else
         U.SafeCall(Ready)
+        U.SafeCall(ns.Lang.Install)
         if ns.On() then U.SafeCall(ns.Chat.Install) U.SafeCall(ns.Screen.Scan) end
     end
 end)
@@ -92,6 +97,7 @@ local function Status()
     if not EnglishClient() then return "не працює: клієнт не англійський" end
     if not ready then return "чекає: Mastercraft не завантажено" end
     if not db.enabled then return "вимкнено (/uadd mastercraft on)" end
+    if not ns.Lang.Wants() then return "не працює: у меню мов Mastercraft вибрано іншу мову (/uadd mastercraft on)" end
     return ("увімкнено: Mastercraft українською; текстів: %d, на екрані з нашим шрифтом: %d")
         :format(ns.Words.Count(), ns.Screen.Count())
 end
@@ -107,14 +113,20 @@ local function Command(args)
     if not db then return Say("ще не завантажено.") end
     local cmd = (args or ""):lower():match("^(%S*)")
     if cmd == "on" then
-        if db.enabled then return Say("вже увімкнено.") end
+        if db.enabled and ns.Lang.Wants() then return Say("вже увімкнено.") end
         db.enabled = true
+        if db.choice == "other" then db.choice = "uk" end
         Begin()
+        U.SafeCall(ns.Lang.Redraw)
+        if not ns.Lang.MastercraftEnglish() then
+            return Say("увімкнено, але Mastercraft зараз іншою мовою: виберіть «Українська» в його меню мов.")
+        end
         Say("увімкнено.")
     elseif cmd == "off" then
         if not db.enabled then return Say("вже вимкнено.") end
         db.enabled = false
         End()
+        U.SafeCall(ns.Lang.Redraw)
         Say("вимкнено. Mastercraft знову англійською.")
     else
         Say(Status())

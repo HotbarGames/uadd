@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
+  Ukrainian; pick another language and that language shows whole.
+  Mastercraft: «Українська» є в його власному меню мов (кнопка з глобусом). Оберіть її, щоб читати Mastercraft
+  українською; оберіть іншу мову, і вона показується ціла.
+- Mastercraft: more lines are in Ukrainian: the zone under your name, the materials lists, the next steps, item
+  and fish names, the cooking vendor line and the skill rank, when UALL Forever has every name in them.
+  Mastercraft: більше рядків українською: зона під ім'ям, списки матеріалів, наступні кроки, назви предметів і
+  риби, рядок продавця в кулінарії та ранг навички, коли UALL Forever має всі назви в них.
+- What's Training?: the section headers ("Available now", "Missing requirements" and the like) are in Ukrainian.
+  What's Training?: заголовки розділів («Доступно зараз», «Доступно, але бракує вимог» тощо) українською.
+
 ## 1.2.2
 
 - ForeverXP Bar: updated for 0.9.4; its new texts are in Ukrainian (the flight map time, What's New).

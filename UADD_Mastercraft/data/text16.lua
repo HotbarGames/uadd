@@ -6,6 +6,16 @@ local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil
 local M = ns.MC or { exact = {}, templates = {} }
 ns.MC = M
 local E, T = M.exact, M.templates
+T[#T + 1] = { id = "8:05fa0083", len = { 0, 6 }, hash = { "00001505", "5ae23b5a" }, kinds = { "d" }, uk = { 1, " {слот|слоти|слотів}" }, sort = { "v" } }
+T[#T + 1] = { id = "8:06609611", len = { 0, 6 }, hash = { "00001505", "5b48d0e8" }, kinds = { "d" }, uk = { 1, " {ярд|ярди|ярдів}" }, sort = { "v" } }
+T[#T + 1] = { id = "8:1898a046", len = { 6, 0 }, hash = { "c08d2fdd", "00001505" }, kinds = { "d" }, uk = { "Рівень ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "8:36aace4d", len = { 1, 5 }, hash = { "0002b5d0", "0a791bd9" }, kinds = { "d" }, uk = { "+", 1, " {альт|альти|альтів}" }, sort = { "v" } }
+T[#T + 1] = { id = "8:36b16f4c", len = { 1, 5 }, hash = { "0002b5d0", "0a7fbcd8" }, kinds = { "d" }, uk = { "+ ще ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "8:3e6e7a4d", len = { 6, 0 }, hash = { "d146dc24", "00001505" }, kinds = { "d" }, uk = { "Уміння ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "8:5e213f5b", len = { 6, 0 }, hash = { "b7365563", "00001505" }, kinds = { "s" }, uk = { "Тут: ", 1 }, sort = { "n" } }
+T[#T + 1] = { id = "8:77945e60", len = { 6, 0 }, hash = { "d0dbef28", "00001505" }, kinds = { "s" }, uk = { "Продає: ", 1 }, sort = { "n" } }
+T[#T + 1] = { id = "8:af7d18cf", len = { 6, 0 }, hash = { "d12541d7", "00001505" }, kinds = { "s" }, uk = { "Від ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "8:c6225049", len = { 6, 0 }, hash = { "ac4252d1", "00001505" }, kinds = { "s" }, uk = { "Коштує ", 1 }, sort = { "v" } }
 T[#T + 1] = { id = "8:c6a9166d", len = { 6, 0 }, hash = { "1bebf044", "00001505" }, kinds = { "d" }, uk = { "уміння ", 1 }, sort = { "v" } }
 T[#T + 1] = { id = "8:c966558c", len = { 6, 0 }, hash = { "c52e2b54", "00001505" }, kinds = { "s" }, uk = { "Потрібно: ", 1 }, sort = { "n" } }
 T[#T + 1] = { id = "8:f333f433", len = { 6, 0 }, hash = { "e1e5f43b", "00001505" }, kinds = { "s" }, uk = { "Зона: ", 1 }, sort = { "n" } }

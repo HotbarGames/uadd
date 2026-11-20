@@ -167,3 +167,25 @@ chat. After each case the game still works and each text is whole English or who
 **Check.** `python3 tools/harness/chaos.py` (part of `python3 tools/harness/run.py`). `CHAOS_SEED`, `CHAOS_N` and
 `CHAOS_ONLY` repeat a failure; each FAIL line prints its repro. A module folder without a recipe fails. It catches
 lesson 16's EditBox and lesson 18's pinned font with their fixes taken out.
+
+## 22. A text pattern that slows down with the square of the line
+
+**What went wrong.** Mastercraft's Words.lua (2026-11-20) had a Lua pattern with two lazy runs (`.-`) over the whole
+line. It was there before, but cheap, since its answer was cached. A new step asked UALL Forever, whose "wait"
+answer skips the cache, so the slow pattern ran on every call: 220-360 ms on a 10 KB text.
+
+**Rule.** No Lua pattern with two `.-` or `.*` runs over a whole line in a hook. Split at the first mark with
+`find(s, mark, 1, true)` instead. A path whose answer may not be cached must be cheap by itself.
+
+**Check.** `python3 tools/harness/chaos.py` (in `run.py`): "Mastercraft 10 KB under 5 ms" fails with the old pattern.
+
+## 23. A module that writes English over another language
+
+**What went wrong.** Mastercraft has its own languages. A switch to German outside its menu (its slash command or
+setup screen) turned UADD_Mastercraft off, and its off path put back the English it saw, through the raw SetText. The
+labels showed English, not German (harness flow `flow_mc_lang`, 2026-11-20).
+
+**Rule.** Going off leaves the addon's text as the addon would draw it now: put a text back only while it is still
+our Ukrainian, and never over a text the addon has changed since.
+
+**Check.** `python3 tools/harness/run.py`, the Mastercraft language steps (`tools/harness/flow_mc_lang.py --prove`).

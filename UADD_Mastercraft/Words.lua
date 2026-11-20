@@ -12,16 +12,20 @@
 --        v  a value (a number, a time, money, a link): kept when it has no English word, else our text
 --        f  a free name (a player, a version): kept as it is; one name only, so not a wide gap, a line
 --           break, " - " or a word in small letters (that is a glued text or a phrase: the line stays English)
---        n  a game name (item, zone, NPC): UALL Forever's Ukrainian, or the whole line stays English
+--        n  a game name (item, zone, NPC), or a list of them with counts: UALL Forever's Ukrainian for
+--           every name, or the whole line stays English
 --        t  our text: translated again (empty stays empty)
 --        b  blank (an English plural ending): dropped
 --      Any slot that holds English we have no Ukrainian for keeps the whole line English (no half lines).
 --   7. a text with a percent after it ("<word> 75%"): the text translated, the percent kept;
---   8. parts joined with " · ": each part alone; a part with English we have no Ukrainian for keeps the
---      whole text English;
---   9. a text with a coloured number after it ("<profession> |cffffffff300|r"): the text translated;
+--   8. parts joined with " · ", a grey "  ·  " or "  -  ": each part alone; a part with English we have
+--      no Ukrainian for keeps the whole text English;
+--   9. a text with a coloured number or a skill ("286 / 300") after it: the text translated; a step with
+--      its zones in grey after it: both; a coloured label and what it says ("Now:  <step>"): both;
 --  10. our words, ": ", then the player's own text in quotes: our words translated, the quotes never;
---  11. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural).
+--  11. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural);
+--  12. a line that is only one game name, maybe after a guild tag: UALL Forever's (a list there may be
+--      players' names, lesson 13).
 -- Answers are remembered by input; a name UALL Forever cannot give yet ("wait") is not remembered, and
 -- W.Try says so (the screen tries that line again later).
 
@@ -43,11 +47,16 @@ function W.Count()
 end
 function W.Index() return ix end
 
+-- Splits by plain find, never a pattern with two lazy runs (Split.lua, docs/LESSONS2.md lesson 22).
+local P = ns.Split
+local Strip, Trim = P.Strip, P.Trim
+
 -- An English word: a run of Latin letters, but not a short unit right after a number ("5m", "10 sec")
 -- nor "x" before one ("x3"). Colour codes, icons and links do not count.
 local function HasLatin(v)
     if type(v) ~= "string" or not v:find("%a") then return false end
-    v = v:gsub("|H.-|h.-|h", " "):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T.-|t", " ")
+    v = Strip(v, "|H", "|h", 2):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    v = Strip(v, "|T", "|t", 1)
     local from = 1
     while true do
         local a, b = v:find("%a+", from)
@@ -62,21 +71,66 @@ end
 W.HasLatin = HasLatin
 
 -- A game name in a slot: UALL Forever's Ukrainian, with its colour put back; false when there is none.
+-- A list ("2 <item>, <item>", "<zone> or <zone>") is asked name by name: all of them, or false. One name
+-- may have a count before it ("2 ", "2-3 ", "2x ") or after it (" x10"), or a value after " - " (a price).
 local ROUTES = { "Text", "Zone", "Npc", "Item" }
-local function Name(v)
-    if v == "" or not HasLatin(v) or v:find("|H", 1, true) then return v end
-    local c, inner = v:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r$")
-    local en = inner or v
+local BARE = { "Zone", "Npc", "Item" }   -- a line that is only a name: never the UI-word route
+local LISTS = { { ", ", ", " }, { " / ", " / " }, { " or ", " або " } }
+
+local function One(en, routes)
     local A = U.UALL   -- UALL Forever's routes live here, never on UADD's root (docs/LESSONS2.md lesson 20)
-    for _, route in ipairs(ROUTES) do
+    for _, route in ipairs(routes) do
         local look = type(A) == "table" and A[route]
         local ua, wait = nil, nil
         if type(look) == "function" then ua, wait = look(en) end
-        if ua then return c and (c .. ua .. "|r") or ua end
+        if type(ua) == "string" and ua ~= "" then return ua end
         if wait then waited = true end
     end
-    return false
 end
+
+local function Counted(v, routes)
+    local ua = One(v, routes)
+    if ua then return ua end
+    local n, rest = v:match("^(%d+%-?%d*x? )(.*%S)$")
+    if n then
+        ua = One(rest, routes)
+        return ua and (n .. ua)
+    end
+    local head, tail = v:match("^(.-%S)( x%d+)$")
+    if not head then
+        head, tail = v:match("^(.-%S)( %- .+)$")
+        if tail and HasLatin(tail) then head = nil end
+    end
+    if head then
+        ua = One(head, routes)
+        return ua and (ua .. tail)
+    end
+end
+
+local function List(v, routes, i)
+    local sep = LISTS[i]
+    if not sep then return Counted(v, routes) end
+    if not v:find(sep[1], 1, true) then return List(v, routes, i + 1) end
+    local whole = One(v, routes)
+    if whole then return whole end
+    local out = {}
+    for part in (v .. sep[1]):gmatch("(.-)" .. sep[1]) do
+        local t = part ~= "" and List(part, routes, i + 1)
+        if not t then return nil end
+        out[#out + 1] = t
+    end
+    return table.concat(out, sep[2])
+end
+
+-- one: a single name (with its count), never a list.
+local function Name(v, routes, one)
+    if v == "" or not HasLatin(v) or v:find("|H", 1, true) then return v end
+    local c, inner = v:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r$")
+    local ua = List(inner or v, routes or ROUTES, one and #LISTS + 1 or 1)
+    if not ua then return false end
+    return c and (c .. ua .. "|r") or ua
+end
+W.Name = Name
 
 local function Slot(k, v, rec)
     local sort = rec.sort and rec.sort[k] or "v"
@@ -110,11 +164,21 @@ local function Lines(s)
     return any and table.concat(out, "\n") or nil
 end
 
+local function Joined(s, sep, back)
+    local out, any = {}, false
+    for part in (s .. sep):gmatch("(.-)" .. sep:gsub("%p", "%%%0")) do
+        local t = part ~= "" and Translate(part) or nil
+        if t then any = true elseif HasLatin(part) then return nil end
+        out[#out + 1] = t or part
+    end
+    return any and table.concat(out, back) or nil
+end
+
 local function Raw(s)
     local uk = ix:Exact(s)
     if uk then return U.Plural(uk, true) end
     if s:find("\n", 1, true) then return Lines(s) end
-    local a, body, b = s:match("^(%s*)(.-)(%s*)$")
+    local a, body, b = Trim(s)
     if a ~= "" or b ~= "" then
         if body == "" then return nil end
         local t = Translate(body)
@@ -145,29 +209,46 @@ local function Raw(s)
         local t = Translate(head)
         if t then return t .. pct end
     end
-    -- 8. parts joined with " · " (the Crafters profile line): each part alone, all of them or none
-    -- The dot is matched by its bytes; our line joins the parts with " — ", which the Cyrillic fonts surely draw.
-    if s:find(DOT, 1, true) then
-        local out, any = {}, false
-        for part in (s .. DOT):gmatch("(.-)" .. DOT) do
-            local t = part ~= "" and Translate(part) or nil
-            if t then any = true elseif HasLatin(part) then return nil end
-            out[#out + 1] = t or part
-        end
-        return any and table.concat(out, " — ") or nil
-    end
-    -- 9. a text and a coloured number after it ("Tailoring |cffffffff300|r"): the text translated
+    -- 8. parts joined with " · " (the Crafters profile line), a grey "  ·  " (Home's next steps) or "  -  "
+    -- (the cooking card): each part alone, all of them or none. The dot is matched by its bytes; our line
+    -- joins the parts with "—" instead, which the Cyrillic fonts surely draw.
+    if s:find(DOT, 1, true) then return Joined(s, DOT, " — ") end
+    local dot = s:match("  |c%x%x%x%x%x%x%x%x\194\183|r  ")
+    if dot then return Joined(s, dot, (dot:gsub("\194\183", "\226\128\148"))) end
+    if s:find("  -  ", 1, true) then return Joined(s, "  -  ", "  -  ") end
+    -- 9. a text and a number after it: coloured ("Tailoring |cffffffff300|r") or a skill ("<rank>  286 / 300")
     local text, num = s:match("^(.-%S)( |c%x%x%x%x%x%x%x%x%d+|r)$")
+    if not text then text, num = s:match("^(.-%S)(  %d+ / %d+)$") end
     if text then
         local t = Translate(text)
         if t then return t .. num end
     end
+    -- 9b. a step and its zones in grey after it ("<step>  |cff......-  <zone>, <zone>|r"): both or none
+    local step, grey, zones = P.Zones(s)
+    if step then
+        local t, z = Translate(step), Name(zones)
+        if t and z then return t .. "  " .. grey .. "-  " .. z .. "|r" end
+    end
+    -- 9c. a coloured label, then what it says ("|cff......Now:|r  <what>", the guide's line): both or none
+    local lc, label, what = P.Label(s)
+    if lc then
+        local a, b = Translate(label), Translate(what)
+        if a and b then return lc .. a .. ":|r  " .. b end
+    end
     -- 10. our words, then the player's own text in quotes (a note for buyers): the quotes kept as they are
-    local words, quoted = s:match('^([^"]-%a[^"]-): (".*")$')
+    local words, quoted = P.Quoted(s)
     if words then
         local t = Translate(words)
         if t then return t .. ": " .. quoted end
     end
+    -- 12. a line that is only a game name (a fish, the zone under the character), maybe after the player's
+    -- guild in <> (kept as it is): UALL Forever's name, never its UI-word route. One name only, never a list
+    -- ("Thrall, Jaina" may be players named as NPCs; lists of names live in template slots). One word alone
+    -- only as a zone: a one-word name may be a player's (docs/LESSONS2.md lesson 13).
+    local tag, gap, rest = s:match("^(<[^>]*>)(%s+)(.+)$")
+    local bare = rest or s
+    local ua = Name(bare, bare:find(" ", 1, true) and BARE or { "Zone" }, true)
+    if ua and ua ~= bare then return tag and (tag .. gap .. ua) or ua end
     return nil
 end
 

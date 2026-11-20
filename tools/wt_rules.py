@@ -42,6 +42,7 @@ SORTS = {
     # glued in code (lessons 6 and 7), CODE below
     "%s (%.1f, %.1f)": "nvv",                # zone (x, y): Rows.lua
     "%s — %s": "nn",                    # zone - weapon master: WeaponGrouping.lua
+    "• %s": "v",                             # the levels view's count, its own font string: Views.lua
 }
 
 # Lines What's Training? builds in code around a game name or its own text, not from its locale table (lesson 6):
@@ -50,6 +51,7 @@ CODE = [
     ("%s (%.1f, %.1f)", "Rows.lua: a trainer's zone and map spot"),
     ("%s — %s", "WeaponGrouping.lua: zone, then the weapon master"),
     ("%s • %d", "Forever/Views.lua: a section title of ours, then its count"),
+    ("• %s", "Forever/Views.lua: the levels view's count (\" • \" and a count of ours; outer spaces kept)"),
     ("%s • %s", "SECTION_COUNT in RecipeList.lua, SkillsRecipeList.lua, Forever/Ignored.lua: title, count"),
 ]
 

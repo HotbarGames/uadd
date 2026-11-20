@@ -11,7 +11,8 @@ UADD_Attune's checks run next, on a stand-in for Attune (flow_att.py).
 UADD_LayerSwap's checks run next, on a stand-in for LayerSwap (flow_lsw.py).
 UADD_AutoPotion's checks run next, on a stand-in for Auto Potion (flow_autopotion.py).
 UADD_Bagnon's checks run next, on stand-ins for Bagnon and Bagnon_Config (flow_bagnon.py).
-UADD_Mastercraft's checks run next, on a stand-in for Mastercraft (flow_mastercraft.py).
+UADD_Mastercraft's checks run next, on a stand-in for Mastercraft (flow_mastercraft.py; «Українська» in its
+language menu: flow_mc_lang.py).
 UADD_WhatsTraining's checks run next, on a stand-in for What's Training? (flow_whatstraining.py).
 UADD_TomTom's checks run next, on a stand-in for TomTom (flow_tomtom.py; the arrow title's font: flow_tomtom_arrow.py).
 UADD_RareScanner's checks run next, on a stand-in for RareScanner (flow_rarescanner.py).
@@ -64,6 +65,7 @@ def run_all():
     import flow_autopotion
     import flow_bagnon
     import flow_mastercraft
+    import flow_mc_lang
     import flow_tomtom
     import flow_tomtom_arrow
     import flow_rarescanner
@@ -98,7 +100,7 @@ def run_all():
     # (facts key, flow module), in run order; each also gets the tooltip font check (tipfont.py)
     for key, mod in (("dialogueui", flow_dialogueui), ("fxpb", flow_fxpb), ("auc", flow_auc), ("att", flow_att),
                      ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
-                     ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("rs", flow_rarescanner), ("pawn", flow_pawn),
+                     ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("rs", flow_rarescanner), ("pawn", flow_pawn),
                      ("gm", flow_gm), ("scrap", flow_scrap), ("sal", flow_sal), ("missed", flow_missed),
                      ("hash", flow_hash), ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):

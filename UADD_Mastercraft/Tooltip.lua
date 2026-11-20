@@ -10,6 +10,7 @@
 local _, ns = ...
 local U = UADD
 local W = ns.Words
+local P = ns.Split
 local T = {}
 ns.Tooltip = T
 
@@ -48,6 +49,7 @@ end
 -- Could s be one of Mastercraft's texts? Every line of every game tooltip passes here, so this cheap test
 -- comes first (docs/LESSONS2.md lesson 12): no slot is filled, nothing is cached. It follows the shapes
 -- W.Translate knows (Words.lua, steps 1-10); false means Translate(s) would surely give nothing.
+-- No pattern with two lazy runs here (Split.lua: by plain find, docs/LESSONS2.md lesson 22).
 local DOT = " \194\183 "
 local function Maybe(s, d)
     if type(s) ~= "string" or s == "" or d > 6 or not s:find("%a") then return false end
@@ -57,7 +59,7 @@ local function Maybe(s, d)
         for line in s:gmatch("[^\n]+") do if Maybe(line, d + 1) then return true end end
         return false
     end
-    local body = s:match("^%s*(.-)%s*$")
+    local _, body = P.Trim(s)
     if body ~= s then return Maybe(body, d + 1) end
     local inner = s:match("^|c%x%x%x%x%x%x%x%x(.*)|r$")
     if inner and Maybe(inner, d + 1) then return true end
@@ -70,7 +72,7 @@ local function Maybe(s, d)
     end
     local text = s:match("^(.-%S) |c%x%x%x%x%x%x%x%x%d+|r$")
     if text and Maybe(text, d + 1) then return true end
-    local words = s:match('^([^"]-%a[^"]-): ".*"$')
+    local words = P.Quoted(s)
     return words ~= nil and Maybe(words, d + 1)
 end
 T.Maybe = function(s) return Maybe(s, 0) end

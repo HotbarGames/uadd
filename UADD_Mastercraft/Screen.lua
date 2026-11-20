@@ -15,7 +15,8 @@
 -- Where Mastercraft would shrink a translated text to fit (mcFitTo, its button; or a one-line label that
 -- is cut off), we shrink it the same way, one point at a time, to mcMinSize or 3/4 of its size.
 -- Headings in capitals (ns.SetUpper: mcUpper) are translated from mcUpper and put in Ukrainian capitals.
--- Off, or the hold key: Mastercraft's English (mcRaw) and its own font again.
+-- Off, or the hold key: Mastercraft's own text and font again (Restore: its English, or the language it
+-- is on now, drawn by its own SetText; a text it changed since is left alone).
 
 local _, ns = ...
 local U = UADD
@@ -143,12 +144,30 @@ local function Later(fs, raw)
 end
 S.Retrying = function() return next(retry) ~= nil end
 
--- Any error while we write: Mastercraft's English as it was, in its own font (the worst we may do is
--- leave a text untranslated). The error is said once (U.SafeCall).
-local function Back(fs)
+-- Our words off one font string: its text as Mastercraft would draw it now (lesson 19: never a wrong
+-- language). Only a text that still is our Ukrainian is put back; one Mastercraft set since (its own
+-- language picked outside its menu) stays as it is. On English: its English with the game's setter, as
+-- always. In another of its languages: through Mastercraft's own SetText, which draws that language and
+-- sets that language's font itself (Greek, Korean, ...); our font goes only where it is still ours.
+local function Restore(fs)
+    local wrote = mine[fs]
     mine[fs] = nil
     local raw = rawget(fs, "mcRaw")
-    if type(raw) == "string" then pcall(fs.mcSetText, fs, raw) end
+    local still = type(wrote) == "string" and type(raw) == "string" and fs:GetText() == wrote
+    if not ns.Lang or ns.Lang.MastercraftEnglish() then
+        if still then fs.mcSetText(fs, raw) end
+        Font(fs, false)
+        return
+    end
+    if still then fs:SetText(raw) end
+    if fonted[fs] and U.IsCyrFont((fs:GetFont())) then Font(fs, false) else fonted[fs] = nil end
+end
+
+-- Any error while we write: Mastercraft's text as it would draw it, in its own font (the worst we may do
+-- is leave a text untranslated). The error is said once (U.SafeCall).
+local function Back(fs)
+    pcall(Restore, fs)
+    mine[fs] = nil
     pcall(Font, fs, false)
 end
 
@@ -181,7 +200,7 @@ S.Apply = Apply
 Write = function(fs, uk, raw, waited, nofont)
     if uk then
         fs.mcSetText(fs, uk)
-        mine[fs] = true
+        mine[fs] = uk                       -- what we wrote: off puts back only while it is still there
         if U.Plain(uk) and U.Plain(uk):find(CYR) then Font(fs, true) Fit(fs) else Font(fs, false) end
         local box = Box(fs)
         if box and box.HookScript and not fits[box] then
@@ -189,11 +208,7 @@ Write = function(fs, uk, raw, waited, nofont)
             box:HookScript("OnSizeChanged", function(b) if ns.WordsWanted() then U.SafeCall(Refit, b) end end)
         end
     else
-        if mine[fs] then
-            mine[fs] = nil
-            if type(rawget(fs, "mcRaw")) == "string" then fs.mcSetText(fs, rawget(fs, "mcRaw")) end
-        end
-        Font(fs, false)
+        if mine[fs] then Restore(fs) else Font(fs, false) end
         if not nofont and not waited and type(raw) == "string" and ns.WordsWanted() and raw:find("%a%a%a") then U.Missed("mastercraft", raw, fs) end
     end
 end
@@ -204,7 +219,8 @@ local function Refont(fs)
 end
 
 local function OnFont(fs)
-    if busy or not mine[fs] then return end
+    -- (not wanted: Mastercraft is switching to another language and sets its own font next)
+    if busy or not mine[fs] or not ns.WordsWanted() then return end
     Guarded(fs, Refont)
 end
 

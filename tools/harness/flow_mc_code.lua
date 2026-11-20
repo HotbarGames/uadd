@@ -25,6 +25,22 @@ function C.names(en, uk)
 end
 function C.hold(en, on) held[en] = on or nil end
 
+-- One text through Words.Translate and the tooltip's Maybe, nothing remembered (as a name UALL Forever
+-- makes wait): the slowest of the two, in ms, best of 3.
+function C.slow(t)
+    local best
+    for _ = 1, 3 do
+        NS().Words.Forget()
+        local t0 = os.clock()
+        NS().Words.Translate(t)
+        local a = os.clock()
+        NS().Tooltip.Maybe(t)
+        local ms = math.max(a - t0, os.clock() - a) * 1000
+        best = best and math.min(best, ms) or ms
+    end
+    return best
+end
+
 -- Our Ukrainian for a whole text, and a template filled by hand (numbers in rec.uk are slots).
 function C.want(key)
     local uk = NS().MC.exact[key]

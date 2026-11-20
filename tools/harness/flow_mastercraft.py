@@ -239,6 +239,9 @@ def run(check, facts):
     import flow_mc_code                     # lines it builds in code: a game of their own
     flow_mc_code.run(check, sys.modules[__name__], src)
     gc.collect()
+    import flow_mc_code2                    # the lines of the owner's screenshots (2026-11-20)
+    flow_mc_code2.run(check, sys.modules[__name__], src)
+    gc.collect()
     game_c(check, p)
 
 

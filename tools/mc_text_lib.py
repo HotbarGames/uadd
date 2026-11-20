@@ -120,4 +120,22 @@ def source(addon):
             rows.append((en, kind_of(en), sec, sub, Path(rel).name))
     if rows:
         rows += [r for r in code_rows(addon, R.IN_CODE) if r[0] not in seen]
+        rows += [r for r in named_rows(rows) if r[0] not in seen]
     return rows
+
+
+# A gathering guide's step "<game name> - <our words>" (a leather, then the beasts that drop it): also
+# as the template "%s - <our words>", so the name comes from UALL Forever (we write no game names).
+NAMED = re.compile(r"^[A-Z][A-Za-z']*(?: (?:of )?[A-Z][A-Za-z']*)* - ([a-z][^%|\n]*)$")
+NAMED_SECTION = "Gathering guides"
+
+
+def named_rows(rows):
+    out, seen = [], set()
+    for en, kind, sec, sub, f in rows:
+        m = NAMED.match(en) if kind == "exact" and sec == NAMED_SECTION else None
+        t = m and "%s - " + m.group(1)
+        if t and t not in seen:
+            seen.add(t)
+            out.append((t, kind_of(t), sec, sub, f))
+    return out

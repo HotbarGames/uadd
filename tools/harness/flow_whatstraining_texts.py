@@ -85,10 +85,18 @@ def picks(src, exact, temps):
     return p
 
 
-def templates(src, temps):
+def templates(src, temps, ours=None):
     """The half-translation check's templates: each shipped template line (a multi-line text's lines
     alone), real English. Slots by the data's sort (tools/wt_rules.py): n a game name (the made-up name
-    UALL Forever "knows", flow_whatstraining.lua M.names), t our text, v a value; no free slots."""
+    UALL Forever "knows", flow_whatstraining.lua M.names), t our text (`ours`: a shipped English we have
+    Ukrainian for, so a template with no words of its own, a section title glued to its count, can fit),
+    v a value (in a template with no words of its own, a %s v slot gets `ours` too: " • 12 spells"); no
+    free slots."""
     lines = {hashtext.key(x): x for en, kind in src if "template" in kind for x in en.split("\n")}
-    return [tpl(k, x, {}, {i: NAME for i, s in enumerate(temps[k], 1) if s == "n"})
-            for k, x in lines.items() if k in temps]
+
+    def good(x, sorts):
+        bare = not re.search("[A-Za-z]", re.sub(r"%[-\d.]*[sdf]", "", x))
+        pick = {"n": NAME, "t": ours, "v": ours if bare else None}
+        return {i: pick[s] for i, (s, kind) in enumerate(zip(sorts, kinds(x)), 1)
+                if pick.get(s) and kind == "s"}
+    return [tpl(k, x, {}, good(x, temps[k])) for k, x in lines.items() if k in temps]

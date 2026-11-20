@@ -80,10 +80,10 @@ OVERRIDE = {
     "21:2dffa21a": "T", "30:2b6028d5": "VNV", "25:a416ff5a": "NT", "16:a1183c3f": "N", "36:1a310d98": "N",
     "38:f74706b4": "VV", "34:7aa1bae1": "VN", "31:6f4b569b": "NNV", "52:f79a5080": "NNVV",
     "15:bc090e32": "VN", "18:4a35255c": "VN", "13:b69472a2": "V", "36:25a51017": "FV", "56:2300719d": "F",
-    "52:f0542eff": "NN", "116:5daaeed5": "NN", "12:fa0b1e27": "NN", "16:285ec4e8": "NVN",
+    "52:f0542eff": "NN", "116:5daaeed5": "NN", "12:fa0b1e27": "NT", "16:285ec4e8": "NVN",
     "46:56fa984f": "VNV", "49:7ab7ad5e": "VNVV", "39:5ee21ff0": "VN", "46:61ac302f": "VNV",
     "56:9f26585d": "VNVVV", "47:ebb4fe4f": "VV", "27:347a4657": "NVNN", "16:b6ba03c5": "NNN",
-    "40:cffe9244": "NVV", "89:280439c8": "FVNN", "21:61ca9680": "F", "14:ea7f7876": "VNN",
+    "40:cffe9244": "TVV", "89:280439c8": "FVNN", "21:61ca9680": "F", "14:ea7f7876": "VNN",
     "11:c97b8fde": "VN", "29:b0ee0bab": "FNV", "35:8fad60ae": "FNV", "102:4155d29f": "N",
     "69:05e6a50f": "N", "29:e8f9bd19": "FF", "35:fa8949ac": "T", "32:54df3a13": "T", "33:a8773893": "T",
     "23:73017ff2": "VT", "35:8cfdd55e": "VVT", "41:6c19ffad": "FN", "49:d8831a88": "NN",
@@ -104,6 +104,10 @@ OVERRIDE = {
     # Texts built in code (IN_CODE below): an icon, a disenchant material, its count, its price; who can
     # craft it (players, kept), the profession; money before "each" / "ea".
     "24:a3fbd071": "VNVV", "19:d68addfb": "FN", "7:32a7c1ce": "V", "5:0adc2fe3": "V",
+    # The owner's screenshots (2026-11-20): a step title is a recipe or a guide's own text (T: Words.lua
+    # finds a bare game name too); a vendor line from the data holds an NPC and its price. (Built in code
+    # and too short to ship: "<count>x <fish>" is Words.lua step 12, the guide's "<label>:  <what>" step 9c.)
+    "10:27784c65": "N",
 }
 
 # Texts Mastercraft builds in its code, not in its locales (tools/mc_text_lib.py code_rows): by

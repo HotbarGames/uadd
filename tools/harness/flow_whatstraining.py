@@ -221,7 +221,7 @@ def game_a(check, facts, p, src, temps):
     check("status: on, with counts", "увімкнено: What's Training? українською" in txt(M.lastChat(4)),
           txt(M.lastChat(2)))
     M.names(lua_str(halves_mods.NAME), lua_str("Квікс"))
-    tps = templates(src, temps)
+    tps = templates(src, temps, p["label"] if p["n"] else None)
     halves_mods.wt(check, M, tps, "" if tps else "skipped: no Ukrainian templates shipped yet")
     _errors(c, check, "game A")
 
@@ -260,6 +260,9 @@ def run(check, facts):
     gc.collect()
     import flow_whatstraining_names     # game names from UALL Forever, and the foreign-frame leave (5b)
     flow_whatstraining_names.run(check, facts)
+    gc.collect()
+    import flow_whatstraining_glue      # section headers glued to a count in code (the owner, 2026-11-20)
+    flow_whatstraining_glue.run(check, facts)
 
 
 Check = collections.namedtuple("Check", "name ok detail")

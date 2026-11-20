@@ -147,6 +147,18 @@ which knows each part alone, left it English. Rule: split it at the commas; all 
 every part, else whole English. Check: `python3 tools/harness/run.py`, the DJ module's header and giver-line steps
 (`tools/harness/flow_dj_head.py`, also made-up lines with one unknown name).
 
+**Again in What's Training? (2026-11-20).** Its section headers are a title, a bullet and a count glued in code
+("%s • %d"). We had the title's Ukrainian but none for the glue template, so the whole header stayed English, with
+no error, and the harness never fed it a real glued header. Rule: every template the addon glues in code gets its
+Ukrainian, and a flow builds the real glued lines from the installed addon's English. Never ship "•" in our
+Ukrainian: the Cyrillic font may draw it as a box (we use "—"). Check: `python3 tools/harness/run.py`, What's
+Training?'s "glue 1-3" steps (`tools/harness/flow_whatstraining_glue.py`); `python3 -m unittest tools.test_font_chars`.
+
+**Again in Mastercraft (2026-11-20).** A list of items ("2 X, 2 Y") and a bare item, NPC or zone on its own line
+were asked from UALL Forever as one name, so they stayed English, also where UALL Forever knows every name. Rule:
+a slot or line that holds a list asks UALL Forever for each name; all Ukrainian when it names every one, else
+whole English. Check: `python3 tools/harness/run.py`, the Mastercraft code steps (`tools/harness/flow_mc_code2.py`).
+
 ## 7. A free slot that swallows glued text
 
 **What went wrong.** LayerSwap's one-line mini bar is the layer's name, a wide gap, then its status
