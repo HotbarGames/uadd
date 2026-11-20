@@ -82,6 +82,7 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Trainer | any trainer, in an addon's own sentence ("наставник") | not an entry |
 | Skinning Trainer, ... | the title over a named trainer, as UALL Forever shows it ("Тренер Білування"; owner 2026-11-20) | `npc.trainer_*` |
 | Guide | Mastercraft's levelling guide ("Посібник"; UALL Forever's «Наставник» is a person who guides) | `prof.guide` |
+| RFD, BRD, Scholo, ... Key | Attune's left list: short dungeon names, and "Key" after them, stay English (owner 2026-11-20) | not an entry: never translate |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.
 
