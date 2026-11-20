@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Auto Potion's own words in Ukrainian: its six settings pages, their tooltips, its chat lines and its key binding names. Macro names stay as they are. Type /uadd autopotion.
 ## Author: HotbarGames
-## Version: 1.2.1
+## Version: 1.2.2
 ## Dependencies: UADD, AutoPotion
 ## X-Category: Localization
 ## X-License: GPL-3.0

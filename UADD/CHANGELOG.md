@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.2
 
 - ForeverXP Bar: updated for 0.9.4; its new texts are in Ukrainian (the flight map time, What's New).
   ForeverXP Bar: оновлено для 0.9.4; його нові тексти українською (час перельоту на мапі, «Що нового»).
