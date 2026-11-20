@@ -80,3 +80,19 @@ the kind "EditBox" or a kind that is not a string (also through `pcall`), outsid
 `python3 tools/harness/run.py`, step "focus: keyboard free after login" (`tools/harness/flow_focus.py`): every
 stand-in and the modules that load with them, and after login `GetCurrentKeyBoardFocus()` is nil. The harness
 EditBox has autoFocus on, as in the game (`tools/harness/wow_focus.lua`). Each fails with the fix taken out.
+
+## 17. A glossary game word never compared with UALL Forever
+
+**What went wrong.** Mastercraft showed «Здирання шкур» for Skinning, while UALL Forever, which the player sees
+everywhere else in the game, says «Білування» (the owner, 2026-11-20). The glossary's profession, rank, trainer
+and weapon words were our own picks and nobody had compared them with UALL Forever: 27 of them differed
+(«Гірництво» for «Гірнича справа», «Знавець» for «Експерт», «Наставник алхімії» for «Вчитель Алхімії», ...).
+
+**Rule.** A game name in the glossary (a profession, rank, trainer title, weapon skill) is UALL Forever's exact
+word. Where it has the word, we use its word. Where it has none, follow its pattern. Ban the old word in the
+same commit (`tools/test_banned_words.py`).
+
+**Check.** `python3 -m unittest tools.test_glossary_uallf`: each `prof.*`, `npc.*` and `weapon.*` entry in
+`UADD/glossary/professions.lua` whose English UALL Forever has (UI, spells, NPC titles) uses one of its words
+(case aside), or is in `ALLOW` with a reason. It skips with a message when UALL Forever is not installed.
+It finds the 27 with the fix taken out.

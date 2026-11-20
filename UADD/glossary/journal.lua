@@ -108,7 +108,7 @@ E{ id = "item.bag", en = "Bag", uk = "Торба", note = "Item type: a bag." }
 E{ id = "item.quiver", en = "Quiver", uk = "Сагайдак", note = "Item type: a bag for arrows." }
 E{ id = "item.ammo_pouch", en = "Ammo Pouch", uk = "Сумка для набоїв", note = "Item type: a bag for bullets." }
 E{ id = "item.recipe", en = "Recipe", uk = "Рецепт", note = "Item type: teaches a profession recipe; one item." }
-E{ id = "item.leatherworking_recipe", en = "Leatherworking Recipe", uk = "Рецепт шкірництва", note = "Item type: a leatherworking pattern." }
+E{ id = "item.leatherworking_recipe", en = "Leatherworking Recipe", uk = "Рецепт шкіряної справи", note = "Item type: a leatherworking pattern. Profession word as prof.leatherworking (owner 2026-11-20)." }
 E{ id = "item.blueprint", en = "Blueprint", uk = "Креслення", note = "Item type: an engineering schematic." }
 E{ id = "item.consumable", en = "Consumable", uk = "Витратний предмет", note = "Item type: used up when used." }
 E{ id = "item.potion", en = "Potion", uk = "Зілля", note = "Item type: a potion." }

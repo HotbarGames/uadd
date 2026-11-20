@@ -53,7 +53,7 @@ HEAD = """\
 #   faction, spell): UALL Forever gives it in Ukrainian.  t another What's Training? text.
 #   ? not sorted yet: ask the lead, or leave the UA empty.
 # Game names (zones, NPCs, spells, factions) are never written here: they come in through the slots.
-# Glossary: «Наставник класу» (trainer), «закляття» (spell).
+# Glossary: «Класовий тренер» (class trainer), «закляття» (spell).
 """
 GONE = "# ── Gone: no longer in What's Training?. Kept so their Ukrainian is not lost. ──"
 DATA_HEAD = [

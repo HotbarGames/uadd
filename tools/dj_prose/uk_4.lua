@@ -109,7 +109,7 @@ return {
   ["13bc2b2d"] = "Принесіть «Heart of the Mountain» до НІП «{npc:Maxwort Uberglint}» у локації «{zone:Burning Steppes}».",
   ["5a24a7ac"] = "Предмет «{item:The Heart of the Mountain}» лежить у сейфі сховища після Темних хранителів.",
   ["5681a0d7"] = "Принесіть «{item:Star Ruby}»: 2 шт., «{item:Gold Bar}»: 20 шт. і «{item:Truesilver Bar}»: 10 шт. до НІП «{npc:Gloom'rel}», потім покладіть їх у «Spectral Chalice» у місцевості «{zone:Summoners' Tomb}».",
-  ["c6ac55db"] = "Гірництво 230. Поговоріть з НІП «{npc:Gloom'rel}» перед боєм із «The Seven»; покладіть у «Spectral Chalice» «{item:Star Ruby}»: 2 шт., «{item:Gold Bar}»: 20 шт. і «{item:Truesilver Bar}»: 10 шт., щоб вивчити «Smelt Dark Iron».",
+  ["c6ac55db"] = "Гірнича справа 230. Поговоріть з НІП «{npc:Gloom'rel}» перед боєм із «The Seven»; покладіть у «Spectral Chalice» «{item:Star Ruby}»: 2 шт., «{item:Gold Bar}»: 20 шт. і «{item:Truesilver Bar}»: 10 шт., щоб вивчити «Smelt Dark Iron».",
   ["18ce8f88"] = "Поговоріть з НІП «{npc:Yuka Screwspigot}» у локації «{zone:Burning Steppes}».",
   ["b2c863ba"] = "Вступний крок до завдання «{quest:Ribbly Screwspigot}».",
   ["bfef45bd"] = "Принесіть предмет «{item:Ribbly's Head}» до НІП «{npc:Yuka Screwspigot}» у локації «{zone:Burning Steppes}».",

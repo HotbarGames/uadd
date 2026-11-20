@@ -77,14 +77,21 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Node | GatherMate2: a spot to gather from, a herb, vein or fish pool ("Точка збору": lead's choice, 2026-11-20) | `prof.node` |
 | Treasure | GatherMate2: a kind of node, chests ("Скарби") | `prof.node_treasure` |
 | Nameplates | the name bars over units' heads ("Таблички імен", never «індикатор імені») | `game.nameplates` |
+| Enchanting | the profession ("Накладання чарів": UALL Forever's word; owner 2026-11-20) | `prof.enchanting` |
+| Enchant | an enchantment put on an item ("Зачарування") | `gear.enchant` |
+| Trainer | any trainer, in an addon's own sentence ("наставник") | not an entry |
+| Skinning Trainer, ... | the title over a named trainer, as UALL Forever shows it ("Тренер Білування"; owner 2026-11-20) | `npc.trainer_*` |
+| Guide | Mastercraft's levelling guide ("Посібник"; UALL Forever's «Наставник» is a person who guides) | `prof.guide` |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.
 
 ## Add a word
 
 1. Pick the file by topic. Add one line with `E{ ... }`. Fill in all four fields.
-2. Prefer words that UALL already uses for game terms. Our own terms: завдання (quest), НІП (NPC), предмети
-   (items), місця (zones).
+2. A game name (a profession, rank, trainer title, weapon skill) takes UALL Forever's exact word: where UALL
+   Forever has it, we use its word (owner 2026-11-20; `python3 -m unittest tools.test_glossary_uallf` checks
+   `professions.lua`). Prefer UALL's words for other game terms too. Our own terms: завдання (quest), НІП
+   (NPC), предмети (items), місця (zones).
 3. Keep `%s`, `%d` and `|c...|r` codes the same in `en` and `uk`. The checker fails if they differ.
 4. Run `python3 tools/glossary.py`. Then `python3 -m unittest discover -s tools`.
 

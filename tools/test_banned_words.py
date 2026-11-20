@@ -32,6 +32,14 @@ BANNED = {
                  "«інстанс» is slang"),
     r"\bПКМ\b|\bЛКМ\b": ("правий клік / клік (glossary ui.right_click)",
                          "mouse shorthand is slang; the glossary word is «Правий клік» (lead, 2026-11-19, What's Training?)"),
+    # Profession words: UALL Forever's word wins (owner 2026-11-20; docs/LESSONS2.md lesson 17).
+    r"здиранн[яюі]\w* шкур": ("Білування (prof.skinning)", "not UALL Forever's word for Skinning"),
+    r"шкірництв": ("шкіряна справа (prof.leatherworking)", "not UALL Forever's word for Leatherworking"),
+    r"гірництв": ("гірнича справа (prof.mining)", "not UALL Forever's word for Mining"),
+    r"\bзнав(?:ець|ц)": ("Експерт (prof.rank_expert)", "not UALL Forever's word for the Expert rank"),
+    r"каліграф": ("накреслення (prof.inscription)", "not UALL Forever's word for Inscription"),
+    r"ювелірн\w* справ": ("ювелірство (prof.jewelcrafting)", "not UALL Forever's word for Jewelcrafting"),
+    r"навич\w* зброї": ("володіння зброєю (weapon.skill)", "not UALL Forever's word for Weapon Skills"),
 }
 # module folder: {regex: (use instead, reason)} - banned only in that module's files
 BANNED_IN = {

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Changed: profession, rank, trainer and weapon skill names now use UALL Forever's words, as in the rest of the
+  game (Skinning is «Білування», Mining «Гірнича справа», Expert «Експерт»).
+  Змінено: назви професій, рангів, учителів і володіння зброєю тепер ті самі, що в UALL Forever і в решті гри
+  (Skinning - «Білування», Mining - «Гірнича справа», Expert - «Експерт»).
+
 ## 1.2.1
 
 - Fixed: with the Mastercraft or What's Training? module loaded, the keyboard stopped working (Enter did not open

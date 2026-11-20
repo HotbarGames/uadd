@@ -9,7 +9,7 @@ E{ id = "gear.stat_weight", en = { "Stat weight", "Weight" }, uk = "Вага х�
 E{ id = "gear.upgrade", en = "Upgrade", uk = "Покращення", note = "An item better than the one you wear (UALL's word)." }
 E{ id = "gear.gem", en = { "Gem", "Gems" }, uk = "Самоцвіт", note = "A gem for an item's socket (many: самоцвіти, UALL's word)." }
 E{ id = "gear.socket", en = "Socket", uk = "Гніздо", note = "A slot on an item that holds a gem (many: гнізда)." }
-E{ id = "gear.enchant", en = "Enchant", uk = "Зачарування", note = "An enchantment on an item. Same Ukrainian as the profession (prof.enchanting), other meaning." }
+E{ id = "gear.enchant", en = "Enchant", uk = "Зачарування", note = "An enchantment on an item. Not the profession (prof.enchanting «Накладання чарів», owner 2026-11-20)." }
 E{ id = "gear.advisor", en = "Advisor", uk = "Порадник", note = "Pawn: the part that marks upgrades in loot, bags and quest rewards." }
 E{ id = "gear.stats", en = "Stats", uk = "Характеристики", note = "An item's or a character's stats, together (UALL's word)." }
 
