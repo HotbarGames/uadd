@@ -38,9 +38,11 @@ function F.wait(seconds)
     for _ = 1, math.ceil(seconds / 0.05 - 1e-6) do H.step(0.05) end
 end
 
--- The text box that has the keyboard (chat while typing): F.focus, nil when none.
-if rawget(_G, "GetCurrentKeyBoardFocus") == nil then
-    function GetCurrentKeyBoardFocus() return F.focus end
+-- The text box that has the keyboard (chat while typing): F.focus when set, else the harness's own focus.
+local realFocus = rawget(_G, "GetCurrentKeyBoardFocus")
+function GetCurrentKeyBoardFocus()
+    if F.focus ~= nil then return F.focus end
+    return realFocus and realFocus() or nil
 end
 
 -- What the core told its listeners since F.toldReset(): "T" for true, "F" for false.

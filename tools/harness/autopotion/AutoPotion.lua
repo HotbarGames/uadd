@@ -82,6 +82,7 @@ local function Build()
     Label("madeup", info, "GameFontNormal", nil)                     -- made-up English: stays whole
     S.texts.madeup:SetText("Zorp settings wobble")
     local link = CreateFrame("EditBox", nil, info)
+    link:SetAutoFocus(false)
     link:SetText("https://example.invalid/quix")
     S.link = link
     -- Heal page: a header, a check box with a tooltip, check boxes with icons, the priority footer.

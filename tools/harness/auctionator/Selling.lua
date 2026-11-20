@@ -19,6 +19,7 @@ table.insert(S.tabs, sell)
 local qty = CreateFrame("Frame", nil, sell)
 qty.labelText = AUCTIONATOR_L_QUANTITY                             -- KeyValue
 qty.InputBox = CreateFrame("EditBox", nil, qty)
+qty.InputBox:SetAutoFocus(false)
 qty.InputBox.Label = Text(qty.InputBox, "quantityLabel")
 qty.InputBox.Label:SetText(qty.labelText)
 qty.InputBox:SetText("1")

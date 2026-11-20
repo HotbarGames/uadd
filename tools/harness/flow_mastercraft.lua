@@ -6,13 +6,17 @@ H.mc = M
 
 -- In the game every frame of a kind shares one method table (getmetatable(f).__index), and Screen.lua
 -- hooks CreateFontString there. The harness looks methods up through a function instead, so the
--- module is shown the table the function reads (H.Widget). Only UADD_Mastercraft sees this.
+-- module is shown the table the function reads (H.Widget). Only UADD_Mastercraft and the core helper
+-- that finds the table for it (UADD.WidgetMethods, UADD/Widgets.lua) see this.
 local realMeta = getmetatable
 local SHARED = { __index = H.Widget }
 getmetatable = function(x)
     if type(x) == "table" and rawget(x, "__type") ~= nil and rawget(x, 0) == x then
         local info = debug.getinfo(2, "S")
-        if info and info.source and info.source:find("AddOns/UADD_Mastercraft/", 1, true) then return SHARED end
+        local src = info and info.source
+        if src and (src:find("AddOns/UADD_Mastercraft/", 1, true) or src:find("AddOns/UADD/Widgets.lua", 1, true)) then
+            return SHARED
+        end
     end
     return realMeta(x)
 end

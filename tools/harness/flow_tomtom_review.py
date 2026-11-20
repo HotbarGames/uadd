@@ -1,4 +1,4 @@
-"""UADD_TomTom review fixes (stage 6; docs/LESSONS.md lesson 12) on the TomTom stand-in. Called from
+"""UADD_TomTom review fixes (stage 6; docs/LESSONS2.md lesson 12) on the TomTom stand-in. Called from
 flow_tomtom.py game A, after the main steps. Each case fails without its fix:
 
   * 1 A profile named exactly like a TomTom settings text stays as typed in the profile dropdown; the

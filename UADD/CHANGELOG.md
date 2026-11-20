@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Fixed: with the Mastercraft or What's Training? module loaded, the keyboard stopped working (Enter did not open
+  chat), because UADD made an invisible text box that took the keyboard.
+  Виправлено: з модулем Mastercraft або What's Training? клавіатура переставала працювати (Enter не відкривав
+  чат), бо UADD створював невидиме текстове поле, яке забирало клавіатуру.
 - New module UADD_SpeedyAutoLoot: Speedy AutoLoot's chat lines, its /sal help and the loot display's anchor in
   Ukrainian. Item names and money in the loot display stay as the game gives them.
   Новий модуль UADD_SpeedyAutoLoot: рядки в чаті, довідка /sal та рамка показу здобичі Speedy AutoLoot

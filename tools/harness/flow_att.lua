@@ -135,6 +135,7 @@ for i = 1, 4 do
         d["button" .. b] = btn
     end
     d.editBox = CreateFrame("EditBox", "StaticPopup" .. i .. "EditBox", d)
+    d.editBox:SetAutoFocus(false)         -- the game's popup sets the focus itself
     d:Hide()
     pops[i] = d
 end

@@ -3,6 +3,7 @@
 ## Lessons (read first)
 
 @docs/LESSONS.md
+@docs/LESSONS2.md
 
 When a new kind of problem is found, add a lesson there and a check in the same commit as the fix.
 

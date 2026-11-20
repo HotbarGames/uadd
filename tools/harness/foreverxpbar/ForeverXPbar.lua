@@ -136,6 +136,7 @@ local race = CreateFrame("Frame", "ForeverXPBarRace", UIParent)
 race:SetSize(300, 200)
 race:SetPoint("CENTER")
 local box = CreateFrame("EditBox", nil, race)
+box:SetAutoFocus(false)
 box:SetText("Lock Bar")
 S.box = box
 Text(race, "raceInfo", PANEL_FONT, 12, "", ("Race created: %s | Code: %s. Share the code with friends."):format("Speed", "AB12"))

@@ -65,10 +65,11 @@ function H.applyTemplate(w, template)
 end
 
 -- A named, non-virtual frame declared in XML.
-function H.xmlFrame(kind, name, parentName, hidden)
+function H.xmlFrame(kind, name, parentName, hidden, noAutoFocus)
     local parent = parentName and rawget(_G, parentName) or UIParent
     if not H.frameTypes[kind] then kind = "Frame" end
     local f = CreateFrame(kind, name, parent)
+    if noAutoFocus then f:SetAutoFocus(false) end
     if hidden then f:Hide() end
     return f
 end

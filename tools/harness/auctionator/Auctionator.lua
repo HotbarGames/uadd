@@ -217,6 +217,7 @@ function shop.SearchButton:OnLoad() self:SetText(self.buttonText) end
 shop.SearchButton:OnLoad()
 S.texts.searchButton = shop.SearchButton:GetFontString()
 shop.SearchBox = CreateFrame("EditBox", nil, shop)
+shop.SearchBox:SetAutoFocus(false)
 shop.SearchBox:SetText(AUCTIONATOR_L_EXTENDED_SEARCH_ACTIVE_TEXT)  -- SearchOptions.lua
 local skip = CreateFrame("Frame", nil, shop)
 skip.labelText = AUCTIONATOR_L_SKIP                                -- KeyValue, set in OnLoad

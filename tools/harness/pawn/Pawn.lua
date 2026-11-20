@@ -62,6 +62,7 @@ Fs(about, "PawnUIFrame_AboutTranslationLabel", "PawnUIFrame_AboutTranslationLabe
 Fs(about, "PawnUIFrame_AboutVersionLabel")
 Fs(about, "PawnUIFrame_MrRobotLabel")
 local box = CreateFrame("EditBox", "PawnUIFrame_ScaleNameBox", ui)
+box:SetAutoFocus(false)
 box:SetText(S.MINE)
 local selector = CreateFrame("Frame", "PawnUIScaleSelector", ui)
 for i = 1, 7 do

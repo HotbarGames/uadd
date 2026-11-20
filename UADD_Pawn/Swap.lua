@@ -1,4 +1,4 @@
--- UADD - Pawn: our Ukrainian into Pawn's words, and Pawn's English back (docs/LESSONS.md lesson 15).
+-- UADD - Pawn: our Ukrainian into Pawn's words, and Pawn's English back (docs/LESSONS2.md lesson 15).
 --
 -- data/*.lua (made by tools/make_pawn_text.py) hold our Ukrainian by PawnLocal path ("Key", "UI.Key",
 -- "Stats.Key"; ns.AL), what each % slot holds (ns.SORT), and data/names.lua the names of Pawn's UI globals

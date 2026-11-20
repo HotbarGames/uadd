@@ -11,6 +11,7 @@
 ## X-Curse-Project-ID: 1807250
 
 Core.lua
+Widgets.lua
 Hash.lua
 Plural.lua
 Missed.lua

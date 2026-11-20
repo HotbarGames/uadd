@@ -216,9 +216,7 @@ function S.Install()
     installed = true
     local done = {}
     for _, kind in ipairs(KINDS) do
-        local ok, f = pcall(CreateFrame, kind)
-        local mt = ok and f and getmetatable(f)
-        local t = mt and type(mt.__index) == "table" and mt.__index or nil
+        local t = U.WidgetMethods(kind)      -- never a new EditBox: it would take the keyboard
         if t and not done[t] and type(t.CreateFontString) == "function" then
             done[t] = true
             hooksecurefunc(t, "CreateFontString", OnCreate)

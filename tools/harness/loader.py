@@ -10,7 +10,8 @@ import xml.etree.ElementTree as ET
 import encoding
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-STUBS = ["wow_core.lua", "wow_lua.lua", "wow_widgets.lua", "wow_api.lua", "wow_widgets2.lua", "wow_frames.lua",
+STUBS = ["wow_core.lua", "wow_lua.lua", "wow_widgets.lua", "wow_api.lua", "wow_widgets2.lua", "wow_focus.lua",
+         "wow_frames.lua",
          "wow_api2.lua", "wow_frames2.lua", "wow_api3.lua", "wow_load.lua"]
 FRAME_TAGS = {"Frame", "Button", "CheckButton", "EditBox", "ScrollFrame", "Slider", "StatusBar",
               "GameTooltip", "MessageFrame", "ScrollingMessageFrame", "Cooldown", "Model",
@@ -145,7 +146,8 @@ class Client:
                 self.H.runSnippet(addon.name, rel, el.text)
         elif tag in FRAME_TAGS and el.get("name") and el.get("virtual") != "true":
             name = el.get("name").replace("$parent", "")
-            self.H.xmlFrame(tag, name, el.get("parent"), el.get("hidden") == "true")
+            self.H.xmlFrame(tag, name, el.get("parent"), el.get("hidden") == "true",
+                            el.get("autoFocus") == "false")
 
     def run_addon_files(self, addon):
         state = self.H.addons[addon.name]

@@ -22,7 +22,9 @@ UADD_Scrap's checks run next, on stand-ins for Scrap and its two load-on-demand 
 locale file (flow_scrap.py).
 UADD_SpeedyAutoLoot's checks run next, on a stand-in for Speedy AutoLoot that runs its own two files (flow_sal.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
-UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
+UADD/Hash.lua's checks (texts by hash, flow_hash.py) run next.
+The keyboard check (flow_focus.py: every stand-in and the modules that load with them; after login no text
+box has the keyboard, docs/LESSONS2.md lesson 16) runs last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
 halves_cover.COVERED whose flow gave no "no half-translated line: <module>" result fails here.
 Exit code 0 = every check passed, 1 = a check failed, 2 = cannot run here.
@@ -65,6 +67,7 @@ def run_all():
     import flow_sal
     import flow_dialogueui
     import flow_dj_module
+    import flow_focus
     import flow_fxpb
     import flow_hash
     import flow_lsw
@@ -149,6 +152,10 @@ def run_all():
     hash_checks, hash_facts = flow_hash.run_checks()
     checks += hash_checks
     facts["hash"] = hash_facts
+    gc.collect()
+    focus_checks, focus_facts = flow_focus.run_checks()
+    checks += focus_checks
+    facts["focus"] = focus_facts
     skipped = ["UADD_OpenMap"] if missing else []      # its flow runs with the journal's
     checks += [flow.Check(name, False, why) for name, why in halves_guard(checks, skipped)]
     return checks, facts, notes

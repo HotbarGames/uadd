@@ -6,7 +6,7 @@ UIParent = CreateFrame("Frame", "UIParent")
 WorldFrame = CreateFrame("Frame", "WorldFrame")
 for i = 1, NUM_CHAT_WINDOWS do
     local f = CreateFrame("ScrollingMessageFrame", "ChatFrame" .. i, UIParent)
-    CreateFrame("EditBox", "ChatFrame" .. i .. "EditBox", f)
+    CreateFrame("EditBox", "ChatFrame" .. i .. "EditBox", f):SetAutoFocus(false)   -- autoFocus="false" in its XML
     CHAT_FRAMES[i] = "ChatFrame" .. i
 end
 DEFAULT_CHAT_FRAME, SELECTED_CHAT_FRAME = ChatFrame1, ChatFrame1

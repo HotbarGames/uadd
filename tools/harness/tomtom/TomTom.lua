@@ -167,6 +167,7 @@ function S.OpenPaste()
         f.button = CreateFrame("Button", nil, f)
         f.button:SetText(L[(feed.paste or {}).button])
         f.edit = CreateFrame("EditBox", nil, f)
+        f.edit:SetAutoFocus(false)
     end
     f:Show()
     S.paste = f
