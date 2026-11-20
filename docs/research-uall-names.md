@@ -238,6 +238,33 @@ A hidden tooltip of our own does **not** work, because UALLF checks the tooltip'
   One thing stays English until the next login: the continent list in "My Journey", which Questie
   builds once (`QuestieJourney.lua:79-102`).
 
+## Names that may be poor translations (open)
+
+The owner flagged this on 2026-11-20. Some zone names in UALL Forever only spell out the English
+sounds in Ukrainian letters (transliteration). They do not translate the meaning. Example: Razorfen
+Downs is «Рейзорфен Даунс». Razorfen Kraul («Рейзорфен Краул») is built the same way.
+
+We may need to do something about this later. For now we change nothing: game names still come from
+UALL Forever (lesson 9). Any fix must change every place below at once, so one window never shows
+two names for one place.
+
+Where we show these names:
+
+- **At runtime, from UALL Forever.** The name is looked up through `UADD.UALL.Zone`
+  (`UADD/uall.lua`) by:
+  - Attune (`UADD_Attune/Names.lua`);
+  - Dungeon Journal: the page title and, from now on, the "NPC, zone" parts of quest details
+    (`UADD_DungeonJournal/Names.lua`, `Content.lua`);
+  - OpenMap (`UADD_OpenMap/Label.lua`);
+  - Questie (`UADD_Questie/Names.lua`).
+- **In sentences we wrote ourselves.** Attune's NPC notes (`UADD_Attune/ui/notes.lua`) contain the
+  name as text:
+  - Razorfen Kraul: `N2_4421` and `N2_4508`;
+  - Razorfen Downs: `N2_7358` and `N2_12865`.
+
+  These lines do not follow a change in UALL Forever: they must be edited by hand, in `ui/notes.lua`
+  itself (`tools/make_att_text.py` reads them from there).
+
 ## A note we could send to UALL's author
 
 > Hi! We make UADD, a set of Ukrainian add-ons for WoW Forever, and we would like Questie's
