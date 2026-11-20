@@ -30,7 +30,7 @@ RESTRICTED = {
     **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion", "SpeedyAutoLoot", "WaypointUI"),
                     "no licence, so all rights reserved"),
 }
-ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT", "WhatsTraining": "MIT"}
+ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT", "WhatsTraining": "MIT", "ForeverQuestPins": "GPL-3.0"}
 THREADS = 32   # for reading the installed addons
 
 # What counts as a copied text. A short or generic string ("Cancel", "Drag to move", "%s - %s") is something

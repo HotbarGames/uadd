@@ -72,11 +72,12 @@ local function generate(d)
         return entry()
     end
     if d.__menuGen then d.__menuGen(d, root) end
-    d.Text:SetText(selected or "")
+    d.Text:SetText(selected or d.__default or "")
     if d.__menuOpen then drawMenu(d, texts) end
 end
 function HARNESS.menuDropdown(d)
     d.Text = d:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    d.SetDefaultText = function(self, t) self.__default, self.defaultText = t, t generate(self) end
     d.SetupMenu = function(self, gen) self.__menuGen = gen generate(self) end
     d.GenerateMenu = generate
     d.OpenMenu = function(self) self.__menuOpen = true generate(self) end
@@ -86,6 +87,37 @@ function HARNESS.menuDropdown(d)
     end
     d.IsMenuOpen = function(self) return self.__menuOpen == true end
     d.GetText = function(self) return self.Text:GetText() end
+end
+-- The settings window's layout of a category (SettingsPanel:GetLayout(category):GetFrame() is its canvas).
+SettingsPanel.GetLayout = function(_, cat) return { GetFrame = function() return cat and cat.frame end } end
+-- The client's Menu and MenuUtil, opt in (a flow calls HARNESS.menuApi() before its game starts): other modules
+-- check for MenuUtil, so a global one would change their flows. HARNESS.menuOpen(tag) runs each ModifyMenu
+-- callback of that tag on a fresh root and returns its element descriptions; HARNESS.menuThrow makes
+-- MenuUtil.SetElementText fail.
+function HARNESS.menuApi()
+    local callbacks = {}
+    local Root = {}
+    Root.__index = Root
+    local function Desc(text) return { text = text, SetEnabled = function() end } end
+    function Root:CreateDivider() self.items[#self.items + 1] = Desc(nil) end
+    function Root:CreateTitle(t) self.items[#self.items + 1] = Desc(t) end
+    function Root:Insert(d) self.items[#self.items + 1] = d end
+    function Root:EnumerateElementDescriptions() return ipairs(self.items) end
+    MenuUtil = { CreateCheckbox = function(text) return Desc(text) end,
+        GetElementText = function(d) return d.text end,
+        SetElementText = function(d, t)
+            if HARNESS.menuThrow then error("stand-in: SetElementText failed") end
+            d.text = t
+        end }
+    Menu = { ModifyMenu = function(tag, fn)
+        callbacks[tag] = callbacks[tag] or {}
+        table.insert(callbacks[tag], fn)
+    end }
+    function HARNESS.menuOpen(tag)
+        local root = setmetatable({ items = {} }, Root)
+        for _, fn in ipairs(callbacks[tag] or {}) do fn(nil, root) end
+        return root.items
+    end
 end
 -- The fonts of the Questie options tab header (QuestieOptionsEngine.lua:179-191).
 CreateFont("GameFontNormalHuge"):SetFont("Fonts\\FRIZQT__.TTF", 20, "")

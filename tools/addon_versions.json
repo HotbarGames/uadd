@@ -1109,6 +1109,41 @@
    },
    "ids": "9767332cb6f8a1410853706daed0a9b99734282e"
   },
+  "UADD_ForeverQuestPins": {
+   "addon": "ForeverQuestPins",
+   "version": "v1.0.13",
+   "interface": "16001",
+   "files": [
+    "AutoQuests.lua",
+    "Breadcrumbs.lua",
+    "Config.lua",
+    "Core.lua",
+    "Database/EventPolicy.lua",
+    "Database/ExcludedQuests.lua",
+    "Database/ForeverQuests.lua",
+    "Database/Metadata.lua",
+    "Database/QuestTagCorrections.lua",
+    "Database/VanillaQuests.lua",
+    "Eligibility.lua",
+    "Events.lua",
+    "HiddenQuests.lua",
+    "Localization.lua",
+    "MapPins.lua",
+    "MapPins.xml",
+    "NPCTooltips.lua",
+    "Nameplates.lua",
+    "QuestLinks.lua",
+    "Setup.lua",
+    "WarEffort.lua",
+    "Waypoints.lua",
+    "WhatsNew.lua"
+   ],
+   "count": 196,
+   "tags": {
+    "L": 196
+   },
+   "ids": "fbfc7a7e011481dd6ef8ee1aa5c3020ec87a370e"
+  },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
    "version": "0.9.4",

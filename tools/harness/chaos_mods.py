@@ -113,6 +113,17 @@ def _wp():
     return c
 
 
+def _fqp():
+    import flow_fqp as F
+    if not F.installed():
+        return None
+    c, M = F._game()
+    M.openCanvas()
+    M.crumbtest()
+    M.menu()
+    return c
+
+
 def _rs():
     import flow_rarescanner as F
     if not F.installed():
@@ -197,6 +208,7 @@ RECIPES = [
     ("UADD_WhatsTraining", "WhatsTraining", _wt),
     ("UADD_TomTom", "TomTom", _tt),
     ("UADD_WaypointUI", "WaypointUI", _wp),
+    ("UADD_ForeverQuestPins", "ForeverQuestPins", _fqp),
     ("UADD_RareScanner", "RareScanner", _rs),
     ("UADD_Pawn", "Pawn", _pawn),
     ("UADD_GatherMate2", "GatherMate2", _gm),

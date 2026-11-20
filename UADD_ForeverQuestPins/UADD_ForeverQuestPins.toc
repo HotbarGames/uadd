@@ -1,0 +1,20 @@
+## Interface: 16001, 16000
+## Title: UADD - Forever Quest Pins
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Forever Quest Pins' own words in Ukrainian: its settings, World Map menu, setup and breadcrumb notice. Part of UADD. Type /uadd foreverquestpins.
+## Author: HotbarGames
+## Version: 1.2.2
+## Dependencies: UADD, ForeverQuestPins
+## OptionalDeps: UALLF, ClassicUA
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (keyed by its locale keys), then the code.
+data/uk_config.lua
+data/uk_other.lua
+Locale.lua
+Breadcrumb.lua
+Screen.lua
+Chat.lua
+Menu.lua
+Module.lua

@@ -75,6 +75,8 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Map Icons | marks an addon draws on the map, RareScanner's too ("Значки") | `map.map_pins` |
 | Vignettes | the game's own map marks for rares and treasures ("Ігрові позначки") | `rare.vignettes` |
 | Map pin | a pin the player drops, OpenMap ("Позначка") | `map.pin` |
+| Quest start pin | Forever Quest Pins: the icon it draws where a quest is given ("Значок початку завдання": lead's choice, 2026-11-20) | `quest.start_pin`, not `map.pin` |
+| Breadcrumb quest | a short quest that sends you to another quest giver ("Вступне завдання": lead's choice, 2026-11-20; never «хлібні крихти») | `quest.breadcrumb` |
 | Repeatable | a quest tag ("Повторюване") | `quest.tag_repeatable` |
 | Repeatable | a rare that comes back, RareScanner ("Що з'являється знову") | `rare.repeatable` |
 | Scale | Pawn: a set of stat weights that values an item ("Шкала") | `gear.scale` |

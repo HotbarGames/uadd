@@ -43,6 +43,13 @@ E{ id = "quest.level", en = "Quest Level", uk = "Рівень завдання",
 E{ id = "quest.started_by", en = { "Started by", "Starts at" }, uk = "Видає", note = "Tooltip label before the NPC or item that gives the quest." }
 E{ id = "quest.ended_by", en = "Ended by", uk = "Приймає", note = "Tooltip label before the NPC that takes the finished quest." }
 
+-- Quest starts on the map (first used by UADD_ForeverQuestPins)
+E{ id = "quest.start_pin", en = { "Quest start pin", "Quest start" }, uk = "Значок початку завдання", note = "Forever Quest Pins: the icon an addon draws where a quest is given; plural «значки початку завдань». A map icon (map.map_pins), not a pin the player drops (map.pin «Позначка»). lead's choice 2026-11-20." }
+E{ id = "quest.breadcrumb", en = { "Breadcrumb quest", "Breadcrumb" }, uk = "Вступне завдання", note = "A short quest that sends you to another quest giver; a skipped one is «пропущене вступне завдання». Never «хлібні крихти». lead's choice 2026-11-20, Forever Quest Pins." }
+E{ id = "quest.follow_up", en = "Follow-up quest", uk = "Наступне завдання", note = "The quest a breadcrumb (quest.breadcrumb) leads to, or the next in a chain." }
+E{ id = "game.spawn_point", en = { "Spawn point", "Spawn location" }, uk = "Місце появи", note = "Where an NPC or object appears; UALL Forever's words (місце появи). Not game.camping." }
+E{ id = "game.war_effort", en = { "AQ war effort", "War effort" }, uk = "Воєнні зусилля Ан'Кіражу", note = "The server-wide collection before the gates of Ahn'Qiraj open; UALL Forever's and ClassicUA's words." }
+
 -- Quest tracker (the list of quests on screen) and its menu
 E{ id = "quest.tracker", en = "Tracker", uk = "Трекер", note = "The quest tracker: the list of quests at the side of the screen." }
 E{ id = "quest.untrack", en = "Untrack Quest", uk = "Прибрати завдання з трекера", note = "Menu action: stop showing the quest in the tracker." }

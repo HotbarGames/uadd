@@ -69,6 +69,11 @@ A line whose slot the addon fills with its own English stays English unless that
 **Check.** `python3 tools/harness/run.py`, RareScanner steps "5" and "7"; `python3 -m unittest tools.test_rs_text`
 (`Slots`: `u` and `INNER` in `tools/rs_rules.py` match the installed code). Each fails with its fix taken out.
 
+**Again in Forever Quest Pins (2026-11-20).** Its settings page glues the player's level range (" (50-61)") onto one
+checkbox label, so the whole label never matched our word and stayed English, on and off. Rule: split the range off,
+swap the head, keep the range as it is (`Turn` in `UADD_ForeverQuestPins/Screen.lua`), both ways. Check:
+`python3 tools/harness/run.py`, "fqp: 3 hold canvas"; "fqp: mutant range" takes the fix out and wants step 3 to fail.
+
 ## 16. A throwaway text box that took the keyboard
 
 **What went wrong.** With UADD on, the keyboard was dead: Enter did not open chat (the owner, in the game,
@@ -141,6 +146,12 @@ error list grew without end, and a few hooks did work for every chat line and to
 fail with its fix taken out) and "tt: arrow B". `python3 -m unittest tools.test_shared_state`: every risky call
 in module code (set font, chat replace, frame walk, keyboard, frame kind) against an allowed count that only goes
 down.
+
+**Again in Forever Quest Pins (2026-11-20).** Its settings checkboxes keep their label and tooltip in an OnEnter
+closure, made with the words of that moment. A tooltip hook under `U.Safe` stops once the module is off for errors,
+so the tooltips would have stayed Ukrainian with the rest English. Rule: a hook that puts the English back also runs
+when the module is off, under a plain `pcall` (`TipHook` in `UADD_ForeverQuestPins/Screen.lua`). Check:
+`python3 tools/harness/run.py`, "fqp: 5 tips back after 5 errors"; "fqp: mutant tiphook" takes the fix out.
 
 ## 20. A game name asked from the wrong place
 
@@ -250,3 +261,20 @@ addon's setter, write it to the font string itself.
 **Check.** `python3 tools/harness/run.py`, "wp: 12 errors in its SetText" (`tools/harness/flow_wp_steps.py`): the
 stand-in's `SetText` fails before drawing, then after; the text is whole English or whole Ukrainian, the module goes
 off after 5 errors, and the English comes back. "wp: mutant fault" takes the fix out and wants step 12 to fail.
+
+## 27. Our word that the addon glues into a line we leave English
+
+**What went wrong.** Forever Quest Pins names a quest that has no title with `L["Quest "]` and its id. We wrote
+«Завдання » there. The addon then glues that title into lines that we keep English when a name is unknown: the
+skipped-breadcrumb window ("You accepted Завдання 5 without completing ...") and the abandoned-quest chat line. So
+a line we meant to leave English came out half Ukrainian. Off put the same half line back (review, 2026-11-20).
+
+**Rule.** Look for each word of ours that the addon glues into another text (`..`, `format`). Where that text
+can stay English, take our word out first: put the addon's own English back ("Quest 5"), so the line is whole
+English. Off and the hold key give back that whole English too. Only do it in a text known to be the addon's English
+template, so a line that is ours is never touched.
+
+**Check.** `python3 tools/harness/run.py`, "fqp: 4 untitled quest" (`tools/harness/flow_fqp_steps.py`): a
+breadcrumb line with an untitled quest and an unknown title is whole English ("Quest 5"), off too, and so is the
+abandoned line with no word for it; with every name known both are whole Ukrainian. "fqp: mutant plain" takes the
+fix (`B.Plain` in `UADD_ForeverQuestPins/Breadcrumb.lua`) out and wants that step to fail.

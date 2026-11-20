@@ -40,6 +40,7 @@ COVERED = {
     "UADD_Scrap": ("flow_scrap.py", "scrap"),
     "UADD_SpeedyAutoLoot": ("flow_sal.py", "sal"),
     "UADD_WaypointUI": ("flow_wp.py", "wp"),
+    "UADD_ForeverQuestPins": ("flow_fqp.py", "fqp"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -62,6 +63,11 @@ UNFIT = {
     "UADD_Scrap": {k: "stays English on purpose: a chat line with an item link (a game name) in it; the module "
                       "never writes this key into Scrap's table (scrap_rules.STAY)"
                    for k in ("L.Added", "L.Destroyed", "L.Forgotten", "L.Removed")},
+    "UADD_ForeverQuestPins": dict(
+        {k: "debug line, kept English on purpose (Lc.NAMES): never written into its L"
+         for k in ("59:a05b813a", "32:7421be4c", "19:716b8f42")},
+        **{k: "/fqp debug or status output, kept English on purpose (data/uk_config.lua): no Ukrainian for it"
+           for k in ("34:a889335a", "37:a5d0a754", "34:cc8dc0a3")}),
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")
 SKIP = "skipped: the addon is not installed"

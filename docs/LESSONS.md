@@ -247,6 +247,14 @@ of 2 or more letters may stay. `ALLOW` in that file lists the few that may (the 
 website), each with a reason; a game name never goes there. `KNOWN` lists texts still being fixed; it only goes
 down. `python3 tools/test_dj_prose.py --latin` prints every hit and a new `KNOWN` block.
 
+**Again in Forever Quest Pins (2026-11-20).** The first module wrote game names itself: a What's New line with our
+Ukrainian for two quest titles, «Ярмарок Даркмун» (UALL Forever's word, where ClassicUA says «Ярмарок Темного
+місяця»), the two capitals by name, and «Ан'Кіраж» alone. The module was not in `MODULES`, so the check never read
+it. Rule: the What's New line with the quest names stays English; an event takes ClassicUA's word, UALL Forever
+fills what ClassicUA lacks; a war effort is the glossary's «воєнні зусилля Ан'Кіражу»; two capitals are «у
+столицях». Check: `python3 -m unittest tools.test_game_names` (Forever Quest Pins is in `MODULES` now);
+`python3 tools/harness/run.py`, "fqp: 4 names" (a What's New line that quotes quest names stays English).
+
 ## 10. Checks that passed because the files were new
 
 **What went wrong.** The AutoPotion module was checked before its first commit. `python3 tools/check_repo.py`

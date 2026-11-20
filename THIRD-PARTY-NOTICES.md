@@ -67,3 +67,11 @@ https://github.com/Questie/Questie
 
 Questie is shared under the GNU General Public License, version 3, with the terms in its `LICENSE.md`
 (the Questie name and logo are not covered). UADD is GPL-3.0 too; the full licence text is in `LICENSE`.
+
+## Forever Quest Pins (GPL-3.0)
+
+https://github.com/TylerAkins/forever-quest-markers
+
+Forever Quest Pins is by Tyler Akins. It is shared under the GNU General Public License, version 3 or later
+(its TOC says GPL-3.0; its `LICENSE` file holds the terms). UADD_ForeverQuestPins keeps its English locale keys,
+each with our Ukrainian. UADD is GPL-3.0 too; the full licence text is in `LICENSE`.

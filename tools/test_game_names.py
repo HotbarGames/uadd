@@ -72,6 +72,9 @@ ALLOW = {
         "67:a35a4aae": "141:0881956d",   # a fishing event: UALLF's UI.lua Ukrainian; the zone is UALLF's
         "136:db515e66": "220:f460a032",  # the auction house as a place: the glossary's «аукціон» (as in Bagnon)
     },
+    "UADD_ForeverQuestPins": {   # reviewed 2026-11-20
+        "89:a188e9e3": "177:f584fb5c",   # the event's name: ClassicUA's word (UALLF's tables lack the event)
+    },
 }
 
 

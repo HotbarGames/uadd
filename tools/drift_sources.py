@@ -102,6 +102,16 @@ def ex_wp(path):
     return [("L", key, en, file) for en, _, _, key, file in W.source(path)[0]]
 
 
+def ex_fqp(path):
+    import drift_fqp   # Forever Quest Pins (GPL-3.0): its L keys, tracked English allowed
+    return drift_fqp.extract(path)
+
+
+def old_fqp():
+    import drift_fqp
+    return drift_fqp.old()
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -164,6 +174,7 @@ MODULES = {
     "UADD_Bagnon": ("BagBrother", ex_bgn, None, ()),          # Bagnon's texts live in BagBrother
     "UADD_DialogueUI": ("DialogueUI", ex_dui, None, ()),
     "UADD_DungeonJournal": ("ForeverDungeonJournal", ex_dj, None, ("tools/dj_prose",)),
+    "UADD_ForeverQuestPins": ("ForeverQuestPins", ex_fqp, old_fqp, ()),   # GPL-3.0: our data is keyed by its English
     "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),
     "UADD_GatherMate2": ("GatherMate2", ex_gm, None, ()),   # treated as all rights reserved (TOC: ARR); our data holds hashes only
     "UADD_LayerSwap": ("LayerSwap", ex_lsw, None, ()),

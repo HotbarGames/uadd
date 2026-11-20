@@ -16,6 +16,10 @@
   the waypoint are in Ukrainian.
   Новий модуль UADD_WaypointUI: налаштування Waypoint UI, його спливні вікна, відстань і час прибуття до точки
   маршруту українською.
+- New module UADD_ForeverQuestPins: Forever Quest Pins' settings, its World Map menu, the setup and the
+  breadcrumb notice are in Ukrainian.
+  Новий модуль UADD_ForeverQuestPins: налаштування Forever Quest Pins, його меню на карті світу, налаштування
+  при першому запуску і сповіщення про вступне завдання українською.
 - Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
   Ukrainian; pick another language and that language shows whole.
   Mastercraft: «Українська» є в його власному меню мов (кнопка з глобусом). Оберіть її, щоб читати Mastercraft

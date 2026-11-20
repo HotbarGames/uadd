@@ -119,7 +119,7 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 ### The other addons
 
 Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy
-AutoLoot and Waypoint UI (steps 42 and on): `docs/TESTING-ADDONS.md`.
+AutoLoot, Waypoint UI and Forever Quest Pins (steps 42 and on): `docs/TESTING-ADDONS.md`.
 
 ## Not checked outside the game
 
@@ -162,6 +162,9 @@ AutoLoot and Waypoint UI (steps 42 and on): `docs/TESTING-ADDONS.md`.
   box, and that real loot lines keep the game's item names and money are only seen in the real client.
 - Waypoint UI's real windows: the settings and prompt fonts (letters or boxes), whether the Ukrainian fits its
   prompts, and the distance and arrival time shown on a real waypoint are only seen in the real client.
+- Forever Quest Pins' real windows: its settings page and World Map filter menu, the setup and breadcrumb notice
+  fonts (letters or boxes), whether the Ukrainian fits their boxes, and that the game's quest, NPC and zone names
+  stay as the game gives them are only seen in the real client.
 
 ## Without the game
 

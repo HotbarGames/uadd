@@ -240,5 +240,37 @@ def tomtom():
     return rows, own | glossary_ranks()
 
 
+def fqp_data():
+    """[(file name, line, English, Ukrainian)]: every T["English"] = "Ukrainian" in UADD_ForeverQuestPins/data."""
+    import luatok
+    out = []
+    for f in sorted((HERE.parent / "UADD_ForeverQuestPins" / "data").glob("uk_*.lua")):
+        t = list(luatok.tokens(luatok.read(f)))
+        for i in range(len(t) - 5):
+            if (t[i][:2] == (luatok.NAME, "T") and t[i + 1][:2] == (luatok.SYM, "[") and t[i + 2][0] == luatok.STR
+                    and t[i + 3][:2] == (luatok.SYM, "]") and t[i + 4][:2] == (luatok.SYM, "=")
+                    and t[i + 5][0] == luatok.STR):
+                out.append((f.name, t[i][2], t[i + 2][1], t[i + 5][1]))
+    return out
+
+
+def foreverquestpins():
+    """(rows, own words) for UADD_ForeverQuestPins, or None without Forever Quest Pins. Its data is keyed by the
+    English itself (GPL-3.0): T["English"] = "Ukrainian" in data/uk_*.lua; the addon's L keys we have no word for
+    come with ""."""
+    import drift_fqp
+    addon = Path(os.environ.get("UADD_ADDONS_DIR") or WOW_ADDONS) / "ForeverQuestPins"
+    if not addon.is_dir():
+        return None
+    uk = {en: u for _, _, en, u in fqp_data()}
+    ens = list(uk) + [r[2] for r in drift_fqp.extract(addon) if r[2] not in uk]
+    rows = [(H.key(en), en, uk.get(en, "")) for en in ens]
+    # Its own name, other addons, the game's keys, and the verbs that start its /fqp help lines ("  /fqp x  Toggle
+    # ..."), read 2026-11-20: none is a game name.
+    own = {"Forever", "Quest", "Pins", "TomTom", "Blizzard", "Wowhead", "WoW", "Classic", "Shift", "Cmd", "Ctrl",
+           "URL", "NPC", "Toggle", "Open", "Disable", "Preview", "List", "Shift-click"}
+    return rows, own | glossary_ranks()
+
+
 MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap, "UADD_Mastercraft": mastercraft,
-           "UADD_WhatsTraining": whatstraining, "UADD_TomTom": tomtom}
+           "UADD_WhatsTraining": whatstraining, "UADD_TomTom": tomtom, "UADD_ForeverQuestPins": foreverquestpins}

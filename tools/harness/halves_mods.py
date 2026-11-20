@@ -225,11 +225,11 @@ def mc(check, M, src, temps):
 
 def tomtom(check, M, tps, note=""): run(check, "UADD_TomTom", tps, M and (lambda tp, t: _t(M.uk(lua_str(t)))), note, glue=True)  # noqa: E704,E501 Words.Translate on whole lines; tps: flow_tomtom_texts.templates()
 def wp(check, M, tps, note=""): run(check, "UADD_WaypointUI", tps, M and (lambda tp, t: _t(M.Text(lua_str(t)))), note, glue=True, free_only=True)  # noqa: E704,E501 ns.Text on a whole text, as its Text frames hand it over; tps: flow_wp_texts.templates()
+def fqp(check, M, tps, note=""): run(check, "UADD_ForeverQuestPins", tps, M and (lambda tp, t: _t(M.half(lua_str(tp.get("path", tp["id"])), lua_str(t)))), note, glue=True)  # noqa: E704,E501 each text as Forever Quest Pins builds it (M.half in flow_fqp.lua); tps: flow_fqp_steps.templates()
 
 
 def rs(check, M, note=""):
-    """RareScanner: the lines it read at load (settings, pop-ups) are read back by Options.Translate with the
-    English template of each key put into its locale table (M.templates(): English, slot kinds, f free)."""
+    """RareScanner: the lines it read at load (settings, pop-ups) are read back by Options.Translate with the English template of each key put into its locale table (M.templates(): English, slot kinds, f free)."""  # noqa: E501
     if M is None:
         return run(check, "UADD_RareScanner", [], None, note or SKIP)
     tps = [tpl(k, txt(row[1]), {i: NAME for i, c in enumerate(txt(row[2]), 1) if c == "f"})
