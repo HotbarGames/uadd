@@ -212,3 +212,22 @@ zone and profession names stay as the game gives them, on purpose: GatherMate2 m
 132. `/uadd gathermate2 off` with the settings open: English again (page names after `/reload`); `on`:
     Ukrainian. Saved nodes stay the same both ways.
 133. Log in without GatherMate2: `/uadd gathermate2` says it waits for GatherMate2, and there are no errors.
+
+### Scrap
+
+These need Scrap on an English client. Type `/uadd missed on` first, then `/reload`. Item names stay as the
+game gives them, and chat lines with an item link stay English, on purpose.
+134. Log in. `/uadd` lists "Scrap". `/uadd scrap` shows "увімкнено" with the text counts.
+135. Open the game's Settings, AddOns, Scrap and each page under it (the main page, the junk list page, Help,
+    Patrons): titles, rows, sliders, buttons and tooltips are Ukrainian, with no boxes, and each text fits.
+    Patron names stay as they are. Note if any page name or title shows «Брухт» (UALL Forever's word).
+136. Visit a vendor. Point at Scrap's button on the vendor window: its tooltip is Ukrainian. Sell junk with
+    it: the chat line with the money is Ukrainian. Repair (if on): that chat line is Ukrainian too.
+137. Open Scrap's tab on the vendor window (the junk list): both tabs and the buttons under the list are
+    Ukrainian and fit. Mark an item as junk and back: the item names stay as the game gives them.
+138. Open the game's Key Bindings, the Scrap part: the four names are Ukrainian, with letters, not boxes.
+139. If the Scrap tutorial shows (Help, the tutorial button): each step is Ukrainian.
+140. Hold Shift with the settings open: English; let go: Ukrainian.
+141. `/uadd scrap off` with the settings open: English again (page names after `/reload`); `on`: Ukrainian.
+    The junk list stays the same both ways.
+142. Log in without Scrap: `/uadd scrap` says it waits for Scrap, and there are no errors.

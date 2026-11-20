@@ -37,6 +37,7 @@ COVERED = {
     "UADD_RareScanner": ("flow_rarescanner.py", "rs"),
     "UADD_Pawn": ("flow_pawn.py", "pawn"),
     "UADD_GatherMate2": ("flow_gm.py", "gm"),
+    "UADD_Scrap": ("flow_scrap.py", "scrap"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -56,6 +57,9 @@ UNFIT = {
                       "node names stay English (GatherMate2 matches them with the game's tooltip); the module "
                       "never writes this key into GatherMate2's table (Swap.lua PIN)",
     },
+    "UADD_Scrap": {k: "stays English on purpose: a chat line with an item link (a game name) in it; the module "
+                      "never writes this key into Scrap's table (scrap_rules.STAY)"
+                   for k in ("L.Added", "L.Destroyed", "L.Forgotten", "L.Removed")},
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")
 SKIP = "skipped: the addon is not installed"

@@ -1,9 +1,7 @@
-"""The half-translation check (halves.py) for each module: its templates' real English, its free
-slots and its translate path. Each flow named in halves_cover.COVERED calls its function here.
-The English is read from the installed addon at test time; without it the check is a note.
-Made-up names for free slots: "Quix" (an item link, a key binding "QUIX" where the module wants one).
-Shapes, made-up values and read-back helpers some modules need: halves_shapes.py.
-"""
+"""The half-translation check (halves.py) for each module: its templates' real English, its free slots and its
+translate path. Each flow named in halves_cover.COVERED calls its function here. The English is read from the
+installed addon at test time; without it the check is a note. Made-up names for free slots: "Quix" (an item
+link, a key binding "QUIX" where the module wants one). Shapes, values, read-back helpers: halves_shapes.py."""
 import os
 import sys
 
@@ -22,12 +20,8 @@ SKIP = halves_cover.SKIP
 def wt(check, M, tps, note=""): run(check, "UADD_WhatsTraining", tps, lambda tp, t: _t(M.uk(lua_str(t))), note, glue=True)  # noqa: E704,E501
 
 
-def _s_slots(en):
-    return [k for k, kind in enumerate(halves_cover.kinds(en), 1) if kind == "s"]
-
-
-def _t(v):
-    return txt(v) if isinstance(v, str) else None
+def _s_slots(en): return [k for k, kind in enumerate(halves_cover.kinds(en), 1) if kind == "s"]  # noqa: E704
+def _t(v): return txt(v) if isinstance(v, str) else None  # noqa: E704
 
 
 def _words(M, p):
@@ -109,7 +103,6 @@ def auc(check, c):
             marks.update({i: "quix" for i in mk.get("word", [])})
             tps.append(tpl(k, en, marks))
     W.Build()
-
     def tr(tp, t):
         out = [_t(W.Text(lua_str(t)))]
         return out + [_t(W.Key(tp["key"], lua_str(t)))] if tp.get("key") else out
@@ -192,7 +185,6 @@ def dj(check, s):
              "HOW_TO_SUMMON": lambda v: X.summon(v[0], item)[1],
              "LOOT_COMBINE_WITH": lambda v: X.child(own, own_boss, v[0], other_boss)[0],
              "LOOT_MADE_FROM": lambda v: X.child(*named(v[0]), *named(v[1]))[1]}
-
     def tr(tp, t):
         v = parts(tp["en"], t)
         return _t(paths[tp["id"]](v)) if v else None
@@ -200,11 +192,9 @@ def dj(check, s):
 
 
 def bgn(check, M, rows):
-    """Bagnon: the module only puts our words into Bagnon's AceLocale tables, and Bagnon formats them
-    itself (L[key]:format(values)). So a text is read back into its values by the English template and
-    formatted with the table's word now (the flow's M.shows). Free slots: make_bgn_text.FREE. A VALUE slot
-    (make_bgn_text.VALUE: a number or money, Bagnon's own code passes nothing else) holding no digit is
-    not a text Bagnon ever shows: it stays as it is. rows: make_bgn_text.texts(); None: not installed."""
+    """Bagnon: the module only puts our words into Bagnon's AceLocale tables; Bagnon formats them itself. A text
+    is read into its values by the English template and formatted with the table's word now (M.shows). Free:
+    make_bgn_text.FREE. A VALUE slot (a number or money) with no digit is no text Bagnon shows: kept as is."""
     import make_bgn_text
     if M is None or not rows:
         return run(check, "UADD_Bagnon", [], None, SKIP)
@@ -213,10 +203,8 @@ def bgn(check, M, rows):
 
     def tr(tp, t):
         v = parts(tp["en"], t)
-        if v is None:
-            return None
-        if tp["id"] in make_bgn_text.VALUE and not all(bgn_value(x) for x in v):
-            return t
+        if v is None or tp["id"] in make_bgn_text.VALUE and not all(bgn_value(x) for x in v):
+            return v and t
         which, _, key = tp["id"].partition(":")
         return _t(M.shows(which, key, *v))
     run(check, "UADD_Bagnon", tps, tr)
@@ -240,9 +228,8 @@ def tomtom(check, M, tps, note=""):  # Words.Translate on whole lines; tps: flow
 
 
 def rs(check, M, note=""):
-    """RareScanner: the lines it read at load (settings, pop-ups) are read back by Options.Translate with
-    the English template of each key the module put into its locale table (M.templates(): English and
-    slot kinds, f free). Keys with an n slot are never put in, so they are not here."""
+    """RareScanner: the lines it read at load (settings, pop-ups) are read back by Options.Translate with the
+    English template of each key put into its locale table (M.templates(): English, slot kinds, f free)."""
     if M is None:
         return run(check, "UADD_RareScanner", [], None, note or SKIP)
     tps = [tpl(k, txt(row[1]), {i: NAME for i, c in enumerate(txt(row[2]), 1) if c == "f"})
@@ -263,7 +250,6 @@ def pawn(check, M, en=None, note=""):
         s = pawn_rules.sorts(p, e)
         if halves_cover.kinds(e) and None not in s and M.usable(lua_str(p)) is not None:
             tps.append(tpl(p, e, {i: NAME for i, c in enumerate(s, 1) if c == "f"}, sorts=s))
-
     def tr(tp, t):
         toks = hashtext.tokens(tp["en"])
         pat = "".join(re.escape(x[1]) if x[0] == "lit" else "(.*?)" if x[2][0] == "arg" else "(?:.*?)"
@@ -293,8 +279,22 @@ def gm(check, M, en=None, note=""):
     import gm_rules as R
     tps = [tpl(k, en[k] + g, {i: NAME for i, c in enumerate(R.slot_sorts(k, en[k]), 1) if c == "f"})
            for k, g in sorted(R.GLUE_AFTER.items())]
-
     def tr(tp, t):
         v = parts(tp["en"], t)
         return _t(M.line(lua_str(tp["id"]), lua_str(v[0]))) if v else None
     run(check, "UADD_GatherMate2", tps, tr, note, glue=True)
+
+
+def scrap(check, M, en=None, note=""):
+    """Scrap: its own code builds each line from its locale row (the stand-in's M.line). scrap_rules.SORTS: v money
+    (other English there is no line Scrap builds: kept as it is), n an item link (STAY keeps the line English)."""
+    if M is None:
+        return run(check, "UADD_Scrap", [], None, note or SKIP)
+    import scrap_rules as R
+    tps = [tpl(k, en[k], {}, sorts=s) for k, s in sorted(R.SORTS.items())]
+    def tr(tp, t):
+        v = parts(tp["en"], t)
+        if not v or any(s == "v" and not bgn_value(x) for s, x in zip(tp["sorts"], v)):
+            return v and t
+        return _t(M.line(lua_str(tp["id"]), *v))
+    run(check, "UADD_Scrap", tps, tr, note)

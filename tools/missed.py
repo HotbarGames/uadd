@@ -133,6 +133,7 @@ STAY_LISTS = {
     "rarescanner": ("RareScanner", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
     "pawn": ("Pawn", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
     "gathermate2": ("GatherMate2", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
+    "scrap": ("Scrap", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
     "openmap": ("OpenMap", lambda: (), lambda: set(_attr("test_openmap_strings", "SKIP_NAMES"))
                 | set(_attr("test_openmap_strings", "SKIP_OTHER")), None),
 }

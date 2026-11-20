@@ -1,0 +1,18 @@
+## Interface: 16001, 16000
+## Title: UADD - Scrap
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Scrap in Ukrainian: its settings, junk list, merchant button, chat lines and tutorial. Part of UADD.
+## Author: HotbarGames
+## Version: 1.1.0
+## Dependencies: UADD
+## OptionalDeps: Scrap, UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (made by tools/make_scrap_text.py build), then the code.
+data/text01.lua
+data/text02.lua
+Swap.lua
+Screen.lua
+Fonts.lua
+Module.lua

@@ -26,7 +26,7 @@ DEFAULT_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interfac
 RESTRICTED = {
     "Auctionator": "All Rights Reserved in its LICENSE",
     "Mastercraft": "all rights reserved in its LICENSE.txt", "Mastercraft_Inbox": "all rights reserved (Mastercraft's licence)",
-    "Pawn": "Creative Commons BY-NC-ND 3.0 (no derivatives)", "GatherMate2": "ARR in its TOC (its LICENSE.txt says GPL; until settled, ARR)","TomTom": "All Rights Reserved in its TOC", "RareScanner": "All Rights Reserved in its TOC", "Bagnon": "All Rights Reserved in its TOC", "BagBrother": "All Rights Reserved in its TOC (Bagnon's texts)",
+    "Pawn": "Creative Commons BY-NC-ND 3.0 (no derivatives)", "GatherMate2": "ARR in its TOC (its LICENSE.txt says GPL; until settled, ARR)","TomTom": "All Rights Reserved in its TOC", "RareScanner": "All Rights Reserved in its TOC", "Bagnon": "All Rights Reserved in its TOC", "BagBrother": "All Rights Reserved in its TOC (Bagnon's texts)", "Scrap": "All Rights Reserved in its TOC",
     **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion"),
                     "no licence, so all rights reserved"),
 }

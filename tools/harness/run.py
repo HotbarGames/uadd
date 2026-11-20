@@ -18,7 +18,9 @@ UADD_RareScanner's checks run next, on a stand-in for RareScanner (flow_rarescan
 UADD_Pawn's checks run next, on a stand-in for Pawn that runs Pawn's own locale files (flow_pawn.py).
 UADD_GatherMate2's checks run next, on a stand-in for GatherMate2 that runs GatherMate2's own libraries and
 locale files (flow_gm.py).
-UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the same stand-in.
+UADD_Scrap's checks run next, on stand-ins for Scrap and its two load-on-demand parts that run Scrap's own
+locale file (flow_scrap.py).
+UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
 halves_cover.COVERED whose flow gave no "no half-translated line: <module>" result fails here.
@@ -58,6 +60,7 @@ def run_all():
     import flow_rarescanner
     import flow_pawn
     import flow_gm
+    import flow_scrap
     import flow_dialogueui
     import flow_dj_module
     import flow_fxpb
@@ -128,6 +131,10 @@ def run_all():
     gm_checks, gm_facts = flow_gm.run_checks()
     checks += gm_checks
     facts["gm"] = gm_facts
+    gc.collect()
+    sc_checks, sc_facts = flow_scrap.run_checks()
+    checks += sc_checks
+    facts["scrap"] = sc_facts
     gc.collect()
     miss_checks, miss_facts = flow_missed.run_checks()
     checks += miss_checks

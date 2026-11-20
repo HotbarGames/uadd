@@ -10,6 +10,11 @@
   Ukrainian. Herb, ore, fish, zone and profession names stay as the game gives them.
   Новий модуль UADD_GatherMate2: сторінки налаштувань, рядки в чаті, підказка кнопки та меню точки на мапі
   GatherMate2 українською. Назви трав, руд, риби, зон і професій лишаються такими, як їх дає гра.
+- New module UADD_Scrap: Scrap's settings pages, junk list, vendor button, chat lines, key bindings and tutorial
+  in Ukrainian. Item names stay as the game gives them, and chat lines with an item link stay English.
+  Новий модуль UADD_Scrap: сторінки налаштувань, список мотлоху, кнопка в торговця, рядки в чаті, клавіші та
+  підказки для новачків Scrap українською. Назви предметів лишаються такими, як їх дає гра, а рядки в чаті з
+  посиланням на предмет лишаються англійською.
 
 ## 1.1.0
 

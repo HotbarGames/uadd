@@ -1,0 +1,8 @@
+## Interface: 16001, 16000
+## Title: Scrap Config (harness stand-in)
+## Notes: Not Scrap_Config. A small stand-in for tools/harness/flow_scrap.py: four settings pages with a title, a subtitle and rows, shaped like Scrap's. It holds none of its English: the words come from Scrap's own locale table, and the few its settings code writes the flow hands over at test time.
+## LoadOnDemand: 1
+## Dependencies: Scrap
+## Version: 0
+
+Config.lua

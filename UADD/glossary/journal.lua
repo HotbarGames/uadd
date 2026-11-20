@@ -119,6 +119,7 @@ E{ id = "item.healthstone", en = { "Healthstone", "Healthstones" }, uk = "Кам
 E{ id = "item.mana_potion", en = "Mana Potion", uk = "Зілля мани", note = "A potion that restores mana (a kind, not one item name: UALL's item is «Зілля Мани»)." }
 E{ id = "item.mana_gem", en = "Mana Gem", uk = "Самоцвіт мани", note = "Mage-made item that restores mana, as UALL names it." }
 E{ id = "item.soul_shard", en = "Soul Shard", uk = "Уламок душі", note = "Warlock reagent, as UALL names it." }
+E{ id = "item.junk", en = "Junk", uk = "Мотлох", note = "Grey items only worth selling to a vendor; UALL Forever's word (its UI.lua). First used by UADD_Scrap." }
 E{ id = "item.conjured", en = "Conjured", uk = "Прикликаний", note = "Made by a spell (conjured food: прикликана їжа); UALL's verb is прикликати." }
 E{ id = "item.quest", en = "Quest Item", uk = "Предмет завдання", note = "Item type: needed for a quest." }
 E{ id = "item.key", en = "Key", uk = "Ключ", note = "Item type: opens a door or chest. Not a keyboard key." }

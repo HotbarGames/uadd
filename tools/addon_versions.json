@@ -1942,6 +1942,45 @@
    },
    "ids": "d0c2cf1d76f1d9c1cd89def1852af741804826bc"
   },
+  "UADD_Scrap": {
+   "addon": "Scrap",
+   "version": "12.1.10",
+   "interface": "120105, 50504, 40402, 30404, 20506, 16001, 11509",
+   "files": [
+    "Bindings.xml",
+    "addons/config/config.xml",
+    "addons/config/options.lua",
+    "addons/config/tutorials.lua",
+    "addons/main/defaults.lua",
+    "addons/main/main.lua",
+    "addons/main/main.xml",
+    "addons/main/pricing.lua",
+    "addons/main/spotlight.lua",
+    "addons/main/tests.lua",
+    "addons/merchant/button.lua",
+    "addons/merchant/learning.lua",
+    "addons/merchant/merchant.xml",
+    "addons/merchant/visualizer.lua",
+    "addons/merchant/visualizer.xml",
+    "localization/cn.lua",
+    "localization/de.lua",
+    "localization/en.lua",
+    "localization/es.lua",
+    "localization/fr.lua",
+    "localization/it.lua",
+    "localization/ko.lua",
+    "localization/localization.xml",
+    "localization/nl.lua",
+    "localization/pt.lua",
+    "localization/ru.lua",
+    "localization/tw.lua"
+   ],
+   "count": 61,
+   "tags": {
+    "L": 61
+   },
+   "ids": "457a7bf8e42878c93cca852cc3b9335414b20c26"
+  },
   "UADD_TomTom": {
    "addon": "TomTom",
    "version": "v4.4.1-release",

@@ -111,7 +111,7 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 
 ### The other addons
 
-Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn and GatherMate2 (steps 42
+Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2 and Scrap (steps 42
 and on): `docs/TESTING-ADDONS.md`.
 
 ## Not checked outside the game
@@ -148,6 +148,9 @@ and on): `docs/TESTING-ADDONS.md`.
 - GatherMate2's real windows: whether it loads on Forever at all (its TOC is for the main game), the
   Settings pages on real category IDs and their fit, the launcher tooltip, the pin menu, and that gathering
   still saves nodes while the module is on are only seen in the real client.
+- Scrap's real windows: whether UALL Forever puts its own word on a Scrap tab or title, whether «Корисне» and
+  «Мотлох» fit the junk list tabs, the key bindings list font (letters or boxes), the settings list page names
+  after a switch, and the tutorial steps are only seen in the real client.
 
 ## Without the game
 

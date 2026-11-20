@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: Scrap (harness stand-in)
+## Notes: Not Scrap. A small stand-in for tools/harness/flow_scrap.py: key binding names, chat lines, the merchant button's tooltip, the confirm pop-up and the tutorial, shaped like Scrap's. It holds none of its English: the flow runs Scrap's own libraries and locale file from the installed addon first.
+## Version: 0
+
+Scrap.lua
