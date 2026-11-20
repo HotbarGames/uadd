@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Scrap in Ukrainian: its settings, junk list, merchant button, chat lines and tutorial. Part of UADD.
 ## Author: HotbarGames
-## Version: 1.1.0
+## Version: 1.2.0
 ## Dependencies: UADD
 ## OptionalDeps: Scrap, UALLF
 ## X-Category: Localization

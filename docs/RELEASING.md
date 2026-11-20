@@ -13,8 +13,9 @@ with `python3 tools/make_zip.py` and upload `dist/UADD-<version>.zip` on the pro
 
 1. If Blizzard changed Forever's interface number (in game: `/dump select(4, GetBuildInfo())`), test the addon on
    the new client and add the number in front in all TOCs: `## Interface: 16002, 16001, 16000`.
-2. Bump `## Version` in all TOCs (`UADD/UADD.toc` and each `UADD_*/UADD_*.toc`; the repo check fails if
-   they differ) and add a section on top of `UADD/CHANGELOG.md`.
+2. `python3 tools/bump_version.py <version>`: it sets `## Version` in all TOCs (`UADD/UADD.toc` and each
+   `UADD_*/UADD_*.toc`; the repo check fails if they differ) and renames `## Unreleased` in
+   `UADD/CHANGELOG.md` to the version.
 3. If Questie changed: `python3 tools/extract_questie_keys.py --out data/questie-keys.json`, then
    `python3 tools/coverage.py --list missing` shows the new strings to translate.
 4. `python3 -m unittest discover -s tools`, commit, push to `main`.

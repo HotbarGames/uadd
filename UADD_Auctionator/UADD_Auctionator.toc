@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Auctionator's own words in Ukrainian: its auction house tabs, buy panels, dialogs, settings pages, tooltip price lines and chat lines. Type /uadd auctionator.
 ## Author: HotbarGames
-## Version: 1.1.0
+## Version: 1.2.0
 ## Dependencies: UADD, Auctionator
 ## X-Category: Localization
 ## X-License: GPL-3.0

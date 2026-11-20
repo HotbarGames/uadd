@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: What's Training?'s own words in Ukrainian: its windows, buttons, tooltips and chat lines. What's Training? stays on English; zone and NPC names are UALL Forever's, spell names stay English. Type /uadd whatstraining.
 ## Author: HotbarGames
-## Version: 1.1.0
+## Version: 1.2.0
 ## Dependencies: UADD, WhatsTraining
 ## OptionalDeps: UALLF
 ## X-Category: Localization

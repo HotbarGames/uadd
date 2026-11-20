@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0
 
 - New module UADD_Pawn: Pawn's window, settings page, item tooltip lines, upgrade advisors and chat lines in
   Ukrainian. Names from the game (scale names, spec names) stay English, and a few lines with game names stay English.
