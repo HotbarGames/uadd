@@ -28,7 +28,7 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file), TomTom and RareScanner (TOC:
   All Rights Reserved), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (TOC: ARR, while its
   LICENSE.txt says GPL-2.0; treated as ARR until the owner settles it), Scrap (TOC: All Rights Reserved),
-  Speedy AutoLoot (no licence file).
+  Speedy AutoLoot and Waypoint UI (no licence file).
 - Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies), What's Training? (MIT; its
   notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 

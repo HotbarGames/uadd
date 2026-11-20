@@ -13,7 +13,8 @@ values (its real sample values: the output is not the input), unless halves_cove
 a reason; and when an UNFIT entry is stale (the template fits now, or is gone).
 With glue=True (a module that finds whole lines on screen, where the addon may have glued two of its
 texts before we see them: ForeverXP Bar, LayerSwap), glued() texts are fed too: a free slot at an edge of
-a template must not take a glued text. Modules that fill a slot at the call that makes the text (DialogueUI,
+a template must not take a glued text (a module whose templates hold only free slots, Waypoint UI's,
+says free_only=True and passes on its glued texts alone; for the others no template found still fails). Modules that fill a slot at the call that makes the text (DialogueUI,
 Auctionator, OpenMap...) get exactly the name there, which may hold any spaces, so they are not fed.
 It fails, too, when one long or tricky text (hard(): many short Cyrillic words, a 160-byte note, many
 separators, colour pieces, brackets) takes more than BOUND: a line can come from another player (a
@@ -22,7 +23,8 @@ shared note), and a slow one freezes the game.
   run(check, module, templates, translate)   templates: tpl(..) dicts; translate(tpl, text) -> str,
                                              None or a list of those (one per path); hard= another
                                              translate for the time check (more paths), if wanted;
-                                             glue=True to feed glued() texts too
+                                             glue=True to feed glued() texts too; free_only=True
+                                             when every template holds only free slots
 """
 import os
 import re
@@ -141,7 +143,7 @@ def _outs(got):
     return [g for g in (got if isinstance(got, list) else [got]) if isinstance(g, str)]
 
 
-def run(check, module, templates, translate, note="", hard=None, glue=False):
+def run(check, module, templates, translate, note="", hard=None, glue=False, free_only=False):
     """One check for the module: no output keeps a filler while the rest changed."""
     assert module in halves_cover.COVERED, module
     name = f"no half-translated line: {module}"
@@ -174,4 +176,4 @@ def run(check, module, templates, translate, note="", hard=None, glue=False):
     glues = f"{nglue} glued to a free slot, " if glue else ""
     check(f"{name} ({n} templates, {count} texts, {glues}{n - len(unfit)} fit, "
           f"{len(unfit)} unfit, slowest {sec * 1000:.1f} ms)",
-          n > 0 and not bad and not slow and not new and not stale, detail)
+          (n > 0 or (free_only and nglue > 0)) and not bad and not slow and not new and not stale, detail)

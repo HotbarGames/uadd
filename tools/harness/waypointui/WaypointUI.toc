@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: Waypoint UI (harness stand-in)
+## Notes: Not Waypoint UI. A small stand-in for tools/harness/flow_wp.py: its ui-kit Text frame (HookEvent, OnTextChanged), the named roots, the waypoint footer, its font objects and its font handler. It holds no English of Waypoint UI's: the flow gives it the texts, read from the installed addon.
+## Version: 0
+
+WaypointUI.lua

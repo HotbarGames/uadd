@@ -12,6 +12,10 @@
   Клавіша оригіналу працює з UALL Forever, ClassicUA чи обома: UADD бере клавішу UALL Forever, а коли ввімкнено
   лише ClassicUA — клавішу ClassicUA. Чат називає клавішу один раз і знову, коли ви додаєте чи прибираєте одне з
   них; `/uadd` теж її показує.
+- New module UADD_WaypointUI: Waypoint UI's settings, its pop-up windows, and the distance and arrival time to
+  the waypoint are in Ukrainian.
+  Новий модуль UADD_WaypointUI: налаштування Waypoint UI, його спливні вікна, відстань і час прибуття до точки
+  маршруту українською.
 - Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
   Ukrainian; pick another language and that language shows whole.
   Mastercraft: «Українська» є в його власному меню мов (кнопка з глобусом). Оберіть її, щоб читати Mastercraft

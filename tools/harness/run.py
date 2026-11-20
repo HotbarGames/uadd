@@ -15,6 +15,7 @@ UADD_Mastercraft's checks run next, on a stand-in for Mastercraft (flow_mastercr
 language menu: flow_mc_lang.py).
 UADD_WhatsTraining's checks run next, on a stand-in for What's Training? (flow_whatstraining.py).
 UADD_TomTom's checks run next, on a stand-in for TomTom (flow_tomtom.py; the arrow title's font: flow_tomtom_arrow.py).
+UADD_WaypointUI's checks run next, on a stand-in for Waypoint UI (flow_wp.py).
 UADD_RareScanner's checks run next, on a stand-in for RareScanner (flow_rarescanner.py).
 UADD_Pawn's checks run next, on a stand-in for Pawn that runs Pawn's own locale files (flow_pawn.py).
 UADD_GatherMate2's checks run next, on a stand-in for GatherMate2 that runs GatherMate2's own libraries and
@@ -70,6 +71,7 @@ def run_all():
     import flow_mc_lang
     import flow_tomtom
     import flow_tomtom_arrow
+    import flow_wp
     import flow_rarescanner
     import flow_pawn
     import flow_gm
@@ -104,8 +106,8 @@ def run_all():
     # (facts key, flow module), in run order; each also gets the tooltip font check (tipfont.py)
     for key, mod in (("dialogueui", flow_dialogueui), ("fxpb", flow_fxpb), ("auc", flow_auc), ("att", flow_att),
                      ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
-                     ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("rs", flow_rarescanner), ("pawn", flow_pawn),
-                     ("gm", flow_gm), ("scrap", flow_scrap), ("sal", flow_sal), ("missed", flow_missed),
+                     ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("wp", flow_wp),
+                     ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sal", flow_sal), ("missed", flow_missed),
                      ("hash", flow_hash), ("cua", flow_classicua), ("keynotice", flow_keynotice),
                      ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):

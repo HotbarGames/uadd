@@ -70,6 +70,8 @@ ALLOW = {
     ("UADD_Questie/HeaderFont.lua", "set font"): (1, "our own font object UADD_QuestieHeaderFont"),
     ("UADD_Questie/Locale.lua", "global write"): (1, "QUESTIE_LOCALES_OVERRIDE: Questie's own documented locale switch"),
     ("UADD_SpeedyAutoLoot/Module.lua", "set font"): (1, "Cyrillic file after U.SaveFont; back with U.FontBack"),
+    ("UADD_WaypointUI/Fonts.lua", "set font"): (1, "Cyrillic file on Waypoint UI's own font objects after "
+                                                   "U.SaveFont, read back; back with U.FontBack"),
     ("UADD_WhatsTraining/Screen.lua", "set font"): (2, FONT_FIX + "; " + TODO),
     ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP),
     ("UADD/Lines.lua", "chat replace"): (2, "core U.ChatLines: never loses a line; pass-through when wrapped after us"),

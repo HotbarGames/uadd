@@ -103,6 +103,16 @@ def _tt():
     return c
 
 
+def _wp():
+    import flow_wp as F
+    src = F.rows()
+    p = src and F.picks(src, *F.shipped())
+    if not p:
+        return None
+    c, _ = F._game(p)
+    return c
+
+
 def _rs():
     import flow_rarescanner as F
     if not F.installed():
@@ -186,6 +196,7 @@ RECIPES = [
     ("UADD_Mastercraft", "Mastercraft", _mc),
     ("UADD_WhatsTraining", "WhatsTraining", _wt),
     ("UADD_TomTom", "TomTom", _tt),
+    ("UADD_WaypointUI", "WaypointUI", _wp),
     ("UADD_RareScanner", "RareScanner", _rs),
     ("UADD_Pawn", "Pawn", _pawn),
     ("UADD_GatherMate2", "GatherMate2", _gm),

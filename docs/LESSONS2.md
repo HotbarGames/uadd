@@ -24,6 +24,12 @@ last English and its Ukrainian and does no lookup when the text did not change.
 grow the Words cache (`W.CacheSize`); the arrow with the same text for 50 frames calls `Translate` once; a
 unit's tooltip runs no `debugstack`. Each fails with its fix taken out.
 
+**Again in Waypoint UI (2026-11-20).** Its footer sets the distance and time lines on every tick. The module's unit
+words keep one shared cache, so two lines that take turns pushed each other out, and each tick cost a look-up.
+Rule: each frame keeps its own last English and Ukrainian (`st.ken`, `st.kuk` in `UADD_WaypointUI/Screen.lua`).
+Check: `python3 tools/harness/run.py`, "wp: 3 footer" (50 ticks, at most 2 look-ups); "wp: mutant cache" takes
+the fix out and wants step 3 to fail.
+
 ## 13. The player's own names inside the addon's list
 
 **What went wrong.** In the same review: TomTom's profile dropdown lists the profiles the player named, and the
@@ -228,3 +234,19 @@ first letter, and ClassicUA in every TOC next to UALLF. Its mutant tests take ea
 `python3 tools/harness/run.py`, the "cua:" steps (`tools/harness/flow_classicua.py`): ClassicUA's real glossary
 through a stand-in zone hook, with UALL Forever, without it, and a stand-in that throws. Manual, in the game: the
 real ClassicUA hook answers, and `/uadd test` says "ClassicUA first: ..." with a Ukrainian name.
+
+## 26. The addon's own SetText that fails after it drew our text
+
+**What went wrong.** Waypoint UI's text frames have their own `SetText`: it draws the text, then fits the frame to
+it. The module called it under `pcall` and, on an error, took the text as not set. But the error can come after the
+text was drawn, so our Ukrainian showed while the module thought the English was there. The error was not counted
+either, so a frame that kept failing never turned the module off. With the module off, putting the English back
+went through the same `SetText`, so a failure there left our Ukrainian on screen (harness, 2026-11-20).
+
+**Rule.** When the addon's own setter can fail, what shows counts, not whether the call threw: read the text back.
+Count each error with `U.Fault`, so 5 of them turn the module off. When the English cannot go back through the
+addon's setter, write it to the font string itself.
+
+**Check.** `python3 tools/harness/run.py`, "wp: 12 errors in its SetText" (`tools/harness/flow_wp_steps.py`): the
+stand-in's `SetText` fails before drawing, then after; the text is whole English or whole Ukrainian, the module goes
+off after 5 errors, and the English comes back. "wp: mutant fault" takes the fix out and wants step 12 to fail.

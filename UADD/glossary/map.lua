@@ -23,6 +23,11 @@ E{ id = "map.quill", en = "Quill", uk = "Перо", note = "OpenMap's drawing to
 E{ id = "map.notes", en = "Map notes", uk = "Нотатки на карті", note = "painted areas with a text note" }
 E{ id = "map.zone_levels", en = "Zone levels", uk = "Рівні зон", note = "the level range shown on each zone" }
 E{ id = "map.arrow", en = "Arrow", uk = "Стрілка", note = "drawing tool: a pointing arrow. Not the ammo (that is gear.arrow)" }
+E{ id = "map.pinpoint", en = "Pinpoint", uk = "Мітка", note = "Waypoint UI: how the waypoint shows once the player is close. The owner's choice, 2026-11-20 (not «Точна позначка»). Not map.pin («Позначка»)" }
+E{ id = "map.navigator", en = "Navigator", uk = "Навігатор", note = "Waypoint UI: the arrow at the screen's edge while the target is off-screen. The owner's choice, 2026-11-20 (not «Покажчик»)" }
+E{ id = "map.pathfinding", en = "Pathfinding", uk = "Прокладання маршруту", note = "Waypoint UI: building a route to the target. The owner's choice, 2026-11-20 (not «Пошук шляху»)" }
+E{ id = "map.context_icon", en = "Context Icon", uk = "Значок цілі", note = "Waypoint UI: the icon above the target (diamond or circle). The owner's choice, 2026-11-20 (not «Контекстний значок»)" }
+E{ id = "map.beam", en = "Beam", uk = "Промінь", note = "Waypoint UI: the light beam above the waypoint" }
 E{ id = "map.waypoint_arrow", en = { "Crazy Arrow", "Waypoint Arrow" }, uk = "Стрілка", note = "TomTom's on-screen arrow that points to the waypoint. Not the drawing tool (map.arrow), not the ammo (gear.arrow)" }
 E{ id = "map.coord_block", en = "Coordinate Block", uk = "Блок координат", note = "TomTom's small movable box that shows the player's x, y" }
 E{ id = "map.paste_window", en = "Paste window", uk = "Вікно вставки", note = "TomTom's window where /way lines are pasted; never the English name in a Ukrainian line" }

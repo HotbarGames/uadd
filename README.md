@@ -23,6 +23,7 @@ UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Fore
 - GatherMate2
 - Scrap
 - Speedy AutoLoot
+- Waypoint UI
 - Questie: its menus and settings. The quest tracker and quest texts come from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization).
 
@@ -38,7 +39,7 @@ UADD says in chat which key it is. `/uadd` shows it again.
 Each module needs its addon. UALL Forever and ClassicUA are optional.
 
 Copy the `UADD`, `UADD_Questie`, `UADD_DungeonJournal`, `UADD_OpenMap`, `UADD_DialogueUI`, `UADD_ForeverXPBar`,
-`UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft`, `UADD_WhatsTraining`, `UADD_TomTom`, `UADD_RareScanner`, `UADD_Pawn`, `UADD_GatherMate2`, `UADD_Scrap` and `UADD_SpeedyAutoLoot` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
+`UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft`, `UADD_WhatsTraining`, `UADD_TomTom`, `UADD_RareScanner`, `UADD_Pawn`, `UADD_GatherMate2`, `UADD_Scrap`, `UADD_SpeedyAutoLoot` and `UADD_WaypointUI` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
 is not installed stays off.
 
 The first time, UADD collects the names from UALL Forever or ClassicUA in the background. When the chat says the names
@@ -89,6 +90,8 @@ Questie builds that list only once, when it starts.
 | `/uadd scrap on` / `off` | Turns the Scrap translation on or off, at once. Off gives Scrap back as it is without UADD; its settings page names change back after `/reload`. Item names stay as the game gives them. |
 | `/uadd sal` | Shows the Speedy AutoLoot module's status and commands. |
 | `/uadd sal on` / `off` | Turns the Speedy AutoLoot translation on or off, at once. Off gives Speedy AutoLoot back as it is without UADD. Item names and money in its loot display stay as the game gives them. |
+| `/uadd waypointui` | Shows the Waypoint UI module's status and commands. |
+| `/uadd waypointui on` / `off` | Turns the Waypoint UI translation on or off, at once. Off gives Waypoint UI back as it is without UADD. |
 | `/uadd combat off` / `on` | Off: the hold key works in a fight too. On (the default): in a fight it does nothing. |
 | `/uadd missed` | Shows, per module, how many texts stayed English because UADD has no Ukrainian for them yet. |
 | `/uadd missed on` / `off` | A tool for testers, off unless you turn it on. On: UADD notes each text it shows in English. Off (the default) costs nothing. The list stays on your PC; nothing is sent. |
@@ -113,7 +116,7 @@ Two tools tell you what needs work. They need no network.
 Do not copy another addon's text or code into this repo in bulk, unless its licence allows it.
 
 - **Not allowed** (all rights reserved): Auctionator (its LICENSE says so), Bagnon (its TOC says so), Mastercraft (its LICENSE.txt says so), TomTom, RareScanner and Scrap (their TOCs say so), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (its TOC says all rights reserved, its LICENSE.txt says GPL; we keep to the stricter one), and Attune, Dialogue UI,
-  ForeverXP Bar, Dungeon Journal, LayerSwap, Auto Potion and Speedy AutoLoot (no licence, so all rights are reserved).
+  ForeverXP Bar, Dungeon Journal, LayerSwap, Auto Potion, Speedy AutoLoot and Waypoint UI (no licence, so all rights are reserved).
 - **Allowed**: Questie (GPL-3.0), OpenMap (MIT) and What's Training? (MIT). Their notices are in `THIRD-PARTY-NOTICES.md`.
 
 So for the addons that are not allowed:

@@ -27,6 +27,7 @@ move-folders:
   UADD/UADD_GatherMate2: UADD_GatherMate2
   UADD/UADD_Scrap: UADD_Scrap
   UADD/UADD_SpeedyAutoLoot: UADD_SpeedyAutoLoot
+  UADD/UADD_WaypointUI: UADD_WaypointUI
 
 # names come from UALL Forever or ClassicUA when one is installed; without them the menus are still Ukrainian
 optional-dependencies:

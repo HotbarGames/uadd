@@ -39,6 +39,7 @@ COVERED = {
     "UADD_GatherMate2": ("flow_gm.py", "gm"),
     "UADD_Scrap": ("flow_scrap.py", "scrap"),
     "UADD_SpeedyAutoLoot": ("flow_sal.py", "sal"),
+    "UADD_WaypointUI": ("flow_wp.py", "wp"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "

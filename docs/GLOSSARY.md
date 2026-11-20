@@ -64,6 +64,11 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Drink, Repair | what a vendor sells (nouns) | `vendor.drink`, `vendor.repair` |
 | Layer | a drawn layer of the map, OpenMap ("Шар") | `map.layer` |
 | Layer | a copy of the server's world, LayerSwap ("Лейер": the owner's word, 2026-11-18) | `game.server_layer` |
+| Pinpoint | Waypoint UI: the waypoint once the player is close ("Мітка": the owner's word, 2026-11-20; «точна позначка» banned in UADD_WaypointUI) | `map.pinpoint` |
+| Pin | a pin the player drops on the map ("Позначка") | `map.pin`, not `map.pinpoint` |
+| Navigator | Waypoint UI: the arrow at the screen's edge ("Навігатор": the owner's word, 2026-11-20; «покажчик» banned there) | `map.navigator` |
+| Pathfinding | Waypoint UI: a route built to the target ("Прокладання маршруту": the owner's word, 2026-11-20; «пошук шляху» banned there) | `map.pathfinding` |
+| Context Icon | Waypoint UI: the icon above the target ("Значок цілі": the owner's word, 2026-11-20; «контекстний значок» banned there) | `map.context_icon` |
 | Camping | UALL Forever's camp system, Mastercraft ("Табір": lead's choice, 2026-11-19) | `game.camping` |
 | Camping | waiting at a spawn for a mob | not this entry («чатування» is banned in UADD_Mastercraft) |
 | Lure | a fishing lure, Mastercraft ("приманка", never «принада») | `prof.lure` |

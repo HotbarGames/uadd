@@ -223,8 +223,8 @@ def mc(check, M, src, temps):
     run(check, "UADD_Mastercraft", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
 
 
-def tomtom(check, M, tps, note=""):  # Words.Translate on whole lines; tps: flow_tomtom_texts.templates()
-    run(check, "UADD_TomTom", tps, M and (lambda tp, t: _t(M.uk(lua_str(t)))), note, glue=True)
+def tomtom(check, M, tps, note=""): run(check, "UADD_TomTom", tps, M and (lambda tp, t: _t(M.uk(lua_str(t)))), note, glue=True)  # noqa: E704,E501 Words.Translate on whole lines; tps: flow_tomtom_texts.templates()
+def wp(check, M, tps, note=""): run(check, "UADD_WaypointUI", tps, M and (lambda tp, t: _t(M.Text(lua_str(t)))), note, glue=True, free_only=True)  # noqa: E704,E501 ns.Text on a whole text, as its Text frames hand it over; tps: flow_wp_texts.templates()
 
 
 def rs(check, M, note=""):

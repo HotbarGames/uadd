@@ -52,6 +52,14 @@ BANNED_IN = {
         r"масштаб": ("шкала (glossary gear.scale)",
                      "lead's choice 2026-11-20, Pawn: a scale values an item; «масштаб» is UALL's word for the UI size"),
     },
+    "UADD_WaypointUI": {
+        r"точн\w* позначк": ("мітка (glossary map.pinpoint)", "the owner's word for Pinpoint, 2026-11-20"),
+        r"покажчик": ("навігатор (glossary map.navigator)", "the owner's word for Navigator, 2026-11-20"),
+        r"пошук\w* шлях": ("прокладання маршруту (glossary map.pathfinding)",
+                           "the owner's word for Pathfinding, 2026-11-20"),
+        r"контекстн\w* знач": ("значок цілі (glossary map.context_icon)",
+                               "the owner's word for Context Icon, 2026-11-20"),
+    },
     "UADD_LayerSwap": {
         r"\bшар(?:а|у|ом|і|и|ів|ам|ами|ах|е)?\b": ("лейер (лейера, на лейері, лейерів; glossary game.server_layer)",
                    "the owner's word for a server layer, 2026-11-18; «шар» is a map layer (map.layer)"),

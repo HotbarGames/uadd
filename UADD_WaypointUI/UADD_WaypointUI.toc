@@ -1,0 +1,18 @@
+## Interface: 16001, 16000
+## Title: UADD - Waypoint UI
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Waypoint UI's own words in Ukrainian: its settings, prompts, the waypoint's distance and arrival time. Part of UADD. Type /uadd waypointui.
+## Author: HotbarGames
+## Version: 1.2.2
+## Dependencies: UADD, WaypointUI
+## OptionalDeps: UALLF, ClassicUA
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (made by tools/make_wp_text.py build), then the code.
+data/text01.lua
+data/text02.lua
+Words.lua
+Fonts.lua
+Screen.lua
+Module.lua
