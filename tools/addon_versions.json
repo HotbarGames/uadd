@@ -3,7 +3,7 @@
  "modules": {
   "UADD_Attune": {
    "addon": "Attune",
-   "version": "16001-43",
+   "version": "16001-44",
    "interface": "16001, 120100, 120105, 120107",
    "files": [
     "Attune.lua",
@@ -15,6 +15,7 @@
     "Locales/deDE.lua",
     "Locales/enUS.lua",
     "Locales/esES.lua",
+    "Locales/esMX.lua",
     "Locales/frFR.lua",
     "Locales/koKR.lua",
     "Locales/ptBR.lua",
@@ -23,12 +24,12 @@
     "Locales/zhTW.lua",
     "embeds.xml"
    ],
-   "count": 4966,
+   "count": 5242,
    "tags": {
-    "C": 1333,
-    "L": 3633
+    "C": 1341,
+    "L": 3901
    },
-   "ids": "2c86cb2f0b4733f81f0b7894819850e844c6b163"
+   "ids": "bb189bd99d8a8ecfd083ccc726d0c46267376949"
   },
   "UADD_Auctionator": {
    "addon": "Auctionator",
@@ -1034,7 +1035,7 @@
   },
   "UADD_DungeonJournal": {
    "addon": "ForeverDungeonJournal",
-   "version": "2.0.12",
+   "version": "2.1.0",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1100,17 +1101,17 @@
     "UI/ItemComparisonData.lua",
     "UI/ThemeData.lua"
    ],
-   "count": 1583,
+   "count": 1602,
    "tags": {
-    "L": 336,
-    "P": 1072,
+    "L": 337,
+    "P": 1090,
     "S": 175
    },
-   "ids": "3f28f40c79bce311210cbea562e7f37f44c3d74d"
+   "ids": "9767332cb6f8a1410853706daed0a9b99734282e"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
-   "version": "0.9.3",
+   "version": "0.9.4",
    "interface": "120100, 16001, 20505, 20506, 70006",
    "files": [
     "ForeverXPBar.lua",
@@ -1121,11 +1122,11 @@
     "ForeverXPBarFonts.lua",
     "ForeverXPBarSounds.lua"
    ],
-   "count": 772,
+   "count": 765,
    "tags": {
-    "X": 772
+    "X": 765
    },
-   "ids": "fdc8a67fe6e5cf57669c2a1887322cd48b201cac"
+   "ids": "5f10bd066c21f9bd980a941b1b252dc1757b769e"
   },
   "UADD_GatherMate2": {
    "addon": "GatherMate2",
@@ -1171,16 +1172,17 @@
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
-   "version": "1.14.38",
+   "version": "1.14.39",
    "interface": "11509, 16001, 20506",
    "files": [
+    "Bindings.xml",
     "LayerSwap.lua"
    ],
-   "count": 379,
+   "count": 399,
    "tags": {
-    "X": 379
+    "X": 399
    },
-   "ids": "9f5d93828652422097c5f37c553c965c98915762"
+   "ids": "2f3e6e83c7e8341d7324e65374192e9f8a071c0e"
   },
   "UADD_Mastercraft": {
    "addon": "Mastercraft",
@@ -1276,11 +1278,11 @@
     "VendorData.lua",
     "Widgets.lua"
    ],
-   "count": 2798,
+   "count": 2802,
    "tags": {
-    "X": 2798
+    "X": 2802
    },
-   "ids": "f54d7ae08de264c5428feac53bc266400fb761ca"
+   "ids": "5a3fcebad5c9953eaa68c7a5b9d8da79bb7ff010"
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
@@ -1714,7 +1716,7 @@
   },
   "UADD_RareScanner": {
    "addon": "RareScanner",
-   "version": "1.60.1.9",
+   "version": "1.60.1.10",
    "interface": "16001",
    "files": [
     "Core/Core.xml",
@@ -2180,11 +2182,11 @@
     "WhatsTraining.lua",
     "WhatsTrainingUI.lua"
    ],
-   "count": 183,
+   "count": 184,
    "tags": {
-    "X": 183
+    "X": 184
    },
-   "ids": "e0dbb84a955a3da3e98146026e4f794f0f0f3a6d"
+   "ids": "50ce29a903d9166edb156c702bdd78fa9adce777"
   }
  }
 }
