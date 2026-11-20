@@ -20,6 +20,7 @@ UADD_GatherMate2's checks run next, on a stand-in for GatherMate2 that runs Gath
 locale files (flow_gm.py).
 UADD_Scrap's checks run next, on stand-ins for Scrap and its two load-on-demand parts that run Scrap's own
 locale file (flow_scrap.py).
+UADD_SpeedyAutoLoot's checks run next, on a stand-in for Speedy AutoLoot that runs its own two files (flow_sal.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run last.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
@@ -61,6 +62,7 @@ def run_all():
     import flow_pawn
     import flow_gm
     import flow_scrap
+    import flow_sal
     import flow_dialogueui
     import flow_dj_module
     import flow_fxpb
@@ -135,6 +137,10 @@ def run_all():
     sc_checks, sc_facts = flow_scrap.run_checks()
     checks += sc_checks
     facts["scrap"] = sc_facts
+    gc.collect()
+    sal_checks, sal_facts = flow_sal.run_checks()
+    checks += sal_checks
+    facts["sal"] = sal_facts
     gc.collect()
     miss_checks, miss_facts = flow_missed.run_checks()
     checks += miss_checks

@@ -231,3 +231,19 @@ game gives them, and chat lines with an item link stay English, on purpose.
 141. `/uadd scrap off` with the settings open: English again (page names after `/reload`); `on`: Ukrainian.
     The junk list stays the same both ways.
 142. Log in without Scrap: `/uadd scrap` says it waits for Scrap, and there are no errors.
+
+### Speedy AutoLoot
+
+These need Speedy AutoLoot on an English client. Type `/uadd missed on` first, then `/reload`. Item names and
+money in the loot display stay as the game gives them, on purpose.
+143. Log in. `/uadd` lists "Speedy AutoLoot". `/uadd sal` shows "увімкнено" with the text counts.
+144. Type `/sal`: the help lines are Ukrainian; the commands (`/sal display` and so on) stay as you type them.
+145. Type each command twice (`/sal display`, `/sal fish`, `/sal sound`, `/sal bop` if listed, `/sal auto`):
+     each "on" and "off" chat line is Ukrainian, colours as before. `/sal set 1234`: the line keeps the number.
+     In a fight a command that refuses: the red line is Ukrainian.
+146. `/sal anchor`: the box's label and the three test entries are Ukrainian, with letters, not boxes, and fit.
+     Loot a mob: the real loot lines show the game's item names and money as before.
+147. Hold Shift while typing `/sal`: English; let go: Ukrainian again. `/uadd sal off`: English again; `on`:
+     Ukrainian.
+148. Log in without Speedy AutoLoot: `/uadd` does not list it (the game does not load the module), and there
+     are no errors.

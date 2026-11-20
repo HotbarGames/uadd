@@ -1,0 +1,8 @@
+## Interface: 16001, 16000
+## Title: Speedy AutoLoot (harness stand-in)
+## Notes: Not Speedy AutoLoot. Only the game functions it needs that the harness lacks (Shim.lua): tools/harness/flow_sal.py then runs the installed addon's own files (read only), since its licence allows none of its English here.
+## Version: 0
+## LoadSavedVariablesFirst: 1
+## SavedVariables: SpeedyAutoLootDB
+
+Shim.lua

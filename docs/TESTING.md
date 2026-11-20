@@ -111,8 +111,8 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 
 ### The other addons
 
-Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2 and Scrap (steps 42
-and on): `docs/TESTING-ADDONS.md`.
+Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap and Speedy
+AutoLoot (steps 42 and on): `docs/TESTING-ADDONS.md`.
 
 ## Not checked outside the game
 
@@ -151,6 +151,8 @@ and on): `docs/TESTING-ADDONS.md`.
 - Scrap's real windows: whether UALL Forever puts its own word on a Scrap tab or title, whether «Корисне» and
   «Мотлох» fit the junk list tabs, the key bindings list font (letters or boxes), the settings list page names
   after a switch, and the tutorial steps are only seen in the real client.
+- Speedy AutoLoot's real loot display: the font of the anchor's label and test entries, whether they fit the
+  box, and that real loot lines keep the game's item names and money are only seen in the real client.
 
 ## Without the game
 

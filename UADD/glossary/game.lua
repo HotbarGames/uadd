@@ -107,3 +107,8 @@ E{ id = "game.camp_item", en = "camp item", uk = "похідний предме�
 E{ id = "game.spellbook", en = "Spellbook", uk = "Книга заклять", note = "The game's spellbook window, as UALL Forever names it. lead's choice 2026-11-19, What's Training?." }
 E{ id = "game.grimoire", en = "Grimoire", uk = "Гримуар", note = "A warlock pet's spell tome. lead's choice 2026-11-19, What's Training?." }
 E{ id = "game.train", en = "Train", uk = "Вивчити", note = "Learn a spell or skill from a trainer (a button, an action). lead's choice 2026-11-19, What's Training?." }
+-- Speedy AutoLoot (lead's choices 2026-11-20; each is UALL Forever's own word)
+E{ id = "game.auto_loot", en = "Auto Loot", uk = "Автозбір здобичі", note = "Taking all loot at once, as the game's setting does. lead's choice 2026-11-20, Speedy AutoLoot." }
+E{ id = "game.inventory", en = "Inventory", uk = "Інвентар", note = "Your bags as a whole (\"inventory is full\"). lead's choice 2026-11-20, Speedy AutoLoot." }
+E{ id = "game.bind_on_pickup", en = "Bind on Pickup", uk = "Прив'язується при отриманні", note = "An item that binds when you loot it. lead's choice 2026-11-20, Speedy AutoLoot." }
+E{ id = "game.loot_display", en = "Loot Display", uk = "Показ здобичі", note = "Speedy AutoLoot's list of what you just looted. lead's choice 2026-11-20, Speedy AutoLoot." }

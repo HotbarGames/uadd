@@ -1,0 +1,14 @@
+## Interface: 16001, 16000
+## Title: UADD - Speedy AutoLoot
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Speedy AutoLoot's own words in Ukrainian: its /sal chat lines and help, the loot display's anchor and test entries. Part of UADD. Type /uadd sal.
+## Author: HotbarGames
+## Version: 1.2.0
+## Dependencies: UADD, SpeedyAutoLoot
+## OptionalDeps: UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (made by tools/make_sal_text.py build), then the code.
+data/text01.lua
+Module.lua

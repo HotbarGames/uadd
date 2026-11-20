@@ -1981,6 +1981,20 @@
    },
    "ids": "457a7bf8e42878c93cca852cc3b9335414b20c26"
   },
+  "UADD_SpeedyAutoLoot": {
+   "addon": "SpeedyAutoLoot",
+   "version": "126",
+   "interface": "11509, 16001, 20506, 50504, 38002, 120105",
+   "files": [
+    "LootDisplay.lua",
+    "SpeedyAutoLoot.lua"
+   ],
+   "count": 23,
+   "tags": {
+    "L": 23
+   },
+   "ids": "60c66ec72dfd29df8d8a9be74dab4cad3c624dad"
+  },
   "UADD_TomTom": {
    "addon": "TomTom",
    "version": "v4.4.1-release",

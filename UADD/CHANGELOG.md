@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- New module UADD_SpeedyAutoLoot: Speedy AutoLoot's chat lines, its /sal help and the loot display's anchor in
+  Ukrainian. Item names and money in the loot display stay as the game gives them.
+  Новий модуль UADD_SpeedyAutoLoot: рядки в чаті, довідка /sal та рамка показу здобичі Speedy AutoLoot
+  українською. Назви предметів і гроші в показі здобичі лишаються такими, як їх дає гра.
+
 ## 1.2.0
 
 - New module UADD_Pawn: Pawn's window, settings page, item tooltip lines, upgrade advisors and chat lines in

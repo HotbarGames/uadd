@@ -26,7 +26,8 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
   (LICENSE.txt: all rights reserved), Attune, DialogueUI,
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file), TomTom and RareScanner (TOC:
   All Rights Reserved), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (TOC: ARR, while its
-  LICENSE.txt says GPL-2.0; treated as ARR until the owner settles it), Scrap (TOC: All Rights Reserved).
+  LICENSE.txt says GPL-2.0; treated as ARR until the owner settles it), Scrap (TOC: All Rights Reserved),
+  Speedy AutoLoot (no licence file).
 - Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies), What's Training? (MIT; its
   notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 
@@ -92,6 +93,7 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
   the pin menu's node name is `n`, so that line stays English).
 - Scrap: `SORTS` in `tools/scrap_rules.py` (only `v`: money in the sold and repaired lines; lines with an item
   link stay English).
+- Speedy AutoLoot: `SORTS` in `tools/sal_rules.py` (only `v`: the sound's number).
 
 A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
 only when the game or the addon puts a name there that has no translation; never one that holds only a

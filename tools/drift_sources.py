@@ -92,6 +92,11 @@ def ex_scrap(path):
     return [("L", key, en, (where[0][0] if where else "built key")) for key, en, _, where, _ in S.source(path)[0]]
 
 
+def ex_sal(path):
+    import sal_source as S   # the texts the generator would translate (tools/sal_rules.py), keyed by hash
+    return [("L", key, en, where[0][0]) for key, en, _, where, _ in S.source(path)[0]]
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -163,6 +168,7 @@ MODULES = {
     "UADD_Questie": ("Questie", ex_questie, old_questie, ()),
     "UADD_RareScanner": ("RareScanner", ex_rs, None, ()),   # All Rights Reserved; our data holds its keys only
     "UADD_Scrap": ("Scrap", ex_scrap, None, ()),   # All Rights Reserved; our data holds its keys only
+    "UADD_SpeedyAutoLoot": ("SpeedyAutoLoot", ex_sal, None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_TomTom": ("TomTom", ex_tt, None, ()),   # All Rights Reserved; our data holds hashes only
     "UADD_WhatsTraining": ("WhatsTraining", ex_wt, None, ()),   # MIT, but our data holds hashes only, so no tracked English
 }

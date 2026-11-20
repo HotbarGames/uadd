@@ -25,8 +25,7 @@ def _t(v): return txt(v) if isinstance(v, str) else None  # noqa: E704
 
 
 def _words(M, p):
-    """ForeverXP Bar (p "fxpb"), LayerSwap ("lsw"): (templates, translate, note) for run(). Words.Text (the
-    stand-in's M.uk); free slots from <p>_words.FREE and BLANK, texts from make_<p>_data."""
+    """ForeverXP Bar (p "fxpb"), LayerSwap ("lsw"): (templates, translate, note) for run(). Words.Text (M.uk); free slots from <p>_words.FREE and BLANK, texts from make_<p>_data."""  # noqa: E501
     import importlib
     W, D = importlib.import_module(p + "_words"), importlib.import_module("make_" + p + "_data")
     if not D.have_addon():
@@ -41,6 +40,7 @@ def _words(M, p):
 
 def fxpb(check, M): run(check, "UADD_ForeverXPBar", *_words(M, "fxpb"), glue=True)  # noqa: E704
 def lsw(check, M): run(check, "UADD_LayerSwap", *_words(M, "lsw"), glue=True)  # noqa: E704
+def sal(check, M, tps, note=""): run(check, "UADD_SpeedyAutoLoot", tps, M and (lambda tp, t: _t(M.tr(lua_str(t)))), note)  # noqa: E704,E501  Speedy AutoLoot: each text through its real chat hook after the addon's name (M.tr); tps: flow_sal.templates()
 
 
 def ap(check, M):

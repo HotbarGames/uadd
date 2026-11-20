@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions
-rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft, UADD_WhatsTraining, UADD_TomTom, UADD_RareScanner, UADD_Pawn, UADD_GatherMate2 and UADD_Scrap into the WoW Forever AddOns folder. See docs\TESTING.md.
+rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft, UADD_WhatsTraining, UADD_TomTom, UADD_RareScanner, UADD_Pawn, UADD_GatherMate2, UADD_Scrap and UADD_SpeedyAutoLoot into the WoW Forever AddOns folder. See docs\TESTING.md.
 rem
 rem   install.bat            -> _forever_
 rem
@@ -22,14 +22,14 @@ if not exist "%CLIENT%\.flavor.info" (
 )
 if not exist "%ADDONS%" mkdir "%ADDONS%"
 
-for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap) do (
+for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap UADD_SpeedyAutoLoot) do (
     echo Installing %%A ...
     robocopy "%~dp0%%A" "%ADDONS%\%%A" /MIR /NFL /NDL /NJH /NJS /NP /R:1 /W:1
     if errorlevel 8 goto :copyfail
 )
 
 echo.
-for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap) do (
+for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap UADD_SpeedyAutoLoot) do (
     rem a folder check: QuestieDB has only QuestieDB_Forever.toc
     if exist "%ADDONS%\%%A\" (
         echo   ok       %%A
@@ -121,6 +121,11 @@ if exist "%ADDONS%\Scrap\" (
     echo   ok       Scrap ^(for UADD_Scrap^)
 ) else (
     echo   optional Scrap not installed: the Scrap module stays off
+)
+if exist "%ADDONS%\SpeedyAutoLoot\" (
+    echo   ok       SpeedyAutoLoot ^(for UADD_SpeedyAutoLoot^)
+) else (
+    echo   optional SpeedyAutoLoot not installed: the Speedy AutoLoot module stays off
 )
 echo.
 echo Done: %ADDONS%
