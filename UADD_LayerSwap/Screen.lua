@@ -36,13 +36,14 @@ local function Visible(f) return type(f) == "table" and f.IsVisible and f:IsVisi
 
 -- In combat only known texts change (Texts.lua's cheap look); the rest waits until combat ends.
 local waiter = CreateFrame("Frame")
-waiter:SetScript("OnEvent", function(self)
+local function CombatOver(self)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     if not ns.On() then return S.Restore() end
     U.SafeCall(ns.Texts.Sync)
     U.SafeCall(ns.Tooltip.Sync, U.originalShown)
     U.SafeCall(S.Scan)
-end)
+end
+waiter:SetScript("OnEvent", function(self) U.SafeCall(CombatOver, self) end)
 
 function S.WaitCombat()
     if not (InCombatLockdown and InCombatLockdown()) then return false end
@@ -72,7 +73,7 @@ local function Collect()
             roots[#roots + 1], rootSet[f] = f, true
             if not hookedRoot[f] and f.HookScript then
                 hookedRoot[f] = true
-                f:HookScript("OnShow", OnRoot)
+                f:HookScript("OnShow", function(self) U.SafeCall(OnRoot, self) end)
             end
         end
     end
@@ -162,14 +163,16 @@ local function Tick()
     U.SafeCall(S.Scan)
 end
 
+local function SafeTick() U.SafeCall(Tick) end    -- an error of ours never reaches the game
+
 -- Once LayerSwap is loaded and the module is on.
 function S.Install()
     if not ns.On() then return end
     if not createHooked and type(CreateFrame) == "function" then
         createHooked = true
-        hooksecurefunc("CreateFrame", function(...) pcall(OnCreate, ...) end)
+        hooksecurefunc("CreateFrame", function(...) U.SafeCall(OnCreate, ...) end)
     end
-    if not ticker then ticker = C_Timer.NewTicker(TICK, Tick) end
+    if not ticker then ticker = C_Timer.NewTicker(TICK, SafeTick) end
 end
 
 -- Every text and font back as LayerSwap had it (module off).

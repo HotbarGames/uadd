@@ -154,6 +154,20 @@ function M.shapes()
     return n, table.concat(bad, ", ")
 end
 function M.isBody(name) return UADD.DialogueUIScreen.IsBody(S().texts[name]) end
+
+-- Its page in the game's options. setL: an English read from the installed DialogueUI (never kept in
+-- the repo), key pictures made as the stand-in makes them.
+function M.setL(key, text) S().L[key] = S().KeyMarkup(text) ukL = nil end
+function M.makeCanvas() S().MakeCanvas() end
+function M.openCanvas()             -- Options opened, then the Dialogue UI page picked
+    SettingsPanel:Show()
+    SettingsPanel:SelectCategory(S().canvasCategory)
+end
+function M.closeCanvas()
+    S().canvas:Hide()
+    SettingsPanel:Hide()
+end
+function M.canvasFound() return UADD.DialogueUIScreen.Canvas() == S().canvas end
 function M.useSpare() S().UseSpare() end
 function M.setAgain(name) S().SetAgain(name) end
 

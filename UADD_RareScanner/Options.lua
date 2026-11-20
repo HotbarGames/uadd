@@ -25,7 +25,7 @@ local apps = {}                                 -- app names whose table we chan
 local walked = setmetatable({}, { __mode = "k" }) -- settings tables already changed (until Restore)
 local mine = setmetatable({}, { __mode = "k" })   -- our wrappers in AceConfigRegistry.tables
 local pats = {}                                 -- key -> { pat, lit, specs } (made once per English)
-local memo = {}                                 -- text -> Ukrainian or false (wiped when words change)
+local memo, memoSize, MEMO_MAX = {}, 0, 2000    -- text -> Ukrainian or false (wiped on new words, and at MEMO_MAX)
 
 -- ── A finished line ───────────────────────────────────────────────────────────────────────────
 
@@ -99,7 +99,7 @@ function O.Translate(s)
     local m = memo[s]
     if m == nil then
         m = ns.Reverse[s] or FromTemplate(s) or false
-        memo[s] = m
+        if memoSize >= MEMO_MAX then wipe(memo) memoSize = 0 end memo[s], memoSize = m, memoSize + 1
     end
     return m or nil
 end
@@ -266,7 +266,7 @@ end
 -- Ours on every word read at load that is English now (again after the hold key: nothing twice).
 function O.Apply()
     if not ns.WordsWanted() then return end
-    wipe(memo)
+    wipe(memo) memoSize = 0
     Tables()
     Pages()
     Popups()
@@ -292,7 +292,7 @@ function O.Restore()
     end
     Labels(false)
     wipe(walked)
-    wipe(memo)
+    wipe(memo) memoSize = 0
     Notify()
     wipe(apps)
 end

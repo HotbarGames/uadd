@@ -64,11 +64,18 @@ function F.lookups(n)
     check("zone", U.Zone, Spread(src.zoneNames, n), function(en) return src.zoneNames[en] end)
     check("npc", U.Npc, Spread(src.npcNames, n), function(en) return src.npcNames[en] end)
     check("item", U.Item, Spread(src.itemNames, n), function(en) return src.itemNames[en] end)
+    -- Spells: UALLF's cast bar hook looks up its UI words first, then spell names.
+    check("spell", U.Spell, Spread(src.spellNameEN, n),
+        function(en) return src.uiStrings[en] or src.spellNameEN[en] end)
     -- Quests: UALLF keys by ID; the English title comes from QuestieDB.
     local ids, titles = {}, {}
     for id, q in pairs(src.quests) do
         local en = Lib().Quest.GetRaw(id, "name")
-        if type(q.title) == "string" and HasCyr(q.title) and not q.title:find("%$") and type(en) == "string" then
+        -- UALLF resolves a bag title as UI text, item, NPC, then quest (its StorageHooks.lua): a quest whose
+        -- English title is also one of those is never reached by title, by design (quest 91725 is an item too).
+        local taken = type(en) == "string" and (src.uiStrings[en] or src.itemNames[en] or src.npcNames[en])
+        if type(q.title) == "string" and HasCyr(q.title) and not q.title:find("%$") and type(en) == "string"
+            and not taken then
             ids[#ids + 1] = id
             titles[id] = en
         end
@@ -80,19 +87,28 @@ function F.lookups(n)
     return out
 end
 
--- Made-up names: every route must say nil, and each borrowed font string keeps text and colour.
+-- Made-up names: every route must say nil, and each Blizzard font string keeps text and colour. Another
+-- addon's SetText hook on each string counts the calls made on that string itself (touched): the probe
+-- calls the hook chain on a string of its own, so it must stay 0.
 function F.madeUp()
     local U = Ns().UALL
     local strings = { ZoneTextString, SubZoneTextString, QuestFrame:GetTitleText(), GossipFrame:GetTitleText() }
     for i = 1, NUM_GROUP_LOOT_FRAMES do strings[#strings + 1] = _G["GroupLootFrame" .. i].Name end
     for i = 1, NUM_CONTAINER_FRAMES do strings[#strings + 1] = _G["ContainerFrame" .. i]:GetTitleText() end
+    for _, bar in ipairs({ PetCastingBarFrame, FocusFrameSpellBar, TargetFrameSpellBar, OverlayPlayerCastingBarFrame,
+        PlayerCastingBarFrame }) do strings[#strings + 1] = bar.Text end
     for i, fs in ipairs(strings) do
         fs:SetText("before " .. i)
         fs:SetTextColor(0.1, 0.2, 0.3, 0.4)
     end
+    local touched = 0
+    for _, fs in ipairs(strings) do
+        hooksecurefunc(fs, "SetText", function(self) if self == fs then touched = touched + 1 end end)
+    end
     local answers = {
         U.Zone("Zzyzx Harness Vale") or false, U.Npc("Zzyzx the Harnessed") or false,
         U.Item("Zzyzx Harness Pebble") or false, U.Quest(999999, "Zzyzx Harness Errand") or false,
+        U.Spell("Zzyzx Harness Bolt") or false,
     }
     local kept = 0
     for i, fs in ipairs(strings) do
@@ -102,7 +118,26 @@ function F.madeUp()
             kept = kept + 1
         end
     end
-    return answers[1], answers[2], answers[3], answers[4], kept, #strings
+    return answers[1], answers[2], answers[3], answers[4], kept, #strings, answers[5], touched
+end
+
+-- Cast bars: one whose unit casts is never borrowed (UALLF would answer with that cast's name).
+-- Returns the answer for Frostbolt while the pet casts, UALLF's Frostbolt, then the answer while all cast.
+function F.castingBar()
+    local U, src = Ns().UALL, H.ns.UALLF
+    local frost, other = src.spellNameEN["Frostbolt"], nil
+    for id, s in pairs(src.spells) do
+        if type(s) == "table" and HasCyr(s.name) and s.name ~= frost then other = id break end
+    end
+    local real, casting = UnitCastingInfo, { pet = true }
+    UnitCastingInfo = function(unit)
+        if casting[unit] then return "Cast", nil, nil, 0, 1, false, nil, false, other end
+    end
+    local one = U.Spell("Frostbolt")
+    casting = { player = true, pet = true, target = true, focus = true }
+    local none, wait = U.Spell("Healing Touch")
+    UnitCastingInfo = real
+    return one or false, frost, none or false, wait or false
 end
 
 -- Total IDs QuestieDB lists for a kind.

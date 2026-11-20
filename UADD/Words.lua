@@ -14,7 +14,8 @@
 --        v  a value (a number, a time, money, a link): kept when it has no English word, else our text
 --        f  a free name: kept as it is; one name only, so not a wide gap, a line break, " - " or a word
 --           in small letters (that is a glued text or a phrase: the line stays English)
---        n  a game name (item, zone, NPC): UALL Forever's Ukrainian, or the whole line stays English
+--        n  a game name (item, zone, NPC; a spell with opts.spells): UALL Forever's Ukrainian through
+--           UADD.UALL's routes (never UADD's own table: it has none), or the whole line stays English
 --        t  our text: translated again (empty stays empty)
 --        b  blank (an English plural ending): dropped
 --        w  only spaces (an indent): kept; any other text says no
@@ -26,6 +27,8 @@
 -- Answers are remembered by input; a name UALL Forever cannot give yet ("wait") is not remembered.
 
 local U = UADD
+local NAMES = { "Text", "Zone", "Npc", "Item" }               -- UADD.UALL routes a game name is asked of
+local SPELLS = { "Text", "Zone", "Npc", "Item", "Spell" }     -- and a spell name (U.NewWords(data, { spells = true }))
 
 -- An English word: a run of Latin letters, but not a short unit right after a number ("5m", "10 sec")
 -- nor "x" before one ("x3"). Colour codes, icons and links do not count.
@@ -56,8 +59,9 @@ function U.UpperUk(s)
     return (s:gsub("\210\145", "\210\144"))
 end
 
-function U.NewWords(data)
+function U.NewWords(data, opts)
     local W = { HasLatin = HasLatin, Upper = U.UpperUk }
+    local routes = type(opts) == "table" and opts.spells and SPELLS or NAMES
     local ix = U.TextIndex(data or {})
     local cache, size, LIMIT = {}, 0, 6000
     local waited = false
@@ -71,17 +75,21 @@ function U.NewWords(data)
     function W.Index() return ix end
 
     -- A game name in a slot: UALL Forever's Ukrainian, with its colour put back; false when there is none.
-    local function Name(v)
+    -- only: the routes to ask (default: this W's); no table is made per call (a miss makes no garbage).
+    -- A second answer, true: a route said "not now" (ask again later).
+    local function Name(v, only)
         if v == "" or not HasLatin(v) or v:find("|H", 1, true) then return v end
         local c, inner = v:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r$")
         local en = inner or v
-        for _, look in ipairs({ U.Text, U.Zone, U.Npc, U.Item }) do
+        local A, later = U.UALL, false
+        for _, route in ipairs(only or routes) do
+            local look = type(A) == "table" and A[route]
             local ua, wait = nil, nil
-            if look then ua, wait = look(en) end
+            if type(look) == "function" then ua, wait = look(en) end
             if ua then return c and (c .. ua .. "|r") or ua end
-            if wait then waited = true end
+            if wait then waited, later = true, true end
         end
-        return false
+        return false, later
     end
     W.Name = Name   -- for a line a module reads by its shape (UADD_TomTom: the pin's coordinates line)
 
@@ -101,7 +109,7 @@ function U.NewWords(data)
             return v
         end
         if sort == "b" then return "" end
-        if sort == "n" then return Name(v) end
+        if sort == "n" then return (Name(v)) end
         if sort == "t" then
             if v == "" then return v end
             local t = Translate(v)
@@ -177,6 +185,26 @@ function U.NewWords(data)
         return uk
     end
     W.Translate = Translate
+
+    -- Could s be one of our texts? A cheap first test for hooks on game-wide paths (lesson 12): no
+    -- slot is filled, nothing is cached. False means Translate(s) would surely give nothing.
+    local function Maybe(s, d)
+        if type(s) ~= "string" or s == "" or d > 4 or not s:find("%a") then return false end
+        local hit = cache[s]
+        if hit ~= nil then return hit ~= false end
+        if ix:Exact(s) or ix:Match(s, 0) then return true end
+        if s:find("\n", 1, true) then
+            for line in s:gmatch("[^\n]+") do if Maybe(line, d + 1) then return true end end
+            return false
+        end
+        local body = s:match("^%s*(.-)%s*$")
+        if body ~= s then return Maybe(body, d + 1) end
+        local inner = s:match("^|c%x%x%x%x%x%x%x%x(.*)|r$")
+        if inner then return Maybe(inner, d + 1) end
+        local rest = s:match("^|T.-|t%s*(.+)$")
+        return rest ~= nil and Maybe(rest, d + 1)
+    end
+    function W.Maybe(s) return Maybe(s, 0) end
 
     function W.Forget() wipe(cache) size = 0 end
     function W.CacheSize() return size end         -- texts looked up so far (the harness reads it)

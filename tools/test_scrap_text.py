@@ -82,7 +82,7 @@ class Build(unittest.TestCase):
         lines = [ln.strip() for ln in toc.splitlines() if ln.strip() and not ln.startswith("#")]
         data = [f"data/text{i:02d}.lua" for i in range(1, M.FILES + 1)]
         self.assertEqual(lines[:len(data)], data)
-        self.assertEqual(lines[len(data):], ["Swap.lua", "Screen.lua", "Fonts.lua", "Module.lua"])
+        self.assertEqual(lines[len(data):], ["Swap.lua", "Screen.lua", "Items.lua", "Fonts.lua", "Module.lua"])
         self.assertIn("## Dependencies: UADD\n", toc)
         self.assertRegex(toc, r"## OptionalDeps: Scrap, UALLF\b")
 

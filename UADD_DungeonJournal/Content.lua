@@ -68,8 +68,8 @@ local function SlotParts()
 end
 
 -- The search list's second line, FDJ.DB[key].location: each comma part is a place name from UALL,
--- or one of the journal's own phrases with a place name in it. A part whose name UALL lacks stays
--- English, whole. K.PlaceNames: the names to ask UALL for (Names.lua).
+-- or one of the journal's own phrases with a place name in it. A line with a part whose name UALL
+-- lacks stays English, whole (docs/LESSONS.md lesson 6). K.PlaceNames: the names to ask UALL for.
 -- The phrases are the journal's own words, so they are keyed by the hash of the English (UADD.Hash).
 local PHRASES = {
     ["730591e7"] = "Під містом {zone:Ironforge}",
@@ -86,6 +86,7 @@ local function Locations()
     return F and type(F.DB) == "table" and F.DB or {}
 end
 
+-- A text's comma parts, trimmed (also Names.lua's quest giver lines).
 local function Parts(text)
     local out = {}
     for part in (type(text) == "string" and text or ""):gmatch("[^,]+") do
@@ -94,6 +95,7 @@ local function Parts(text)
     end
     return out
 end
+K.Parts = Parts
 
 function K.PlaceNames()
     local out = {}
@@ -116,6 +118,8 @@ function K.Location(key)
         if uk then
             parts[i] = phrase and ns.Prose.Fill(phrase) or uk
             changed = true
+        elseif en:find("%a") then
+            return nil
         end
     end
     return changed and table.concat(parts, ", ") or nil
@@ -124,6 +128,9 @@ end
 function K.Build()
     local N = ns.Names
     local prose, places = ns.Prose.Build()
+    -- Zones and towns too: a quest's giver line is "Name, Town, Zone", each part a whole name
+    -- (FDJ.LocalizeFreeText); a line with a part UALL has no name for stays whole English (Whole.lua).
+    for en, uk in pairs(N.Zones()) do if places[en] == nil then places[en] = uk end end
     for en, uk in pairs(N.Npcs()) do places[en] = uk end
     local trash = UADD.Glossary.Text("game.trash_loot")
     return {

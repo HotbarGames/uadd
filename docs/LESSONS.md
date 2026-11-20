@@ -63,6 +63,12 @@ The independent review found it; the harness had no late window. Rule: a window 
 open is scanned when it appears (`NewRoot()` in `UADD_WhatsTraining/Screen.lua`), not only at login, and the
 stand-in makes it late too. Check: `python3 tools/harness/run.py` (What's Training?'s "late window" step).
 
+**Again in Dialogue UI (2026-11-20).** Its page in the game's options (Options > AddOns) stayed English: it is a
+nameless frame, not under the module's named roots, and its first OnShow replaces itself, so a hook on it does not
+last. Rule: such a page is found by what it holds (its one button's text, by hash), when the options window opens,
+and its texts are hooked at once. Check: `python3 tools/harness/run.py`, the Dialogue UI canvas steps
+(`tools/harness/flow_dialogueui_canvas.py`; game E makes the page after login).
+
 ## 3. The same text translated by two addons
 
 **What went wrong.** UALL Forever (UALLF) is a separate Ukrainian addon. It is installed at
@@ -135,6 +141,11 @@ the whole line English (no half translations).
 
 **Check.** Manual: list such places in the module notes. For each one, add a flow with a real joined text
 in the harness (as `tools/harness/flow_openmap_label.py` does), then run `python3 tools/harness/run.py`.
+
+**Again in Dungeon Journal (2026-11-20).** A quest's giver line is "Name, Town, Zone" in one text, so UALL Forever,
+which knows each part alone, left it English. Rule: split it at the commas; all Ukrainian when UALL Forever names
+every part, else whole English. Check: `python3 tools/harness/run.py`, the DJ module's header and giver-line steps
+(`tools/harness/flow_dj_head.py`, also made-up lines with one unknown name).
 
 ## 7. A free slot that swallows glued text
 
@@ -209,6 +220,16 @@ in `ALLOW` in that file, with the hash of its Ukrainian, so a later change is re
 six texts above. It misses a name made of plain words the addon also writes in small letters, a name at a sentence
 start, and modules not in its list (`MODULES` in `tools/game_names_src.py`; ForeverXPBar gives too many false hits
 yet). Manual: read every capitalised word of the English.
+
+**Again in Dungeon Journal (2026-11-20).** About 220 long texts (`tools/dj_prose/uk_N.lua`) kept English game names
+inside the Ukrainian, as in «Faldrim Anvilmar». That is a half line. The generator makes a placeholder (`{npc:..}`,
+`{zone:..}`, `{item:..}`, `{quest:..}`) only for names UALL Forever has. The translators copied the other names as
+they were. Rule: a name UALL Forever lacks is said another way, without the name, or the whole text stays English.
+We never write the name in Ukrainian letters ourselves. Check: `python3 -m unittest tools.test_dj_prose`
+(`test_no_latin_in_uk`). After placeholders, colour and texture codes, links and `%s` are taken out, no Latin word
+of 2 or more letters may stay. `ALLOW` in that file lists the few that may (the realm, the game, the addon, a
+website), each with a reason; a game name never goes there. `KNOWN` lists texts still being fixed; it only goes
+down. `python3 tools/test_dj_prose.py --latin` prints every hit and a new `KNOWN` block.
 
 ## 10. Checks that passed because the files were new
 

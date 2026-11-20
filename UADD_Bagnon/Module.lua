@@ -7,8 +7,9 @@
 --     right the few words Bagnon read once while loading.
 --   * Fonts.lua gives our words a font with Ukrainian letters, one FontString at a time.
 --   * Item, spell, zone and NPC names are the game's (UALL Forever's), never ours. Words of the game
---     itself that Bagnon uses (bank, search, options and the like) are the game's and are not changed.
---     A few lines stay English because Bagnon glues them to such a word (tools/make_bgn_text.py: STAY).
+--     itself that Bagnon uses (inventory, search, money, options and the like) are taken from UALL
+--     Forever when they show (Game.lua); one it lacks stays English. A few lines stay English because
+--     Bagnon glues them to such a word (tools/make_bgn_text.py: STAY).
 -- While the hold key is held (UADD/Original.lua) Bagnon's English is back. "/uadd bagnon off" puts
 -- everything back as Bagnon had it, but for the page names in the game's Settings list, which the game
 -- keeps from when Bagnon_Config loaded: those change at the next /reload. On a client that is not

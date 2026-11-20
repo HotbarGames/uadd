@@ -4,7 +4,7 @@
 -- shows goes through its own font strings (ns.Text, UI.Label): each one carries mcSetText and mcSetFont
 -- (the game's own setters, kept by Mastercraft), mcRaw (the English it was given) and mcSize/mcFlags.
 -- No other addon puts those fields on a font string, so rawget(fs, "mcSetText") tells us it is
--- Mastercraft's. We find them three ways:
+-- Mastercraft's. We find them three ways (Find.lua):
 --   * a post-hook on CreateFontString of the frame kinds (Frame, Button, ...): the frame that made one
 --     is looked at on the next frame (Mastercraft fills the fields right after it makes the string);
 --   * Mastercraft's named windows and every child of UIParent, once after login (made before us);
@@ -28,15 +28,7 @@ local hooked = setmetatable({}, { __mode = "k" })   -- fs -> true: our hooks are
 local mine = setmetatable({}, { __mode = "k" })     -- fs -> true: it shows our Ukrainian
 local fonted = setmetatable({}, { __mode = "k" })   -- fs -> { path, size, flags } it had before ours
 local fits = setmetatable({}, { __mode = "k" })     -- box -> true: refits on OnSizeChanged
-local shown = {}                                    -- root window -> true: rescanned on OnShow
 local busy = false
-local queue, queued = {}, false
-local walked = setmetatable({}, { __mode = "k" })
-local ROOTS = { "MastercraftFrame", "MastercraftCompact", "MastercraftMinimapButton", "MastercraftFarmHUD",
-    "MastercraftFishBar", "MastercraftFishRecap", "MastercraftFishWindow", "MastercraftGoals",
-    "MastercraftLFGPanel", "MastercraftMiniGuide", "MastercraftNeverBank", "MastercraftRecipePanel",
-    "MastercraftAltView", "MastercraftDetails", "MastercraftTradeBoard", "MastercraftConfirm" }
-local KINDS = { "Frame", "Button", "CheckButton", "StatusBar", "ScrollFrame", "Slider", "EditBox" }
 
 local function Ours(fs) return type(fs) == "table" and rawget(fs, "mcSetText") ~= nil end
 S.Ours = Ours
@@ -54,8 +46,8 @@ local function Font(fs, on)
         if not path then return end
         local was = fonted[fs]
         if not was then
-            local p, s, f = fs:GetFont()
-            was = { p, s, f }
+            was = U.SaveFont(fs)                -- its font object too (lesson 18)
+            was[1], was[2], was[3] = was.path, was.size, was.flags
         end
         local size = rawget(fs, "mcSize") or was[2]
         local flags = rawget(fs, "mcSize") and rawget(fs, "mcFlags") or was[3]
@@ -73,6 +65,9 @@ local function Font(fs, on)
         if size then
             fs.mcSetFont(fs, rawget(fs, "mcScript") or path or was[1] or STANDARD_TEXT_FONT,
                 size, rawget(fs, "mcFlags") or "")
+        elseif was.object then                  -- its font object back, never a pinned file
+            U.FontBack(fs, { object = was.object })
+            if was.own then fs.mcSetFont(fs, was[1], was[2], was[3] or "") end
         elseif was[1] and was[2] then
             fs.mcSetFont(fs, was[1], was[2], was[3] or "")
         end
@@ -125,16 +120,65 @@ local function Refit(box)
     end
 end
 
+-- A line that stayed English because UALL Forever said "not now" for a game name in it (in combat, at
+-- login) is tried again a few seconds later, up to 3 times for the same English.
+local retry = setmetatable({}, { __mode = "k" })   -- fs -> { English, tries }
+local retrying = false
+local Apply
+local function Retry()
+    retrying = false
+    for fs, r in pairs(retry) do
+        if rawget(fs, "mcRaw") == r[1] then U.SafeCall(Apply, fs) else retry[fs] = nil end
+    end
+end
+local function Later(fs, raw)
+    local r = retry[fs]
+    if not r or r[1] ~= raw then r = { raw, 0 } retry[fs] = r end
+    r[2] = r[2] + 1
+    if r[2] > 3 then retry[fs] = nil return end
+    if not retrying and C_Timer and C_Timer.After then
+        retrying = true
+        C_Timer.After(2, Retry)
+    end
+end
+S.Retrying = function() return next(retry) ~= nil end
+
+-- Any error while we write: Mastercraft's English as it was, in its own font (the worst we may do is
+-- leave a text untranslated). The error is said once (U.SafeCall).
+local function Back(fs)
+    mine[fs] = nil
+    local raw = rawget(fs, "mcRaw")
+    if type(raw) == "string" then pcall(fs.mcSetText, fs, raw) end
+    pcall(Font, fs, false)
+end
+
+-- Every write under busy (our own SetText / SetFont calls must not come back to us) goes through here:
+-- busy is reset on every path, an error included, or off and the hold key would stop working.
+local function Guarded(fs, fn, ...)
+    busy = true
+    local ok = U.SafeCall(fn, fs, ...)
+    if not ok then Back(fs) end
+    busy = false
+end
+
+local Write
+
 -- After Mastercraft set a text (or when we redo one): ours when we have it, its English otherwise.
-local function Apply(fs)
+Apply = function(fs)
     if busy then return end
     local raw, up = English(fs)
-    local uk = ns.WordsWanted() and type(raw) == "string" and W.Translate(raw) or nil
+    local uk, waited
+    if ns.WordsWanted() and type(raw) == "string" then uk, waited = W.Try(raw) end
+    if uk or not waited then retry[fs] = nil else Later(fs, raw) end
     if uk and up then uk = W.Upper(uk) end
     -- No Cyrillic font: Mastercraft's English stays (no boxes), and it is not a missed text.
     local nofont = uk ~= nil and (U.Plain(uk) or ""):find(CYR) ~= nil and not U.CyrFontPath()
     if nofont then uk = nil end
-    busy = true
+    Guarded(fs, Write, uk, raw, waited, nofont)
+end
+S.Apply = Apply
+
+Write = function(fs, uk, raw, waited, nofont)
     if uk then
         fs.mcSetText(fs, uk)
         mine[fs] = true
@@ -150,18 +194,18 @@ local function Apply(fs)
             if type(rawget(fs, "mcRaw")) == "string" then fs.mcSetText(fs, rawget(fs, "mcRaw")) end
         end
         Font(fs, false)
-        if not nofont and type(raw) == "string" and ns.WordsWanted() and raw:find("%a%a%a") then U.Missed("mastercraft", raw, fs) end
+        if not nofont and not waited and type(raw) == "string" and ns.WordsWanted() and raw:find("%a%a%a") then U.Missed("mastercraft", raw, fs) end
     end
-    busy = false
 end
-S.Apply = Apply
+
+local function Refont(fs)
+    Font(fs, true)
+    Fit(fs)
+end
 
 local function OnFont(fs)
     if busy or not mine[fs] then return end
-    busy = true
-    Font(fs, true)
-    Fit(fs)
-    busy = false
+    Guarded(fs, Refont)
 end
 
 local function OnText(fs) U.SafeCall(Apply, fs) end
@@ -175,75 +219,7 @@ local function Hook(fs)
 end
 S.Hook = Hook
 
-local function Regions(f)
-    if not f.GetRegions then return end
-    for _, r in ipairs({ f:GetRegions() }) do
-        if not hooked[r] and Ours(r) then Hook(r) end
-    end
-end
-
--- A frame and everything in it, once (later font strings come in through CreateFontString).
-local function Walk(f, budget)
-    if type(f) ~= "table" or walked[f] or budget[1] <= 0 then return end
-    walked[f] = true
-    budget[1] = budget[1] - 1
-    if f.IsForbidden and f:IsForbidden() then return end
-    Regions(f)
-    if f.GetChildren then
-        for _, c in ipairs({ f:GetChildren() }) do Walk(c, budget) end
-    end
-end
-
-local function Flush()
-    queued = false
-    local list = queue
-    queue = {}
-    for f in pairs(list) do U.SafeCall(Regions, f) end
-end
-
-local function OnCreate(self)
-    if queue[self] then return end
-    queue[self] = true
-    if not queued then
-        queued = true
-        C_Timer.After(0, Flush)
-    end
-end
-
-local installed = false
-function S.Install()
-    if installed then return end
-    installed = true
-    local done = {}
-    for _, kind in ipairs(KINDS) do
-        local t = U.WidgetMethods(kind)      -- never a new EditBox: it would take the keyboard
-        if t and not done[t] and type(t.CreateFontString) == "function" then
-            done[t] = true
-            hooksecurefunc(t, "CreateFontString", OnCreate)
-        end
-    end
-end
-
--- Every window of Mastercraft's we can reach now (after login, when it shows, after "on").
-function S.Scan()
-    local budget = { 30000 }
-    for _, name in ipairs(ROOTS) do
-        local f = rawget(_G, name)
-        if type(f) == "table" then
-            walked[f] = nil
-            Walk(f, budget)
-            if f.HookScript and not shown[f] then
-                shown[f] = true
-                f:HookScript("OnShow", function(self)
-                    if ns.On() then walked[self] = nil U.SafeCall(Walk, self, { 5000 }) end
-                end)
-            end
-        end
-    end
-    if UIParent and UIParent.GetChildren then
-        for _, c in ipairs({ UIParent:GetChildren() }) do Walk(c, budget) end
-    end
-end
+-- Finding the strings: Find.lua (S.Install, S.Scan).
 
 -- Redo every hooked font string: ours when wanted, Mastercraft's English when not.
 function S.Sync()

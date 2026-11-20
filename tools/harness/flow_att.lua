@@ -87,7 +87,7 @@ local function Lines(tip)
     for i = 1, 8 do
         for _, side in ipairs({ "Left", "Right" }) do
             local fs = rawget(_G, name .. "Text" .. side .. i) or tip:CreateFontString(name .. "Text" .. side .. i)
-            fs:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
+            fs:SetFontObject((i == 1 and side == "Left") and GameTooltipHeaderText or GameTooltipText)  -- wow_fontfam.lua
         end
     end
     local function Clear(self)

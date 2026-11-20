@@ -2,7 +2,8 @@
 
 Checked: the Favourites button (FDJ's Systems/Favourites.lua adds its words only to the languages it
 finds at load, so ours come from ui/strings_systems.lua); the search list's place line under each
-dungeon (UALL zone names, and our two phrases with a zone in them; a part UALL lacks stays English);
+dungeon (UALL zone names, and our two phrases with a zone in them; a line with a part UALL lacks stays
+whole English, also a made-up one: docs/LESSONS.md lesson 6);
 the loot type line ("Two-Hand, Axe") and every type word in the journal's loot; the "Trash Drops"
 row on the Deadmines boss list. Each in Ukrainian, exact English with Shift held and with
 "/uadd dj off". Fact: "Ogre Loincloth" is not in UALL, so its name stays English.
@@ -19,6 +20,7 @@ SLOTS = {"Two-Hand, Axe": "Дворучна, Сокира", "Legs, Cloth": "Но
          "Recipe, Blacksmithing": "Рецепт, Ковальство", "Back": "Плащ"}
 TRASH_EN, TRASH_UK = "Trash Drops", "Здобич зі звичайних ворогів"
 UK_PLACES = ("Moonbrook, Westfall", "Cleft of Shadow, Orgrimmar", "Northern Barrens", "Silverpine Forest")
+MADE_UP = "Wobbly Gizmo Hollow"     # a place nobody has a name for
 
 
 def places(D):
@@ -53,7 +55,13 @@ def run(s, check, facts):
     has_lordaeron = D.dungeon(lua_str("Lordaeron")) is not None
     check("words: a place UALL lacks stays English", (ruins == "The ruined city of Lordaeron") != has_lordaeron,
           f"{ruins!r} (UALL has Lordaeron: {has_lordaeron})")
-    facts["dj_place_lines"] = f"{sum(1 for k, v in p.items() if k != v)} of {len(p)} in Ukrainian"
+    half = {en: v for en, v in p.items() if v != en and re.search("[A-Za-z]", v)}
+    check("words: a place line is all Ukrainian or exactly English", not half, half or "")
+    known = UK_PLACES[0].split(", ")[1]
+    for line in (f"{known}, {MADE_UP}", f"{MADE_UP}, {known}"):
+        shown = txt(D.madeUp(lua_str(UK_PLACES[0]), lua_str(line)))
+        check(f"words: a known place beside an unknown one stays whole English ({line})", shown == line, shown)
+    facts["dj_place_lines"] =f"{sum(1 for k, v in p.items() if k != v)} of {len(p)} in Ukrainian"
 
     check("words: loot type lines in Ukrainian", got["slots"] == SLOTS, got["slots"])
     n, gaps = triple(D.slotGaps(), 2)

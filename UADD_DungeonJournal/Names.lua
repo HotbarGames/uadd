@@ -54,6 +54,7 @@ function N.Boss(en) return type(en) == "string" and N.maps.Npc[en] or nil end
 function N.Quest(id) return N.maps.Quest[id] end
 function N.Item(en) return type(en) == "string" and N.maps.Item[en] or nil end
 function N.Npcs() return N.maps.Npc end
+function N.Zones() return N.maps.zones end
 
 -- ── The English names in the journal ──────────────────────────────────────────────────────────
 
@@ -104,6 +105,9 @@ function N.Sources()
                 if help then Add("Item", help.itemName, help.item) end
                 Add("Npc", Person(q.pickup))
                 Add("Npc", Person(q.turnin))
+                for _, text in pairs({ q.pickup, q.turnin }) do   -- "Name, Town, Zone": the places after the name
+                    for i, en in ipairs(ns.Content.Parts(text)) do if i > 1 and en:find("^%u") then Add("zones", en) end end
+                end
             end
         end
     end
@@ -127,7 +131,7 @@ end
 -- ── The saved copy ────────────────────────────────────────────────────────────────────────────
 
 function N.Signature()
-    local parts = { "dj5", "rules=" .. tostring(U.UALL and U.UALL.RULES) }
+    local parts = { "dj6", "rules=" .. tostring(U.UALL and U.UALL.RULES) }
     for _, addon in ipairs({ "UADD", "UADD_DungeonJournal", "ForeverDungeonJournal", "UALLF" }) do
         parts[#parts + 1] = addon .. "=" .. tostring(U.Meta(addon, "Version"))
     end

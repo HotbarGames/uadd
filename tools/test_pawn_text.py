@@ -76,7 +76,7 @@ class Build(unittest.TestCase):
         lines = [ln.strip() for ln in toc.splitlines() if ln.strip() and not ln.startswith("#")]
         data = [f"data/text{i:02d}.lua" for i in range(1, M.FILES + 1)] + ["data/names.lua"]
         self.assertEqual(lines[:len(data)], data)
-        self.assertEqual(lines[len(data):], ["Swap.lua", "Fonts.lua", "Module.lua"])
+        self.assertEqual(lines[len(data):], ["Swap.lua", "Game.lua", "Fonts.lua", "Module.lua"])
 
     def test_long_value_is_cut(self):
         e = K.lua_entry("T", "K", "ї" * 600)

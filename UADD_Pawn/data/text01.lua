@@ -5,7 +5,7 @@
 local _, ns = ...
 local T = ns.AL or {}; ns.AL = T
 local S = ns.SORT or {}; ns.SORT = S
-T["UI.CompareClearItems"] = "Очистити"
+T["UI.CompareClearItems"] = "Зняти"
 T["UI.CompareClearItemsTooltip"] = "Прибрати обидва предмети з порівняння."
 T["UI.CompareColoredSockets"] = "Гнізда"
 T["UI.CompareEquipped"] = "Вдягнено"

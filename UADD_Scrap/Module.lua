@@ -4,8 +4,9 @@
 -- in the table (and the four key binding names), Screen.lua in what Scrap wrote once (settings page names,
 -- the junk list's tabs and buttons, the tutorial), Fonts.lua gives our words a font with Ukrainian letters.
 -- No English is stored here: it is read from Scrap at run time.
---   * Never ours: item names, and the chat lines with an item link in them (lesson 9). Scrap saves no text
---     of the table in its data (lesson 14).
+--   * Never ours: item names, and the chat lines with an item link in them (lesson 9). The junk list shows
+--     each item's name taken from UALL Forever (Items.lua); one it lacks stays English. The "Scrap" tab and
+--     title are the addon's name and stay. Scrap saves no text of the table in its data (lesson 14).
 --   * Scrap's settings (Scrap_Config) and its junk list (Scrap_Merchant) load later, on their own: each gets
 --     ours when it loads.
 --   * Off, and while the hold key is held (UADD/Original.lua): the English goes back everywhere it went in.
@@ -43,7 +44,9 @@ local function Apply(on)
     if on then
         U.SafeCall(ns.Swap.SwapIn)
         U.SafeCall(ns.Screen.Apply)
+        U.SafeCall(ns.Items.Set, true)
     else
+        U.SafeCall(ns.Items.Set, false)
         U.SafeCall(ns.Screen.Restore)
         U.SafeCall(ns.Swap.SwapOut)
     end
@@ -131,7 +134,7 @@ end
 local HELP = {
     "/uadd scrap on - Scrap українською",
     "/uadd scrap off - вимкнути, Scrap знову англійською",
-    "Назви предметів лишаються такими, як їх дає гра.",
+    "Назви предметів у списку - з UALL Forever; яких там немає, лишаються англійською.",
 }
 
 local function Command(args)

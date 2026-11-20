@@ -40,9 +40,10 @@ function M.hooked() return NS().Screen.Hooked() end
 
 -- A made-up name the halves check puts in a game-name slot: UALL Forever's Ukrainian for it.
 function M.names(en, uk)
+    UADD.UALL = UADD.UALL or {}
     for _, k in ipairs({ "Text", "Zone", "Npc", "Item" }) do
-        local old = UADD[k]
-        UADD[k] = function(s, ...)
+        local old = UADD.UALL[k]
+        UADD.UALL[k] = function(s, ...)
             if s == en then return uk end
             if old then return old(s, ...) end
         end
@@ -110,6 +111,35 @@ function M.tipOther(left)
     GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     GameTooltip:AddLine(left)
     return GameTooltipTextLeft1:GetText() or ""
+end
+
+-- The owner's case (lesson 18): a bag item's tooltip, the game's item lines and Mastercraft's block at the
+-- bottom, fills itself again (a timer, BAG_UPDATE; SetOwner clears it). Then UALL Forever puts Ukrainian on
+-- every game line: each line must have its font object back and not be pinned to a Latin file. Gives
+-- the lines that would show boxes, "" when none.
+function M.refill(mc)
+    local tip, CYR = GameTooltip, "\208\162\208\181\209\129\209\130"     -- a Cyrillic test word
+    local function Line(i) return _G["GameTooltipTextLeft" .. i] end
+    local function Fill(game, ours)
+        tip:SetOwner(UIParent, "ANCHOR_NONE")
+        for i = 1, game do tip:AddLine("") Line(i):SetText("item line " .. i) end
+        for _ = 1, ours do S().TipAdd(mc) end
+        tip:Show()
+    end
+    Fill(2, 3)                          -- a short item: Mastercraft's lines are 3 to 5
+    Fill(5, 1)                          -- the refill of a longer one: lines 3 to 5 are the game's now
+    tip:SetOwner(UIParent, "ANCHOR_NONE")
+    local bad = {}
+    for i = 1, 6 do
+        tip:AddLine("")
+        local fs = Line(i)
+        fs:SetText(CYR)                 -- UALL Forever's Ukrainian on a game line
+        local want = i == 1 and GameTooltipHeaderText or GameTooltipText
+        local pinned = rawget(fs, "__pinned") and not UADD.IsCyrFont((fs:GetFont()))
+        if pinned or fs:GetFontObject() ~= want then bad[#bad + 1] = i .. ":" .. tostring((fs:GetFont())) end
+    end
+    tip:Hide()
+    return table.concat(bad, ", ")
 end
 
 -- A chat line from the stand-in (its blue name first), or one without the name; the line shown.

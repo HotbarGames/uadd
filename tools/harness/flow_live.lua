@@ -21,14 +21,59 @@ function F.spyReset()
     end
 end
 
--- A logged quest whose title UALL Forever does not have, while its target does:
--- The Return of Korrak (7381), a Skull of Korrak (18148) that Korrak the Bloodrager (12159) drops.
-F.extraId = 7381
+-- A logged quest whose title UALL Forever does not have, while its target does. Chosen at run time from
+-- the installed UALL Forever and QuestieDB, so a UALLF update that adds the title cannot break the step
+-- (7381 "The Return of Korrak" served until UALLF 1.0.18 added it): the lowest quest id that
+--   * UALLF has neither by id (src.quests) nor by English title (src.questTitles), and UADD's own route
+--     (UALL.Quest) gives nil too, so the title stays English by design;
+--   * has exactly one objective, an item UALLF names (src.itemNames), dropped by 1-5 NPCs that all have
+--     spawns and all have UALLF names (src.npcNames), so the map pins turn Ukrainian.
+-- F.extra = { id, title, item, itemName, npcs = { [npcId] = English name } }, or nil when no quest fits.
+local function Fits(src, U, Q, I, Nd, id)
+    local en = Q.Get(id, "name")
+    if src.quests[id] or type(en) ~= "string" or src.questTitles[en] then return end
+    local o = Q.Get(id, "objectives")
+    if type(o) ~= "table" or type(o[3]) ~= "table" or #o[3] ~= 1 then return end
+    for _, k in ipairs({ 1, 2, 5, 6 }) do if type(o[k]) == "table" and #o[k] > 0 then return end end
+    if o[4] then return end
+    local item = o[3][1][1]
+    local itemName = I.Get(item, "name")
+    if type(itemName) ~= "string" or not src.itemNames[itemName] then return end
+    local drops = I.Get(item, "npcDrops")
+    if type(drops) ~= "table" or #drops < 1 or #drops > 5 then return end
+    local npcs = {}
+    for _, n in ipairs(drops) do
+        local name, spawns = Nd.Get(n, "name"), Nd.Get(n, "spawns")
+        if type(name) ~= "string" or not src.npcNames[name] or type(spawns) ~= "table" or not next(spawns) then
+            return
+        end
+        npcs[n] = name
+    end
+    local uk, wait = U.Quest(id, en)          -- last: the costliest test
+    if uk or wait then return end
+    return { id = id, title = en, item = item, itemName = itemName, npcs = npcs, level = Q.Get(id, "questLevel") }
+end
+
+function F.pickExtra()
+    local lib, src, U = _G.LibQuestieDB, H.ns.UALLF, H.ns.UADD_Questie.UALL
+    local ids = {}
+    for _, id in ipairs(lib.Quest.GetAllIds()) do ids[#ids + 1] = id end
+    table.sort(ids)
+    for _, id in ipairs(ids) do
+        local ok, e = pcall(Fits, src, U, lib.Quest, lib.Item, lib.Npc, id)
+        if ok and e then return e end
+    end
+end
+
 function F.addExtraQuest()
-    local log = {}
-    for i, e in ipairs(F.questLog) do log[i] = e end
-    log[#log + 1] = { title = "The Return of Korrak", level = 60, questID = F.extraId, objectives = {
-        { text = "0/1 Skull of Korrak", type = "item", numFulfilled = 0, numRequired = 1, finished = false } } }
+    F.extra = F.pickExtra()
+    F.extraId = F.extra and F.extra.id
+    if not F.extra then return end
+    local e, log = F.extra, {}
+    for i, q in ipairs(F.questLog) do log[i] = q end
+    local level = type(e.level) == "number" and e.level > 0 and e.level or 60
+    log[#log + 1] = { title = e.title, level = level, questID = e.id, objectives = {
+        { text = "0/1 " .. e.itemName, type = "item", numFulfilled = 0, numRequired = 1, finished = false } } }
     H.keys.SHIFT = true                    -- UALL says "not now", so the collection waits meanwhile
     H.questLog = log
     H.fire("QUEST_LOG_UPDATE")

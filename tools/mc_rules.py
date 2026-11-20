@@ -44,14 +44,15 @@ RULES = [
     # a player or a character
     (r"^@ (?:knows|can |can't|needs \+|asks|already|is not online|will |marked|is done|is in an? |hasn't|"
      r"accepted|broke|is unblocked|isn't|is fully|is capped|is almost|\(your alt\)|\(on their alt|\(under|'s )", FREE),
-    (r"^@  -  (?:online now|seen)|^@  \(you\)|\(@'s alt\)|ready on @|your account: @|learned by: @|"
+    (r"^@  \(you\)|\(@'s alt\)|ready on @|your account: @|learned by: @|"
      r"put @'s|players on @|by @\.?$|all characters: @|is saved - @|^@ is ready on|\(@\)\. please|"
      r"or here: @|in chat: @|the link: @|first on @", FREE),
     (r"^@'s |@  \(#'s alt\)|# \(on their alt @\)|\bon their alt @|(?:known by|learned by|log in with|whisper|"
      r"mail it to|mailing .* to|asking|online as|crafter:|bank alt:|leave|meet|code sent to|reminder:|"
      r"hides \d+ alts?:|hides # alts:|is ready on|has it|for #'s) @|# - @ has it|^from @$|^to @$|"
      r"remove @ \(level", FREE),
-    # a game name
+    # a game name; an alt's zone before when it was seen (Alts.lua: the zone, never a player)
+    (r"^@  -  (?:online now|seen)", NAME),
     (r"\b(?:sells|sold by|taught by|drops from|found in|in|from the|from|quest|quests:|reward:|recipe item:|"
      r"learn from:|learned from:|requires|needs|track|open your|your|zone:|"
      r"where:|map: @|waypoint:|wants:|watching:|cook now:|smelt now:|fishing:|"
@@ -98,7 +99,17 @@ OVERRIDE = {
     "42:c33a0463": "N", "32:27231f3c": "NVNNT", "21:c858716a": "NNNT", "21:c3a7c5ff": "VNVV",
     "16:589231fd": "NV", "13:e0813675": "FFT", "5:10147f1a": "F", "18:1490fe3a": "FNF",
     "71:eb2d9b36": "NV", "23:cd938ab2": "F",
+    # Found by tools/test_mc_slots.py: a vendor and its zone; a recipe (never a player there).
+    "10:166ad36a": "N", "11:5f7c4ced": "N",
+    # Texts built in code (IN_CODE below): an icon, a disenchant material, its count, its price; who can
+    # craft it (players, kept), the profession; money before "each" / "ea".
+    "24:a3fbd071": "VNVV", "19:d68addfb": "FN", "7:32a7c1ce": "V", "5:0adc2fe3": "V",
 }
+
+# Texts Mastercraft builds in its code, not in its locales (tools/mc_text_lib.py code_rows): by
+# "<bytes>:<hash>" of the shape Words.lua sees. Its item tooltip: a disenchant material row, "Crafted by"
+# players and profession, money with "each" / "ea" after it. (A chance, "<word> 75%", is Words.lua step 7.)
+IN_CODE = {"24:a3fbd071", "19:d68addfb", "7:32a7c1ce", "5:0adc2fe3"}
 
 
 def context(en, n):

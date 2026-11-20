@@ -39,6 +39,9 @@ L["Option Enabled"] = "Enabled"
 L["BookUI Keep UI Open"] = "Keep Window Open"
 L["BookUI Keep UI Open Desc"] = "Keep the window open when you move away from the object.\n\nPress Escape or right-click on the UI to close it."
 L["Default Font"] = "Default Font"
+-- Its page in the game's options (Options > AddOns). The instruction line's English is not here: the
+-- flow reads it from the installed DialogueUI (flow_dialogueui.py, _instruction).
+L["Open Settings"] = "Open Settings"
 -- The custom tooltip.
 L["Format Item Level"] = "Item Level %d"
 L["Item Level"] = "Item Level"

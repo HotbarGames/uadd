@@ -19,26 +19,38 @@ U.version = Meta(ADDON, "Version") or "?"
 -- ── Chat output ───────────────────────────────────────────────────────────────────────────────
 
 function U.Print(msg)
+    if U.quiet then return end           -- UADD/Safe.lua turns a module off without its chat lines
     local frame = DEFAULT_CHAT_FRAME
     local text = "|cff4fc3f7UADD|r " .. tostring(msg)
     if frame and frame.AddMessage then frame:AddMessage(text) else print(text) end
 end
 
 -- ── SafeCall: pcall that reports each different error once ────────────────────────────────────
+-- Reported once per place (file:line), at most 50 places a session: an error with a changing text
+-- (a number, a name in it) must not grow the table or flood the chat. Each error also goes to
+-- U.OnFault (UADD/Safe.lua): a module that keeps failing is turned off, its English back.
 
-local reported = {}
+local reported, nReported, MAX_REPORTED = {}, 0, 50
+
+function U.ReportError(err)
+    err = tostring(err)
+    U.lastError = err
+    local at = err:match("^(.-:%d+):") or err:sub(1, 80)
+    if not reported[at] and nReported < MAX_REPORTED then
+        reported[at], nReported = true, nReported + 1
+        U.Print("|cffff6060помилка:|r " .. err)
+    end
+end
 
 local function Finish(ok, ...)
     if not ok then
         local err = tostring((...))
-        U.lastError = err
-        if not reported[err] then
-            reported[err] = true
-            U.Print("|cffff6060помилка:|r " .. err)
-        end
+        U.ReportError(err)
+        if U.OnFault then pcall(U.OnFault, err) end
     end
     return ok, ...
 end
+U.ReportedCount = function() return nReported end   -- for the checks
 
 -- Returns ok, results... like pcall. Never throws.
 function U.SafeCall(fn, ...)
@@ -127,6 +139,7 @@ local function ListModules()
     U.Print("  /uadd perf — скільки мс забрав останній показ оригіналу (клавіша вниз / вгору)")
     U.Print("  /uadd combat on|off — чи діє клавіша оригіналу в бою (типово ні)")
     U.Print("  /uadd missed — скільки написів лишилося англійською (on|off|clear)")
+    if U.HealthLines then for _, line in ipairs(U.HealthLines()) do U.Print(line) end end
 end
 
 -- /uadd combat on: the show-original key does nothing in a fight (the default); off: it works there too.
@@ -169,7 +182,10 @@ SlashCmdList.UADD = function(msg)
     elseif first == "missed" and not spec and U.MissedCommand then
         U.MissedCommand(rest)
     elseif spec and type(spec.Command) == "function" then
+        -- "/uadd <key> on" installs the module: an error in it turns the module off at once (Safe.lua).
+        U.installing = (rest or ""):lower():match("^on") and first or nil
         U.SafeCall(spec.Command, rest or "")
+        U.installing = nil
     else
         ListModules()
     end

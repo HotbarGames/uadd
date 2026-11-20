@@ -2,7 +2,9 @@
 --
 -- Pawn keeps its words in the global table PawnLocal and copies many of them while it loads (UIStrings.lua,
 -- PawnUI.xml). Swap.lua puts ours in both places and Pawn's English back; Fonts.lua gives our words a font
--- with Ukrainian letters. No English is stored here: it is read from Pawn at run time.
+-- with Ukrainian letters. No English is stored here: it is read from Pawn at run time. Game.lua puts the
+-- game's stat names (and the list's two headers) in from UALL Forever when the window shows; a name UALL
+-- Forever lacks stays English, and so does each line built from it.
 --   * Never ours: its tooltip parsing, number separators, spec names and debug lines (Pawn reads or compares
 --     them), and words Pawn saves into the player's data (lesson 14): those show ours only on screen.
 --   * Off, and while the hold key is held (UADD/Original.lua): the English goes back everywhere it went in,
@@ -40,9 +42,11 @@ local function Apply(on)
     local S = ns.Swap
     if on then
         U.SafeCall(S.SwapIn)
+        U.SafeCall(ns.Game.Names, true)
         U.SafeCall(S.Scan, true)
     else
         U.SafeCall(S.Scan, false)
+        U.SafeCall(ns.Game.Names, false)
         U.SafeCall(S.SwapOut)
     end
     U.SafeCall(S.Refresh)
@@ -52,6 +56,7 @@ end
 local function Begin()
     if not ns.On() then return end
     U.SafeCall(ns.Swap.Install)
+    U.SafeCall(ns.Game.Install)
     U.SafeCall(ns.Fonts.Install)
     Apply(ns.WordsWanted())
 end

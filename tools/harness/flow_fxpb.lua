@@ -75,8 +75,8 @@ function StaticPopup_Hide(which) if pop.which == which then pop:Hide() end end
 -- GameTooltip's lines get their text (AddLine and friends only count lines in the harness).
 local tip = GameTooltip
 for i = 1, 8 do
-    _G["GameTooltipTextLeft" .. i]:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
-    _G["GameTooltipTextRight" .. i]:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
+    _G["GameTooltipTextLeft" .. i]:SetFontObject(i == 1 and GameTooltipHeaderText or GameTooltipText)  -- wow_fontfam.lua
+    _G["GameTooltipTextRight" .. i]:SetFontObject(GameTooltipText)
 end
 local function Clear(self)
     for i = 1, 8 do _G["GameTooltipTextLeft" .. i]:SetText(nil) _G["GameTooltipTextRight" .. i]:SetText(nil) end

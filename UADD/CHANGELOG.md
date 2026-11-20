@@ -2,6 +2,45 @@
 
 ## Unreleased
 
+- ForeverXP Bar: updated for 0.9.4; its new texts are in Ukrainian (the flight map time, What's New).
+  ForeverXP Bar: оновлено для 0.9.4; його нові тексти українською (час перельоту на мапі, «Що нового»).
+- Fixed: item and spell tooltips, and TomTom's arrow title, could show boxes instead of letters until /reload,
+  because UADD put a line's old font back by its file, which has no Cyrillic letters.
+  Виправлено: підказки предметів і заклять, а також назва над стрілкою TomTom, могли показувати квадратики
+  замість літер до /reload, бо UADD повертав рядку старий шрифт за його файлом, у якому немає кирилиці.
+- New: safeguards. A module that keeps failing turns itself off for the session, says so once in chat, and its
+  addon is English again. A guard repairs a tooltip font or a keyboard that UADD might still break, and says so.
+  Нове: запобіжники. Модуль, що раз у раз дає помилку, вимикається до кінця сесії, пише про це один раз у чат, і
+  його аддон знову англійською. Охоронець лагодить шрифт підказки чи клавіатуру, якщо UADD таки їх зламає, і
+  пише про це.
+- Fixed: game names (zones, NPCs, items, spells) inside What's Training?, TomTom and Mastercraft lines stayed
+  English; they now come from UALL Forever.
+  Виправлено: назви з гри (зони, NPC, предмети, закляття) в рядках What's Training?, TomTom і Mastercraft
+  лишалися англійською; тепер вони беруться з UALL Forever.
+- Fixed: several modules did extra work for every chat line or tooltip of the game, or let an error reach the
+  game's error window; found by a new test that tries to break every module on purpose.
+  Виправлено: кілька модулів робили зайву роботу для кожного рядка чату чи підказки гри або пропускали помилку у
+  вікно помилок гри; це знайшов новий тест, що навмисно пробує зламати кожен модуль.
+- Dialogue UI: its page in the game's options (Options > AddOns) is in Ukrainian.
+  Dialogue UI: його сторінка в налаштуваннях гри (Options > AddOns) українською.
+- Dungeon Journal: quest giver lines ("Name, Town, Zone") and the header's level line are in Ukrainian when
+  UALL Forever has every name in them; otherwise the line stays whole English.
+  Dungeon Journal: рядки про того, хто дає завдання («Ім'я, Місто, Зона»), і рядок рівня в заголовку українською,
+  коли UALL Forever має всі назви в них; інакше рядок лишається цілком англійським.
+- LayerSwap: updated for 1.14.39; its new texts (panel statuses, buttons, tooltips) are in Ukrainian.
+  LayerSwap: оновлено для 1.14.39; його нові тексти (стани панелі, кнопки, підказки) українською.
+- Dungeon Journal: updated for 2.1.0; its new texts and the reputation requirement line are in Ukrainian, and
+  quest texts follow UALL Forever's new names.
+  Dungeon Journal: оновлено для 2.1.0; його нові тексти й рядок вимоги репутації українською, а тексти завдань
+  узгоджено з новими назвами UALL Forever.
+- Dungeon Journal: about 220 quest texts no longer carry an English name in the middle of Ukrainian. Each is
+  said without the name, or stays whole English where the name is the point (whom to find).
+  Dungeon Journal: близько 220 текстів завдань більше не мають англійської назви посеред української. Кожен
+  сказано без назви або лишено цілком англійським, коли назва і є суттю (кого знайти).
+- Pawn, AutoPotion, Bagnon, Scrap: the game names they show (stats, classes, spells, potions, bag titles,
+  items) come from UALL Forever; a name it lacks stays English.
+  Pawn, AutoPotion, Bagnon, Scrap: назви з гри, які вони показують (характеристики, класи, закляття, зілля, назви
+  сумок, предмети), беруться з UALL Forever; назва, якої там немає, лишається англійською.
 - Changed: profession, rank, trainer and weapon skill names now use UALL Forever's words, as in the rest of the
   game (Skinning is «Білування», Mining «Гірнича справа», Expert «Експерт»).
   Змінено: назви професій, рангів, учителів і володіння зброєю тепер ті самі, що в UALL Forever і в решті гри

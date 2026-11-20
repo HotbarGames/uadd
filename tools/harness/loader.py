@@ -8,11 +8,12 @@ import re
 import xml.etree.ElementTree as ET
 
 import encoding
+import tipfont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 STUBS = ["wow_core.lua", "wow_lua.lua", "wow_widgets.lua", "wow_api.lua", "wow_widgets2.lua", "wow_focus.lua",
          "wow_frames.lua",
-         "wow_api2.lua", "wow_frames2.lua", "wow_api3.lua", "wow_load.lua"]
+         "wow_api2.lua", "wow_frames2.lua", "wow_fontfam.lua", "wow_api3.lua", "wow_load.lua"]
 FRAME_TAGS = {"Frame", "Button", "CheckButton", "EditBox", "ScrollFrame", "Slider", "StatusBar",
               "GameTooltip", "MessageFrame", "ScrollingMessageFrame", "Cooldown", "Model",
               "PlayerModel", "ColorSelect", "SimpleHTML"}
@@ -101,6 +102,7 @@ class Client:
         encoding.install(self.lua)
         self.H = self.lua.globals().HARNESS
         self.H.locale = locale
+        self.H.tipReport = tipfont.report           # the tooltip font check (wow_fontfam.lua)
         for i, a in enumerate(addons, 1):
             meta = self.lua.table_from(a.meta)
             lower = self.lua.table_from({k.lower(): v for k, v in a.meta.items()})

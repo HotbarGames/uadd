@@ -9,7 +9,9 @@ DialogueUI's own font without Ukrainian letters). Run by run.py after the other 
     (FontUtil) then the window again; the hold key; combat (nothing changes, then a catch-up);
     "/uadd dialogueui off" (exact English, exact fonts, hooks idle) and "on" again; no Lua errors.
   * Game B: DialogueUI loaded after UADD. Game C: no DialogueUI (idle). Game D: a Russian client
-    (the module steps aside).
+    (the module steps aside). Game E: DialogueUI's page in the game's options made after login.
+  * Games A, B and E open that page (Options > AddOns > Dialogue UI) and check it in Ukrainian, also
+    shown again, with the hold key, off and on: flow_dialogueui_canvas.py (also game E).
 The Lua helpers are in flow_dialogueui.lua.
 """
 import collections
@@ -17,6 +19,7 @@ import gc
 import os
 import sys
 
+import flow_dialogueui_canvas
 import halves_mods
 import session
 from loader import Addon, Client, lua_str, read_text, txt
@@ -40,9 +43,11 @@ def _module():
     return Addon(MODULE, os.path.join(session.REPO, MODULE), session.FLAVOR)
 
 
-def _game(addons, locale="enUS"):
+def _game(addons, locale="enUS", late_canvas=False):
     c = Client(addons, None, locale)
     c.lua.execute(read_text(os.path.join(HERE, "flow_dialogueui.lua")))
+    if late_canvas:
+        c.lua.execute("DUI_STANDIN_LATE_CANVAS = true")
     c.start()
     c.H.pump(60)
     return c, c.H.dui
@@ -231,6 +236,7 @@ def game_a(check, facts):
     _all_uk(c, M, check, "on again")
     chat = _list(c, M.chat("uk"))
     check("on again: chat lines in Ukrainian", not chat, chat[:2])
+    flow_dialogueui_canvas.canvas(sys.modules[__name__], c, M, check, "options page")
     _errors(c, check, "game A")
     del c, M
     gc.collect()
@@ -241,6 +247,7 @@ def game_b(check):
     M.showAll()
     M.wait(WAIT)
     _all_uk(c, M, check, "DialogueUI loaded after UADD")
+    flow_dialogueui_canvas.canvas(sys.modules[__name__], c, M, check, "DialogueUI loaded after UADD, options page")
     _errors(c, check, "DialogueUI loaded after UADD")
 
 
@@ -265,7 +272,8 @@ def run(check, facts):
     if not module_there():
         check("UADD_DialogueUI is there", False, "no UADD_DialogueUI/UADD_DialogueUI.toc")
         return
-    for g in (lambda: game_a(check, facts), lambda: game_b(check), lambda: game_c(check), lambda: game_d(check)):
+    for g in (lambda: game_a(check, facts), lambda: game_b(check), lambda: game_c(check), lambda: game_d(check),
+              lambda: flow_dialogueui_canvas.game_e(sys.modules[__name__], check)):
         g()
         gc.collect()
 

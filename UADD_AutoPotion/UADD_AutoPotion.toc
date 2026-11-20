@@ -11,6 +11,7 @@
 data/words.lua
 Words.lua
 Fonts.lua
+Game.lua
 Texts.lua
 Screen.lua
 Chat.lua

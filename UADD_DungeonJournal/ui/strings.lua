@@ -94,6 +94,7 @@ local S = {
     SHOW_QUEST_CHAIN = "Показати ланцюжок",
     REQUIRED_QUESTS = "Потрібні завдання",
     REQUIRED_ITEMS = "Потрібні предмети",
+    REP_REQUIRES = "Потрібна репутація «%s» з фракцією «%s»",
     PROVIDED_ITEM = "Видається предмет",
     SHOW_WHOLE_CHAIN = "Клацніть, щоб побачити весь ланцюжок завдань",
     OPEN_REQUIRED_CHAIN = "Відкрити потрібний ланцюжок завдань.",

@@ -135,13 +135,18 @@ end
 
 -- The pin tooltip's "zone (x, y)" line (tools/tt_rules.py SORTS 15) has no word to find it by, so it is read
 -- by its shape: UALL Forever's zone name, else the line stays English.
+local COORDS = "^(.-)( %(%-?%d+%.%d%d, %-?%d+%.%d%d%))$"
 local function Coords(s)
-    local zone, xy = s:match("^(.-)( %(%-?%d+%.%d%d, %-?%d+%.%d%d%))$")
+    local zone, xy = s:match(COORDS)
     local ua = zone and zone ~= "" and ns.Words.Name and ns.Words.Name(zone)
     return ua and ua ~= zone and (ua .. xy) or nil
 end
+-- Maybe: the cheap first test on every line of the game's tooltips (lesson 12): our words, or the
+-- coordinates line's shape. A line that fails it never reaches Translate.
 ns.Tips = U.TipLines({ tips = { "GameTooltip" }, own = { "TomTomTooltip" }, from = FROM, wanted = ns.WordsWanted,
-    missed = "tomtom", words = { Translate = function(s) return ns.Words.Translate(s) or Coords(s) end } })
+    missed = "tomtom", words = {
+        Translate = function(s) return ns.Words.Translate(s) or Coords(s) end,
+        Maybe = function(s) return ns.Words.Maybe(s) or (type(s) == "string" and s:find(COORDS) ~= nil) end } })
 ns.Chat = U.ChatLines({ prefix = PREFIX, words = ns.Words, wanted = ns.WordsWanted })
 ns.ChatPlain = U.ChatLines({ from = FROM, words = ns.Words, wanted = ns.WordsWanted })
 

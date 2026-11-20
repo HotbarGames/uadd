@@ -1,21 +1,24 @@
 -- UADD core: Ukrainian names from UALL Forever (UALLF), read at run time.
 --
 -- UALLF keeps its tables private (ns.zoneNames, ns.npcNames, ...), but it hooks SetText on some
--- Blizzard font strings and swaps the English for Ukrainian inside the same call. We write the
--- English into one of those font strings while its window is hidden, catch the Ukrainian that
--- UALLF writes back, and put the old text and colour back. All in one call, so nothing is drawn.
+-- Blizzard font strings and swaps the English for Ukrainian inside the same call. hooksecurefunc
+-- puts that hook chain on the font string itself, so we call it on a hidden font string of our own
+-- with the English and catch the Ukrainian UALLF writes back. A Blizzard font string is never
+-- written to: other addons' hooks on it may run, but with our string as self, never the game's.
 -- We never copy UALLF's data, never write into its tables, never touch its files.
 -- See docs/research-uall-names.md for every route, with UALLF file:line.
 --
---   kind   font string (only while hidden)            UALLF hook                     setting
+--   kind   whose SetText hook chain we call            UALLF hook                     setting
 --   zone   ZoneTextString / SubZoneTextString / ...   ZoneHooks Translate (zoneNames) world.zones
 --   npc    QuestFrame / GossipFrame title              GossipHooks PinNpcTitle         gossip
 --   item   GroupLootFrame1..4 .Name                    LootHooks ItemText (itemNames)  interface.loot
---   quest  a closed bag window's title                 StorageHooks Translate          interface.storage
+--   quest  a bag window's title                        StorageHooks Translate          interface.storage
 --          (looks up uiStrings, items, NPCs, then quest titles, all by the English text)
+--   spell  an idle cast bar's .Text (pet, focus, ...)  CastBarHooks Translate          spells.castbar
+--          (no cast, so no spell ID: uiStrings, then spellNameEN, by the English name)
 --
 -- Every function returns a Ukrainian string or nil, never throws. nil = keep the English.
--- "Not now" (combat, held Shift, a window on screen, not logged in) is never cached and comes back
+-- "Not now" (combat, held Shift, a cast on every bar, not logged in) is never cached and comes back
 -- as nil, true: ask again later. Real answers and real misses are cached per session.
 
 UADD.UALL = UADD.UALL or {}
@@ -23,15 +26,19 @@ local U = UADD.UALL
 
 -- ── Safe string helpers (Midnight "secret" strings throw on any comparison) ───────────────────
 
+-- Named, not made per call: a lookup makes no garbage (many run on every refresh of a list).
+local function Empty(v) return v == "" end
+local function Eq(a, b) return a == b end
+
 local function Text(v)
     if type(v) ~= "string" then return nil end
-    local ok, empty = pcall(function() return v == "" end)
+    local ok, empty = pcall(Empty, v)
     if not ok or empty then return nil end
     return v
 end
 
 local function Same(a, b)
-    local ok, same = pcall(function() return a == b end)
+    local ok, same = pcall(Eq, a, b)
     return not ok or same
 end
 
@@ -62,7 +69,7 @@ end
 -- ── The probe ─────────────────────────────────────────────────────────────────────────────────
 
 local probing, probeInput, captured
-local hooked = setmetatable({}, { __mode = "k" })
+local mine                -- our own hidden font string; false: it could not be made
 
 -- Runs inside UALLF's own SetText hook (its busy flag is set): must never raise.
 -- The first text that differs from what we wrote is UALLF's answer. In UALLF's reverse mode
@@ -73,41 +80,44 @@ local function OnSetText(self, text)
     if text and not Same(text, probeInput) then captured = text end
 end
 
--- A font string we may borrow right now: exists, not forbidden, not on screen.
+local function Mine()
+    if mine == nil then
+        mine = false
+        local ok, fs = pcall(function()
+            local f = CreateFrame("Frame")
+            f:Hide()
+            local s = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+            hooksecurefunc(s, "SetText", OnSetText)
+            return s
+        end)
+        if ok and type(fs) == "table" then mine = fs end
+    end
+    return mine or nil
+end
+
+-- A Blizzard font string whose SetText UALLF may have hooked: exists, not forbidden. We only read
+-- its SetText (the hook chain); we never write to it, so it may be on screen.
 local function Free(fs)
-    if type(fs) ~= "table" or type(fs.SetText) ~= "function" or type(fs.GetText) ~= "function" then return false end
+    if type(fs) ~= "table" or type(fs.SetText) ~= "function" then return false end
     if fs.IsForbidden then
         local ok, forbidden = pcall(fs.IsForbidden, fs)
         if not ok or forbidden then return false end
     end
-    if type(fs.IsVisible) ~= "function" then return false end
-    local ok, visible = pcall(fs.IsVisible, fs)
-    return ok and not visible
+    return true
 end
 
--- Write `en`, catch UALLF's answer, restore. Returns ua (or nil), done (false = no real answer).
+-- Calls fs's SetText hook chain on our own hidden string with `en` and catches UALLF's answer.
+-- The Blizzard string is never written to. Returns ua (or nil), done (false = no real answer).
 local function Ask(fs, en)
     if probing then return nil, false end
-    if not hooked[fs] then
-        if not pcall(hooksecurefunc, fs, "SetText", OnSetText) then return nil, false end
-        hooked[fs] = true
-    end
-    local okGet, before = pcall(fs.GetText, fs)
-    if not okGet then return nil, false end
-    if before ~= nil and not pcall(function() return before == before end) then
-        return nil, false                      -- a secret string: we could not compare it later
-    end
-    local r, g, b, a
-    if type(fs.GetTextColor) == "function" then
-        local okC, cr, cg, cb, ca = pcall(fs.GetTextColor, fs)
-        if okC then r, g, b, a = cr, cg, cb, ca end
-    end
-    probing, probeInput, captured = fs, en, nil
-    local okSet = pcall(fs.SetText, fs, en)
+    local s = Mine()
+    if not s then return nil, false end
+    local okGet, chain = pcall(function() return fs.SetText end)
+    if not okGet or type(chain) ~= "function" then return nil, false end
+    probing, probeInput, captured = s, en, nil
+    local okSet = pcall(chain, s, en)
     local ua = captured
     probing, probeInput, captured = nil, nil, nil
-    pcall(fs.SetText, fs, before)
-    if r and type(fs.SetTextColor) == "function" then pcall(fs.SetTextColor, fs, r, g, b, a) end
     if not okSet then return nil, false end
     return ua, true
 end
@@ -118,6 +128,23 @@ local function Title(frame)
     if type(frame) ~= "table" or type(frame.GetTitleText) ~= "function" then return nil end
     local ok, fs = pcall(frame.GetTitleText, frame)
     return ok and fs or nil
+end
+
+-- A cast bar's text, only while its unit casts nothing: UALLF's hook takes a running cast's spell
+-- ID first, which would answer with that spell's name instead of ours.
+local BARS = { "PetCastingBarFrame", "FocusFrameSpellBar", "TargetFrameSpellBar",
+               "OverlayPlayerCastingBarFrame", "PlayerCastingBarFrame" }
+
+local function Idle(bar)
+    if type(bar) ~= "table" then return nil end
+    local unit = bar.unit
+    if type(unit) == "string" then
+        for _, fn in ipairs({ UnitCastingInfo, UnitChannelInfo }) do
+            local ok, busy = pcall(function() return fn(unit) ~= nil end)
+            if not ok or busy then return nil end
+        end
+    end
+    return bar.Text
 end
 
 -- Each route lists its candidate font strings, best first; missing frames are simply skipped.
@@ -153,9 +180,14 @@ local KINDS = {
         end,
         canary = { "Kobold Camp Cleanup", "A Threat Within", "Wolves Across the Border" },
     },
+    spell = {
+        gate = "spells.castbar",
+        widgets = function(add) for _, name in ipairs(BARS) do add(Idle(_G[name])) end end,
+        canary = { "Fireball", "Frostbolt", "Healing Touch" },
+    },
 }
 
--- First free widget of a kind, or nil (all on screen, or none exist in this client).
+-- First usable widget of a kind, or nil (none exist in this client, or every cast bar casts).
 local function Widget(spec)
     local found
     local function add(fs)
@@ -173,9 +205,10 @@ end
 
 -- ── When to ask ───────────────────────────────────────────────────────────────────────────────
 
+local NONE = {}           -- UALLF's settings when it has none (read only; one table, no garbage)
 local function Settings()
     local s = _G.UALLFSettingsDB
-    return type(s) == "table" and s or {}
+    return type(s) == "table" and s or NONE
 end
 
 local function KeyHeld(s)
@@ -185,18 +218,20 @@ local function KeyHeld(s)
         or (key == "ALT" and IsAltKeyDown and IsAltKeyDown()) or false
 end
 
+local function Available()
+    local loaded
+    if C_AddOns and C_AddOns.IsAddOnLoaded then
+        local loading, done = C_AddOns.IsAddOnLoaded("UALLF")
+        loaded = loading and done ~= false
+    elseif IsAddOnLoaded then
+        loaded = IsAddOnLoaded("UALLF")
+    end
+    if not loaded then return false end
+    return Settings().enabled ~= false
+end
+
 function U.IsAvailable()
-    local ok, yes = pcall(function()
-        local loaded
-        if C_AddOns and C_AddOns.IsAddOnLoaded then
-            local loading, done = C_AddOns.IsAddOnLoaded("UALLF")
-            loaded = loading and done ~= false
-        elseif IsAddOnLoaded then
-            loaded = IsAddOnLoaded("UALLF")
-        end
-        if not loaded then return false end
-        return Settings().enabled ~= false
-    end)
+    local ok, yes = pcall(Available)
     return ok and yes or false
 end
 
@@ -213,12 +248,15 @@ end
 
 -- ── Cache ─────────────────────────────────────────────────────────────────────────────────────
 
-local cache = { zone = {}, npc = {}, item = {}, quest = {} }
+local cache = {}          -- kind -> { English = Ukrainian or false }
+for kind in pairs(KINDS) do cache[kind] = {} end
 local verified = {}       -- kind -> true once any lookup of that kind came back Ukrainian
 local canaryAt = {}       -- kind -> GetTime() of the last failed canary run
 local sig, sigAt
 
-local SIG_KEYS = { "enabled", "reverseOriginal", "world.zones", "gossip", "interface.loot", "interface.storage" }
+local SIG_KEYS = { "enabled", "reverseOriginal" }   -- and each route's own setting
+for _, spec in pairs(KINDS) do SIG_KEYS[#SIG_KEYS + 1] = spec.gate end
+table.sort(SIG_KEYS)
 
 local function CheckSettings()
     local now = GetTime and GetTime() or 0
@@ -283,6 +321,8 @@ function U.Zone(englishName) return Safe("zone", englishName) end
 function U.Npc(englishName) return Safe("npc", englishName) end
 function U.Item(englishName) return Safe("item", englishName) end
 function U.Text(englishText) return Safe("quest", englishText) end   -- any text the bag-title route knows: UI words ("Hall of Thanes"), items, NPCs, quests
+U.Class = U.Text          -- class names ("Priest") are UI words in UALLF; so is "Rank 1"
+function U.Spell(englishName) return Safe("spell", englishName) end   -- the name alone, no rank
 
 -- UALLF has no hidden by-ID route (its by-ID quest titles only go through GameTooltip),
 -- so this looks up the English title. Without one, the client's own title for the ID is used.
@@ -297,49 +337,6 @@ function U.Quest(questId, englishTitle)
     return ok and ua or nil, ok and wait or nil
 end
 
-local SAMPLES = {
-    zone  = { "Elwynn Forest", "Stormwind City", "Durotar", "Orgrimmar", "Westfall",
-              "Ironforge", "The Barrens", "Mulgore", "Teldrassil", "Tirisfal Glades" },
-    npc   = { "Thrall", "Marshal Dughan", "Hogger", "Cairne Bloodhoof", "Gryan Stoutmantle",
-              "Deputy Willem", "Lady Sylvanas Windrunner", "Magni Bronzebeard" },
-    item  = { "Hearthstone", "Linen Cloth", "Copper Ore", "Light Leather", "Peacebloom",
-              "Silverleaf", "Rough Stone", "Wool Cloth" },
-    quest = { "Kobold Camp Cleanup", "A Threat Within", "Wolves Across the Border",
-              "Brotherhood of Thieves", "Rest and Relaxation", "Investigate Echo Ridge",
-              "The Defias Brotherhood", "Your Place In The World" },
-}
-
--- /uadd test: per kind, how many samples UALLF answered and how long the probes took.
--- Goes straight to the probe (no cache), so the time is the real cost per lookup.
-function U.SelfTest()
-    local function say(msg) print("|cff4fc3f7UADD|r UALL: " .. msg) end
-    local ok, err = pcall(function()
-        if not U.IsAvailable() then say("UALL Forever is not loaded, or its translation is switched off.") return end
-        if InCombatLockdown and InCombatLockdown() then say("in combat: lookups wait until combat ends.") return end
-        local s = Settings()
-        if not s.reverseOriginal and KeyHeld(s) then say("let go of the show-original key and try again.") return end
-        for _, kind in ipairs({ "zone", "npc", "item", "quest" }) do
-            local spec, list = KINDS[kind], SAMPLES[kind]
-            if s[spec.gate] == false then
-                say(("%s: off in UALL settings (%s)."):format(kind, spec.gate))
-            elseif not Widget(spec) then
-                say(("%s: no free widget for this route (window on screen, or frame missing)."):format(kind))
-            else
-                local hits, first = 0, nil
-                local t0 = debugprofilestop()
-                for _, en in ipairs(list) do
-                    local ua = Raw(kind, en)
-                    ua = ua and Clean(ua)
-                    if ua and HasCyrillic(ua) then
-                        hits = hits + 1
-                        first = first or (en .. " -> " .. ua)
-                    end
-                end
-                local ms = debugprofilestop() - t0
-                say(("%s: %d/%d resolved, %.2f ms (%.3f ms each)%s"):format(kind, hits, #list, ms,
-                    ms / #list, first and (", e.g. " .. first) or ""))
-            end
-        end
-    end)
-    if not ok then say("self-test error: " .. tostring(err)) end
-end
+-- For /uadd test (uall_test.lua): the probe without the cache.
+U.probe = { Settings = Settings, KeyHeld = KeyHeld, KINDS = KINDS, Widget = Widget, Raw = Raw,
+            Clean = Clean, HasCyrillic = HasCyrillic }

@@ -44,11 +44,14 @@ end
 
 F.Decide = Decide                              -- what a hooked SetText runs (the harness times it)
 
+-- What the hooks run: through U.SafeCall, so an error of ours never reaches the game (the text stays as set).
+local function OnSet(fs) U.SafeCall(F.Decide, fs) end
+
 local function HookFs(fs)
     if hooked[fs] then return end
     hooked[fs] = true
-    hooksecurefunc(fs, "SetText", Decide)
-    hooksecurefunc(fs, "SetFormattedText", Decide)
+    hooksecurefunc(fs, "SetText", OnSet)
+    hooksecurefunc(fs, "SetFormattedText", OnSet)
 end
 
 local function OnButton(b)
@@ -56,12 +59,14 @@ local function OnButton(b)
     if fs then HookFs(fs) Decide(fs) end
 end
 
+local function OnButtonSet(b) U.SafeCall(OnButton, b) end
+
 local function HookButton(b)
     if hooked[b] then return end
     hooked[b] = true
     for _, m in ipairs({ "SetText", "SetFormattedText", "SetNormalFontObject", "SetHighlightFontObject",
         "SetDisabledFontObject" }) do
-        if b[m] then hooksecurefunc(b, m, OnButton) end
+        if b[m] then hooksecurefunc(b, m, OnButtonSet) end
     end
 end
 
@@ -136,6 +141,7 @@ local function OnTip(tip)
     if tip.GetItem and tip:GetItem() then return end       -- an item's tooltip: never ours
     if not Ours(tip:GetOwner()) then return end
     local name, any = tip:GetName(), false
+    if ns.Game then U.SafeCall(ns.Game.Tip, tip, name) end    -- the game's words from UALL Forever
     for i = 1, tip:NumLines() do
         for _, side in ipairs({ "Left", "Right" }) do
             local fs = name and _G[name .. "Text" .. side .. i]
@@ -152,7 +158,7 @@ local function OnTip(tip)
     end
 end
 
-local function TipBack() UADD.AceFont.Stop(TIP) end
+local function TipBack() U.SafeCall(UADD.AceFont.Stop, TIP) end
 
 local function OnMenu(owner)
     if not ns.On() or not Ours(owner) then return end

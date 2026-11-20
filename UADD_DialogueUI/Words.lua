@@ -54,21 +54,7 @@ local function Skipped(key)
     return false
 end
 
--- ── Upper case, Cyrillic too ─────────────────────────────────────────────────────────────────
-
-local UP = {}
-do
-    for i = 0, 15 do UP["\208" .. string.char(0xB0 + i)] = "\208" .. string.char(0x90 + i) end   -- а-п
-    for i = 0, 15 do UP["\209" .. string.char(0x80 + i)] = "\208" .. string.char(0xA0 + i) end   -- р-я
-    UP["\209\150"], UP["\209\151"], UP["\209\148"] = "\208\134", "\208\135", "\208\132"        -- і ї є
-    UP["\210\145"] = "\210\144"                                                                   -- ґ
-end
-
-function W.Upper(s)
-    s = s:gsub("[\208\209\210][\128-\191]", UP)
-    if not s:find("|", 1, true) then s = s:upper() end   -- escape codes (|cff..) stay as they are
-    return s
-end
+W.Upper = ns.Shape.Upper   -- upper case, Cyrillic too (Shape.lua)
 
 -- ── Tokens ───────────────────────────────────────────────────────────────────────────────────
 
@@ -233,7 +219,12 @@ function W.Build()
 end
 
 local One
-local Filler = ns.Slots.Filler(function(t) return One(t) end)
+local SlotFill = ns.Slots.Filler(function(t) return One(t) end)
+local function Filler(k, v, d)      -- a %s kept as it is: one name or a value, else no fit (Shape.lua)
+    local r = SlotFill(k, v, d)
+    if r == nil and d.kinds[k] == "s" and type(v) == "string" and not ns.Shape.OneName(v) then return false end
+    return r
+end
 local function BodyFit(k, _, d) if d.kinds[k] == "s" then return false end end
 
 -- One text that is a single L value (or one in colour) in Ukrainian, or nil. `body`: quest text.
@@ -252,7 +243,8 @@ One = function(t, body)
     return nil
 end
 
--- Lines joined with "\n": the longest runs of lines that are one L value each.
+-- Lines joined with "\n": the longest runs of lines that are one L value each. A line with English words
+-- that is in no such run keeps the whole text English (never a half text: CLAUDE.md "No half translations").
 local function Joined(t)
     local lines = {}
     for line in (t .. "\n"):gmatch("(.-)\n") do lines[#lines + 1] = line end
@@ -268,7 +260,11 @@ local function Joined(t)
                 break
             end
         end
-        if not done then out[#out + 1] = lines[i] i = i + 1 end
+        if not done then
+            if ns.Shape.HasWords(lines[i]) then return nil end
+            out[#out + 1] = lines[i]
+            i = i + 1
+        end
     end
     return any and table.concat(out, "\n") or nil
 end

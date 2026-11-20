@@ -8,8 +8,8 @@
 --   * Post-hooks on AddLine, AddDoubleLine and SetText. A line changes only when we have Ukrainian for
 --     it and (on the game's tooltips) the call came from the addon's code: the stack is looked at only
 --     then, so a line of the game or another addon that reads the same stays as it is.
---   * That line gets UADD's Cyrillic font at its size (read back, lesson 2); the tooltip's own font comes
---     back when it is cleared. No Cyrillic font: the line stays English (no boxes).
+--   * That line gets UADD's Cyrillic font at its size (read back, lesson 2); the tooltip's own font object
+--     comes back when it is cleared (U.FontBack, lesson 18). No Cyrillic font: the line stays English.
 --   * Off or the hold key: new lines stay English (a tooltip already shown changes when shown again).
 --
 -- U.ChatLines(o) -> { Install, Restore, Count, Wrapped }. The main chat window's AddMessage is wrapped
@@ -41,26 +41,34 @@ function U.TipLines(o)
         if not fs or not U.Plain(uk) then return end
         if not uk:find(CYR) then fs:SetText(uk) return end
         local path = U.CyrFontPath()
-        local p, s, f = fs:GetFont()
+        local _, s, f = fs:GetFont()
         if not path or not s then return end
         changed[tip] = changed[tip] or {}
-        if not changed[tip][fs] then changed[tip][fs] = { p, s, f } end
+        if not changed[tip][fs] then changed[tip][fs] = U.SaveFont(fs) end
         fs:SetFont(path, s, f or "")
         if not U.IsCyrFont((fs:GetFont())) then return end
         fs:SetText(uk)
         count = count + 1
     end
 
+    -- On the game's tooltips every line of the game passes here: the source comes before any translate
+    -- work (lesson 12). Cheapest first: could it be ours at all (no lookup, no cache growth), then our
+    -- words, then the stack (a template can match a unit's name that has no Ukrainian: no stack look then).
+    -- Words with no Maybe: no line of the game's tooltips is tried (the worst is an English line; never
+    -- every line of the game sent to Translate). The addon's own tooltips are tried as they are.
+    local Maybe = W.Maybe or function() return false end
     local function Redo(tip, left, right)
         if not o.wanted() then return end
         left, right = U.Plain(left), U.Plain(right)     -- nil for a secret text: left as it is
-        local l = left and W.Translate(left) or nil
-        local r = right and W.Translate(right) or nil
         local mine = own[tip]
+        local missed = left and U.MissedOn() and left:find("%a%a%a")
+        local tryL = left and (mine or Maybe(left))
+        local tryR = right and (mine or Maybe(right))
+        if not tryL and not tryR and not missed then return end
+        local l = tryL and W.Translate(left) or nil
+        local r = tryR and W.Translate(right) or nil
         if not l and not r then
-            if left and U.MissedOn() and left:find("%a%a%a") and (mine or From(o.from)) then
-                U.Missed(o.missed, left)
-            end
+            if missed and (mine or From(o.from)) then U.Missed(o.missed, left) end
             return
         end
         if not mine and not From(o.from) then return end
@@ -73,9 +81,7 @@ function U.TipLines(o)
         local list = changed[tip]
         if not list then return end
         changed[tip] = nil
-        for fs, was in pairs(list) do
-            if was[1] and was[2] then pcall(fs.SetFont, fs, was[1], was[2], was[3] or "") end
-        end
+        for fs, was in pairs(list) do pcall(U.FontBack, fs, was) end   -- its font object, not a pinned file
     end
 
     local function HookTip(tip, mine)
@@ -103,36 +109,51 @@ function U.ChatLines(o)
     local C, W = {}, o.words
     local prefix = o.prefix
     local N = prefix and #prefix or 0
-    local frame, orig, count = nil, nil, 0
+    local Maybe = W.Maybe or function() return false end   -- no Maybe: no line without the prefix is tried
+    local frame, base, live, count = nil, nil, false, 0   -- base: the AddMessage we wrapped; kept for good
 
-    local function Wrapped(self, msg, ...)
-        if self == frame and type(msg) == "string" and o.wanted() then
-            if prefix then
-                if msg:sub(1, N) == prefix then
-                    local ok, uk = pcall(W.Translate, msg:sub(N + 1))
-                    if ok and uk then msg, count = prefix .. uk, count + 1 end
-                end
-            elseif From(o.from) then                -- every chat line passes here: the addon's only are matched
-                local ok, uk = pcall(W.Translate, msg)
-                if ok and uk then msg, count = uk, count + 1 end
-            end
+    -- Our Ukrainian for a chat line, or nil. Every chat line of the game passes here: the cheapest tests
+    -- first, no stack look for a line that cannot be ours (lesson 12).
+    local function Ours(self, msg)
+        if self ~= frame or not o.wanted() then return nil end
+        if prefix then
+            if msg:sub(1, N) ~= prefix then return nil end
+            local uk = W.Translate(msg:sub(N + 1))
+            if uk then count = count + 1 return prefix .. uk end
+            return nil
         end
-        return orig(self, msg, ...)
+        if msg:find("|Hplayer", 1, true) or msg:find("|Hchannel", 1, true) or msg:find(CYR) then return nil end
+        if not Maybe(msg) or not From(o.from) then return nil end
+        local uk = W.Translate(msg)
+        if uk then count = count + 1 end
+        return uk
+    end
+
+    -- Never loses a line: any error, a msg that is not a string, or off passes it on as it came.
+    local function Wrapped(self, msg, ...)
+        if live and type(msg) == "string" then
+            local ok, uk = pcall(Ours, self, msg)
+            if ok and type(uk) == "string" then return base(self, uk, ...) end
+        end
+        return base(self, msg, ...)
     end
     C.Wrapped = Wrapped
 
     function C.Install()
-        if orig then return end
+        live = true
+        if frame then return end                  -- wrapped already (maybe under a later wrapper)
         local f = DEFAULT_CHAT_FRAME
-        if type(f) ~= "table" or type(f.AddMessage) ~= "function" then return end
-        frame, orig = f, f.AddMessage
+        if type(f) ~= "table" or type(f.AddMessage) ~= "function" then live = false return end
+        frame, base = f, f.AddMessage
         f.AddMessage = Wrapped
     end
 
+    -- Someone wrapped after us: ours stays under theirs and lets every line through as it is.
     function C.Restore()
-        if orig and frame and rawget(frame, "AddMessage") == Wrapped then
-            frame.AddMessage = orig
-            frame, orig = nil, nil
+        live = false
+        if frame and rawget(frame, "AddMessage") == Wrapped then
+            frame.AddMessage = base
+            frame = nil
         end
     end
 

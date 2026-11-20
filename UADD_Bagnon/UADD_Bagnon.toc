@@ -13,5 +13,6 @@ data/core.lua
 data/config.lua
 data/faq.lua
 Locale.lua
+Game.lua
 Fonts.lua
 Module.lua

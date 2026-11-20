@@ -89,14 +89,20 @@ def run():
     f.check("UALL.IsAvailable()", U.IsAvailable())
     c.F.spy()
     res = c.F.lookups(12)
-    for kind in ("zone", "npc", "item", "quest"):
+    for kind in ("zone", "npc", "item", "quest", "spell"):
         r = res[kind]
         f.check(f"UALL {kind}: UALLF text for samples", r.asked > 0 and r.same == r.asked,
                 f"{r.same}/{r.asked}" + (f", e.g. {txt(r.bad)}" if r.bad else ""))
-    zone, npc, item, quest, kept, n = c.F.madeUp()
-    f.check("UALL: made-up names give nil", not (zone or npc or item or quest),
-            f"zone={txt(zone)} npc={txt(npc)} item={txt(item)} quest={txt(quest)}")
-    f.check("UALL: borrowed font strings keep text and colour", kept == n, f"{kept}/{n}")
+    zone, npc, item, quest, kept, n, spell, touched = c.F.madeUp()
+    f.check("UALL: made-up names give nil", not (zone or npc or item or quest or spell),
+            f"zone={txt(zone)} npc={txt(npc)} item={txt(item)} quest={txt(quest)} spell={txt(spell)}")
+    one, frost, none, wait = c.F.castingBar()
+    f.check("UALL spell: a bar whose unit casts is not borrowed", one == frost and bool(one),
+            f"{txt(one)} (UALLF: {txt(frost)})")
+    f.check("UALL spell: every unit casting: nil, 'not now'", (none, wait) == (False, True), f"{txt(none)} {wait}")
+    f.check("UALL: Blizzard font strings keep text and colour", kept == n, f"{kept}/{n}")
+    f.check("UALL: no Blizzard font string is written to (another addon's hook saw no call on it)",
+            touched == 0, f"{touched} calls")
     f.check("UALL: an answer in combat is nil, 'not now'", c.F.combatLookup("Zzyzx Combat Rock") == (False, True))
     c.H.combat = False
     arnak, twin, twin_wait, npc, npc_wait, pair, style, same = c.F.variants()

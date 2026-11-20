@@ -1,7 +1,7 @@
 ## Interface: 16001, 16000
 ## Title: UADD - What's Training?
 ## IconTexture: Interface\AddOns\UADD\Logo
-## Notes: What's Training?'s own words in Ukrainian: its windows, buttons, tooltips and chat lines. What's Training? stays on English; zone and NPC names are UALL Forever's, spell names stay English. Type /uadd whatstraining.
+## Notes: What's Training?'s own words in Ukrainian: its windows, buttons, tooltips and chat lines. What's Training? stays on English; game names (zones, NPCs, spells) are UALL Forever's. Type /uadd whatstraining.
 ## Author: HotbarGames
 ## Version: 1.2.1
 ## Dependencies: UADD, WhatsTraining
@@ -14,4 +14,5 @@ data/text02.lua
 data/text03.lua
 data/text04.lua
 Module.lua
+Names.lua
 Screen.lua

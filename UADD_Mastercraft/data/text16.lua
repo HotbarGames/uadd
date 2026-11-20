@@ -6,6 +6,11 @@ local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil
 local M = ns.MC or { exact = {}, templates = {} }
 ns.MC = M
 local E, T = M.exact, M.templates
+T[#T + 1] = { id = "8:c6a9166d", len = { 6, 0 }, hash = { "1bebf044", "00001505" }, kinds = { "d" }, uk = { "уміння ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "8:c966558c", len = { 6, 0 }, hash = { "c52e2b54", "00001505" }, kinds = { "s" }, uk = { "Потрібно: ", 1 }, sort = { "n" } }
+T[#T + 1] = { id = "8:f333f433", len = { 6, 0 }, hash = { "e1e5f43b", "00001505" }, kinds = { "s" }, uk = { "Зона: ", 1 }, sort = { "n" } }
+T[#T + 1] = { id = "8:f6ba9ff6", len = { 6, 0 }, hash = { "c538d33e", "00001505" }, kinds = { "s" }, uk = { "Далі: ", 1 }, sort = { "n" } }
+T[#T + 1] = { id = "8:ffcefa80", len = { 6, 0 }, hash = { "1b810348", "00001505" }, kinds = { "s" }, uk = { "продає ", 1 }, sort = { "n" } }
 T[#T + 1] = { id = "92:eb1ddb3d", len = { 0, 90 }, hash = { "00001505", "80cd5ac5" }, kinds = { "s" }, uk = { "Гравця ", 1, " заблоковано на 7 днів: порушено роботу Майстрів. Розблокувати: Майстри > Заблоковані. Повідомити: /mc report" }, sort = { "f" } }
 T[#T + 1] = { id = "93:63c6bf26", len = { 10, 81 }, hash = { "fa3685f5", "0282fabe" }, kinds = { "s" }, uk = { "|cffffd140", 1, "|r закидає й підсікає, поки відкрита панель риболовлі. Змінити: Налаштування > Рибалка." }, sort = { "f" } }
 T[#T + 1] = { id = "93:64b0396d", len = { 13, 6, 66 }, hash = { "efa0dc43", "92a9b1ac", "09b539f2" }, kinds = { "d", "d" }, uk = { "Раз на тиждень, ", 1, ":00 - ", 2, ":00 за часом сервера. Календар гри показує цей день, коли він близько." }, sort = { "v", "v" } }

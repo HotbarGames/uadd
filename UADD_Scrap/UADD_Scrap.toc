@@ -14,5 +14,6 @@ data/text01.lua
 data/text02.lua
 Swap.lua
 Screen.lua
+Items.lua
 Fonts.lua
 Module.lua

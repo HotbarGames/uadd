@@ -177,6 +177,8 @@ def run(check, facts):
     errors(c, check, "game E")
     game_a(check, facts, code, en, E)
     game_b(check)
+    import flow_scrap_names
+    flow_scrap_names.run(check, facts)
 
 
 def run_checks():

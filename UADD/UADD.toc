@@ -11,6 +11,7 @@
 ## X-Curse-Project-ID: 1807250
 
 Core.lua
+Safe.lua
 Widgets.lua
 Hash.lua
 Plural.lua
@@ -27,8 +28,10 @@ glossary/map.lua
 glossary/rares.lua
 glossary/gear.lua
 Font.lua
+Guard.lua
 AceFont.lua
 uall.lua
+uall_test.lua
 Words.lua
 Lines.lua
 QuestVariants.lua

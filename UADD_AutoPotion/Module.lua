@@ -10,7 +10,8 @@
 --     over its check boxes, Chat.lua its chat lines, Bindings.lua its Key Bindings lines.
 --   * The five macro names (and the macros themselves), its saved settings and the lines of its debug
 --     log stay English. The chat lines that say its debug mode is on or off are ours (Chat.lua).
---     Spell, item and class names are the game's: not ours to change.
+--     Spell, item and class names are the game's (UALL Forever's), never ours: Game.lua takes the class
+--     headers and the spell and item names on its check boxes from UALL Forever; one it lacks stays English.
 -- While the hold key is held (UADD/Original.lua) the words are English again. "/uadd autopotion off"
 -- puts everything back as Auto Potion had it. On a client that is not English the module does nothing.
 -- UALL Forever has no hooks for Auto Potion (checked against UALLF 1.0.17), so nothing is left to it.

@@ -15,10 +15,12 @@ kept), as the build would take it (tools/pawn_rules.py), goes to the module (flo
     the colour code; our font only on Pawn's lines, back when the tooltip is cleared. 6 No half line.
   * Game B: first opened while off, then on and off. Game C: first opened with the hold key held.
   * Game D: no Pawn (the module waits).
+  * The game's stat names from UALL Forever: flow_pawn_names.py.
 """
 import os
 import sys
 
+import flow_pawn_names
 import halves_mods
 from flow_pawn_game import cyr as _cyr, diff, errors as _errors, fonts, game as _game, installed, module_there
 from flow_pawn_game import snap, test_data, tip_lines
@@ -242,6 +244,7 @@ def run(check, facts):
     O = game_a(check, facts, data, en, E)
     game_b(check, data, E, O)
     game_d(check)
+    flow_pawn_names.run(check, data)
 
 
 def run_checks():

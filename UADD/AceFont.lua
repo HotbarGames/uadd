@@ -10,7 +10,7 @@
 --     (check boxes, headings, buttons, labels, a dropdown's label and its selected value, the tree
 --     and tab buttons, the window title) gets our font on each FontString that shows Cyrillic;
 --   * the lists of its dropdowns get it when one opens (AceGUI:SetFocus, called right after);
---   * a widget's old fonts go back exactly when it is released (AceGUI:Release), when its text has no
+--   * a widget's old fonts (its font object, lesson 18) go back when it is released (AceGUI:Release), when its text has no
 --     Cyrillic any more (SetText, SetLabel, ...), and on Stop(appName) ("/uadd ... off");
 --   * if someone sets a font on such a FontString while it still shows our text, ours goes back on.
 -- Nothing is put on in combat and nothing runs per frame. The hooks cannot be removed; with the
@@ -26,6 +26,35 @@ local hookedW = {}          -- AceGUI widget -> true once its text setters are h
 local apps = {}             -- appName -> function: true while we serve that app
 local busy = false          -- up while we set a font ourselves
 local focusHooked, feedHooked, releaseHooked
+-- The same records by owner, so Stop(app) and a widget's release touch only their own FontStrings
+-- (AceGUI's Release runs for every widget of every addon: a foreign one leaves at once).
+local mine = {}             -- app -> { FontString = true }
+local byWidget = {}         -- AceGUI widget -> { FontString = true }
+
+local function Forget(fs)
+    local r = rec[fs]
+    if not r then return end
+    rec[fs] = nil
+    local m = r.app ~= nil and mine[r.app]
+    if m then m[fs] = nil end
+    local b = type(r.widget) == "table" and byWidget[r.widget]
+    if b then
+        b[fs] = nil
+        if next(b) == nil then byWidget[r.widget] = nil end
+    end
+end
+
+local function Keep(fs, r)
+    rec[fs] = r
+    if r.app ~= nil then
+        mine[r.app] = mine[r.app] or {}
+        mine[r.app][fs] = true
+    end
+    if type(r.widget) == "table" then
+        byWidget[r.widget] = byWidget[r.widget] or {}
+        byWidget[r.widget][fs] = true
+    end
+end
 
 local function InCombat() return InCombatLockdown and InCombatLockdown() end
 local function HasCyr(fs)
@@ -38,7 +67,7 @@ local ApplyWidget
 local function OnFont(fs)
     if busy then return end
     local r = rec[fs]
-    rec[fs] = nil                                    -- their font now: nothing of ours to put back
+    Forget(fs)                                       -- their font now: nothing of ours to put back
     if not r or not r.widget or InCombat() then return end
     if type(r.widget) == "function" then UADD.SafeCall(r.widget, fs) else UADD.SafeCall(ApplyWidget, r.widget) end
 end
@@ -53,42 +82,35 @@ function A.Set(fs, app, widget)
         hookedFs[fs] = true
         hooksecurefunc(fs, "SetFont", OnFont)
         hooksecurefunc(fs, "SetFontObject", OnFont)
+        if UADD.GuardWatch then UADD.GuardWatch(fs) end   -- the guard sees a Latin pin left on it later
     end
     local p, size, flags = fs:GetFont()
     if not p or UADD.IsCyrFont(p) then return end    -- ours already, or a font with our letters
-    rec[fs] = { path = p, size = size, flags = flags, object = fs:GetFontObject(), app = app, widget = widget }
+    local was = UADD.SaveFont(fs)                    -- path, size, flags, object (and own): lesson 18
+    was.app, was.widget = app, widget
+    Keep(fs, was)
     busy = true
     local ok = pcall(fs.SetFont, fs, path, size or 12, flags or "")
     busy = false
-    if not ok then rec[fs] = nil end
+    if not ok then Forget(fs) end
 end
 
--- One FontString's own font back, exactly: the font object, then the file, size and flags (only
--- when they differ, so a font that was only inherited is not pinned). The colour is kept.
+-- One FontString's own font back (UADD.FontBack): its font object always, so the family's Cyrillic
+-- member comes back; the file only when it had none, or one set by hand before us. Colour kept.
 function A.Back(fs)
     local old = fs and rec[fs]
     if not old then return end
-    rec[fs] = nil
+    Forget(fs)
     busy = true
-    pcall(function()
-        if old.object and fs:GetFontObject() ~= old.object then
-            local r, g, b, a = fs:GetTextColor()
-            fs:SetFontObject(old.object)
-            if r then fs:SetTextColor(r, g, b, a) end
-        end
-        local p, size, flags = fs:GetFont()
-        if p ~= old.path or size ~= old.size or flags ~= old.flags then
-            fs:SetFont(old.path, old.size, old.flags)
-        end
-    end)
+    pcall(UADD.FontBack, fs, old)
     busy = false
 end
 
--- Every font of `app` back.
+-- Every font of `app` back: only its own records are looked at.
 function A.Stop(app)
-    for fs, r in pairs(rec) do
-        if r.app == app then A.Back(fs) end
-    end
+    local list = {}
+    for fs in pairs(mine[app] or {}) do list[#list + 1] = fs end
+    for _, fs in ipairs(list) do A.Back(fs) end
 end
 
 -- For the checks: the font one FontString had before ours (path, size, flags, font object), or nil.
@@ -140,8 +162,13 @@ local function Strings(w)
     return out
 end
 
+-- A widget's fonts back: only the FontStrings we set on it (none: nothing to do).
 local function Release(w)
-    for _, fs in ipairs(Strings(w)) do A.Back(fs) end
+    local b = byWidget[w]
+    if not b then return end
+    local list = {}
+    for fs in pairs(b) do list[#list + 1] = fs end
+    for _, fs in ipairs(list) do A.Back(fs) end
 end
 
 local SETTERS = { "SetText", "SetLabel", "SetTitle", "SetValue", "RefreshTree", "BuildTabs" }
@@ -187,12 +214,14 @@ end
 function A.Hook()
     local okG, gui = pcall(LibStub, "AceGUI-3.0", true)
     if okG and type(gui) == "table" and type(gui.SetFocus) == "function" and gui.SetFocus ~= focusHooked then
-        hooksecurefunc(gui, "SetFocus", function(_, widget) UADD.SafeCall(OnFocus, widget) end)
+        hooksecurefunc(gui, "SetFocus", function(_, widget)
+            if AppOf(widget) then UADD.SafeCall(OnFocus, widget) end     -- another addon's: leave at once
+        end)
         focusHooked = gui.SetFocus
     end
     if okG and type(gui) == "table" and type(gui.Release) == "function" and gui.Release ~= releaseHooked then
         hooksecurefunc(gui, "Release", function(_, widget)
-            if type(widget) == "table" then UADD.SafeCall(Release, widget) end
+            if byWidget[widget] then UADD.SafeCall(Release, widget) end   -- none of ours: no work
         end)
         releaseHooked = gui.Release
     end

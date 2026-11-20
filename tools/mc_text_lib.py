@@ -10,7 +10,9 @@ The parts every hash-keyed module shares (batches, review files, checks) live in
 import re
 from pathlib import Path
 
+import hashtext as H
 import luatok
+import mc_rules as R
 from text_lib import (CYR, GREF, IS_PATTERN, LATIN_WORD, PLURAL, WS, batches, block, check,  # noqa: F401
                       ends, esc, expand, is_pattern, kind_of, read_review, unesc)
 
@@ -55,8 +57,54 @@ def read_keys(path):
     return keys, sections(text)
 
 
+def _concat(t, j):
+    return j + 1 < len(t) and t[j][:2] == (luatok.SYM, ".") and t[j + 1][:2] == (luatok.SYM, ".")
+
+
+def code_shapes(text):
+    """{English: line} of the shapes one Lua file builds in code: each string literal (stripped like
+    Locale.lua); a literal that starts with a space (glued after a value) as "%s" + it (a "|r" end with
+    no colour start dropped: the colour is taken off around the whole); `.. "a" .. x .. "b"` as
+    "%s" + a + "%s" + b."""
+    t, out = list(luatok.tokens(text)), {}
+    for i, (kind, v, line) in enumerate(t):
+        if kind != luatok.STR:
+            continue
+        out.setdefault(strip(v), line)
+        if not v.startswith(" "):
+            continue
+        out.setdefault("%s" + (v[:-2] if v.endswith("|r") and "|c" not in v else v), line)
+        if i < 2 or not _concat(t, i - 2):
+            continue
+        j = i + 1
+        if _concat(t, j) and j + 2 < len(t) and t[j + 2][0] == luatok.NAME:
+            j += 2
+            while j + 2 < len(t) and t[j + 1][:2] == (luatok.SYM, ".") and t[j + 2][0] == luatok.NAME \
+                    and not _concat(t, j + 1):
+                j += 2
+            if _concat(t, j + 1) and j + 3 < len(t) and t[j + 3][0] == luatok.STR:
+                out.setdefault("%s" + v + "%s" + t[j + 3][1], line)
+    return out
+
+
+def code_rows(addon, keys):
+    """[(English, kind, "Code", file:line, file)] of the texts Mastercraft builds in its code (not in its
+    locales) whose hash is in `keys` (tools/mc_rules.py IN_CODE), each once."""
+    rows, seen = [], set()
+    for path in sorted(Path(addon).rglob("*.lua")):
+        if "Locales" in path.parts:
+            continue
+        rel = path.relative_to(addon).as_posix()
+        for en, line in code_shapes(luatok.read(path)).items():
+            if en and en not in seen and H.key(en) in keys:
+                seen.add(en)
+                rows.append((en, kind_of(en), "Code", f"{rel}:{line}", path.name))
+    return rows
+
+
 def source(addon):
-    """[(English, kind, section, sub, file)] in source order, each English once (stripped like Locale.lua)."""
+    """[(English, kind, section, sub, file)] in source order, each English once (stripped like Locale.lua);
+    then the texts built in code that tools/mc_rules.py IN_CODE names."""
     rows, seen = [], set()
     for rel in SOURCES:
         path = Path(addon) / rel
@@ -70,4 +118,6 @@ def source(addon):
             seen.add(en)
             sec, sub = secs.get(line, ("Other", ""))
             rows.append((en, kind_of(en), sec, sub, Path(rel).name))
+    if rows:
+        rows += [r for r in code_rows(addon, R.IN_CODE) if r[0] not in seen]
     return rows

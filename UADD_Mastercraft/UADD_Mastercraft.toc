@@ -42,6 +42,8 @@ data/text31.lua
 data/text32.lua
 Words.lua
 Screen.lua
+Find.lua
+Raw.lua
 Tooltip.lua
 Chat.lua
 Module.lua

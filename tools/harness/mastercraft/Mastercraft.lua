@@ -64,10 +64,37 @@ end
 
 function S.Set(name, text) S.texts[name]:SetText(text) end
 
+-- Like its RawText (text that stays as it is: a player's name, a note): no mc* fields, its own
+-- SetText / SetFont wrappers on the string.
+local function RawText(parent, size)
+    local fs = parent:CreateFontString(nil, "OVERLAY")
+    local set, font = fs.SetText, fs.SetFont
+    font(fs, PATH, size, "")
+    fs.SetFont = function(self, p, s, f) return font(self, p, s, f) end
+    fs.SetText = function(self, t) return set(self, t) end
+    return fs
+end
+
+-- Its Crafters hub, made after login: a profile card (class icon, name, line under it, note) and a tile
+-- (big number, two lines, its "nothing here" text in emptyText). S.hub.card / S.hub.tile.
+function S.Hub(empty)
+    local hub = CreateFrame("Frame", nil, MastercraftFrame)
+    local card = CreateFrame("Frame", nil, hub)
+    card.cls = card:CreateTexture(nil, "ARTWORK")
+    card.name, card.profs, card.note = RawText(card, 14), RawText(card, 11), RawText(card, 10)
+    local tile = CreateFrame("Frame", nil, hub)
+    tile.num, tile.l1, tile.l2 = RawText(tile, 22), RawText(tile, 11), RawText(tile, 10)
+    tile.emptyText = empty
+    S.hub = { card = card, tile = tile }
+    return S.hub
+end
+
 function S.Tip(left, right)
     GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
     if right then GameTooltip:AddDoubleLine(left, right) else GameTooltip:AddLine(left) end
     GameTooltip:Show()
 end
+
+function S.TipAdd(left) GameTooltip:AddLine(left) end    -- its block at the bottom of an item's tooltip
 
 function S.Print(text) DEFAULT_CHAT_FRAME:AddMessage(S.PREFIX .. text) end

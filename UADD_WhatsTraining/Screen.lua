@@ -30,6 +30,8 @@ local fonted = Weak()     -- fs -> { font object, path, size, flags } it had bef
 local buttons = Weak()    -- button -> true: our SetText hook is on it
 local owned = Weak()      -- frame -> true: it is What's Training?'s
 local walked = Weak()
+local foreign = Weak()    -- frame -> true: looked at once, with a parent, not What's Training?'s (or forbidden):
+                          -- its next CreateFontString leaves at once (an OnShow walk still finds a late one)
 local shown = {}
 local busy = false
 local queue, queued = {}, false
@@ -88,9 +90,10 @@ local function Cyr(fs, was)
     return false
 end
 
+-- Our words, else (a whole text that is one game name) UALL Forever's (Names.lua).
 local function Put(fs)
     local en = raw[fs]
-    local uk = ns.WordsWanted() and type(en) == "string" and W.Translate(en) or nil
+    local uk = ns.WordsWanted() and type(en) == "string" and (W.Translate(en) or ns.GameName(en)) or nil
     local cyr = uk ~= nil and (U.Plain(uk) or ""):find(CYR) ~= nil
     local nofont = cyr and not U.CyrFontPath()
     if uk and cyr and not Cyr(fs) then uk = nil end
@@ -115,7 +118,7 @@ local function Apply(fs)
     busy = true
     local ok, err = pcall(Put, fs)
     busy = false
-    if not ok and geterrorhandler then geterrorhandler()(err) end
+    if not ok then error(err, 0) end          -- every caller runs it through U.SafeCall
 end
 S.Apply = Apply
 
@@ -125,7 +128,8 @@ local function OnText(fs, text)
     U.SafeCall(Apply, fs)
 end
 
-local function OnFormatted(fs) if not busy then OnText(fs, fs:GetText()) end end
+local function OnTextHook(fs, text) U.SafeCall(OnText, fs, text) end
+local function OnFormatted(fs) if not busy then U.SafeCall(OnText, fs, fs:GetText()) end end
 
 -- What's Training? changed the font of one that shows ours: that is the font to go back to; ours again.
 local function OnFont(fs, byObject)
@@ -136,34 +140,45 @@ local function OnFont(fs, byObject)
     busy = false
 end
 
+local function OnSetFont(self) U.SafeCall(OnFont, self, false) end
+local function OnSetFontObject(self) U.SafeCall(OnFont, self, true) end
+
 local function Hook(fs)
     if hooked[fs] or type(fs) ~= "table" or not fs.SetText or (fs.IsForbidden and fs:IsForbidden()) then return end
     hooked[fs] = true
-    hooksecurefunc(fs, "SetText", OnText)
+    hooksecurefunc(fs, "SetText", OnTextHook)
     if fs.SetFormattedText then hooksecurefunc(fs, "SetFormattedText", OnFormatted) end
-    hooksecurefunc(fs, "SetFont", function(self) OnFont(self, false) end)
-    if fs.SetFontObject then hooksecurefunc(fs, "SetFontObject", function(self) OnFont(self, true) end) end
+    hooksecurefunc(fs, "SetFont", OnSetFont)
+    if fs.SetFontObject then hooksecurefunc(fs, "SetFontObject", OnSetFontObject) end
     raw[fs] = raw[fs] or fs:GetText()
     if ns.On() then U.SafeCall(Apply, fs) end
 end
 S.Hook = Hook
 
+local function OnButtonText(self, text)
+    if busy then return end
+    local fs = self:GetFontString()
+    if not fs then return end
+    Hook(fs)
+    OnText(fs, text)
+end
+
 local function HookButton(b)
     if buttons[b] or not b.GetFontString then return end
     buttons[b] = true
-    hooksecurefunc(b, "SetText", function(self, text)
-        if busy then return end
-        local fs = self:GetFontString()
-        if not fs then return end
-        Hook(fs)
-        OnText(fs, text)
-    end)
+    hooksecurefunc(b, "SetText", function(self, text) U.SafeCall(OnButtonText, self, text) end)
     local fs = b:GetFontString()
     if fs then Hook(fs) end
 end
 
+local function Forbidden(f)
+    if not f.IsForbidden then return false end
+    local ok, yes = pcall(f.IsForbidden, f)
+    return not ok or yes
+end
+
 local function Regions(f)
-    if not Owned(f) then return end
+    if Forbidden(f) or not Owned(f) then return end
     if Is(f, "Button") then HookButton(f) end
     if not f.GetRegions then return end
     for _, r in ipairs({ f:GetRegions() }) do
@@ -198,18 +213,31 @@ local function Flush()
     local list = queue
     queue = {}
     if not ns.On() then return end
-    for f in pairs(list) do U.SafeCall(Regions, f) end
+    for f in pairs(list) do
+        -- "no": forbidden, or not What's Training?'s and with a parent (one with none yet may get one)
+        local ok, own = pcall(function()
+            if Forbidden(f) then return "no" end
+            if Owned(f) then return "yes" end
+            return f.GetParent and f:GetParent() and "no" or nil
+        end)
+        if ok and own == "yes" then U.SafeCall(Regions, f)
+        elseif not ok or own == "no" then foreign[f] = true end
+    end
     if NewRoot() then U.SafeCall(S.Scan) end
 end
 
+local function SafeFlush() U.SafeCall(Flush) end
+
 local function OnCreate(self)
-    if queue[self] then return end
+    if foreign[self] or queue[self] then return end
     queue[self] = true
     if not queued then
         queued = true
-        C_Timer.After(0, Flush)
+        C_Timer.After(0, SafeFlush)
     end
 end
+
+local function OnCreateHook(self) U.SafeCall(OnCreate, self) end
 
 local installed = false
 function S.Install()
@@ -220,9 +248,16 @@ function S.Install()
         local t = U.WidgetMethods(kind)      -- never a new EditBox: it would take the keyboard
         if t and not done[t] and type(t.CreateFontString) == "function" then
             done[t] = true
-            hooksecurefunc(t, "CreateFontString", OnCreate)
+            hooksecurefunc(t, "CreateFontString", OnCreateHook)
         end
     end
+end
+
+local function OnRootShow(self)
+    if not ns.On() then return end
+    wipe(walked)
+    U.SafeCall(Walk, self, { 5000 })
+    U.SafeCall(ns.Tips.Install)
 end
 
 -- Every window of What's Training? we can reach now (after login, when it shows, after "on").
@@ -235,12 +270,7 @@ function S.Scan()
             Walk(f, budget)
             if f.HookScript and not shown[f] then
                 shown[f] = true
-                f:HookScript("OnShow", function(self)
-                    if not ns.On() then return end
-                    wipe(walked)
-                    U.SafeCall(Walk, self, { 5000 })
-                    U.SafeCall(ns.Tips.Install)
-                end)
+                f:HookScript("OnShow", function(self) U.SafeCall(OnRootShow, self) end)
             end
         end
     end
@@ -248,7 +278,7 @@ end
 
 -- Redo every hooked font string: ours when wanted, the English when not.
 function S.Sync()
-    for fs in pairs(hooked) do Apply(fs) end
+    for fs in pairs(hooked) do U.SafeCall(Apply, fs) end   -- one bad string leaves the others done
 end
 
 function S.Count()

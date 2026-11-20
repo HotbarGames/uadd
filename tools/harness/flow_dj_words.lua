@@ -25,6 +25,19 @@ function W.locations()
     return table.concat(out, "\n")
 end
 
+-- A made-up place line on the dungeon whose real line is `real`, as the journal shows it; the real
+-- line is put back after.
+function W.madeUp(real, line)
+    for key, d in pairs(F().DB) do
+        if type(d) == "table" and d.location == real then
+            d.location = line
+            local ok, shown = pcall(F().LocalizeDungeonField, key, "location", line)
+            d.location = real
+            return ok and shown or ("error: " .. tostring(shown))
+        end
+    end
+end
+
 function W.hallWant()
     local N = ns().Names
     local a, b = N.Dungeon("Ironforge"), N.Dungeon("Dun Morogh")

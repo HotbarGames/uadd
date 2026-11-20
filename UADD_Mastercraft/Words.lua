@@ -7,7 +7,7 @@
 --      whole text stays English (a name glued on with a line break must not leave a half text, lesson 7);
 --   3. outer spaces taken off, put back after;
 --   4. one outer colour (|c........ ... |r) taken off, put back after;
---   5. an icon at the start (|T...|t) kept, the rest translated;
+--   5. an icon at the start (|T...|t) kept, the rest translated (or else on to the templates);
 --   6. a template. Each slot is filled by what it holds (rec.sort, tools/mc_rules.py):
 --        v  a value (a number, a time, money, a link): kept when it has no English word, else our text
 --        f  a free name (a player, a version): kept as it is; one name only, so not a wide gap, a line
@@ -16,8 +16,14 @@
 --        t  our text: translated again (empty stays empty)
 --        b  blank (an English plural ending): dropped
 --      Any slot that holds English we have no Ukrainian for keeps the whole line English (no half lines).
---   7. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural).
--- Answers are remembered by input; a name UALL Forever cannot give yet ("wait") is not remembered.
+--   7. a text with a percent after it ("<word> 75%"): the text translated, the percent kept;
+--   8. parts joined with " · ": each part alone; a part with English we have no Ukrainian for keeps the
+--      whole text English;
+--   9. a text with a coloured number after it ("<profession> |cffffffff300|r"): the text translated;
+--  10. our words, ": ", then the player's own text in quotes: our words translated, the quotes never;
+--  11. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural).
+-- Answers are remembered by input; a name UALL Forever cannot give yet ("wait") is not remembered, and
+-- W.Try says so (the screen tries that line again later).
 
 local _, ns = ...
 local U = UADD
@@ -28,6 +34,7 @@ local ix = U.TextIndex(ns.MC or {})
 local cache, size, LIMIT = {}, 0, 6000
 local waited = false
 local depth, DEPTH = 0, 6
+local DOT = " \194\183 "                           -- Mastercraft's " · " join (U+00B7), as bytes
 local Translate
 
 function W.Count()
@@ -55,13 +62,16 @@ end
 W.HasLatin = HasLatin
 
 -- A game name in a slot: UALL Forever's Ukrainian, with its colour put back; false when there is none.
+local ROUTES = { "Text", "Zone", "Npc", "Item" }
 local function Name(v)
     if v == "" or not HasLatin(v) or v:find("|H", 1, true) then return v end
     local c, inner = v:match("^(|c%x%x%x%x%x%x%x%x)(.-)|r$")
     local en = inner or v
-    for _, look in ipairs({ U.Text, U.Zone, U.Npc, U.Item }) do
+    local A = U.UALL   -- UALL Forever's routes live here, never on UADD's root (docs/LESSONS2.md lesson 20)
+    for _, route in ipairs(ROUTES) do
+        local look = type(A) == "table" and A[route]
         local ua, wait = nil, nil
-        if look then ua, wait = look(en) end
+        if type(look) == "function" then ua, wait = look(en) end
         if ua then return c and (c .. ua .. "|r") or ua end
         if wait then waited = true end
     end
@@ -73,8 +83,9 @@ local function Slot(k, v, rec)
     -- A free slot holds one name: a wide gap, a line break or " - " in it means a text glued on (lesson 7);
     -- a word in small letters ("the", "and") means a phrase, not a name: a longer template fits, or none.
     if sort == "f" then
-        if v:find("   ", 1, true) or v:find("\n", 1, true) or v:find(" - ", 1, true)
-            or v:find("%f[%a]%l%a") then return false end
+        local bare = v:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")   -- a name in its class colour
+        if bare:find("   ", 1, true) or bare:find("\n", 1, true) or bare:find(" - ", 1, true)
+            or bare:find("%f[%a]%l%a") then return false end
         return v
     end
     if sort == "b" then return "" end
@@ -115,19 +126,49 @@ local function Raw(s)
         return t and (c .. t .. "|r") or nil
     end
     local icon, rest = s:match("^(|T.-|t%s*)(.+)$")
-    if icon then
+    if icon then                        -- (else a template may hold the icon in a slot: a disenchant row)
         local t = Translate(rest)
-        return t and (icon .. t) or nil
+        if t then return icon .. t end
     end
     local after = 0
     while true do
         local id, caps, rank = ix:Match(s, after)
-        if not id then return nil end
+        if not id then break end
         local filled = ix:Fill(id, caps, Slot)
         if filled then return U.Plural(filled, true) end
-        if not rank or rank <= after then return nil end
+        if not rank or rank <= after then break end
         after = rank
     end
+    -- 7. a text and a percent after it ("%s %d%%", a disenchant chance: too short to ship as a template)
+    local head, pct = s:match("^(.-%S)( %d+%%)$")
+    if head then
+        local t = Translate(head)
+        if t then return t .. pct end
+    end
+    -- 8. parts joined with " · " (the Crafters profile line): each part alone, all of them or none
+    -- The dot is matched by its bytes; our line joins the parts with " — ", which the Cyrillic fonts surely draw.
+    if s:find(DOT, 1, true) then
+        local out, any = {}, false
+        for part in (s .. DOT):gmatch("(.-)" .. DOT) do
+            local t = part ~= "" and Translate(part) or nil
+            if t then any = true elseif HasLatin(part) then return nil end
+            out[#out + 1] = t or part
+        end
+        return any and table.concat(out, " — ") or nil
+    end
+    -- 9. a text and a coloured number after it ("Tailoring |cffffffff300|r"): the text translated
+    local text, num = s:match("^(.-%S)( |c%x%x%x%x%x%x%x%x%d+|r)$")
+    if text then
+        local t = Translate(text)
+        if t then return t .. num end
+    end
+    -- 10. our words, then the player's own text in quotes (a note for buyers): the quotes kept as they are
+    local words, quoted = s:match('^([^"]-%a[^"]-): (".*")$')
+    if words then
+        local t = Translate(words)
+        if t then return t .. ": " .. quoted end
+    end
+    return nil
 end
 
 Translate = function(s)
@@ -150,6 +191,14 @@ Translate = function(s)
     return uk
 end
 W.Translate = Translate
+
+-- Translate, and whether a game name in it had to wait for UALL Forever ("not now": in combat, the
+-- hold key...). The screen tries such a line again a little later.
+function W.Try(s)
+    waited = false
+    local uk = Translate(s)
+    return uk, waited
+end
 
 -- Ukrainian capitals where Mastercraft writes a heading in capitals (its own capitals lack і ї є ґ).
 -- Latin letters too, when the text has no colour codes or icons (they must keep their case).

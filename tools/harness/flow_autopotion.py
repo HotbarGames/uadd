@@ -110,6 +110,8 @@ def run(check, facts):
     for g in (lambda: game_a(check, facts, en), lambda: game_b(check)):
         g()
         gc.collect()
+    import flow_autopotion_names
+    flow_autopotion_names.run(check, facts)
 
 
 Check = collections.namedtuple("Check", "name ok detail")

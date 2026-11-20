@@ -74,9 +74,10 @@ end
 
 -- A made-up name UALL Forever "has": its Ukrainian for the module's game-name slots.
 function M.names(en, uk)
-    for _, k in ipairs({ "Text", "Zone", "Npc", "Item" }) do
-        local old = UADD[k]
-        UADD[k] = function(s, ...)
+    local A = UADD.UALL          -- the routes Words.lua asks (UADD itself has none)
+    for _, k in ipairs({ "Text", "Zone", "Npc", "Item", "Spell" }) do
+        local old = A[k]
+        A[k] = function(s, ...)
             if s == en then return uk end
             if old then return old(s, ...) end
         end

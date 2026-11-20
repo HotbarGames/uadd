@@ -99,3 +99,11 @@ for name, size in pairs({ GameFontNormalMed1 = 14, GameFontHighlightSmall = 10, 
     GameFontNormalSmall2 = 11, GameFontDisableTiny = 9, GameFontHighlight = 12 }) do
     if not rawget(_G, name) then CreateFont(name):SetFont("Fonts\\FRIZQT__.TTF", size, "") end
 end
+-- Cast bars (CastingBarFrame.xml): hidden while nothing is cast; .Text, and .unit for the unit they show.
+for name, unit in pairs({ PlayerCastingBarFrame = "player", OverlayPlayerCastingBarFrame = "player",
+    PetCastingBarFrame = "pet", TargetFrameSpellBar = "target", FocusFrameSpellBar = "focus" }) do
+    local bar = window(name)
+    bar.unit = unit
+    bar.Text = bar:CreateFontString(name .. "Text")
+end
+TargetFrame.spellbar = TargetFrameSpellBar

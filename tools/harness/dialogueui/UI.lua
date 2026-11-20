@@ -9,6 +9,7 @@
 --     description.."\n\n"..choice, a dropdown value.
 --   * An anonymous tooltip frame with AddLeftLine; the item-level line is read back and parsed.
 --   * DUIBookFrame with a label, and PrintMessage to chat.
+--   * Its nameless page in the game's options (S.MakeCanvas, Canvas.lua), given to Settings.
 -- DialogueUIStandIn.recipes[name](L, upper) gives the text a widget shows, so the checks can
 -- build the English and the Ukrainian the same way.
 local _, addon = ...

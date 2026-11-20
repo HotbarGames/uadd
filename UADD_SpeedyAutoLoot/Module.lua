@@ -102,9 +102,9 @@ end
 -- Our font on fs (its own kept); true when the font has Ukrainian letters.
 local function CyrOn(fs)
     local path = U.CyrFontPath()
-    local p, s, f = fs:GetFont()
+    local _, s, f = fs:GetFont()
     if not path or not s then return false end
-    if not D.saved[fs] then D.saved[fs] = { p, s, f } end
+    if not D.saved[fs] then D.saved[fs] = U.SaveFont(fs) end
     fs:SetFont(path, s, f or "")
     return U.IsCyrFont((fs:GetFont()))
 end
@@ -113,7 +113,7 @@ local function FontBack(fs)
     local o = D.saved[fs]
     if not o then return end
     D.saved[fs] = nil
-    if o[1] then fs:SetFont(o[1], o[2], o[3] or "") end
+    U.FontBack(fs, o)          -- its font object, not a pinned file (lesson 18)
 end
 
 local function Put(fs, text)

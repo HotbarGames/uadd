@@ -174,6 +174,8 @@ def game_a(check, facts, p, src, temps):
     check("tooltip double line from Mastercraft: both sides ours",
           (txt(left or ""), txt(right or "")) == (_want(M, p["tip2"]), _want(M, p["tip3"])), txt(left or ""))
     check("the same tooltip line from other code stays as it is", txt(M.tipOther(lua_str(p["tip"]))) == "", "")
+    boxes = M.refill(lua_str(p["tip"]))
+    check("item tooltip filled again: UALL Forever's Ukrainian on every line draws (lesson 18)", not boxes, boxes)
     # Chat.
     pre = "|cff4da6ffMastercraft|r  "
     got = txt(M.print(lua_str(p["chat"])))
@@ -233,6 +235,9 @@ def run(check, facts):
     if not p:
         return
     game_a(check, facts, p, src, temps)
+    gc.collect()
+    import flow_mc_code                     # lines it builds in code: a game of their own
+    flow_mc_code.run(check, sys.modules[__name__], src)
     gc.collect()
     game_c(check, p)
 

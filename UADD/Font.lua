@@ -45,6 +45,53 @@ function U.IsCyrFont(path)
     return false
 end
 
+-- ── A FontString's own font, kept and put back (docs/LESSONS2.md lesson 18) ──────────────────────
+-- The client's font objects (GameTooltipText, GameFontNormal, ...) are font FAMILIES: one file per
+-- alphabet, a Cyrillic one too, while GetFont shows only the Latin file. fs:SetFont(path) pins the
+-- FontString to that one file until a /reload, and UALL Forever's Ukrainian on it shows boxes. So a
+-- FontString that followed its font object gets the object back (SetFontObject), never SetFont.
+
+local function SamePath(a, b)
+    return type(a) == "string" and type(b) == "string" and (a:gsub("/", "\\"):lower()) == (b:gsub("/", "\\"):lower())
+end
+
+-- What U.FontBack needs later: { object, path, size, flags, own }. `own`: the font differed from its
+-- object's (set by hand before us), so the file, size and flags go back too.
+function U.SaveFont(fs)
+    local p, s, f = fs:GetFont()
+    local o = fs.GetFontObject and fs:GetFontObject() or nil
+    local was = { object = o, path = p, size = s, flags = f }
+    if type(o) == "table" and o.GetFont then
+        local op, osize, oflags = o:GetFont()
+        was.own = not (SamePath(op, p) and type(osize) == "number" and type(s) == "number"
+            and math.abs(osize - s) < 0.5 and (oflags or "") == (f or ""))
+    end
+    return was
+end
+
+-- SetFontObject also sets the object's colour, justify, shadow and spacing: the FontString's own stay.
+local LOOKS = { { "GetTextColor", "SetTextColor" }, { "GetJustifyH", "SetJustifyH" },
+    { "GetJustifyV", "SetJustifyV" }, { "GetShadowColor", "SetShadowColor" },
+    { "GetShadowOffset", "SetShadowOffset" }, { "GetSpacing", "SetSpacing" } }
+
+-- The font `was` (U.SaveFont) back on fs: its font object again, so the family's Cyrillic member is
+-- back too; SetFont only with no object, or when the font was set by hand before us (`own`).
+function U.FontBack(fs, was)
+    if type(was) ~= "table" then return end
+    if was.object then
+        local keep = {}
+        for i, m in ipairs(LOOKS) do
+            if fs[m[1]] and fs[m[2]] then keep[i] = { fs[m[1]](fs) } end
+        end
+        fs:SetFontObject(was.object)
+        for i, m in ipairs(LOOKS) do
+            if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
+        end
+        if not was.own then return end
+    end
+    if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end
+end
+
 local function LSM()
     if type(LibStub) ~= "table" and type(LibStub) ~= "function" then return nil end
     local ok, lib = pcall(LibStub, "LibSharedMedia-3.0", true)

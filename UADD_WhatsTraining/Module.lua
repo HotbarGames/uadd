@@ -7,8 +7,11 @@
 --   * Screen.lua: its own font strings and buttons, with a font that has Ukrainian letters.
 --   * ns.Tips (UADD/Lines.lua): the lines it adds to its own tooltips, and to the game tooltip (its
 --     minimap and Broker tooltips). ns.Chat: its chat lines (it prints them with no name in front).
---   * Zone and NPC names come from UALL Forever; without one the whole line stays English. Spell names
---     stay English (UALL Forever has no route to them for us), and so does a line with one glued on.
+--   * Game names come from UALL Forever (UADD.UALL), never from us: zones, NPCs, factions and spells in a
+--     line's name slots (ns.Words with spells on), and a whole text that is one spell, NPC, zone or item name
+--     (Names.lua: a spell row, a trainer). A name it lacks keeps the whole line English; "not now": asked
+--     again the next time the text is set. A spell with its rank ("%s (%s)") has no Ukrainian of ours yet.
+--   * The title "What's Training?" is the addon's own name: it stays as it is.
 --   * The Broker text (shown by another addon, in that addon's font) stays English.
 -- The Blizzard trainer window and the spellbook are UALL Forever's: we never touch them.
 -- While the hold key is held (UADD/Original.lua) the English is back. "/uadd whatstraining off" puts
@@ -21,7 +24,7 @@ local ready = false
 local TARGET = "WhatsTraining"
 local FROM = "AddOns[/\\]WhatsTraining[/\\]"
 
-ns.Words = U.NewWords(ns.WT)
+ns.Words = U.NewWords(ns.WT, { spells = true })   -- a name slot may hold a spell (tools/wt_rules.py)
 
 local function Say(msg) U.Print("What's Training?: " .. msg) end
 

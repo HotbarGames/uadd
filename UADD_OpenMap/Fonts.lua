@@ -16,7 +16,7 @@ local _, ns = ...
 local F = {}
 ns.Fonts = F
 
-local changed = {}        -- FontString -> { path, size, flags, object }: its font before ours
+local changed = {}        -- FontString -> its font before ours (UADD.SaveFont, lesson 18)
 local hookedFont = {}     -- FontString -> true once its SetFont and SetFontObject are hooked
 local guard = false       -- up while we set a font ourselves
 
@@ -37,7 +37,7 @@ Fix = function(fs, byOpenMap)
         if byOpenMap then changed[fs] = nil end    -- OpenMap chose a Cyrillic font itself
         return
     end
-    changed[fs] = { path = p, size = size, flags = flags, object = fs:GetFontObject() }
+    changed[fs] = UADD.SaveFont(fs)
     guard = true
     local ok, err = pcall(fs.SetFont, fs, path, size or 12, flags or "")
     guard = false
@@ -50,20 +50,9 @@ Fix = function(fs, byOpenMap)
 end
 F.Fix = Fix
 
--- One FontString as OpenMap left it: its font object, then its file, size and flags.
--- SetFontObject may reset the text colour, so the colour the text has now is kept.
-local function Put(fs, old)
-    if old.object and fs:GetFontObject() ~= old.object then
-        local r, g, b, a = fs:GetTextColor()
-        fs:SetFontObject(old.object)
-        if r then fs:SetTextColor(r, g, b, a) end
-    end
-    local p, size, flags = fs:GetFont()
-    local want = { old.path, old.size or size or 12, old.flags or flags or "" }
-    if p ~= want[1] or size ~= want[2] or flags ~= want[3] then   -- only when it differs
-        fs:SetFont(want[1], want[2], want[3])
-    end
-end
+-- One FontString as OpenMap left it (UADD.FontBack): its font object, always, so the family's
+-- Cyrillic letters come back; the file, size and flags only when OpenMap had set them by hand.
+local Put = UADD.FontBack
 
 -- One FontString back as it was (a StaticPopup's, shared with other addons: Popup.lua).
 function F.Back(fs)

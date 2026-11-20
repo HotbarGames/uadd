@@ -31,9 +31,16 @@ for i, name in ipairs({ "Quix Blade", rawget(_G, "ScrapStandInItem") or "QUIX" }
     local b = CreateFrame("Button", nil, V)
     b.Icon = b:CreateTexture(nil, "ARTWORK")
     b.Text = S.Text(b)
-    b.Text:SetText(name)
+    b.name = name
     V.items[i] = b
 end
+
+-- Like Scrap's list: its rows (Scroll.buttons), named again from the item each time it updates.
+V.Scroll = { buttons = V.items }
+function V.Scroll.update()
+    for _, b in ipairs(V.items) do b.Text:SetText(b.name) end
+end
+V.Scroll.update()
 
 V:SetTab(1)
 V:Hide()

@@ -14,7 +14,7 @@ local F = {}
 ns.Fonts = F
 
 local copies = {}         -- shared font object -> our copy (only for our own menu entry)
-local changed = {}        -- FontString -> { path, size, flags, object }: its font before ours
+local changed = {}        -- FontString -> its font before ours (UADD.SaveFont, lesson 18)
 local hookedFont = {}     -- FontString -> true once its SetFont and SetFontObject are hooked
 local count = 0
 local guard = false       -- up while we set a font ourselves, so our SetFont does not come back
@@ -65,7 +65,7 @@ Fix = function(fs, byJournal)
         return
     end
     -- The journal's latest choice, all of it, so F.Restore can put it back exactly.
-    changed[fs] = { path = p, size = size, flags = flags, object = fs:GetFontObject() }
+    changed[fs] = UADD.SaveFont(fs)
     guard = true
     local ok, err = pcall(fs.SetFont, fs, path, size or 12, flags or "")
     guard = false
@@ -88,17 +88,9 @@ function F.Kept(fs)
     return changed[fs] ~= nil and hookedFont[fs] == true
 end
 
--- One FontString as the journal left it: its font object, then its file, size and flags.
--- SetFontObject may reset the text colour, so the colour the text has now is kept.
-local function Put(fs, old)
-    if old.object and fs:GetFontObject() ~= old.object then
-        local r, g, b, a = fs:GetTextColor()
-        fs:SetFontObject(old.object)
-        if r then fs:SetTextColor(r, g, b, a) end
-    end
-    local _, size, flags = fs:GetFont()
-    fs:SetFont(old.path, old.size or size or 12, old.flags or flags or "")
-end
+-- One FontString as the journal left it (UADD.FontBack): its font object, always, so the family's
+-- Cyrillic letters come back; then the file, size and flags when the journal had set them by hand.
+local Put = UADD.FontBack
 
 -- The journal's fonts back, exactly as they were before we changed them (the hooks keep `changed`
 -- up to date with each new choice of the journal).

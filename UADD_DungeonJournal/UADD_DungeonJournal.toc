@@ -19,6 +19,8 @@ Content.lua
 Fonts.lua
 Screen.lua
 Map.lua
+Head.lua
+Whole.lua
 Language.lua
 Search.lua
 Module.lua

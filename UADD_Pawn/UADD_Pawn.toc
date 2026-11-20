@@ -21,5 +21,6 @@ data/text07.lua
 data/text08.lua
 data/names.lua
 Swap.lua
+Game.lua
 Fonts.lua
 Module.lua

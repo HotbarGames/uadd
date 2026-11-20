@@ -257,6 +257,9 @@ def run(check, facts):
     game_a(check, facts, p, src, temps)
     gc.collect()
     game_c(check, p)
+    gc.collect()
+    import flow_whatstraining_names     # game names from UALL Forever, and the foreign-frame leave (5b)
+    flow_whatstraining_names.run(check, facts)
 
 
 Check = collections.namedtuple("Check", "name ok detail")

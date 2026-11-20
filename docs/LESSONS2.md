@@ -96,3 +96,74 @@ same commit (`tools/test_banned_words.py`).
 `UADD/glossary/professions.lua` whose English UALL Forever has (UI, spells, NPC titles) uses one of its words
 (case aside), or is in `ALLOW` with a reason. It skips with a message when UALL Forever is not installed.
 It finds the 27 with the fix taken out.
+
+## 18. A font put back by its file
+
+**What went wrong.** After a while, item and spell tooltips showed boxes until /reload (the owner, 2026-11-20).
+One bag item's tooltip did it right after /reload: lines 1-3 were fine, line 4 and on were boxes, with
+Mastercraft's lines at the bottom. UADD put a tooltip line's old font back with `SetFont(path)`. GetFont reports
+only FRIZQT__.TTF, but the line's font object (GameTooltipText, GameTooltipHeaderText) is a family with a
+Cyrillic file. SetFont pinned the line to the Latin file, so UALL Forever's Ukrainian on the next fill drew as
+boxes. Bag tooltips fill again on a timer and on BAG_UPDATE, so one clear was enough. TomTom's arrow title
+(made from GameFontHighlightSmall) showed boxes the same way after `/uadd tomtom off`.
+
+**Rule.** Save a line's font with `UADD.SaveFont(fs)` and put it back with `UADD.FontBack(fs, was)`: SetFontObject
+with the saved object, every time, keeping the line's colour and justify. SetFont only when the line had no
+object, or when a font had been set on it by hand before ours. Never put a font back by its path.
+
+**Check.** `python3 tools/harness/run.py`: after every segment, "tooltip font object back after clear: <key>"
+(`tools/harness/tipfont.py`, `wow_fontfam.lua`: the harness fonts are families, as in the game); Mastercraft's
+"item tooltip filled again" step; "tt: arrow A" (`tools/harness/flow_tomtom_arrow.py --prove`).
+`python3 -m unittest tools.test_shared_state` lists every SetFont in module code against an allowed count.
+
+## 19. One module's bug that could break the whole game
+
+**What went wrong.** Lessons 16 and 18 each broke the whole game (a dead keyboard, boxes in every tooltip) from
+one module's file. A wider review (2026-11-20) also found that a module that kept throwing errors stayed on, the
+error list grew without end, and a few hooks did work for every chat line and tooltip of the game.
+
+**Rule.** The worst UADD may do is leave a text English (the owner, 2026-11-20).
+- A module's hooks run under `UADD.Safe` / `UADD.SafeCall`. After 5 errors the module turns itself off for the
+  session through its own `Command("off")`, says so once in chat, and its English comes back. An Install that
+  fails half way turns the module off at once.
+- Game-wide state (fonts, the keyboard, chat, tooltips, frame walks) is touched only through core helpers
+  (`U.FontBack`, `U.ChatLines`, `U.TipLines`, `U.Regions`, `U.Children`, `U.WidgetMethods`).
+- The guard (`UADD/Guard.lua`) repairs what still slips through (a pinned tooltip line or watched text, a shared
+  font object, a keyboard held by an unseen box) and says so once per kind.
+
+**Check.** `python3 tools/harness/run.py`, steps "safe 1-7" (`tools/harness/flow_safe.py --prove` shows each
+fail with its fix taken out) and "tt: arrow B". `python3 -m unittest tools.test_shared_state`: every risky call
+in module code (set font, chat replace, frame walk, keyboard, frame kind) against an allowed count that only goes
+down.
+
+## 20. A game name asked from the wrong place
+
+**What went wrong.** Game names (zones, NPCs, items, spells) come from UALL Forever through the routes in
+`UADD.UALL` (`UADD/uall.lua`). Core `Words.lua` asked `UADD.Text`, `UADD.Zone`, ... instead: UADD's root has no
+such routes, so every game-name slot of What's Training?, TomTom and Mastercraft stayed English in the game. The
+harness passed, because its stubs set `UADD.Zone` and the like on the root.
+
+**Rule.** Ask a game name only through `UADD.UALL.<Route>`. A harness stub patches `UADD.UALL`, never the root.
+A module whose data has a game-name slot (sort `n`) says which routes its windows need.
+
+**Check.** `python3 -m unittest tools.test_uall_routes`: no code reads a route from UADD's root, and each module
+in `SHOWS` reaches each route it needs through `UADD.UALL`; a module with `n` slots must be listed. Its mutant
+tests put the old code back and want it to fail.
+
+## 21. Bugs we found only one at a time
+
+**What went wrong.** The dead keyboard (lesson 16) and the pinned tooltip font (lesson 18) each reached the owner
+before a check knew about them. Each check was written after its bug, for that bug only. On 2026-11-20 a chaos test
+fed every module bad and odd cases on purpose. On its first run it found 8 more problems no check had caught: three
+modules' hooks or timers let an error reach the game's error handler (Bagnon, What's Training?, LayerSwap); two
+tooltip hooks translated every line of the game (Mastercraft, TomTom); a joined DialogueUI text kept an English line
+next to Ukrainian ones; OpenMap's idle work rose with the map open; RareScanner's memo had no bound.
+
+**Rule.** Every module must survive the chaos test: bad values, odd text, 10k calls, off/on 100 times, a second
+install, combat, its own code throwing, an install that fails part-way, an addon update, other addons' tooltips and
+chat. After each case the game still works and each text is whole English or whole Ukrainian. Never call
+`geterrorhandler()` yourself. A new module gets a recipe in `tools/harness/chaos_mods.py` in the same commit.
+
+**Check.** `python3 tools/harness/chaos.py` (part of `python3 tools/harness/run.py`). `CHAOS_SEED`, `CHAOS_N` and
+`CHAOS_ONLY` repeat a failure; each FAIL line prints its repro. A module folder without a recipe fails. It catches
+lesson 16's EditBox and lesson 18's pinned font with their fixes taken out.

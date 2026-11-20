@@ -53,9 +53,10 @@ function M.hooked() return NS().Screen.Hooked() end
 
 -- A made-up name the halves check puts in a game-name slot: UALL Forever's Ukrainian for it.
 function M.names(en, uk)
-    for _, k in ipairs({ "Text", "Zone", "Npc", "Item" }) do
-        local old = UADD[k]
-        UADD[k] = function(s, ...)
+    local A = UADD.UALL          -- the routes Words.lua asks (UADD itself has none)
+    for _, k in ipairs({ "Text", "Zone", "Npc", "Item", "Spell" }) do
+        local old = A[k]
+        A[k] = function(s, ...)
             if s == en then return uk end
             if old then return old(s, ...) end
         end

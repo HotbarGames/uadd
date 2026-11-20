@@ -14,8 +14,7 @@
 -- A full redraw has no public entry in FDJ, so we press the menu's own English option with
 -- the save switched off (quiet): FDJ then redraws everything for the language GetLanguage says.
 -- That option plays FDJ's menu click and closes the menu, so it is pressed only for something the
--- player just did: picking «Українська», or typing "/uadd dj on" / "off". Muting it would mean
--- swapping the global PlaySound, which Blizzard's own secure code calls, and would taint it.
+-- player just did (picking «Українська», "/uadd dj on" / "off"); muting it would taint PlaySound.
 -- Everything else (the hold key, names that arrive) uses L.Light: silent, but FDJ has no public
 -- way to redo its labels (tabs, buttons), so those stay in the language they were drawn in.
 
@@ -34,9 +33,8 @@ local lastSaved, lastEnglish   -- FDJ's saved language at the last look, and whe
 local function FDJ() return rawget(_G, "ForeverDungeonJournal_NS") end
 local function Frame() return rawget(_G, "ForeverDungeonJournalFrame") end
 
--- Does FDJ's saved language mean English? FDJ asks GetLanguage thousands of times in one search,
--- so the answer is kept until the saved value changes (or L.Forget). The client's language does
--- not change while the game runs.
+-- Does FDJ's saved language mean English? FDJ asks GetLanguage thousands of times in one search, so
+-- the answer is kept until the saved value changes (or L.Forget); the client's language never does.
 local function SavedEnglish(raw)
     if lastEnglish ~= nil and raw == lastSaved then return lastEnglish end
     local saved = raw ~= nil and tostring(raw):lower() or "auto"
@@ -93,6 +91,8 @@ function L.Install()
     fdj.GetLanguage = GetLanguage
     -- An older journal without SetLanguage: nothing to wrap, and then nothing can save a language.
     if type(orig.SetLanguage) == "function" then fdj.SetLanguage = SetLanguage end
+    ns.Head.Install(fdj)                -- the header's level line (Head.lua)
+    ns.Whole.Install(fdj)               -- free-text lines whole (Whole.lua)
     fdj.Locales[L.LOCALE] = ns.Content.Strings()
     if type(fdj.ContentLocales) == "table" then fdj.ContentLocales[L.LOCALE] = ns.Content.Build() end
     installed = true
@@ -110,6 +110,8 @@ function L.Uninstall()
     fdj.Locales[L.LOCALE] = nil
     if type(fdj.ContentLocales) == "table" then fdj.ContentLocales[L.LOCALE] = nil end
     installed = false
+    ns.Head.Uninstall(fdj)              -- also the header's English back
+    ns.Whole.Uninstall(fdj)
     L.Forget()
     if entry then L.ShowEntry(false) end
 end
@@ -273,6 +275,7 @@ function L.Light()
         ns.Screen.WatchShow(f)
     end
     if TrackerShown() and type(fdj.RefreshQuestTracker) == "function" then pcall(fdj.RefreshQuestTracker) end
+    UADD.SafeCall(ns.Head.Texts)
     ns.Screen.Schedule()
 end
 

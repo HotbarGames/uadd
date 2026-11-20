@@ -12,6 +12,7 @@
 ui/locale.lua
 ui/hashes.lua
 Slots.lua
+Shape.lua
 Words.lua
 Fonts.lua
 Texts.lua

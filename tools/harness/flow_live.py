@@ -59,22 +59,31 @@ class Live:
         self.f.check("reload: the same names as the live session", got == self.names, str(got[:3]))
 
     def extra(self, c, step, after):
-        """A logged quest with an English title and a translated target (flow_live.lua F.extraId).
-        Before: its map pins are English. After the live apply: the pins carry Ukrainian names,
-        the title stays English, and every tooltip points at the quest's current objectives."""
-        N = c.H.ns.UADD_Questie.Names
-        got = [txt(x) for x in c.lines(c.F.objectiveNames(c.F.extraId))]
+        """A logged quest with an English title and a translated target (flow_live.lua F.pickExtra,
+        chosen at run time from UALL Forever and QuestieDB). Before: its map pins are English. After the
+        live apply: the pins of the NPCs that drop its item carry UALLF's Ukrainian names, the title stays
+        English, and every tooltip points at the quest's current objectives."""
+        name = f"{step}: English-titled logged quest, map pins and tooltips " + (
+            "English" if not after else "Ukrainian and fresh")
+        e = c.F.extra
+        if not e:
+            self.f.check(name, False, "no quest fits: none that UALL Forever lacks by id and title, with one item "
+                         "objective whose item and dropping NPCs UALL Forever names (flow_live.lua F.pickExtra)")
+            return
+        N, src = c.H.ns.UADD_Questie.Names, c.H.ns.UALLF
+        npcs = sorted(int(k) for k in e.npcs.keys())
+        got = [txt(x) for x in c.lines(c.F.objectiveNames(e.id))]
         title = [x for x in got if x.startswith("title=")]
         spawns = {int(x.split()[1].split("=")[0]): x.split("=", 1)[1] for x in got if x.startswith("spawn ")}
         tips = [x for x in got if x.startswith("tooltip ")]
-        ok = title == ["title=The Return of Korrak"] and spawns and tips
+        ok = title == [f"title={txt(e.title)}"] and all(i in spawns for i in npcs) and bool(tips)
         if not after:
             ok = ok and not any(CYRILLIC.search(v) for v in spawns.values())
         else:
-            want = {i: txt(N.maps.Npc[i]) for i in spawns if N.maps.Npc[i]}
-            ok = ok and want and all(spawns[i] == w for i, w in want.items()) and all(x.endswith(" fresh") for x in tips)
-        self.f.check(f"{step}: English-titled logged quest, map pins and tooltips "
-                     + ("English" if not after else "Ukrainian and fresh"), ok, "; ".join(got[:8]))
+            want = {i: txt(src.npcNames[e.npcs[i]]) for i in npcs}
+            ok = ok and all(CYRILLIC.search(w) and spawns.get(i) == w and txt(N.maps.Npc[i]) == w
+                            for i, w in want.items()) and all(x.endswith(" fresh") for x in tips)
+        self.f.check(name, ok, f"quest {int(e.id)} {txt(e.title)!r}, item {txt(e.itemName)!r}: " + "; ".join(got[:8]))
 
     def failures(self, c, collect):
         """Each way the live path can go wrong ends with one "/reload" message and no "shown"."""

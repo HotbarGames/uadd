@@ -5,8 +5,9 @@
 --     T.Hook once per FontString: hooksecurefunc on its own SetText (never the shared metatable), so a
 --     text set again later (the Info page's "installed" marks) is caught too.
 --   * A Button's SetText does not go through its FontString's SetText, so each button gets a hook too.
---   * A text is changed only when Words.lua knows it. Spell, item and class names, the macro names and
---     any text with Ukrainian letters stay as set.
+--   * A text is changed only when Words.lua knows it, or when it is a game name UALL Forever has (Game.lua:
+--     class headers, spell and item names on check boxes). The macro names and any text with Ukrainian
+--     letters stay as set.
 --   * After a change the box around the text is fitted again (Screen.Refit): the Reset button's width,
 --     and the click area of a check box with an icon, both measured the way Auto Potion measures them.
 
@@ -50,7 +51,7 @@ function T.Apply(fs, quick)
     end
     if ns.WordsWanted() then
         if not mine[fs] then
-            local uk = ns.Words.Text(orig[fs])
+            local uk = ns.Words.Text(orig[fs]) or ns.Game.Text(fs, orig[fs])
             if not uk then
                 if orig[fs] then Note(fs, orig[fs]) end
                 return ns.Fonts.Back(fs)

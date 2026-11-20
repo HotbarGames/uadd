@@ -10,7 +10,7 @@
 -- The options window (AceConfig, built from L, so its words come from Locale.lua) is not ours to
 -- walk: its widgets are shared with other addons' windows, so UADD/AceFont.lua does its fonts.
 -- OpenMap makes these frames on first use, so we look for them every TICK seconds while the World
--- Map or one of them is shown, and once a second, while the World Map is shown, until all the
+-- Map or one of them is shown (backing off to IDLE_MAX while a look finds no new frame or text), and once a second, while the World Map is shown, until all the
 -- named ones exist; their OnShow is hooked. Nothing of the World Map's own is touched (but its hover
 -- label, where OpenMap writes its own parts: Label.lua). Nothing is changed in combat. S.Sweep ("/uadd openmap off") reaches every text, shown or not.
 
@@ -23,24 +23,31 @@ if type(UADD) == "table" then UADD.OpenMapScreen = S end   -- for the checks (to
 local MIN_GAP = 0.2
 local TICK = 0.5
 local FIND = 1
+local IDLE_MAX = 4   -- seconds: the longest wait between looks while a look finds nothing new
 
 local NAMED = { "OpenMapMenu", "OpenMapNews", "OpenMapPins", "OpenMapPinEditor", "OpenMapPinsCode",
     "OpenMapNoteEditor", "OpenMapNotesExport", "OpenMapReport" }
 
 local roots, seen, hookedRoot = {}, {}, {}
 local pending, last, ticker, finder = false, 0, nil, nil
+-- The idle look backs off (lesson 12): each frame and text a look has met is known; a look that meets
+-- nothing new doubles the wait before the next tick's look, up to IDLE_MAX. A window that shows or hides,
+-- a text OpenMap sets (its SetText hook) or a look that meets something new brings it back to TICK.
+local known = setmetatable({}, { __mode = "k" })
+local gap, fresh = TICK, false
 S.panel = nil        -- OpenMap's page in the game's Settings (caught when OpenMap registers it)
 
 local function Visible(f) return type(f) == "table" and f.IsVisible and f:IsVisible() or false end
 
 -- Nothing is changed in combat: a change asked for then waits until combat ends.
 local waiter = CreateFrame("Frame")
-waiter:SetScript("OnEvent", function(self)
+local function CombatOver(self)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     U.SafeCall(ns.Locale.Sync)
     U.SafeCall(ns.Words.Sync)
     if ns.On() then S.Schedule() else U.SafeCall(S.Sweep) end
-end)
+end
+waiter:SetScript("OnEvent", function(self) U.SafeCall(CombatOver, self) end)
 
 function S.WaitCombat()
     if not (InCombatLockdown and InCombatLockdown()) then return false end
@@ -91,16 +98,18 @@ end
 
 -- A window shows or hides: texts the hold key skipped while hidden are put right at once.
 local function OnRoot()
+    gap = TICK
     if ns.On() and not (InCombatLockdown and InCombatLockdown()) then U.SafeCall(ns.Words.Flush) end
     S.Start()
 end
+local function OnRootHook() U.SafeCall(OnRoot) end
 
 local function WatchShow(r)
     local f = r.f
     if not hookedRoot[f] and f.HookScript then
         hookedRoot[f] = true
-        f:HookScript("OnShow", OnRoot)
-        f:HookScript("OnHide", OnRoot)
+        f:HookScript("OnShow", OnRootHook)
+        f:HookScript("OnHide", OnRootHook)
     end
 end
 
@@ -121,11 +130,13 @@ local CYR = "[\208\209]"
 local function Walk(f, r, every)
     if seen[f] or not (every or Visible(f)) then return end
     seen[f] = true
+    if not every and not known[f] then known[f], fresh = true, true end
     if f.IsProtected and f:IsProtected() then return end   -- secure frames (a gamepad's button): never ours
     if r.words and not every and f.GetObjectType and f:GetObjectType() == "Button" then ns.Words.HookButton(f) end
     if f.GetRegions then
         for _, g in ipairs({ f:GetRegions() }) do
             if g.GetObjectType and g:GetObjectType() == "FontString" and (every or g:IsVisible()) then
+                if not every and not known[g] then known[g], fresh = true, true end
                 if every then
                     if r.words then ns.Words.Apply(g) end
                 else
@@ -176,16 +187,30 @@ end
 local function Run()
     pending = false
     last = GetTime()
+    fresh = false
     U.SafeCall(S.Scan)
+    gap = fresh and TICK or math.min(gap * 2, IDLE_MAX)
     if not AnyShown() then StopTicker() end
 end
+local function SafeRun() U.SafeCall(Run) end
 
 -- At most one look per MIN_GAP, and none while none of OpenMap's windows is shown.
-function S.Schedule()
+local function Schedule()
     if pending or not ns.On() or S.WaitCombat() or not AnyShown() then return end
     pending = true
-    C_Timer.After(math.max(0, last + MIN_GAP - GetTime()), Run)
+    C_Timer.After(math.max(0, last + MIN_GAP - GetTime()), SafeRun)
 end
+-- Asked for (a text OpenMap set, a window shown, combat over): a look soon, and the idle wait from TICK.
+function S.Schedule()
+    gap = TICK
+    Schedule()
+end
+-- The ticker: a look only once the idle wait has passed.
+local function Tick()
+    if GetTime() - last + 0.01 >= gap then Schedule() end
+end
+local function SafeTick() U.SafeCall(Tick) end
+S.Gap = function() return gap end   -- for the checks
 
 -- While the World Map or one of OpenMap's windows is shown: a look every TICK seconds (new
 -- frames, and texts OpenMap set before we hooked them).
@@ -201,25 +226,43 @@ end
 local function Finding() return ns.On() and Visible(rawget(_G, "WorldMapFrame")) and not AllFound() end
 local Find
 
-function S.Start()
+-- `quiet`: only keep the tickers right; the look waits for the ticker's idle wait.
+function S.Start(quiet)
     if not ns.On() or not AnyShown() then
         StopTicker()
         if finder and not Finding() then finder:Cancel() finder = nil end
         return
     end
-    if not ticker then ticker = C_Timer.NewTicker(TICK, S.Schedule) end
-    if not finder and Finding() then finder = C_Timer.NewTicker(FIND, Find) end
-    S.Schedule()
+    if not ticker then ticker = C_Timer.NewTicker(TICK, SafeTick) end
+    if not finder and Finding() then finder = C_Timer.NewTicker(FIND, function() U.SafeCall(Find) end) end
+    if not quiet then Schedule() end
 end
 
 -- For the checks: true while the once-a-second look runs.
 function S.Finding() return finder ~= nil end
 
+-- How many of the named windows exist: a new one gets a look at once, otherwise the idle wait holds.
+local named = 0
+local function Named()
+    local n = 0
+    for _, name in ipairs(NAMED) do
+        if type(rawget(_G, name)) == "table" then n = n + 1 end
+    end
+    return n
+end
+
 Find = function()
     if not Finding() then
         if finder then finder:Cancel() finder = nil end
     end
-    if ns.On() and AnyShown() then S.Start() end
+    if not (ns.On() and AnyShown()) then return end
+    local n = Named()
+    if n ~= named then
+        named, gap = n, TICK
+        S.Start()
+    else
+        S.Start(true)
+    end
 end
 
 -- At ADDON_LOADED, before OpenMap's PLAYER_LOGIN: catches the page OpenMap adds to Settings.
@@ -236,8 +279,8 @@ function S.Install()
     local map = rawget(_G, "WorldMapFrame")
     if type(map) == "table" and map.HookScript and not hookedRoot[map] then
         hookedRoot[map] = true
-        map:HookScript("OnShow", OnRoot)
-        map:HookScript("OnHide", OnRoot)
+        map:HookScript("OnShow", OnRootHook)
+        map:HookScript("OnHide", OnRootHook)
     end
     S.Start()
 end

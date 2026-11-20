@@ -218,6 +218,9 @@ def run(check, facts):
     game_a(check, facts, base, rows)
     gc.collect()
     game_b(check)
+    gc.collect()
+    import flow_bagnon_names       # the game's words from UALL Forever (UADD_Bagnon/Game.lua)
+    flow_bagnon_names.run(check, facts)
 
 
 Check = collections.namedtuple("Check", "name ok detail")

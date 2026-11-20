@@ -160,6 +160,7 @@ function Lc.Patch(on)
         if type(cur) == "string" then _G[g] = (Swap("core", key, cur, on)) end
     end
     PatchPanels(on)
+    if ns.Game then U.SafeCall(ns.Game.Set, on) end                -- the game's words (Game.lua)
 end
 
 -- ── Bagnon_Config, while it loads ───────────────────────────────────────────────────────────
@@ -186,6 +187,8 @@ local function Wrap()
                     rawset(t, k, uk)
                     reverse[cur] = uk
                     inTable.config = true
+                elseif ns.Game then
+                    U.SafeCall(ns.Game.Config, t, k)               -- a word of the game's (Game.lua)
                 end
             end,
         })

@@ -1,7 +1,8 @@
 -- Finds DialogueUI's FontStrings and hands them to Texts.lua (hook once, then our words).
 -- The roots: the global frames DUIQuestFrame (dialogue window), DUIDialogSettings (settings) and
 -- DUIBookFrame (books), and DialogueUI's own tooltips, which have no name: they are found by walking
--- all frames (EnumerateFrames) once, again only while fewer than two are known, and cached.
+-- all frames (EnumerateFrames) once, again only while fewer than two are known, and cached; and its
+-- nameless page in the game's options (FindCanvas below).
 -- When we look: a root shows (OnShow), the frame after a QUEST_* / GOSSIP_* event, and every TICK
 -- seconds while a root is shown (new pooled FontStrings, a new settings tab). Once hooked, each
 -- FontString's SetText swaps the words itself. Hidden FontStrings of shown frames are hooked too (a
@@ -60,6 +61,53 @@ local function FindTips()
     end
 end
 
+-- DialogueUI's page in the game's options (Options > AddOns > Dialogue UI): a nameless canvas it gives
+-- to Settings.RegisterCanvasLayoutCategory when it loads. Its one child is a button with its "Open
+-- Settings" L value (known here by that value's hash), and it sets its instruction line on each show
+-- (its first OnShow then replaces itself with SetScript, so a hook on that OnShow does not last). It
+-- is found by walking all frames: at Install, and when the game's options window opens or a page in
+-- it is picked (a user's click, not a game-wide path), until found. Its FontStrings are hooked at once, so the instruction line set on the
+-- first show is caught; the button's text (set once, by Button:SetText) is changed by the look that
+-- the options window asks for, as the page shows.
+local canvas
+
+local function IsCanvas(f)
+    if type(f) ~= "table" or (f.IsForbidden and f:IsForbidden()) or not f.GetChildren or not f.GetRegions or (f.GetName and f:GetName()) then return false end
+    local want = type(ns.DUI_HASH) == "table" and type(ns.DUI_HASH["Open Settings"]) == "table"
+        and ns.DUI_HASH["Open Settings"].e
+    if not want or (f.GetNumChildren and f:GetNumChildren() ~= 1) then return false end
+    local b = f:GetChildren()
+    if not (b and b.GetObjectType and b:GetObjectType() == "Button" and b.GetText) then return false end
+    local t = UADD.Plain(b:GetText())
+    if type(t) ~= "string" or #t .. ":" .. (U.Hash(t) or "") ~= want then return false end
+    for _, g in ipairs({ f:GetRegions() }) do
+        if g.GetObjectType and g:GetObjectType() == "FontString" then return true end
+    end
+    return false
+end
+
+local function HookCanvas(f)
+    for _, g in ipairs({ f:GetRegions() }) do
+        if g.GetObjectType and g:GetObjectType() == "FontString" then ns.Texts.Hook(g) end
+    end
+    local b = f:GetChildren()
+    local fs = b and b.GetFontString and b:GetFontString()
+    if fs then ns.Texts.Hook(fs) end
+end
+
+local function FindCanvas()
+    if canvas or type(EnumerateFrames) ~= "function" then return end
+    local f = EnumerateFrames()
+    while f do
+        if IsCanvas(f) then
+            canvas = f
+            HookCanvas(f)
+            return
+        end
+        f = EnumerateFrames(f)
+    end
+end
+
 local function Collect()
     wipe(roots)
     for _, name in ipairs(NAMED) do
@@ -67,6 +115,7 @@ local function Collect()
         if type(f) == "table" then roots[#roots + 1] = f end
     end
     for _, t in ipairs(tips) do roots[#roots + 1] = t end
+    if canvas then roots[#roots + 1] = canvas end
 end
 
 -- A window shows or hides: texts the hold key skipped while hidden are put right at once.
@@ -161,10 +210,34 @@ events:SetScript("OnEvent", function()
     C_Timer.After(0, function() U.SafeCall(S.Start) end)
 end)
 
+-- The game's options window opens, or a page in it is picked: look once the page shows (next frame;
+-- the open and the pick in one frame make one look).
+local panelHooked, panelPending = false, false
+local function OnPanel()
+    if panelPending then return end
+    panelPending = true
+    C_Timer.After(0, function()
+        panelPending = false
+        if not ns.On() then return end
+        U.SafeCall(FindCanvas)
+        U.SafeCall(S.Start)
+    end)
+end
+
+local function HookPanel()
+    local panel = rawget(_G, "SettingsPanel")
+    if panelHooked or type(panel) ~= "table" or not panel.HookScript then return end
+    panelHooked = true
+    panel:HookScript("OnShow", OnPanel)
+    if type(panel.SelectCategory) == "function" then hooksecurefunc(panel, "SelectCategory", OnPanel) end
+end
+
 -- Once DialogueUI is loaded and the module is on.
 function S.Install()
     for _, e in ipairs(EVENTS) do pcall(events.RegisterEvent, events, e) end
     FindTips()
+    U.SafeCall(FindCanvas)
+    HookPanel()
     S.Start()
 end
 
@@ -179,5 +252,6 @@ function S.Stop()
     events:UnregisterAllEvents()
 end
 
--- For the checks: the tooltips found so far.
+-- For the checks: the tooltips found so far, and DialogueUI's options page once found.
 function S.Tips() return tips end
+function S.Canvas() return canvas end

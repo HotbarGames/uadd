@@ -1,8 +1,10 @@
 # Ukrainian names from UALL Forever: what we can read, and how
 
-Checked against UALL Forever (UALLF) **1.0.15**. The addon is at
+Checked against UALL Forever (UALLF) **1.0.18**. The addon is at
 `C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\UALLF\`.
-Line numbers below refer to that version.
+Line numbers below were taken from 1.0.15 and may have moved a little.
+A quest title that is also an item, NPC or UI text resolves to that, not to the quest (UALLF's
+`StorageHooks.lua` asks UI texts, items, NPCs, then quest titles); seen with quest 91725, also an item in 1.0.18.
 The code that uses this research is `UADD/uall.lua`.
 
 ## The short answer
