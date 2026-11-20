@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.1
 
 - Fixed: with the Mastercraft or What's Training? module loaded, the keyboard stopped working (Enter did not open
   chat), because UADD made an invisible text box that took the keyboard.

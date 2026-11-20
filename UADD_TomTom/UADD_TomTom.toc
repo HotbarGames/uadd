@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: TomTom's own words in Ukrainian: its settings, arrow, menus, pop-ups, tooltips and chat lines. TomTom stays on English; zone names are UALL Forever's, waypoint titles stay as they are. Type /uadd tomtom.
 ## Author: HotbarGames
-## Version: 1.2.0
+## Version: 1.2.1
 ## Dependencies: UADD, TomTom
 ## OptionalDeps: UALLF
 ## X-Category: Localization
