@@ -74,6 +74,8 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Repeatable | a rare that comes back, RareScanner ("Що з'являється знову") | `rare.repeatable` |
 | Scale | Pawn: a set of stat weights that values an item ("Шкала") | `gear.scale` |
 | Scale | the size of a window or the UI (UALL's «Масштаб») | not this entry («масштаб» is banned in UADD_Pawn) |
+| Node | GatherMate2: a spot to gather from, a herb, vein or fish pool ("Точка збору": lead's choice, 2026-11-20) | `prof.node` |
+| Treasure | GatherMate2: a kind of node, chests ("Скарби") | `prof.node_treasure` |
 | Nameplates | the name bars over units' heads ("Таблички імен", never «індикатор імені») | `game.nameplates` |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.

@@ -82,6 +82,11 @@ def ex_pawn(path):
     return [("L", key, en, (where[0][0] if where else "built key")) for key, en, _, where, _ in S.source(path)[0]]
 
 
+def ex_gm(path):
+    import gm_source as S   # the keys the generator would translate (tools/gm_rules.py): L.<hash>, Panel.*, AceDBO.*
+    return [("L", key, en, (where[0][0] if where else "built key")) for key, en, _, where, _ in S.source(path)[0]]
+
+
 def ex_dui(path):
     import make_dui_data as D
     enus, _ = D.read_enus(path / "Locales" / "enUS.lua")
@@ -145,6 +150,7 @@ MODULES = {
     "UADD_DialogueUI": ("DialogueUI", ex_dui, None, ()),
     "UADD_DungeonJournal": ("ForeverDungeonJournal", ex_dj, None, ("tools/dj_prose",)),
     "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),
+    "UADD_GatherMate2": ("GatherMate2", ex_gm, None, ()),   # treated as all rights reserved (TOC: ARR); our data holds hashes only
     "UADD_LayerSwap": ("LayerSwap", ex_lsw, None, ()),
     "UADD_Mastercraft": ("Mastercraft", ex_mc, None, ()),     # Mastercraft_Inbox has no texts of its own
     "UADD_OpenMap": ("OpenMap", ex_openmap, old_openmap, ()),

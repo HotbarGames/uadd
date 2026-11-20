@@ -48,7 +48,7 @@ POSITIONAL = re.compile(r"%\d+\$")
 PLURAL = re.compile(r"\{[^{}]*\|[^{}]*\}")
 CYR = re.compile(r"[Ѐ-ӿ]")
 LATIN_WORD = re.compile(r"[A-Za-z]{2,}")
-WS = " \t\n\r\v\f"
+WS = " \t\n\v\f"   # no CR: an addon's English may end its lines with one (CRLF files); ours never has one
 
 
 def slots(en):

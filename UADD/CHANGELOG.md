@@ -6,6 +6,10 @@
   Ukrainian. Names from the game (scale names, spec names) stay English, and a few lines with game names stay English.
   Новий модуль UADD_Pawn: вікно, сторінка налаштувань, рядки підказок предметів, поради щодо покращень та рядки в
   чаті Pawn українською. Назви з гри (назви шкал, спеціалізацій) лишаються англійською, як і кілька рядків з назвами з гри.
+- New module UADD_GatherMate2: GatherMate2's settings pages, chat lines, launcher tooltip and map pin menu in
+  Ukrainian. Herb, ore, fish, zone and profession names stay as the game gives them.
+  Новий модуль UADD_GatherMate2: сторінки налаштувань, рядки в чаті, підказка кнопки та меню точки на мапі
+  GatherMate2 українською. Назви трав, руд, риби, зон і професій лишаються такими, як їх дає гра.
 
 ## 1.1.0
 

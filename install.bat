@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions
-rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft, UADD_WhatsTraining, UADD_TomTom, UADD_RareScanner and UADD_Pawn into the WoW Forever AddOns folder. See docs\TESTING.md.
+rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft, UADD_WhatsTraining, UADD_TomTom, UADD_RareScanner, UADD_Pawn and UADD_GatherMate2 into the WoW Forever AddOns folder. See docs\TESTING.md.
 rem
 rem   install.bat            -> _forever_
 rem
@@ -22,14 +22,14 @@ if not exist "%CLIENT%\.flavor.info" (
 )
 if not exist "%ADDONS%" mkdir "%ADDONS%"
 
-for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn) do (
+for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2) do (
     echo Installing %%A ...
     robocopy "%~dp0%%A" "%ADDONS%\%%A" /MIR /NFL /NDL /NJH /NJS /NP /R:1 /W:1
     if errorlevel 8 goto :copyfail
 )
 
 echo.
-for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn) do (
+for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2) do (
     rem a folder check: QuestieDB has only QuestieDB_Forever.toc
     if exist "%ADDONS%\%%A\" (
         echo   ok       %%A
@@ -111,6 +111,11 @@ if exist "%ADDONS%\Pawn\" (
     echo   ok       Pawn ^(for UADD_Pawn^)
 ) else (
     echo   optional Pawn not installed: the Pawn module stays off
+)
+if exist "%ADDONS%\GatherMate2\" (
+    echo   ok       GatherMate2 ^(for UADD_GatherMate2^)
+) else (
+    echo   optional GatherMate2 not installed: the GatherMate2 module stays off
 )
 echo.
 echo Done: %ADDONS%

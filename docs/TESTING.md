@@ -111,7 +111,7 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 
 ### The other addons
 
-Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner and Pawn (steps 42
+Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn and GatherMate2 (steps 42
 and on): `docs/TESTING-ADDONS.md`.
 
 ## Not checked outside the game
@@ -145,6 +145,9 @@ and on): `docs/TESTING-ADDONS.md`.
 - Pawn's real windows: whether every text fits its tabs and buttons, the Settings page, the tooltip lines
   and their number alignment, the loot, bag and quest upgrade advisors, the scale dialogs, and whether the
   tab names and headers switch back on `/uadd pawn off` are only seen in the real client.
+- GatherMate2's real windows: whether it loads on Forever at all (its TOC is for the main game), the
+  Settings pages on real category IDs and their fit, the launcher tooltip, the pin menu, and that gathering
+  still saves nodes while the module is on are only seen in the real client.
 
 ## Without the game
 

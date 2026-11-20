@@ -1127,6 +1127,48 @@
    },
    "ids": "fdc8a67fe6e5cf57669c2a1887322cd48b201cac"
   },
+  "UADD_GatherMate2": {
+   "addon": "GatherMate2",
+   "version": "1.52.7",
+   "interface": "16001,120105,120107",
+   "files": [
+    "Bindings.xml",
+    "Collector.lua",
+    "Config.lua",
+    "Constants.lua",
+    "Display.lua",
+    "GatherMate2.lua",
+    "GatherMate2.xml",
+    "LoadAddonStorage.lua",
+    "Locales/GatherMate2-deDE.lua",
+    "Locales/GatherMate2-enUS.lua",
+    "Locales/GatherMate2-esES.lua",
+    "Locales/GatherMate2-esMX.lua",
+    "Locales/GatherMate2-frFR.lua",
+    "Locales/GatherMate2-itIT.lua",
+    "Locales/GatherMate2-koKR.lua",
+    "Locales/GatherMate2-ptBR.lua",
+    "Locales/GatherMate2-ruRU.lua",
+    "Locales/GatherMate2-zhCN.lua",
+    "Locales/GatherMate2-zhTW.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-deDE.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-enUS.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-esES.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-esMX.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-frFR.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-itIT.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-koKR.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-ptBR.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-ruRU.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-zhCN.lua",
+    "Locales/Vanilla/GatherMate2-Vanilla-zhTW.lua"
+   ],
+   "count": 161,
+   "tags": {
+    "L": 161
+   },
+   "ids": "43e55ea50f77da3c6683aaffa964bac3d9685229"
+  },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
    "version": "1.14.38",

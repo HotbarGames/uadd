@@ -193,3 +193,22 @@ stay English on purpose.
     Scales and their values stay the same both ways.
 125. Log in without Pawn: the game does not load UADD - Pawn (Pawn is a required
     dependency), `/uadd` does not list it, no errors.
+
+### GatherMate2
+
+These need GatherMate2 on an English client. Type `/uadd missed on` first, then `/reload`. Herb, ore, fish,
+zone and profession names stay as the game gives them, on purpose: GatherMate2 matches them to save a node.
+126. Log in. `/uadd` lists "GatherMate2". `/uadd gathermate2` shows "увімкнено" with the text counts. If it says
+    it waits for GatherMate2, GatherMate2 did not load on this client: note that and stop here.
+127. Open the game's Settings, AddOns, "GatherMate 2" and each page under it (Minimap, Filters, Maintenance,
+    Import, Profiles, FAQ): the page names, rows, buttons and tooltips are Ukrainian, with no boxes, and each
+    text fits. The list of herb and ore names stays English. Point at a key binding row: its hint is Ukrainian.
+128. Gather an herb or a vein: GatherMate2 still saves it (a new pin on the map). Its chat lines, if any, are
+    Ukrainian.
+129. Point at the GatherMate2 launcher (minimap or a data broker bar): its tooltip is Ukrainian.
+130. Right-click a pin on the map: the menu line with the node name stays all English; the other lines are
+    Ukrainian.
+131. Hold Shift with the settings open: English; let go: Ukrainian.
+132. `/uadd gathermate2 off` with the settings open: English again (page names after `/reload`); `on`:
+    Ukrainian. Saved nodes stay the same both ways.
+133. Log in without GatherMate2: `/uadd gathermate2` says it waits for GatherMate2, and there are no errors.

@@ -78,3 +78,24 @@ E{ id = "prof.network", en = "Network", uk = "Мережа", note = "Mastercraft
 E{ id = "prof.shop", en = "Shop", uk = "Крамниця", note = "A crafter's shop (what a crafter offers to make). lead's choice 2026-11-19, Mastercraft." }
 E{ id = "prof.item_tracker", en = "Item tracker", uk = "Трекер предметів", note = "List of items to collect, with counts. lead's choice 2026-11-19, Mastercraft." }
 E{ id = "prof.trade_board", en = "Trade board", uk = "Торгова дошка", note = "Board where crafters and buyers post requests. lead's choice 2026-11-19, Mastercraft." }
+
+-- GatherMate2 (lead's choices 2026-11-20)
+E{ id = "prof.node", en = "Node", uk = "Точка збору", note = "A spot to gather from (herb, vein, fish pool); many: «точки збору». lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.node_treasure", en = "Treasure", uk = "Скарби", note = "Kind of node: chests and treasure. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.node_herbs", en = "Herb Bushes", uk = "Кущі трав", note = "Kind of node for Herbalism. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.node_veins", en = "Mineral Veins", uk = "Рудні жили", note = "Kind of node for Mining. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.node_fish", en = "Fishes", uk = "Рибні місця", note = "Kind of node for Fishing: pools. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.node_gas", en = "Gas Clouds", uk = "Газові хмари", note = "Kind of node for Engineering. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.node_timber", en = "Timber", uk = "Деревина", note = "Kind of node: logging. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "ui.database", en = "Database", uk = "База даних", note = "Where an addon keeps its saved data. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "ui.cleanup", en = "Cleanup", uk = "Очищення", note = "Removing old or double data. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "ui.radius", en = "Radius", uk = "Радіус", note = "A distance setting. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "ui.database_locking", en = "Database Locking", uk = "Блокування бази даних", note = "Stops changes to saved data. lead's choice 2026-11-20, GatherMate2." }
+E{ id = "prof.digsite", en = "Digsite", uk = "Місце розкопок", note = "An Archaeology dig spot. GatherMate2 text agent, 2026-11-20." }
+E{ id = "game.expansion", en = "Expansion", uk = "Доповнення", note = "A game expansion (its name stays English). GatherMate2 text agent, 2026-11-20." }
+E{ id = "ui.filters", en = "Filters", uk = "Фільтри", note = "A settings page or group of filters. GatherMate2 text agent, 2026-11-20." }
+E{ id = "ui.maintenance", en = "Maintenance", uk = "Обслуговування", note = "A settings page for cleanup and database tools. GatherMate2 text agent, 2026-11-20." }
+E{ id = "ui.faq", en = "FAQ", uk = "Запитання", note = "Page name; as a title: «Поширені запитання». GatherMate2 text agent, 2026-11-20." }
+E{ id = "ui.merge", en = "Merge", uk = "Об'єднати", note = "Action: join imported data with yours. GatherMate2 text agent, 2026-11-20." }
+E{ id = "ui.overwrite", en = "Overwrite", uk = "Перезаписати", note = "Action: replace your data with the imported. GatherMate2 text agent, 2026-11-20." }
+E{ id = "ui.yards", en = "yards", uk = "ярдів", note = "Distance unit after a number (1 ярд, 2 ярди, 5 ярдів). GatherMate2 text agent, 2026-11-20." }

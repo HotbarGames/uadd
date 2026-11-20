@@ -36,6 +36,7 @@ COVERED = {
     "UADD_TomTom": ("flow_tomtom.py", "tomtom"),
     "UADD_RareScanner": ("flow_rarescanner.py", "rs"),
     "UADD_Pawn": ("flow_pawn.py", "pawn"),
+    "UADD_GatherMate2": ("flow_gm.py", "gm"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -49,6 +50,11 @@ UNFIT = {
     "UADD_LayerSwap": {
         "25:2288ecc9": "no Ukrainian for it on purpose: its name in front of a chat line; Chat.lua keeps the "
                        "name and translates the line after it",
+    },
+    "UADD_GatherMate2": {
+        "L.adde7058": "stays English on purpose: the world map pin menu glues a node's game name after it, and "
+                      "node names stay English (GatherMate2 matches them with the game's tooltip); the module "
+                      "never writes this key into GatherMate2's table (Swap.lua PIN)",
     },
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")

@@ -30,38 +30,23 @@ def _t(v):
     return txt(v) if isinstance(v, str) else None
 
 
-def fxpb(check, M):
-    """ForeverXP Bar: Words.Text (the stand-in's M.uk); free slots from fxpb_words.FREE and BLANK."""
-    import fxpb_words
-    import make_fxpb_data
-    if not make_fxpb_data.have_addon():
-        return run(check, "UADD_ForeverXPBar", [], None, SKIP)
-    kept, _ = make_fxpb_data.collect()
+def _words(M, p):
+    """ForeverXP Bar (p "fxpb"), LayerSwap ("lsw"): (templates, translate, note) for run(). Words.Text (the
+    stand-in's M.uk); free slots from <p>_words.FREE and BLANK, texts from make_<p>_data."""
+    import importlib
+    W, D = importlib.import_module(p + "_words"), importlib.import_module("make_" + p + "_data")
+    if not D.have_addon():
+        return [], None, SKIP
     tps = []
-    for kind, en in make_fxpb_data.texts(kept):
-        if kind == "format":
-            k = hashtext.key(en)
-            free = {i: NAME for i in fxpb_words.FREE.get(k, [])}
-            free.update({i: "s" for i in fxpb_words.BLANK.get(k, [])})
-            tps.append(tpl(k, en, free, blank=set(fxpb_words.BLANK.get(k, []))))
-    run(check, "UADD_ForeverXPBar", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
+    for k, en in ((hashtext.key(en), en) for kind, en in D.texts(D.collect()[0]) if kind == "format"):
+        free = {i: NAME for i in W.FREE.get(k, [])}
+        free.update({i: "s" for i in W.BLANK.get(k, [])})
+        tps.append(tpl(k, en, free, blank=set(W.BLANK.get(k, []))))
+    return tps, lambda tp, t: _t(M.uk(lua_str(t))), ""
 
 
-def lsw(check, M):
-    """LayerSwap: Words.Text (the stand-in's M.uk); free slots from lsw_words.FREE and BLANK."""
-    import lsw_words
-    import make_lsw_data
-    if not make_lsw_data.have_addon():
-        return run(check, "UADD_LayerSwap", [], None, SKIP)
-    kept, _ = make_lsw_data.collect()
-    tps = []
-    for kind, en in make_lsw_data.texts(kept):
-        if kind == "format":
-            k = hashtext.key(en)
-            free = {i: NAME for i in lsw_words.FREE.get(k, [])}
-            free.update({i: "s" for i in lsw_words.BLANK.get(k, [])})
-            tps.append(tpl(k, en, free, blank=set(lsw_words.BLANK.get(k, []))))
-    run(check, "UADD_LayerSwap", tps, lambda tp, t: _t(M.uk(lua_str(t))), glue=True)
+def fxpb(check, M): run(check, "UADD_ForeverXPBar", *_words(M, "fxpb"), glue=True)  # noqa: E704
+def lsw(check, M): run(check, "UADD_LayerSwap", *_words(M, "lsw"), glue=True)  # noqa: E704
 
 
 def ap(check, M):
@@ -298,3 +283,18 @@ def pawn(check, M, en=None, note=""):
             return t
         return _t(M.fmt(lua_str(tp["id"]), *args))
     run(check, "UADD_Pawn", tps, tr, note)
+
+
+def gm(check, M, en=None, note=""):
+    """GatherMate2: no %s; its code glues a value after a key (gm_rules.GLUE_AFTER), so each is a template
+    (its English plus the glue), the line built by the stand-in's own code (M.line). f free (fed glued too)."""
+    if M is None:
+        return run(check, "UADD_GatherMate2", [], None, note or SKIP)
+    import gm_rules as R
+    tps = [tpl(k, en[k] + g, {i: NAME for i, c in enumerate(R.slot_sorts(k, en[k]), 1) if c == "f"})
+           for k, g in sorted(R.GLUE_AFTER.items())]
+
+    def tr(tp, t):
+        v = parts(tp["en"], t)
+        return _t(M.line(lua_str(tp["id"]), lua_str(v[0]))) if v else None
+    run(check, "UADD_GatherMate2", tps, tr, note, glue=True)

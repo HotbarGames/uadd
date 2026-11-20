@@ -1,0 +1,20 @@
+## Interface: 16001, 16000
+## Title: UADD - GatherMate2
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: GatherMate2 in Ukrainian: its settings, chat lines, launcher tooltip and map pin menu. Part of UADD.
+## Author: HotbarGames
+## Version: 1.1.0
+## Dependencies: UADD
+## OptionalDeps: GatherMate2, UALLF
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (made by tools/make_gm_text.py build), then the code.
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/libs.lua
+Swap.lua
+Options.lua
+Fonts.lua
+Module.lua

@@ -25,7 +25,8 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
   (TOC: All Rights Reserved; Bagnon's texts are in BagBrother), Mastercraft and Mastercraft_Inbox
   (LICENSE.txt: all rights reserved), Attune, DialogueUI,
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file), TomTom and RareScanner (TOC:
-  All Rights Reserved), Pawn (CC BY-NC-ND 3.0: no derivatives).
+  All Rights Reserved), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (TOC: ARR, while its
+  LICENSE.txt says GPL-2.0; treated as ARR until the owner settles it).
 - Allowed: Questie (GPL-3.0), OpenMap (MIT; its notice must go with copies), What's Training? (MIT; its
   notice must go with copies). See `THIRD-PARTY-NOTICES.md`.
 
@@ -87,6 +88,8 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
   duration with English units: the line stays English).
 - Pawn: `SORTS` in `tools/pawn_rules.py` (`v` value, `f` free name: a scale, player or realm name, `n` game
   name, `t` our text: the line stays English when a slot holds an `n`).
+- GatherMate2: `SORTS` in `tools/gm_rules.py` (same marks as Pawn; `f`: an addon's folder name kept as it is;
+  the pin menu's node name is `n`, so that line stays English).
 
 A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
 only when the game or the addon puts a name there that has no translation; never one that holds only a
