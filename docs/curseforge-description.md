@@ -27,12 +27,14 @@ UADD does not include those addons.
 
 ## Names of quests, NPCs, items and zones
 
-They come from [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization) while you play. It is optional.
-Without it, the names stay English, and the menus are still Ukrainian.
+They come from [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization) or [ClassicUA](https://www.curseforge.com/wow/addons/classicua) while you play. Either one works, and so do both together. They are optional.
+Without them, the names stay English, and the menus are still Ukrainian.
 
-## Hold Shift for English
+## Hold a key for English
 
-Hold Shift (or the key you picked in UALL Forever) to see English. Let go, and it is Ukrainian again.
+Hold a key to see English. Let go, and it is Ukrainian again.
+With UALL Forever, UADD uses UALL Forever's key (Shift by default). With only ClassicUA, it uses ClassicUA's tooltip key (Alt by default).
+The first time you log in, UADD says in chat which key it is. `/uadd` shows it again.
 
 ## Turn modules on and off
 
@@ -67,6 +69,7 @@ Write the English text, our Ukrainian, and what it should say.
 - Speedy AutoLoot by Yuyuli: https://www.curseforge.com/wow/addons/speedyautoloot
 - Questie by the Questie team: https://www.curseforge.com/wow/addons/questie
 - UALL Forever by the UALL team: https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization
+- ClassicUA by Greenya, Jakanis and others: https://www.curseforge.com/wow/addons/classicua
 
 Source code (GPL-3.0): https://github.com/HotbarGames/uadd
 
@@ -103,12 +106,14 @@ Source code (GPL-3.0): https://github.com/HotbarGames/uadd
 
 ## Назви завдань, НІП, предметів і місць
 
-Їх дає [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization) під час гри. Він не обов'язковий.
-Без нього назви лишаються англійською, а меню все одно українською.
+Їх дає [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization) або [ClassicUA](https://www.curseforge.com/wow/addons/classicua) під час гри. Підійде будь-який із них, або обидва разом. Вони не обов'язкові.
+Без них назви лишаються англійською, а меню все одно українською.
 
-## Shift показує англійську
+## Клавіша показує англійську
 
-Затисніть Shift (або клавішу, яку вибрано в UALL Forever), і буде англійською. Відпустіть, і знову українська.
+Затисніть клавішу, і буде англійською. Відпустіть, і знову українська.
+З UALL Forever UADD бере клавішу UALL Forever (типово Shift). Лише з ClassicUA бере клавішу підказок ClassicUA (типово Alt).
+Під час першого входу UADD один раз пише в чат, яка це клавіша. `/uadd` покаже її знову.
 
 ## Як вмикати й вимикати модулі
 
@@ -124,4 +129,4 @@ Source code (GPL-3.0): https://github.com/HotbarGames/uadd
 
 ## Дякуємо
 
-Авторам усіх цих аддонів і команді UALL Forever (посилання вище).
+Авторам усіх цих аддонів, команді UALL Forever і авторам ClassicUA (посилання вище).

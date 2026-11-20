@@ -1,11 +1,11 @@
 ## Interface: 16001, 16000
 ## Title: UADD - Dungeon Journal
 ## IconTexture: Interface\AddOns\UADD\Logo
-## Notes: Dungeon Journal in Ukrainian: its menus, plus dungeon, boss, quest and item names from UALL Forever. Type /uadd dj.
+## Notes: Dungeon Journal in Ukrainian: its menus, plus dungeon, boss, quest and item names from UALL Forever or ClassicUA. Type /uadd dj.
 ## Author: HotbarGames
 ## Version: 1.2.2
 ## Dependencies: UADD, ForeverDungeonJournal
-## OptionalDeps: UALLF
+## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
 ## X-License: GPL-3.0
 

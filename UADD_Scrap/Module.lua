@@ -134,7 +134,7 @@ end
 local HELP = {
     "/uadd scrap on - Scrap українською",
     "/uadd scrap off - вимкнути, Scrap знову англійською",
-    "Назви предметів у списку - з UALL Forever; яких там немає, лишаються англійською.",
+    "Назви предметів у списку - з UALL Forever або ClassicUA; яких у них немає, лишаються англійською.",
 }
 
 local function Command(args)

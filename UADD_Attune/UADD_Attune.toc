@@ -1,11 +1,11 @@
 ## Interface: 16001, 16000
 ## Title: UADD - Attune
 ## IconTexture: Interface\AddOns\UADD\Logo
-## Notes: Attune in Ukrainian: its window, steps, Next window, settings, tooltips, dialogs and chat lines, plus quest, NPC, item and zone names from UALL Forever. Type /uadd attune.
+## Notes: Attune in Ukrainian: its window, steps, Next window, settings, tooltips, dialogs and chat lines, plus quest, NPC, item and zone names from UALL Forever or ClassicUA. Type /uadd attune.
 ## Author: HotbarGames
 ## Version: 1.2.2
 ## Dependencies: UADD, Attune
-## OptionalDeps: UALLF
+## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
 ## X-License: GPL-3.0
 

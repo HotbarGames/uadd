@@ -139,6 +139,7 @@ function N.Signature()
     parts[#parts + 1] = ok and (tostring(version) .. "." .. tostring(build)) or "?"
     local okOff, off = pcall(function() return U.UALL.RoutesOff() end)
     if okOff and type(off) == "string" and off ~= "" then parts[#parts + 1] = "off=" .. off end
+    pcall(function() local p = U.UALL.ProviderSig() if p ~= "" then parts[#parts + 1] = tostring(p) end end)
     return table.concat(parts, "|")
 end
 
@@ -162,7 +163,7 @@ local function Basis(sig)
     local out = {}
     for part in tostring(sig):gmatch("[^|]+") do
         local key = part:match("^([%w_]+)=")
-        if key == "rules" or key == "UADD" or key == "UALLF" or key == "off" then
+        if key == "rules" or key == "UADD" or key == "UALLF" or key == "off" or key == "ClassicUA" then
             out[#out + 1] = part
         elseif not key and part:find("^%d+%.[%d%.]+$") then
             out[#out + 1] = part                    -- the game build, "1.15.7.12345"

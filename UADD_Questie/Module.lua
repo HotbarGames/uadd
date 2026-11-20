@@ -82,7 +82,7 @@ local function Ready(shown, partial, off)
             .. "Введіть /reload, і вони з'являться.")
     end
     SayOff(off)
-    if partial then Say("UALL Forever довго не відповідав, тож решту назв доберу при наступному вході.") end
+    if partial then Say("назви збиралися надто довго, тож решту доберу при наступному вході.") end
 end
 
 -- Tells the player how it went, once per collection, and nothing after /uadd questie off.
@@ -155,7 +155,7 @@ local function CollectNames(all)
     end)
     if started then applyToken = a.token end
     if started and not db.collectedOnce then
-        Say("беру назви завдань, НІП, предметів і місць з UALL Forever. Це йде у фоні, гра не гальмує.")
+        Say("беру назви завдань, НІП, предметів і місць з UALL Forever або ClassicUA. Це йде у фоні, гра не гальмує.")
     end
     return started, why
 end
@@ -223,7 +223,7 @@ local function Status()
     local s, c = L.stats, N.counts
     local parts = { ("рядків меню: %d"):format(s.strings) }
     if not N.IsAvailable() then
-        parts[#parts + 1] = "назви: англійською (немає UALL Forever)"
+        parts[#parts + 1] = "назви: англійською (немає ні UALL Forever, ні ClassicUA)"
     else
         parts[#parts + 1] = ("назви: завдання %d, НІП %d, предмети %d, місця %d")
             :format(c.Quest, c.Npc, c.Item, math.max(c.zones, s.zones))
@@ -239,8 +239,8 @@ end
 local HELP = {
     "/uadd questie on - увімкнути (потім /reload)",
     "/uadd questie off - вимкнути, Questie знову англійською",
-    "/uadd questie rebuild - заново зібрати назви з UALL Forever",
-    "/uadd questie test - перевірити зв'язок з UALL Forever",
+    "/uadd questie rebuild - заново зібрати назви з UALL Forever або ClassicUA",
+    "/uadd questie test - перевірити зв'язок з UALL Forever і ClassicUA",
 }
 
 local function Command(args)
@@ -268,7 +268,7 @@ local function Command(args)
         elseif why == "busy" then
             Say("вже збираю, зачекайте.")
         elseif why == "no-uall" then
-            Say("UALL Forever не завантажено або його переклад вимкнено. Назви лишаються англійською.")
+            Say("ні UALL Forever, ні ClassicUA не завантажено, або їхній переклад вимкнено. Назви лишаються англійською.")
         end
     elseif cmd == "test" then
         if ns.UALL and type(ns.UALL.SelfTest) == "function" then

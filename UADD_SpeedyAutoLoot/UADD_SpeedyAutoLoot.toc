@@ -5,7 +5,7 @@
 ## Author: HotbarGames
 ## Version: 1.2.2
 ## Dependencies: UADD, SpeedyAutoLoot
-## OptionalDeps: UALLF
+## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
 ## X-License: GPL-3.0
 

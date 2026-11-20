@@ -125,10 +125,20 @@ local function StatusOf(spec)
     return ok and tostring(text or "") or "стан невідомий"
 end
 
+-- The show-original key: the same lines as the login notice (UADD/Original.lua), or Shift without
+-- UALL Forever and ClassicUA. Nothing when that code fails: the list still prints.
+local function KeyLines()
+    local ok, lines = U.SafeCall(function() return U.KeyNoticeLines() end)
+    if not ok or type(lines) ~= "table" then return end
+    if #lines == 0 then lines = { "Затисніть Shift — вікна аддонів покажуть англійський оригінал." } end
+    for _, line in ipairs(lines) do U.Print(line) end
+end
+
 local function ListModules()
     U.Print("версія " .. U.version .. ". Модулі:")
     if #U.order == 0 then
         U.Print("  жодного. Увімкніть, наприклад, UADD - Questie у списку аддонів.")
+        KeyLines()
         return
     end
     for _, key in ipairs(U.order) do
@@ -139,6 +149,7 @@ local function ListModules()
     U.Print("  /uadd perf — скільки мс забрав останній показ оригіналу (клавіша вниз / вгору)")
     U.Print("  /uadd combat on|off — чи діє клавіша оригіналу в бою (типово ні)")
     U.Print("  /uadd missed — скільки написів лишилося англійською (on|off|clear)")
+    KeyLines()
     if U.HealthLines then for _, line in ipairs(U.HealthLines()) do U.Print(line) end end
 end
 
@@ -196,10 +207,22 @@ end
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
+-- Seconds after login before the key notice, so it comes after the game's and other addons' login lines.
+local NOTICE_DELAY = 4
+
+local function KeyNotice() if U.KeyNotice then U.SafeCall(U.KeyNotice) end end
+
 frame:SetScript("OnEvent", function(_, event, name)
     if event == "ADDON_LOADED" and name == ADDON then
         U.DB()
         U.DB().version = U.version
+    elseif event == "PLAYER_LOGIN" then
+        -- Which key shows the English: once, and again when UALL Forever or ClassicUA comes or goes.
+        if C_Timer and type(C_Timer.After) == "function" then
+            pcall(C_Timer.After, NOTICE_DELAY, KeyNotice)
+        else
+            KeyNotice()
+        end
     end
     -- LibSharedMedia may arrive with any later addon (Questie embeds it), so try each time.
     if U.RegisterFont then U.SafeCall(U.RegisterFont) end

@@ -2,14 +2,25 @@
 
 ## Unreleased
 
+- Game names (zones, NPCs, items, quests) now come from ClassicUA too. With both installed, UADD takes
+  ClassicUA's name first and UALL Forever's where ClassicUA has none. Either one works, and so do both.
+  Назви з гри (зони, НІП, предмети, завдання) тепер беруться й з ClassicUA. Коли встановлено обидва, UADD
+  спершу бере назву з ClassicUA, а з UALL Forever — там, де в ClassicUA її немає. Підійде будь-який із них або обидва.
+- The show-original key works with UALL Forever, ClassicUA or both: UADD follows UALL Forever's key, or
+  ClassicUA's when only ClassicUA is on. The chat names the key once, and again when you add or remove one of
+  them; `/uadd` shows it too.
+  Клавіша оригіналу працює з UALL Forever, ClassicUA чи обома: UADD бере клавішу UALL Forever, а коли ввімкнено
+  лише ClassicUA — клавішу ClassicUA. Чат називає клавішу один раз і знову, коли ви додаєте чи прибираєте одне з
+  них; `/uadd` теж її показує.
 - Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
   Ukrainian; pick another language and that language shows whole.
   Mastercraft: «Українська» є в його власному меню мов (кнопка з глобусом). Оберіть її, щоб читати Mastercraft
   українською; оберіть іншу мову, і вона показується ціла.
 - Mastercraft: more lines are in Ukrainian: the zone under your name, the materials lists, the next steps, item
-  and fish names, the cooking vendor line and the skill rank, when UALL Forever has every name in them.
+  and fish names, the cooking vendor line and the skill rank, when UALL Forever or ClassicUA has every name in
+  them.
   Mastercraft: більше рядків українською: зона під ім'ям, списки матеріалів, наступні кроки, назви предметів і
-  риби, рядок продавця в кулінарії та ранг навички, коли UALL Forever має всі назви в них.
+  риби, рядок продавця в кулінарії та ранг навички, коли UALL Forever або ClassicUA має всі назви в них.
 - What's Training?: the section headers ("Available now", "Missing requirements" and the like) are in Ukrainian.
   What's Training?: заголовки розділів («Доступно зараз», «Доступно, але бракує вимог» тощо) українською.
 

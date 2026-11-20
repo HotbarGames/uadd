@@ -24,6 +24,8 @@ locale file (flow_scrap.py).
 UADD_SpeedyAutoLoot's checks run next, on a stand-in for Speedy AutoLoot that runs its own two files (flow_sal.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run next.
+ClassicUA as the first name source (flow_classicua.py, lesson 25: its zone hook is a harness stand-in that calls
+ClassicUA's real options and glossary) runs next, then the key notice (flow_keynotice.py).
 The keyboard check (flow_focus.py: every stand-in and the modules that load with them; after login no text
 box has the keyboard, docs/LESSONS2.md lesson 16) runs next.
 The safeguards (flow_safe.py: a failing module falls back to English, the guard puts game-wide breakage
@@ -75,6 +77,8 @@ def run_all():
     import flow_sal
     import flow_dialogueui
     import flow_dj_module
+    import flow_classicua
+    import flow_keynotice
     import flow_focus
     import chaos
     import flow_fxpb
@@ -102,7 +106,8 @@ def run_all():
                      ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
                      ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("rs", flow_rarescanner), ("pawn", flow_pawn),
                      ("gm", flow_gm), ("scrap", flow_scrap), ("sal", flow_sal), ("missed", flow_missed),
-                     ("hash", flow_hash), ("focus", flow_focus), ("safe", flow_safe),
+                     ("hash", flow_hash), ("cua", flow_classicua), ("keynotice", flow_keynotice),
+                     ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):
         seg_checks, seg_facts = mod.run_checks()
         checks += seg_checks + tipfont.segment(key, flow.Check)

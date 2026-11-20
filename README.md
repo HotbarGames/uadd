@@ -26,20 +26,22 @@ UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Fore
 - Questie: its menus and settings. The quest tracker and quest texts come from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization).
 
-Quest, NPC, item and zone names come from UALL Forever while you play. It is optional: without it, the names
+Game names (zones, NPCs, items, quests, spells) come from [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization) or [ClassicUA](https://www.curseforge.com/wow/addons/classicua) while you play. Either one works, and so do both together. They are optional: without them, the names
 stay English and the menus are still Ukrainian.
 
-Hold Shift to see English. Let go, and it is Ukrainian again.
+Hold a key to see English. Let go, and it is Ukrainian again. With UALL Forever, UADD uses UALL Forever's key
+(Shift by default). With only ClassicUA, it uses ClassicUA's tooltip key (Alt by default). The first time you log in,
+UADD says in chat which key it is. `/uadd` shows it again.
 
 ## Install
 
-Each module needs its addon. UALL Forever is optional.
+Each module needs its addon. UALL Forever and ClassicUA are optional.
 
 Copy the `UADD`, `UADD_Questie`, `UADD_DungeonJournal`, `UADD_OpenMap`, `UADD_DialogueUI`, `UADD_ForeverXPBar`,
 `UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft`, `UADD_WhatsTraining`, `UADD_TomTom`, `UADD_RareScanner`, `UADD_Pawn`, `UADD_GatherMate2`, `UADD_Scrap` and `UADD_SpeedyAutoLoot` folders into `World of Warcraft\_forever_\Interface\AddOns\`, or run `install.bat`. Start the game. A module whose addon
 is not installed stays off.
 
-The first time, UADD collects the names from UALL Forever in the background. When the chat says the names
+The first time, UADD collects the names from UALL Forever or ClassicUA in the background. When the chat says the names
 are ready, Questie shows them right away. You do not need `/reload`. UADD waits for a fight to end first.
 While Questie puts the names in, its map pins vanish for a moment and come back.
 
@@ -53,11 +55,11 @@ Questie builds that list only once, when it starts.
 | `/uadd` | Lists the modules and their status. |
 | `/uadd questie` | Shows the status and the commands. |
 | `/uadd questie on` / `off` | Turns the Questie translation on or off. Then type `/reload`. |
-| `/uadd questie rebuild` | Collects the names from UALL Forever again. |
-| `/uadd questie test` | Checks the link to UALL Forever. |
+| `/uadd questie rebuild` | Collects the names from UALL Forever or ClassicUA again. |
+| `/uadd questie test` | Checks the link to UALL Forever and ClassicUA. |
 | `/uadd dj` | Shows the journal module's status and commands. |
 | `/uadd dj on` / `off` | Turns the journal translation on or off, at once. Off gives the journal back as it is without UADD. |
-| `/uadd dj rebuild` | Collects the journal's names from UALL Forever again. |
+| `/uadd dj rebuild` | Collects the journal's names from UALL Forever or ClassicUA again. |
 | `/uadd openmap` | Shows the OpenMap module's status and commands. |
 | `/uadd openmap on` / `off` | Turns the OpenMap translation on or off, at once. Off gives the map back as it is without UADD. |
 | `/uadd dialogueui` | Shows the Dialogue UI module's status and commands. |
@@ -66,7 +68,7 @@ Questie builds that list only once, when it starts.
 | `/uadd auctionator on` / `off` | Turns the Auctionator translation on or off, at once. Off gives Auctionator back as it is without UADD (after the fight, if you are in one). |
 | `/uadd attune` | Shows the Attune module's status and commands. |
 | `/uadd attune on` / `off` | Turns the Attune translation on or off, at once. Off gives Attune back as it is without UADD (after the fight, if you are in one). |
-| `/uadd attune rebuild` | Collects Attune's names from UALL Forever again. |
+| `/uadd attune rebuild` | Collects Attune's names from UALL Forever or ClassicUA again. |
 | `/uadd autopotion` | Shows the Auto Potion module's status and commands. |
 | `/uadd autopotion on` / `off` | Turns the Auto Potion translation on or off, at once. Off gives Auto Potion back as it is without UADD. |
 | `/uadd bagnon` | Shows the Bagnon module's status and commands. |
@@ -87,7 +89,7 @@ Questie builds that list only once, when it starts.
 | `/uadd scrap on` / `off` | Turns the Scrap translation on or off, at once. Off gives Scrap back as it is without UADD; its settings page names change back after `/reload`. Item names stay as the game gives them. |
 | `/uadd sal` | Shows the Speedy AutoLoot module's status and commands. |
 | `/uadd sal on` / `off` | Turns the Speedy AutoLoot translation on or off, at once. Off gives Speedy AutoLoot back as it is without UADD. Item names and money in its loot display stay as the game gives them. |
-| `/uadd combat off` / `on` | Off: the hold key (Shift) works in a fight too. On (the default): in a fight it does nothing. |
+| `/uadd combat off` / `on` | Off: the hold key works in a fight too. On (the default): in a fight it does nothing. |
 | `/uadd missed` | Shows, per module, how many texts stayed English because UADD has no Ukrainian for them yet. |
 | `/uadd missed on` / `off` | A tool for testers, off unless you turn it on. On: UADD notes each text it shows in English. Off (the default) costs nothing. The list stays on your PC; nothing is sent. |
 | `/uadd missed clear` | Empties the list. `/uadd missed clear fxpb` empties one module's part (the names are in `/uadd missed`). |

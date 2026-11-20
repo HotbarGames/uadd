@@ -204,3 +204,27 @@ changed and stamps it.
 **Check.** `python3 -m unittest tools.test_listing`: each list holds exactly the TOC Titles, the Thanks has a line
 per module, no "coming" line, and the paste stamp exists. `python3 tools/make_zip.py` (`tools/listing.py`) says loudly
 when the text changed since the last paste.
+
+## 25. A second source addon for game names
+
+**What went wrong.** Players use UALL Forever, ClassicUA, or both (the owner, 2026-11-20). UADD asked only UALL
+Forever, so a player with ClassicUA alone got every game name in English, and one with both saw ClassicUA's word
+in the game and UALL Forever's in our windows. Both addons hook the same zone texts. A plain probe would have
+taken the other addon's Ukrainian as ClassicUA's, asked ClassicUA for text it only half translates (a name with
+levels or a link), and ignored the player's ClassicUA options.
+
+**Rule.** Game names come from ClassicUA first and from UALL Forever when ClassicUA has none (`UADD/uall_cua.lua`).
+- An answer counts only when `debugstack` names ClassicUA's folder.
+- Never ask text with `[`, `(`, `|`, a line break or spaces at its edges.
+- Ask only while ClassicUA's options allow it (`translate_zone`, `disable_all_translation`, `dev_mode`).
+- Any error, or test names that get no answer, means ClassicUA is not asked again this session: the routes work as
+  with UALL Forever alone, or the English stays.
+- Every TOC that lists UALLF in `## OptionalDeps` lists ClassicUA too. Saved caches add `UADD.UALL.ProviderSig()`
+  to their signature.
+
+**Check.** `python3 -m unittest tools.test_classicua`: in a small Lua world it wants ClassicUA's word first, no
+answer from another addon's hook, no ask for refused text, UALL Forever's answer with each option off, a capital
+first letter, and ClassicUA in every TOC next to UALLF. Its mutant tests take each fix out and want it to fail.
+`python3 tools/harness/run.py`, the "cua:" steps (`tools/harness/flow_classicua.py`): ClassicUA's real glossary
+through a stand-in zone hook, with UALL Forever, without it, and a stand-in that throws. Manual, in the game: the
+real ClassicUA hook answers, and `/uadd test` says "ClassicUA first: ..." with a Ukrainian name.

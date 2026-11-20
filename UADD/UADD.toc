@@ -5,7 +5,7 @@
 ## Author: HotbarGames
 ## Version: 1.2.2
 ## SavedVariables: UADD_DB
-## OptionalDeps: UALLF
+## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
 ## X-License: GPL-3.0
 ## X-Curse-Project-ID: 1807250
@@ -37,3 +37,4 @@ Lines.lua
 QuestVariants.lua
 Routes.lua
 Collector.lua
+uall_cua.lua

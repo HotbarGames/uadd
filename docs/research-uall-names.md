@@ -267,6 +267,11 @@ Where we show these names:
   These lines do not follow a change in UALL Forever: they must be edited by hand, in `ui/notes.lua`
   itself (`tools/make_att_text.py` reads them from there).
 
+## ClassicUA
+
+Every route here asks ClassicUA first and UALL Forever when ClassicUA has none (the owner, 2026-11-20;
+`UADD/uall_cua.lua`, lesson 25). How ClassicUA is asked, and when not: `docs/research-classicua-names.md`.
+
 ## A note we could send to UALL's author
 
 > Hi! We make UADD, a set of Ukrainian add-ons for WoW Forever, and we would like Questie's

@@ -21,7 +21,7 @@ end
 
 local function Collect(all)
     local started, why = N.Start(db, all, function(partial)
-        if partial then Say("UALL Forever довго не відповідав, решту назв доберу при наступному вході.") end
+        if partial then Say("назви збиралися надто довго, решту доберу при наступному вході.") end
     end)
     return started, why
 end
@@ -71,7 +71,7 @@ local function Status()
     if not db.enabled then return "вимкнено (/uadd dj on)" end
     local parts = { L.Wants() and "мова журналу: українська" or "у журналі вибрано іншу мову" }
     if not U.Collector.IsAvailable() then
-        parts[#parts + 1] = "назви: англійською (немає UALL Forever)"
+        parts[#parts + 1] = "назви: англійською (немає ні UALL Forever, ні ClassicUA)"
     else
         local c = N.Counts()
         parts[#parts + 1] = ("назви: підземелля %d з %d, боси й НІП %d, завдання %d, предмети %d")
@@ -87,7 +87,7 @@ end
 local HELP = {
     "/uadd dj on - увімкнути українську в журналі підземель",
     "/uadd dj off - вимкнути, журнал знову такий, як без UADD",
-    "/uadd dj rebuild - заново зібрати назви з UALL Forever",
+    "/uadd dj rebuild - заново зібрати назви з UALL Forever або ClassicUA",
 }
 
 local function Command(args)
@@ -120,7 +120,7 @@ local function Command(args)
         elseif why == "busy" then
             Say("вже збираю, зачекайте.")
         else
-            Say("UALL Forever не завантажено або його переклад вимкнено. Назви лишаються англійською.")
+            Say("ні UALL Forever, ні ClassicUA не завантажено, або їхній переклад вимкнено. Назви лишаються англійською.")
         end
     else
         Say(Status())

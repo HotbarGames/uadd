@@ -63,7 +63,7 @@ end
 local function Collect(all)
     if not ns.On() then return false, "off" end
     return N.Start(db, all, function(partial)
-        if partial then Say("UALL Forever довго не відповідав, решту назв доберу при наступному вході.") end
+        if partial then Say("назви збиралися надто довго, решту доберу при наступному вході.") end
     end)
 end
 
@@ -123,7 +123,7 @@ local function Status()
     local parts = { ("увімкнено: Attune українською; слів: %d, текстів перекладено: %d, шрифтів виправлено: %d")
         :format(ns.Words.Count(), ns.Texts.Count(), ns.Fonts.Count()) }
     if not N.IsAvailable() then
-        parts[#parts + 1] = "назви: англійською (немає UALL Forever)"
+        parts[#parts + 1] = "назви: англійською (немає ні UALL Forever, ні ClassicUA)"
     else
         local c = N.counts
         parts[#parts + 1] = ("назви: завдання %d, НІП %d, предмети %d, зони %d, інше %d")
@@ -139,7 +139,7 @@ end
 local HELP = {
     "/uadd attune on - Attune українською",
     "/uadd attune off - вимкнути, Attune знову такий, як без UADD",
-    "/uadd attune rebuild - заново зібрати назви з UALL Forever",
+    "/uadd attune rebuild - заново зібрати назви з UALL Forever або ClassicUA",
 }
 
 local function Command(args)
@@ -164,7 +164,7 @@ local function Command(args)
         elseif why == "busy" then
             Say("вже збираю, зачекайте.")
         else
-            Say("UALL Forever не завантажено або його переклад вимкнено. Назви лишаються англійською.")
+            Say("ні UALL Forever, ні ClassicUA не завантажено, або їхній переклад вимкнено. Назви лишаються англійською.")
         end
     else
         Say(Status())

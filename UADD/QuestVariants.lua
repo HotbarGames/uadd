@@ -12,6 +12,7 @@
 -- we take the one whose English is closest to ours. Answers that differ in words: no answer.
 local U = UADD.UALL
 local exact = U.Quest
+local uallfRoutes = { U.Item, U.Npc }   -- UALLF's own, taken before uall_cua.lua puts ClassicUA first
 
 U.RULES = 3   -- version of these lookup rules; part of the saved-cache signature (Names.lua)
 
@@ -68,7 +69,7 @@ end
 -- "Not now" for every route alike: UALLF off or not loaded, combat, before login, its key held.
 -- UALLFSettingsDB is UALLF's saved settings, a global; we only read it.
 local function NotNow()
-    if not U.IsAvailable() or (InCombatLockdown and InCombatLockdown()) then return true end
+    if not U.UallfAvailable() or (InCombatLockdown and InCombatLockdown()) then return true end
     if IsLoggedIn and not IsLoggedIn() then return true end
     local s = type(_G.UALLFSettingsDB) == "table" and _G.UALLFSettingsDB or {}
     if s.reverseOriginal then return false end
@@ -83,7 +84,7 @@ end
 -- not translated), cannot clear the variant, so we do not use it. We do not wait for that route:
 -- it may stay off for good, and the quest just keeps its English title.
 local function Elsewhere(text)
-    for _, fn in ipairs({ U.Item, U.Npc }) do
+    for _, fn in ipairs(uallfRoutes) do
         local ua, wait = fn(text)
         if ua then return true end
         if wait then

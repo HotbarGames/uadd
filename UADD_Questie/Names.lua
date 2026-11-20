@@ -97,6 +97,9 @@ function N.Signature()
     -- Only when a route is off, so a saved copy with every route on stays valid as it is.
     local okOff, off = pcall(function() return ns.UALL.RoutesOff() end)
     if okOff and type(off) == "string" and off ~= "" then parts[#parts + 1] = "off=" .. off end
+    -- Only with ClassicUA active (it answers first), so a copy saved without it stays valid.
+    local okP, p = pcall(function() return ns.UALL.ProviderSig() end)
+    if okP and type(p) == "string" and p ~= "" then parts[#parts + 1] = p end
     return table.concat(parts, "|")
 end
 

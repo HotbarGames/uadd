@@ -40,7 +40,7 @@ typed in the box; check it saved by opening the page fresh. CurseForge rewrites 
 when it is registered (`python3 -m unittest tools.test_listing` fails until it is), and describes only what players
 can download, so paste it with the release that ships the module.
 
-Relations: only UALL Forever, as an Optional Dependency (owner, 2026-11-20). The addons we translate are not
-listed: a player needs none of them for UADD, and the list would grow with every module. The project's Default
-Relations (project settings) hold only UALL Forever, so a new file gets it by itself; check it on the file's
-edit page after the upload.
+Relations: UALL Forever and ClassicUA, both as Optional Dependency (owner, 2026-11-20). The addons we translate
+are not listed: a player needs none of them for UADD, and the list would grow with every module. The project's
+Default Relations (project settings) hold just these two, so a new file gets them by itself; check it on the
+file's edit page after the upload.

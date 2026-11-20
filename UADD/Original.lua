@@ -1,7 +1,8 @@
 -- UADD core: hold a key to see the original English for a moment, as in UALL Forever (UALLF).
 --
 -- The key is UALLF's own "show original" key when UALLF is loaded (UALLFSettingsDB.originalKey,
--- a global we only read: "SHIFT", "CTRL", "ALT" or "NONE" for no key), and Shift otherwise.
+-- a global we only read: "SHIFT", "CTRL", "ALT" or "NONE" for no key); without UALLF, ClassicUA's
+-- tooltip key when ClassicUA is loaded (U.ClassicUAKey); Shift otherwise, or for a value we do not know.
 -- UALLF's reverse mode (UALLFSettingsDB.reverseOriginal) is followed the same way: then the
 -- English shows unless the key is held, and holding the key shows the Ukrainian. Without UALLF
 -- there is no reverse mode.
@@ -39,21 +40,91 @@ local function Loaded(name)
     return ok and yes and true or false
 end
 
--- "SHIFT", "CTRL", "ALT", or nil when the player chose no key in UALLF.
+local function Field(t, k)            -- t[k], or nil when t is not a table or reading it throws
+    if type(t) ~= "table" then return nil end
+    local ok, v = pcall(function() return t[k] end)
+    return ok and v or nil
+end
+
+-- ClassicUA's tooltip key (ClassicUA_Options.tooltip_original_key, a global we only read): "ALT", "CTRL",
+-- "SHIFT", or nil when ClassicUA is not loaded or the value is not one of those (then today's Shift).
+-- ClassicUA has no "no key" choice and no reverse mode; its quest windows have their own language button.
+function U.ClassicUAKey()
+    if not Loaded("ClassicUA") then return nil end
+    local key = Field(_G.ClassicUA_Options, "tooltip_original_key")
+    return type(key) == "string" and DOWN[key] and key or nil
+end
+
+-- "SHIFT", "CTRL", "ALT", or nil when the player chose no key in UALLF. UALLF loaded: its key.
+-- Only ClassicUA loaded: its tooltip key. Neither, or a value we do not know: Shift.
 function U.OriginalKey()
-    local s = _G.UALLFSettingsDB
-    if Loaded("UALLF") and type(s) == "table" and s.originalKey ~= nil then
-        local key = s.originalKey
+    if Loaded("UALLF") then
+        local key = Field(_G.UALLFSettingsDB, "originalKey")
         if key == "NONE" then return nil end
-        return DOWN[key] and key or "SHIFT"
+        return type(key) == "string" and DOWN[key] and key or "SHIFT"
     end
-    return "SHIFT"
+    return U.ClassicUAKey() or "SHIFT"
 end
 
 -- true when UALLF is loaded and the player turned on its reverse mode (English unless the key is held).
 function U.OriginalReverse()
-    local s = _G.UALLFSettingsDB
-    return Loaded("UALLF") and type(s) == "table" and s.reverseOriginal == true
+    return Loaded("UALLF") and Field(_G.UALLFSettingsDB, "reverseOriginal") == true
+end
+
+-- ── Which key: the chat notice ────────────────────────────────────────────────────────────────
+-- Printed once, at the first login (U.KeyNotice from Core.lua), and again only when the set of
+-- Ukrainian addons that own a key (UALLF, ClassicUA) changes: UADD_DB.keyNotice keeps the last set.
+-- /uadd shows the same lines. Neither addon: no notice. Both are named side by side, neither as better.
+
+local NAMES = { SHIFT = "Shift", CTRL = "Ctrl", ALT = "Alt" }
+local WINDOWS = "вікна аддонів покажуть англійський оригінал"
+
+-- "UALLF", "ClassicUA", "UALLF+ClassicUA", or "" for neither.
+function U.KeySources()
+    local uall, cua = Loaded("UALLF"), Loaded("ClassicUA")
+    return (uall and cua and "UALLF+ClassicUA") or (uall and "UALLF") or (cua and "ClassicUA") or ""
+end
+
+-- UALLF's part: "Затисніть Shift — вікна аддонів ...", for UALLF's key and reverse mode.
+local function UallLine(key)
+    if not key then return "Клавішу оригіналу для вікон аддонів вимкнено в налаштуваннях UALL Forever." end
+    if U.OriginalReverse() then
+        return "Затисніть " .. NAMES[key] .. " — вікна аддонів стануть українськими (обернений режим UALL Forever)."
+    end
+    return "Затисніть " .. NAMES[key] .. " — " .. WINDOWS .. " (клавіша з налаштувань UALL Forever)."
+end
+
+-- The notice: one or two chat lines (without the "UADD" mark), or {} when neither addon is loaded.
+function U.KeyNoticeLines()
+    local set, key, cua = U.KeySources(), U.OriginalKey(), U.ClassicUAKey()
+    if set == "UALLF" or (set == "UALLF+ClassicUA" and not cua) then
+        return { UallLine(key) }
+    elseif set == "ClassicUA" then
+        if not cua then return { "Затисніть " .. NAMES[key] .. " — " .. WINDOWS .. "." } end
+        return { "Затисніть " .. NAMES[cua] .. " — англійський оригінал покажуть вікна аддонів і підказки ClassicUA"
+                     .. " (клавіша з /ua).",
+                 "У вікнах завдань ClassicUA має свою кнопку мови." }
+    elseif set == "UALLF+ClassicUA" then
+        if key == cua and not U.OriginalReverse() then
+            return { "Затисніть " .. NAMES[key] .. " — англійський оригінал покажуть вікна аддонів (клавіша UALL Forever)"
+                         .. " і підказки ClassicUA (клавіша з /ua)." }
+        end
+        local out = { UallLine(key) .. " Підказки ClassicUA — клавіша " .. NAMES[cua] .. "." }
+        if key ~= cua then
+            out[2] = "Одна клавіша для всього: виберіть ту саму в налаштуваннях UALL Forever і в /ua (ClassicUA)."
+        end
+        return out
+    end
+    return {}
+end
+
+-- At login: the notice when the set of addons differs from the one saved at the last notice.
+function U.KeyNotice()
+    if type(UADD_DB) ~= "table" then return end
+    local set = U.KeySources()
+    if UADD_DB.keyNotice == set then return end
+    for _, line in ipairs(U.KeyNoticeLines()) do U.Print(line) end
+    UADD_DB.keyNotice = set
 end
 
 -- true while the key is held (at once, without the HOLD delay).

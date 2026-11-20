@@ -109,6 +109,13 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 40. With Dialogue UI - UALL: its quest titles, NPC names and option texts keep its words and its fonts.
 41. Log in without Dialogue UI: `/uadd dialogueui` says it waits for Dialogue UI, and there are no errors.
 
+### The show-original key (UALL Forever, ClassicUA, both)
+
+- First login with this version: a few seconds after login the chat names the key once. Log in again: no
+  line. Turn ClassicUA on (or off) and log in: the line comes once more. `/uadd` always shows it.
+- Only ClassicUA, its key set to Alt in `/ua`: hold Alt in a UADD window (the Dungeon Journal): English;
+  Shift does nothing. Both addons with different keys: UADD follows UALL Forever's key.
+
 ### The other addons
 
 Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap and Speedy

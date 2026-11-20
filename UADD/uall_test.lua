@@ -24,7 +24,12 @@ function U.SelfTest()
     local function say(msg) print("|cff4fc3f7UADD|r UALL: " .. msg) end
     local ok, err = pcall(function()
         local P = U.probe
-        if not U.IsAvailable() then say("UALL Forever is not loaded, or its translation is switched off.") return end
+        if U.cua and U.HasProvider and U.HasProvider("ClassicUA") then
+            local en = SAMPLES.zone[1]
+            local ua, why = U.cua.Ask(en)
+            say(("ClassicUA first: %s -> %s"):format(en, ua or why or "no answer"))
+        end
+        if not U.UallfAvailable() then say("UALL Forever is not loaded, or its translation is switched off.") return end
         if InCombatLockdown and InCombatLockdown() then say("in combat: lookups wait until combat ends.") return end
         local s = P.Settings()
         if not s.reverseOriginal and P.KeyHeld(s) then say("let go of the show-original key and try again.") return end

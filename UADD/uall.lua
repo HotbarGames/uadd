@@ -230,14 +230,12 @@ local function Available()
     return Settings().enabled ~= false
 end
 
-function U.IsAvailable()
-    local ok, yes = pcall(Available)
-    return ok and yes or false
-end
+local function UallfOn() local ok, yes = pcall(Available) return ok and yes or false end
+U.IsAvailable, U.UallfAvailable = UallfOn, UallfOn   -- uall_cua.lua: IsAvailable = any name source
 
 -- true = UALLF would answer right now. false = "not now" or switched off: do not cache.
 local function Ready(gate)
-    if not U.IsAvailable() then return false end
+    if not UallfOn() then return false end
     if InCombatLockdown and InCombatLockdown() then return false end
     if IsLoggedIn and not IsLoggedIn() then return false end    -- gossip title is pinned at login
     local s = Settings()
