@@ -99,7 +99,7 @@ end
 local function OnBody(_, text)
     if busy then return end
     last = nil
-    if not ns.WordsWanted() or type(text) ~= "string" or #text > 600 then return end
+    if not ns.WordsWanted() or not U.Plain(text) or #text > 600 then return end   -- a secret: no op on it
     shape = shape or Lc.Shape(EN)
     local en = text:match(shape) and B.Plain(text) or text   -- the line with no word of ours in it
     local uk = B.Make(text)

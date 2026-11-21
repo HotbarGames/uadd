@@ -185,8 +185,8 @@ local function HookTip(tip, always)
     if type(tip) ~= "table" or hooked[tip] then return end
     hooked[tip] = true
     hooksecurefunc(tip, "Show", function(t) U.SafeCall(OnTip, t, always) end)
-    tip:HookScript("OnTooltipCleared", TipBack)
-    tip:HookScript("OnHide", TipBack)
+    tip:HookScript("OnTooltipCleared", function(t) U.SafeCall(TipBack, t) end)
+    tip:HookScript("OnHide", function(t) U.SafeCall(TipBack, t) end)
 end
 
 local function OnMenu(owner)
@@ -232,7 +232,7 @@ function F.Install()
     -- A window TomTom makes late (the paste window): found by its name when it is made.
     if not frameHooked and lateLeft > 0 then
         frameHooked = true
-        hooksecurefunc("CreateFrame", function(_, name)
+        U.OnNewFrame(function(_, name)                -- the core hook, under U.SafeCall (lesson 35)
             if lateLeft > 0 and type(name) == "string" and LATE[name] then
                 C_Timer.After(0, function() U.SafeCall(Collect) U.SafeCall(F.Scan) end)
             end

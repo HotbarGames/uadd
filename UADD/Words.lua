@@ -63,6 +63,9 @@ function U.NewWords(data, opts)
     local W = { HasLatin = HasLatin, Upper = U.UpperUk }
     local routes = type(opts) == "table" and opts.spells and SPELLS or NAMES
     local ix = U.TextIndex(data or {})
+    local far = 1000                                     -- longer than any text of ours (Hash.lua's MAX_LEN too)
+    for len in pairs(ix.byLen or {}) do if type(len) == "number" and len > far then far = len end end
+    far = far + 64                                       -- room for spaces and a colour around it
     local cache, size, LIMIT = {}, 0, 6000
     local waited = false
     local depth, DEPTH = 0, 6
@@ -190,6 +193,7 @@ function U.NewWords(data, opts)
     -- slot is filled, nothing is cached. False means Translate(s) would surely give nothing.
     local function Maybe(s, d)
         if type(s) ~= "string" or s == "" or d > 4 or not s:find("%a") then return false end
+        if #s > far and not s:find("\n", 1, true) then return false end    -- a BG's 5 KB line: no scan (lesson 35)
         local hit = cache[s]
         if hit ~= nil then return hit ~= false end
         if ix:Exact(s) or ix:Match(s, 0) then return true end

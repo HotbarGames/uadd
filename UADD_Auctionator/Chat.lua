@@ -1,9 +1,9 @@
 -- Auctionator's own chat lines in Ukrainian. It prints every message the same way
 -- (Source/Utilities/Message.lua):
 --     print(LIGHTBLUE_FONT_COLOR:WrapTextInColorCode("Auctionator: ") .. message)
--- print() hands its words to the game's print handler (getprinthandler / setprinthandler). We put a
--- handler in front of the one that was there: a print of one text that starts with that coloured
--- prefix gets the part after it in Ukrainian, when Words.lua knows it; every other print (other
+-- print() hands its words to the game's print handler. Line is a handler on the core's one print
+-- handler (U.PrintHook, UADD/Print.lua; off in an instance, lesson 35): a print of one text that starts
+-- with that coloured prefix gets the part after it in Ukrainian, when Words.lua knows it; every other print (other
 -- addons, several values, what players say never comes here) goes to the old handler untouched.
 -- No chat frame is changed. The prefix (the addon's name) stays. Lines Auctionator glues together:
 --   * "/atr help": "<command words>: <text>": only the text after the first ": " changes;
@@ -19,7 +19,6 @@ local C = {}
 ns.Chat = C
 
 local PREFIX = "^(|c%x%x%x%x%x%x%x%xAuctionator: |r)(.*)$"
-local had, wrapper = nil, nil
 local active = false
 
 -- Sentences ("One. Two.") each in Ukrainian where we know them; nil when none changed.
@@ -70,32 +69,18 @@ local function Line(text)
     return uk and prefix .. uk or text
 end
 
+local hook = UADD.PrintHook({ line = Line })
+
 function C.Start()
     active = true
-    if wrapper then return end
-    local get, set = rawget(_G, "getprinthandler"), rawget(_G, "setprinthandler")
-    if type(get) ~= "function" or type(set) ~= "function" then return end
-    had = get()
-    if type(had) ~= "function" then had = nil return end
-    local old = had
-    wrapper = function(...)
-        local text = ...
-        if select("#", ...) ~= 1 or type(text) ~= "string" then return old(...) end
-        local ok, t = pcall(Line, text)
-        return old(ok and t or text)
-    end
-    set(wrapper)
+    hook.Start()
 end
 
 function C.Stop()
     active = false
-    if not wrapper then return end
-    if getprinthandler() == wrapper then   -- nobody set a handler after us: put the old one back
-        setprinthandler(had)
-        wrapper, had = nil, nil
-    end
+    hook.Stop()
 end
 
--- For the checks: true while the wrapper changes lines.
-function C.Active() return active and wrapper ~= nil end
+-- For the checks: true while the core handler changes lines.
+function C.Active() return active and hook.Active() end
 C.Line = Line

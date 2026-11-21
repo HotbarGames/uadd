@@ -167,10 +167,12 @@ class Original:
         H.fire("PLAYER_REGEN_ENABLED")
         ends = F.toldText()
         F.key("SHIFT", False)
-        f.check(f"{step}: fight starts with English shown, Ukrainian back once", starts == "TF", starts)
-        f.check(f"{step}: the key in a fight does nothing", during == "TF", during)
-        f.check(f"{step}: fight ends with the key held, English at once; let go, Ukrainian",
-                ends == "TFT" and F.toldText() == "TFTF", f"{ends!r} {F.toldText()!r}")
+        # In combat lockdown nothing is redrawn (LESSONS3 lesson 36): the English shown at the start stays,
+        # and a fight that ends with the key still held has nothing to redraw.
+        f.check(f"{step}: fight starts with English shown, nothing redrawn in it", starts == "T", starts)
+        f.check(f"{step}: the key in a fight does nothing", during == "T", during)
+        f.check(f"{step}: fight ends with the key held, English stays; let go, Ukrainian",
+                ends == "T" and F.toldText() == "TF", f"{ends!r} {F.toldText()!r}")
 
         c.slash("combat off")
         saved = c.lua.globals().UADD_DB.keyInCombat

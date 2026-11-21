@@ -161,3 +161,49 @@ player's map chain, through `UADD.UALL.Zone`. A hook that runs every frame keeps
 "wait". When one fix fits several addons, follow the text to every addon that shows it. Check:
 `python3 tools/harness/run.py`, "tt: place 1-6" (`tools/harness/flow_tomtom_place.py`); its mutants `hook`, `map`,
 `cache`, `wait`, `back` and `tip` each take one fix out and want their step to fail. Also "wp: 13".
+
+## 35. Game-wide hooks that throw in a battleground
+
+**What went wrong.** A streamer saw many Lua errors in a battleground (2026-11-21). There every chat line and every
+new frame (nameplates, raid frames: hundreds a second) passes UADD's hooks, and some chat lines are secret: any
+string op on one throws. Five modules each wrapped the chat window's AddMessage themselves, and Mastercraft's ran
+`msg:sub` on every line with no pcall. Attune's, LayerSwap's and Mastercraft's CreateFrame hooks and two
+CreateFontString hooks ran raw on every frame, and some did a full scan in combat. AutoPotion sent 653 of 10k other
+lines to its Bare look-up, since its gate looked at the length only.
+
+**Rule.** A path the whole game uses has one core hook, and modules add a handler to it:
+- chat: `U.ChatHook` (`UADD/Lines.lua`) wraps AddMessage once. `U.Plain` is its first test, before any byte, sub
+  or compare. A secret line, a value that is no string, or an error gives the original line to the game's
+  AddMessage, untouched, exactly once. In an instance the wrap is off: a field we set on the chat window taints
+  the game's chat path, and there every line is secret, so the game's own code throws. Our lines stay English
+  there; it wraps again outside (PLAYER_ENTERING_WORLD, ZONE_CHANGED_NEW_AREA). A later addon's wrap is kept;
+- print: `U.PrintHook` (`UADD/Print.lua`) is the one print handler; no module calls setprinthandler. In an instance
+  it is off as the chat wrap (ours on top: the old handler back; one set after us: theirs stays, ours passes all);
+- frames: `U.OnNewFrame` and `U.OnNewFontString` (`UADD/Widgets.lua`) run each handler under `U.SafeCall`. A
+  handler leaves at once for a frame that is not its addon's (`U.GameMade`: the game's busy families, by name)
+  and never scans in combat (`U.AfterCombat`);
+- a chat handler or a SetText hook puts its text through `U.Plain` before any string op;
+- a gate on all chat compares whole-line hashes, not lengths alone.
+
+**Check.** `python3 -m unittest tools.test_hook_guards`: no module wraps AddMessage, calls setprinthandler or hooks
+CreateFrame or CreateFontString itself, and no chat handler or SetText hook uses its text before `U.Plain`; its self-tests plant
+each shape. `python3 tools/harness/chaos.py`, in every module's game (`tools/harness/chaos_flood.py`): "BG flood"
+sends 10k mixed lines, every 7th one secret (string ops on it throw), and wants no error, each line once and byte
+for byte, no Translate, Bare or debugstack, within a time bound; "CreateFrame hook, 9000 odd calls" wants no error
+and no report; "in a BG" wants no AddMessage field of ours in the instance, lines through once, and the wrap back
+outside (its mutant `unwrap` takes the instance unwrap out and wants it to fail); "in a BG, print" wants the same
+of the print handler, odd prints through once (mutant `print gate`). `python3 -m unittest tools.test_shared_state`: "chat replace" is allowed only in the core (2).
+Manual, in the game: a BG with UADD on shows no Lua error and no hitch.
+
+## 36. Work that redraws in combat lockdown
+
+**What went wrong.** The hold key's listeners, a popup's OnHide and OpenMap's map show and hide redrew frames in
+combat: secure buttons, StaticPopup heights, a frame walk. In combat lockdown the game blocks some of that, and a
+big redraw in a fight can hitch (review, 2026-11-21).
+
+**Rule.** Core `Tell` waits while `InCombatLockdown()` is true, unless the player chose `/uadd combat off`. At
+PLAYER_REGEN_ENABLED it runs each listener once, with the final state. A popup forgotten in combat and OpenMap's
+Start wait the same way.
+
+**Check.** `python3 -m unittest tools.test_combat_defer`: its mutants take each gate out and want it to fail.
+`python3 tools/harness/run.py`, the show-original "combat_key" step (`tools/harness/flow_original.py`).

@@ -152,7 +152,8 @@ local function OnCreate(_, name, parent)
     if type(parent) ~= "table" or not ns.On() then return end
     local ours = parentOurs[parent]
     if ours == nil then
-        ours = InOurs(parent)
+        local ok, yes = pcall(InOurs, parent)          -- a table that is no frame: not ours, no error (lesson 35)
+        ours = ok and yes == true
         parentOurs[parent] = ours
     end
     if ours then Soon() end
@@ -170,7 +171,7 @@ function S.Install()
     if not ns.On() then return end
     if not createHooked and type(CreateFrame) == "function" then
         createHooked = true
-        hooksecurefunc("CreateFrame", function(...) U.SafeCall(OnCreate, ...) end)
+        U.OnNewFrame(OnCreate)                    -- one core hook, each call under U.SafeCall (lesson 35)
     end
     if not ticker then ticker = C_Timer.NewTicker(TICK, SafeTick) end
 end

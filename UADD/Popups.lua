@@ -10,7 +10,8 @@
 --   * hooksecurefunc("StaticPopup_Show"): a shown dialog of ours gets our words on its text (the module's
 --     own lookup) and buttons, and flips both ways on the hold key and off. The edit box is never touched.
 --     The dialog grows or shrinks by the text's height change (SetHeight only). In combat only the fields;
---     a dialog shown then gets its buttons' English back on the hold key and off (Unrecorded).
+--     a dialog shown then gets its buttons' English back on the hold key and off (Unrecorded). A dialog
+--     forgotten in combat (hidden, another question, off) is not redrawn then: after combat (AfterCombat).
 --   * Every hook runs under UADD.Safe(key): 5 errors turn the module off, and Off puts the English back
 --     under a plain pcall. The worst case is a dialog left English.
 local U = UADD
@@ -129,13 +130,19 @@ local function Show(d, rec, uk)
     local h = d.GetHeight and d:GetHeight()
     if h and h0 and h1 and h1 ~= h0 then d:SetHeight(h + h1 - h0) end
 end
+local function Locked() local ok, yes = pcall(InCombatLockdown) return ok and yes and true or false end
 
+local later = {}   -- dialog frame -> its record, forgotten in combat (drawn again after it)
+local waiter = CreateFrame("Frame")
 local function Forget(d)
     local rec = open[d]
     if not rec then return end
     open[d] = nil
-    Show(d, rec, false)
+    if not Locked() then return Show(d, rec, false) end
+    later[d] = rec
+    waiter:RegisterEvent("PLAYER_REGEN_ENABLED")
 end
+P.Later = function() local n = 0 for _ in pairs(later) do n = n + 1 end return n end   -- for the checks
 
 local function Wanted(s)
     local ok, yes = pcall(s.wanted)
@@ -143,8 +150,7 @@ local function Wanted(s)
 end
 
 local function ShowOne(s, which)
-    if not Wanted(s) then return end
-    if InCombatLockdown and InCombatLockdown() then return end
+    if not Wanted(s) or Locked() then return end
     for _, d in ipairs(Dialogs()) do
         if d:IsShown() and rawget(d, "which") == which then
             if open[d] then Forget(d) end      -- shown again: the game set its English again
@@ -194,6 +200,18 @@ local function Rescan(s)
         if not open[d] and d:IsShown() and Ours(s, which) then ShowOne(s, which) end
     end
 end
+
+-- After combat each record forgotten then gets its English back (Show touches only a text that still shows our
+-- word), unless it was recorded again, or the same question shows and its module wants our words (Rescan).
+local function AfterCombat(self)
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    for d, rec in pairs(later) do
+        later[d] = nil
+        local again = d:IsShown() and rawget(d, "which") == rec.which and Wanted(rec.spec)
+        if again and not open[d] then pcall(Rescan, rec.spec) elseif not open[d] then pcall(Show, d, rec, false) end
+    end
+end
+waiter:SetScript("OnEvent", function(self) pcall(AfterCombat, self) end)
 
 -- A dialog of ours shown with no record (in combat) shows our words from the fields: on the hold key and off,
 -- its buttons that still hold our word get the English back (SetText on a button's text only).

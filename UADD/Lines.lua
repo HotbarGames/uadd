@@ -12,11 +12,11 @@
 --     comes back when it is cleared (U.FontBack, lesson 18). No Cyrillic font: the line stays English.
 --   * Off or the hold key: new lines stay English (a tooltip already shown changes when shown again).
 --
--- U.ChatLines(o) -> { Install, Restore, Count, Wrapped }. The main chat window's AddMessage is wrapped
--- once. A line changes when it starts with o.prefix (kept, the rest translated) or, with no prefix, when
--- the call came from o.from and we have Ukrainian for the whole line. The source is looked at first: the
--- game's and other addons' lines never reach Translate or its cache (lesson 12). "Off" puts the game's own back
--- when nobody wrapped it after us (otherwise the wrapper stays and lets every line through as it is).
+-- U.ChatHook(o): the one wrap of the main chat window's AddMessage, shared by every module (below).
+-- U.ChatLines(o) -> { Install, Restore, Count, Active }, on U.ChatHook. A line changes when it starts with
+-- o.prefix (kept, the rest translated) or, with no prefix, when the call came from o.from and we have
+-- Ukrainian for the whole line. The cheap tests come first: the game's and other addons' lines never reach
+-- Translate or its cache (lesson 12).
 
 local U = UADD
 local CYR = "[\208-\210]"
@@ -105,58 +105,147 @@ function U.TipLines(o)
     return T
 end
 
+-- U.ChatHook(o) -> { Start, Stop, Active, Count }: the one wrap of the main chat window's AddMessage that
+-- every module shares (lesson 35). A chat line reaches o.line(msg) only when a cheap test says it may be
+-- ours: one of o.marks (a string at byte 1, or { text, at }) is there, or o.maybe(msg) is true (no Translate
+-- in it). o.line returns the new line, or nil / msg to leave it. Every chat line of the game passes here
+-- (a BG floods it): a byte and a plain compare per mark, nothing else for a line that is not ours.
+--   * Each o.line runs under U.SafeCall: an error is reported and counted (lesson 19), the line goes on as it
+--     came. A line is passed on exactly once, also when our code fails; a line our own report prints is
+--     passed through as it is.
+--   * The wrap goes on with the first Start and comes off when no hook is on and nobody wrapped after us
+--     (otherwise it stays in their chain and lets every line through as it is).
+--   * In an instance (a BG) the wrap is off: the field we set taints the game's chat path, and there every
+--     line is secret, so the game's own compares throw "tainted by UADD". Our lines stay English there. It
+--     goes on again outside (PLAYER_ENTERING_WORLD, ZONE_CHANGED_NEW_AREA). Wrapped after us: we pass all.
+local hooks, nLive = {}, 0
+local chat, had, base, busy = nil, nil, nil, false     -- had: the frame's own field (nil: its method)
+local inside = false                                     -- in an instance: no wrap, no line of ours
+local byte, sub = string.byte, string.sub
+
+local function InInstance()
+    local f = rawget(_G, "IsInInstance")
+    if type(f) ~= "function" then return false end
+    local ok, yes = pcall(f)
+    return ok and (yes == true or yes == 1)
+end
+U.InInstance = InInstance                                -- also the print handler's gate (UADD/Print.lua)
+
+local function Could(h, msg)
+    local m = h.marks
+    for i = 1, #m do
+        local k = m[i]
+        if byte(msg, k.at) == k.b and sub(msg, k.at, k.to) == k.text then return true end
+    end
+    if not h.maybe then return false end
+    local ok, yes = pcall(h.maybe, msg)
+    return ok and yes == true
+end
+
+local function Pick(msg)
+    if not U.Plain(msg) then return nil end
+    for i = 1, #hooks do
+        local h = hooks[i]
+        if h.live and Could(h, msg) then
+            local ok, out = U.SafeCall(h.line, msg)
+            if ok and type(out) == "string" and out ~= msg then h.count = h.count + 1 return out end
+        end
+    end
+end
+
+local function Wrapped(self, msg, ...)
+    if self == chat and nLive > 0 and not inside and not busy and type(msg) == "string" then
+        busy = true
+        local ok, out = pcall(Pick, msg)
+        busy = false
+        if ok and type(out) == "string" then msg = out end
+    end
+    return base(self, msg, ...)
+end
+U.ChatWrapped = Wrapped                                  -- for the checks
+
+local function Wrap()
+    if chat then return true end                         -- wrapped already (maybe under a later wrapper)
+    inside = InInstance()
+    if inside then return false end                      -- never in an instance (see above)
+    local f = rawget(_G, "DEFAULT_CHAT_FRAME")
+    if type(f) ~= "table" or type(f.AddMessage) ~= "function" then return false end
+    chat, had, base = f, rawget(f, "AddMessage"), f.AddMessage
+    f.AddMessage = Wrapped   -- taints this one field: so it is off in instances, where lines are secret
+    return true
+end
+
+-- force: off while hooks are on (an instance). Wrapped after us: we stay in their chain, passing all.
+local function Unwrap(force)
+    if (nLive > 0 and not force) or not chat or rawget(chat, "AddMessage") ~= Wrapped then return end
+    chat.AddMessage = had                                -- had nil: the field is gone, the method shows
+    chat, had, base = nil, nil, nil
+end
+
+-- In an instance: off. Outside, with a hook on: on again.
+local function Sync()
+    inside = InInstance()
+    if inside then Unwrap(true) elseif nLive > 0 then Wrap() end
+end
+U.ChatSync = Sync                                        -- for the checks
+do
+    local ev = CreateFrame("Frame")
+    ev:RegisterEvent("PLAYER_ENTERING_WORLD")
+    ev:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    ev:SetScript("OnEvent", function() pcall(Sync) end)
+end
+
+function U.ChatHook(o)
+    local h = { marks = {}, maybe = o.maybe, line = o.line, live = false, count = 0 }
+    for _, m in ipairs(o.marks or {}) do
+        local text, at = m, 1
+        if type(m) == "table" then text, at = m[1], m[2] or 1 end
+        if type(text) == "string" and #text > 0 then
+            h.marks[#h.marks + 1] = { text = text, at = at, to = at + #text - 1, b = byte(text, 1) }
+        end
+    end
+    hooks[#hooks + 1] = h
+    local H = {}
+    function H.Start()
+        if h.live then Wrap() return end
+        if not Wrap() and not inside then return end    -- in an instance: on, wrapped when we leave it
+        h.live, nLive = true, nLive + 1
+    end
+    function H.Stop()
+        if h.live then h.live, nLive = false, nLive - 1 end
+        Unwrap()
+    end
+    function H.Active() return h.live and chat ~= nil end
+    function H.Count() return h.count end
+    return H
+end
+
+-- U.ChatLines(o) -> { Install, Restore, Count }, on U.ChatHook. With o.prefix: the line starts with it (and
+-- holds o.mark at byte o.markAt, when given); the rest goes to Translate and the prefix stays. With no prefix:
+-- the line has no player or channel link and no Cyrillic, W.Maybe says it may be one of ours (a hash, no
+-- cache), then the stack says o.from wrote it; only then Translate.
 function U.ChatLines(o)
-    local C, W = {}, o.words
-    local prefix = o.prefix
+    local W, prefix = o.words, o.prefix
     local N = prefix and #prefix or 0
-    local Maybe = W.Maybe or function() return false end   -- no Maybe: no line without the prefix is tried
-    local frame, base, live, count = nil, nil, false, 0   -- base: the AddMessage we wrapped; kept for good
-
-    -- Our Ukrainian for a chat line, or nil. Every chat line of the game passes here: the cheapest tests
-    -- first, no stack look for a line that cannot be ours (lesson 12).
-    local function Ours(self, msg)
-        if self ~= frame or not o.wanted() then return nil end
+    local function Line(msg)
+        if not o.wanted() then return nil end
         if prefix then
-            if msg:sub(1, N) ~= prefix then return nil end
-            local uk = W.Translate(msg:sub(N + 1))
-            if uk then count = count + 1 return prefix .. uk end
-            return nil
+            if sub(msg, 1, N) ~= prefix then return nil end
+            local uk = W.Translate(sub(msg, N + 1))
+            return uk and prefix .. uk or nil
         end
-        if msg:find("|Hplayer", 1, true) or msg:find("|Hchannel", 1, true) or msg:find(CYR) then return nil end
-        if not Maybe(msg) or not From(o.from) then return nil end
-        local uk = W.Translate(msg)
-        if uk then count = count + 1 end
-        return uk
+        if not From(o.from) then return nil end
+        return W.Translate(msg)
     end
-
-    -- Never loses a line: any error, a msg that is not a string, or off passes it on as it came.
-    local function Wrapped(self, msg, ...)
-        if live and type(msg) == "string" then
-            local ok, uk = pcall(Ours, self, msg)
-            if ok and type(uk) == "string" then return base(self, uk, ...) end
-        end
-        return base(self, msg, ...)
-    end
-    C.Wrapped = Wrapped
-
-    function C.Install()
-        live = true
-        if frame then return end                  -- wrapped already (maybe under a later wrapper)
-        local f = DEFAULT_CHAT_FRAME
-        if type(f) ~= "table" or type(f.AddMessage) ~= "function" then live = false return end
-        frame, base = f, f.AddMessage
-        f.AddMessage = Wrapped
-    end
-
-    -- Someone wrapped after us: ours stays under theirs and lets every line through as it is.
-    function C.Restore()
-        live = false
-        if frame and rawget(frame, "AddMessage") == Wrapped then
-            frame.AddMessage = base
-            frame = nil
+    local marks, maybe = {}, nil
+    if prefix then
+        marks[1] = o.mark and { o.mark, o.markAt or 1 } or prefix
+    elseif W.Maybe then                                  -- no Maybe: no line without a prefix is tried
+        maybe = function(msg)
+            if msg:find("|Hplayer", 1, true) or msg:find("|Hchannel", 1, true) or msg:find(CYR) then return false end
+            return W.Maybe(msg) and true or false
         end
     end
-
-    function C.Count() return count end
-    return C
+    local hook = U.ChatHook({ marks = marks, maybe = maybe, line = Line })
+    return { Install = hook.Start, Restore = hook.Stop, Count = hook.Count, Active = hook.Active }
 end

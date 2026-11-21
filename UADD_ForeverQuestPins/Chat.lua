@@ -46,4 +46,7 @@ function Words.Translate(msg)
 end
 ns.ChatWords = Words
 
-ns.Chat = U.ChatLines({ prefix = "|cff", words = Words, wanted = function() return ns.WordsWanted() end })
+-- Its name at byte 11 (after "|cff" and six colour digits) is the cheap test: other coloured lines never
+-- reach Words.Translate (lesson 35).
+ns.Chat = U.ChatLines({ prefix = "|cff", mark = TAG, markAt = 11, words = Words,
+    wanted = function() return ns.WordsWanted() end })

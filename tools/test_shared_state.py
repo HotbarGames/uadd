@@ -75,11 +75,8 @@ ALLOW = {
                                                    "U.SaveFont, read back; back with U.FontBack"),
     ("UADD_WhatsTraining/Screen.lua", "set font"): (2, FONT_FIX + "; " + TODO),
     ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP),
-    ("UADD/Lines.lua", "chat replace"): (2, "core U.ChatLines: never loses a line; pass-through when wrapped after us"),
+    ("UADD/Lines.lua", "chat replace"): (2, "core chat bus (U.ChatHook): one wrap for all modules, lesson 35"),
 }
-CHAT_TODO = "the module's own chat wrapper; TODO: move to U.ChatLines (UADD/Lines.lua)"
-for _m in ("AutoPotion", "DialogueUI", "ForeverXPBar", "LayerSwap", "Mastercraft"):
-    ALLOW[(f"UADD_{_m}/Chat.lua", "chat replace")] = (2, CHAT_TODO)
 WALK_TODO = "a frame walk with no IsForbidden test; TODO: use U.Regions / U.Children (UADD/Guard.lua)"
 for _f, _n in {"Attune/Claim": 4, "Attune/Screen": 6, "Auctionator/Menu": 2, "Auctionator/Rows": 1,
                "Auctionator/Screen": 2, "AutoPotion/Screen": 2, "Bagnon/Fonts": 2, "DialogueUI/Screen": 3,

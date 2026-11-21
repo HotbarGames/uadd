@@ -38,7 +38,6 @@ local queue, queued = {}, false
 local ROOTS = { "WhatsTrainingOverlay", "WhatsTrainingFrame", "WhatsTrainingSettings",
     "WhatsTrainingTrainerController", "WhatsTrainingTrainAllConfirmation", "WhatsTrainingTrainAllButton",
     "WhatsTrainingFloatingFrame", "WhatsTrainingCraftingPage" }
-local KINDS = { "Frame", "Button", "CheckButton", "StatusBar", "ScrollFrame", "Slider", "EditBox" }
 
 local function Is(f, kind) return f.IsObjectType and f:IsObjectType(kind) end
 
@@ -208,10 +207,14 @@ local function NewRoot()
     return false
 end
 
-local function Flush()
+local Flush
+local function SafeFlush() U.SafeCall(Flush) end
+local nQueued, QUEUE_MAX = 0, 2000                  -- more waiting than that: the rest found by the scans
+Flush = function()
+    if U.AfterCombat(SafeFlush) then return end     -- no look in combat (a BG): after it, every second
     queued = false
     local list = queue
-    queue = {}
+    queue, nQueued = {}, 0
     if not ns.On() then return end
     for f in pairs(list) do
         -- "no": forbidden, or not What's Training?'s and with a parent (one with none yet may get one)
@@ -226,31 +229,23 @@ local function Flush()
     if NewRoot() then U.SafeCall(S.Scan) end
 end
 
-local function SafeFlush() U.SafeCall(Flush) end
-
+-- Every CreateFontString of the game passes here (core U.OnNewFontString, under U.SafeCall): table look-ups,
+-- and the game's busy frames (nameplates, raid frames) by their name only (lesson 35).
 local function OnCreate(self)
-    if foreign[self] or queue[self] then return end
-    queue[self] = true
+    if type(self) ~= "table" or foreign[self] or queue[self] or nQueued >= QUEUE_MAX then return end
+    if U.GameMade(self) then foreign[self] = true return end
+    queue[self], nQueued = true, nQueued + 1
     if not queued then
         queued = true
         C_Timer.After(0, SafeFlush)
     end
 end
 
-local function OnCreateHook(self) U.SafeCall(OnCreate, self) end
-
 local installed = false
 function S.Install()
     if installed then return end
     installed = true
-    local done = {}
-    for _, kind in ipairs(KINDS) do
-        local t = U.WidgetMethods(kind)      -- never a new EditBox: it would take the keyboard
-        if t and not done[t] and type(t.CreateFontString) == "function" then
-            done[t] = true
-            hooksecurefunc(t, "CreateFontString", OnCreateHook)
-        end
-    end
+    U.OnNewFontString(OnCreate)
 end
 
 local function OnRootShow(self)

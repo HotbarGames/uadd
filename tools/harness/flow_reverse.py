@@ -45,8 +45,8 @@ def reverse(O, c, step):
     F.key("SHIFT", False)
     H.combat = False
     H.fire("PLAYER_REGEN_ENABLED")
-    f.check(f"{step}: reverse: a fight lets the key go, English", fight == "FT" and held(),
-            f"{F.toldText()!r} {held()}")
+    f.check(f"{step}: reverse: a fight lets the key go, English once it ends (nothing redrawn in it)",
+            fight == "F" and F.toldText() == "FT" and held(), f"{fight!r} {F.toldText()!r} {held()}")
 
     F.toldReset()
     F.hideUALLF(True)

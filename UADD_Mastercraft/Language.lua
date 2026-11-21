@@ -267,13 +267,11 @@ function L.Redraw()
 end
 
 -- Mastercraft makes its window the first time it opens, after login: we learn of it by its name, one
--- compare per new frame of the game, and none once it is there.
-if type(hooksecurefunc) == "function" then
-    hooksecurefunc("CreateFrame", function(_, name)
-        if name ~= "MastercraftFrame" then return end
-        U.SafeCall(Watch, rawget(_G, "MastercraftFrame"))
-    end)
-end
+-- compare per new frame of the game (the core hook, under U.SafeCall: lesson 35).
+U.OnNewFrame(function(_, name)
+    if name ~= "MastercraftFrame" then return end
+    Watch(rawget(_G, "MastercraftFrame"))
+end)
 
 function L.Entry()                                 -- for the harness: our row, if it is there
     for _, menu in pairs(buttons) do return done[menu] end

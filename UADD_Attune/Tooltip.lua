@@ -104,8 +104,8 @@ local function Hook(tip, app)
     hooked[tip] = true
     tips[tip] = { app = app, lines = {}, layout = false }
     hooksecurefunc(tip, "Show", function(self) UADD.SafeCall(OnShow, self) end)
-    pcall(tip.HookScript, tip, "OnTooltipCleared", function(self) Clear(self) end)
-    tip:HookScript("OnHide", function(self) Clear(self) end)
+    pcall(tip.HookScript, tip, "OnTooltipCleared", function(self) UADD.SafeCall(Clear, self) end)
+    tip:HookScript("OnHide", function(self) UADD.SafeCall(Clear, self) end)
     return true
 end
 

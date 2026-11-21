@@ -27,6 +27,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.dirname(HERE))
 
 import chaos_cases as K  # noqa: E402
+import chaos_flood  # noqa: E402
 import chaos_mods  # noqa: E402
 import chaos_steps as S  # noqa: E402
 import loader  # noqa: E402
@@ -44,16 +45,19 @@ class Spied:
 
         def spied(c, *a, **k):
             init(c, *a, **k)
-            for f in ("chaos.lua", "chaos_ops.lua", "chaos_more.lua"):
+            for f in ("chaos.lua", "chaos_ops.lua", "chaos_more.lua", "chaos_flood.lua"):
                 c.lua.execute(read_text(os.path.join(HERE, f)))
             if Spied.hook_fail:
                 c.lua.globals().CHAOS.hookFail = Spied.hook_fail
+            if Spied.cut:                       # chaos_flood.prove's mutant, cut as UADD/Lines.lua loads
+                c.lua.globals().CHAOS.cutFrom, c.lua.globals().CHAOS.cutTo = Spied.cut
         loader.Client.__init__ = spied
         return self
 
     def __exit__(self, *_):
         loader.Client.__init__ = self.init
     hook_fail = None
+    cut = None
 
 
 class Run:
@@ -135,6 +139,9 @@ def module(folder, target, build, check, notes, hooks):
     r.off_gives_english("first off", snap)
     S.feeds(r, snap, rng)
     S.foreign(r, snap[0][1], snap)
+    chaos_flood.flood(r)                # a BG: 10k chat lines, some secret, and odd CreateFrame calls
+    chaos_flood.odd_frames(r)
+    chaos_flood.instance(r)             # in a BG the chat wrap is off (taint), wrapped again outside
     S.stress(r, snap)
     S.bulk(r, snap)
     S.idle(r)
@@ -165,6 +172,10 @@ def run_checks():
             except Exception as e:      # a broken recipe is a failure of this test, not a crash of run.py
                 check(f"chaos: {folder} ran", False, f"{type(e).__name__}: {e} | seed {SEED}")
             checks += tipfont.segment("chaos " + folder, Check)
+        try:
+            chaos_flood.prove(check, Spied, chaos_mods.RECIPES, ONLY)
+        except Exception as e:
+            check("chaos: in a BG, mutant 'unwrap' ran", False, f"{type(e).__name__}: {str(e)[:160]}")
         try:
             chaos_more.run(check, notes, Spied, SEED, ONLY, hooks)
         except Exception as e:

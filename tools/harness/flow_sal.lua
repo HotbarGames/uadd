@@ -74,13 +74,13 @@ function M.fonts()
     return bad, n
 end
 
--- Work the chat hook does on a line that is not the addon's: calls of Translate, UADD.Hash and UADD.Plain.
--- (on a foreign line, on one of the addon's lines)
+-- Work the chat hook does on a line that is not the addon's: calls of Translate and UADD.Hash (U.Plain is not
+-- counted: the core chat hook tests every line with it first, lesson 35). (on a foreign line, on one of the addon's)
 function M.cheap()
     local W, n = NS().Words, 0
-    local t, h, p = W.Translate, UADD.Hash, UADD.Plain
+    local t, h = W.Translate, UADD.Hash
     local function count(f) return function(...) n = n + 1 return f(...) end end
-    W.Translate, UADD.Hash, UADD.Plain = count(t), count(h), count(p)
+    W.Translate, UADD.Hash = count(t), count(h)
     DEFAULT_CHAT_FRAME:AddMessage(TEST .. ", Quix")
     DEFAULT_CHAT_FRAME:AddMessage("|cffEEE4AEQuix:|r " .. TEST)
     local foreign = n
@@ -88,7 +88,7 @@ function M.cheap()
     M.sal("fish")
     M.sal("fish")
     local ours = n
-    W.Translate, UADD.Hash, UADD.Plain = t, h, p
+    W.Translate, UADD.Hash = t, h
     return foreign, ours
 end
 

@@ -45,7 +45,12 @@ local function CombatOver(self)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     U.SafeCall(ns.Locale.Sync)
     U.SafeCall(ns.Words.Sync)
-    if ns.On() then S.Schedule() else U.SafeCall(S.Sweep) end
+    if ns.On() then
+        gap = TICK
+        S.Start()           -- a look, and the tickers right for the windows shown now (none: stopped)
+    else
+        U.SafeCall(S.Sweep)
+    end
 end
 waiter:SetScript("OnEvent", function(self) U.SafeCall(CombatOver, self) end)
 
@@ -228,6 +233,7 @@ local Find
 
 -- `quiet`: only keep the tickers right; the look waits for the ticker's idle wait.
 function S.Start(quiet)
+    if ns.On() and S.WaitCombat() then return end   -- in combat no Collect: S.Start once after it
     if not ns.On() or not AnyShown() then
         StopTicker()
         if finder and not Finding() then finder:Cancel() finder = nil end
@@ -255,7 +261,7 @@ Find = function()
     if not Finding() then
         if finder then finder:Cancel() finder = nil end
     end
-    if not (ns.On() and AnyShown()) then return end
+    if not ns.On() or S.WaitCombat() or not AnyShown() then return end
     local n = Named()
     if n ~= named then
         named, gap = n, TICK

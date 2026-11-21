@@ -21,7 +21,6 @@ local ROOTS = { "MastercraftFrame", "MastercraftCompact", "MastercraftMinimapBut
     "MastercraftLFGPanel", "MastercraftMiniGuide", "MastercraftNeverBank", "MastercraftRecipePanel",
     "MastercraftAltView", "MastercraftDetails", "MastercraftTradeBoard", "MastercraftConfirm",
     "MastercraftOrderToast" }
-local KINDS = { "Frame", "Button", "CheckButton", "StatusBar", "ScrollFrame", "Slider", "EditBox" }
 
 local function Forbidden(f) return f.IsForbidden and f:IsForbidden() end
 
@@ -73,27 +72,35 @@ local function Look(f)
     if empty[f] >= 2 then dry[f] = true empty[f] = nil end
 end
 
-local function Flush()
+local nQueued, QUEUE_MAX = 0, 2000                  -- more waiting than that: the rest found by the scans
+local Flush
+local function SafeFlush() U.SafeCall(Flush) end
+Flush = function()
+    if U.AfterCombat(SafeFlush) then return end     -- no look in combat (a BG): after it, every second
     local list, n = queue, 0
-    queue = {}
+    queue, nQueued = {}, 0
     for f in pairs(list) do
         if n < CAP then
             n = n + 1
             U.SafeCall(Look, f)
         else
-            queue[f] = true                 -- the rest on the next frame
+            queue[f], nQueued = true, nQueued + 1   -- the rest on the next frame
         end
     end
     queued = next(queue) ~= nil
-    if queued then C_Timer.After(0, Flush) end
+    if queued then C_Timer.After(0, SafeFlush) end
 end
 
+-- Every CreateFontString of the game passes here (core U.OnNewFontString, under U.SafeCall): table look-ups,
+-- and the game's busy frames (nameplates, raid frames) by their name only (lesson 35).
 local function OnCreate(self)
-    if dry[self] or queue[self] then return end
-    queue[self] = true
+    if type(self) ~= "table" or dry[self] or queue[self] then return end
+    if nQueued >= QUEUE_MAX then return end
+    if U.GameMade(self) then dry[self] = true return end
+    queue[self], nQueued = true, nQueued + 1
     if not queued then
         queued = true
-        C_Timer.After(0, Flush)
+        C_Timer.After(0, SafeFlush)
     end
 end
 S.Dry = function(f) return dry[f] == true end
@@ -102,14 +109,7 @@ local installed = false
 function S.Install()
     if installed then return end
     installed = true
-    local done = {}
-    for _, kind in ipairs(KINDS) do
-        local t = U.WidgetMethods(kind)      -- never a new EditBox: it would take the keyboard
-        if t and not done[t] and type(t.CreateFontString) == "function" then
-            done[t] = true
-            hooksecurefunc(t, "CreateFontString", OnCreate)
-        end
-    end
+    U.OnNewFontString(OnCreate)
 end
 
 -- The scan: a stack of frames, STEP of them per game frame, 30000 at most.
@@ -123,7 +123,10 @@ local function One(f)
         for i = #kids, 1, -1 do pending[#pending + 1] = kids[i] end
     end
 end
-local function Step()
+local Step
+local function SafeStep() U.SafeCall(Step) end
+Step = function()
+    if U.AfterCombat(SafeStep) then return end      -- no walk in combat: after it, every second
     local n = 0
     while n < STEP and left > 0 do
         local f = table.remove(pending)
@@ -134,7 +137,7 @@ local function Step()
             U.SafeCall(One, f)
         end
     end
-    if pending[1] ~= nil and left > 0 then C_Timer.After(0, Step) else scanning = false pending = {} end
+    if pending[1] ~= nil and left > 0 then C_Timer.After(0, SafeStep) else scanning = false pending = {} end
 end
 S.Scanning = function() return scanning end
 

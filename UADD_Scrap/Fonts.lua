@@ -192,8 +192,8 @@ function F.Install()
     if not tipHooked and GameTooltip then
         tipHooked = true
         hooksecurefunc(GameTooltip, "Show", function(tip) U.SafeCall(OnTip, tip) end)
-        GameTooltip:HookScript("OnTooltipCleared", TipBack)
-        GameTooltip:HookScript("OnHide", TipBack)
+        GameTooltip:HookScript("OnTooltipCleared", function(t) U.SafeCall(TipBack, t) end)
+        GameTooltip:HookScript("OnHide", function(t) U.SafeCall(TipBack, t) end)
     end
     local S = Sushi()
     if not popupHooked and S and type(S.Popup) == "table" and type(S.Popup.New) == "function" then

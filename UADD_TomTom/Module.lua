@@ -112,7 +112,9 @@ local Arrow = { busy = false, hooked = false, count = 0, en = nil, uk = false }
 ns.Arrow = Arrow
 
 function Arrow.OnStatus(fs, text)
-    if Arrow.busy or type(text) ~= "string" or not ns.WordsWanted() then return end
+    if Arrow.busy then return end
+    text = U.Plain(text)                            -- a secret string is no text of ours (no compare on it)
+    if not text or not ns.WordsWanted() then return end
     if text ~= Arrow.en then
         local ok, uk = pcall(ns.Words.Translate, text)
         Arrow.en, Arrow.uk = text, ok and type(uk) == "string" and uk ~= text and uk or false
@@ -130,7 +132,7 @@ function Arrow.Install()
     local fs = type(w) == "table" and w.status
     if Arrow.hooked or type(fs) ~= "table" or not fs.SetText then return end
     Arrow.hooked = true
-    hooksecurefunc(fs, "SetText", Arrow.OnStatus)
+    hooksecurefunc(fs, "SetText", function(f, t) U.SafeCall(Arrow.OnStatus, f, t) end)
 end
 
 -- The arrow's title (a waypoint named after its map): Title.lua, loaded before this file.

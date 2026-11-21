@@ -86,7 +86,7 @@ end
 local function HookTip(tip)
     if tipHooked or type(tip) ~= "table" or not tip.HookScript then return end
     tipHooked = true
-    tip:HookScript("OnTooltipCleared", function() if next(set) then BackAll() end end)
+    tip:HookScript("OnTooltipCleared", function() if next(set) then U.SafeCall(BackAll) end end)
 end
 
 function F.Install()

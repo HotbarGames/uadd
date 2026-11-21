@@ -21,8 +21,14 @@
 --
 -- In a fight the key does nothing (Shift is a common keybind there, and a switch redraws texts):
 -- a fight that starts with the key counted as held lets it go once (normal mode: Ukrainian; reverse
--- mode: English), and when it ends a key still held counts at once. /uadd combat off
+-- mode: English), but in lockdown nothing is redrawn, so the windows change when the fight ends; then a
+-- key still held counts at once. /uadd combat off
 -- (UADD_DB.keyInCombat = true) turns this off.
+--
+-- In combat lockdown no listener runs, unless /uadd combat off (docs/LESSONS3.md): they redraw addon
+-- windows, some with secure buttons, and write globals. The last state asked for then waits and runs
+-- once at PLAYER_REGEN_ENABLED; a state that ends where it started runs nothing. U.originalShown
+-- always says what the listeners were last told (what the windows show).
 
 local U = UADD
 local listeners = {}
@@ -153,7 +159,13 @@ local function Typing()
     return ok and focus ~= nil
 end
 
-local function Tell(show)
+-- true while the game's combat lockdown is on (protected frames, secure buttons). false on any error.
+local function Locked()
+    local ok, yes = pcall(InCombatLockdown)
+    return ok and yes and true or false
+end
+
+local function Run(show)
     U.originalShown = show
     local clock = type(debugprofilestop) == "function" and debugprofilestop
     for i, fn in ipairs(listeners) do
@@ -163,6 +175,25 @@ local function Tell(show)
         if t0 and perf then perf[show and "down" or "up"] = clock() - t0 end
     end
 end
+
+-- In combat lockdown no listener runs (they redraw addon windows, some with secure buttons, and write
+-- globals): the state asked for waits in `waiting` and runs once when the fight ends (Flush), with the
+-- last state asked. A state that ends where the listeners were last told runs nothing.
+local waiting = nil         -- true / false: asked for in combat, not told yet; nil: nothing waits
+
+local function Tell(show)
+    if Locked() and U.IgnoreKeyInCombat() then   -- /uadd combat off: the player wants the key in a fight
+        if show ~= U.originalShown then waiting = show else waiting = nil end
+        return
+    end
+    waiting = nil
+    if show ~= U.originalShown then Run(show) end
+end
+
+local function Flush()
+    if waiting ~= nil then Tell(waiting) end
+end
+U.OriginalWaiting = function() return waiting end   -- for the checks
 
 local keyDown = false       -- the key went down and no HOLD check has given up on it yet
 local engaged = false       -- the key was held for HOLD and has not come up since
@@ -180,8 +211,7 @@ local function Engage(on)
         U.originalPoll:Cancel()
         U.originalPoll = nil
     end
-    local show = engaged ~= U.OriginalReverse()
-    if show ~= U.originalShown then Tell(show) end
+    Tell(engaged ~= U.OriginalReverse())    -- tells only a change; in combat it waits (Tell)
 end
 
 -- true unless the player turned it off (/uadd combat off saves UADD_DB.keyInCombat = true).
@@ -243,7 +273,9 @@ frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:SetScript("OnEvent", function(_, event)
     if event == "PLAYER_REGEN_DISABLED" then Combat(true)
-    elseif event == "PLAYER_REGEN_ENABLED" then Combat(false)
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        U.SafeCall(Combat, false)
+        Flush()                     -- what waited in combat, once, with the last state
     elseif event == "PLAYER_ENTERING_WORLD" then Engage(engaged)   -- reverse mode: English from the start
     else U.CheckOriginal() end
 end)

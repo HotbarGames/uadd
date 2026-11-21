@@ -192,7 +192,7 @@ local function Mark(fs, own, words)
     rawset(fs, "mcSetFont", font)
     if words then rawset(fs, "mcWords", words) end
     local function Take(self, text)
-        rawset(self, "mcRaw", (type(text) == "string" and own(text)) and text or nil)
+        rawset(self, "mcRaw", (UADD.Plain(text) and own(text)) and text or nil)
     end
     Take(fs, fs:GetText())
     hooksecurefunc(fs, "SetText", Take)       -- before Screen.lua's hook, so it reads this mcRaw

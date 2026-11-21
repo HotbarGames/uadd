@@ -211,6 +211,7 @@ function Widget:IsOwned(f) return self.__owner == f end
 function Widget:AddMessage(msg)
     msg = tostring(msg)
     H.chat[#H.chat + 1] = msg
+    if H.secret and H.secret[msg] then return end               -- the client draws a secret line; no string op on it here
     if msg:find("|cffff0000[ERROR]|r", 1, true) then H.errors[#H.errors + 1] = { where = "Questie.Error", msg = msg, tb = "" } end
 end
 function Widget:Play() end

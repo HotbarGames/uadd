@@ -113,8 +113,8 @@ function T.Install()
     if hooked or type(tip) ~= "table" or not tip.HookScript then return end
     hooked = true
     hooksecurefunc(tip, "Show", function(self) UADD.SafeCall(OnShow, self) end)
-    pcall(tip.HookScript, tip, "OnTooltipCleared", T.Stop)
-    tip:HookScript("OnHide", T.Stop)
+    pcall(tip.HookScript, tip, "OnTooltipCleared", function(...) UADD.SafeCall(T.Stop, ...) end)
+    tip:HookScript("OnHide", function(...) UADD.SafeCall(T.Stop, ...) end)
 end
 
 -- For the checks: tooltip lines in our words, and in our font, now.

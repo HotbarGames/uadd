@@ -170,8 +170,8 @@ function T.Install()
             tips[tip] = { app = "AUCTip" .. i, lines = {}, layout = false }
             hooksecurefunc(tip, "AddDoubleLine", function(self) UADD.SafeCall(OnDouble, self) end)
             hooksecurefunc(tip, "Show", function(self) UADD.SafeCall(OnShow, self) end)
-            pcall(tip.HookScript, tip, "OnTooltipCleared", function(self) Clear(self) end)
-            tip:HookScript("OnHide", function(self) Clear(self) end)
+            pcall(tip.HookScript, tip, "OnTooltipCleared", function(self) UADD.SafeCall(Clear, self) end)
+            tip:HookScript("OnHide", function(self) UADD.SafeCall(Clear, self) end)
         end
     end
 end

@@ -169,7 +169,7 @@ function D.Install()
         local fs = type(b) == "table" and b.Text
         if type(fs) == "table" and fs.SetText and not D.owner[fs] then
             D.owner[fs] = b
-            hooksecurefunc(fs, "SetText", OnText)
+            hooksecurefunc(fs, "SetText", function(f, t) U.SafeCall(OnText, f, t) end)
             n = n + 1
         end
     end

@@ -37,6 +37,7 @@ uall_test.lua
 Words.lua
 Place.lua
 Lines.lua
+Print.lua
 QuestVariants.lua
 Routes.lua
 Collector.lua

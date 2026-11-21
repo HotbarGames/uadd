@@ -225,7 +225,8 @@ local function SettingsShown()
     return false
 end
 
--- A frame made inside one we walked: that frame and the ones around it are entered again.
+-- A frame made inside one we walked: it and the ones around it are entered again. Every CreateFrame of the game
+-- passes here (U.OnNewFrame, under U.SafeCall): odd arguments leave at the first type or table look-up.
 local function OnNewFrame(_, _, parent)
     if type(parent) == "string" then parent = rawget(_G, parent) end
     if type(parent) ~= "table" or walked[parent] == nil then return end
@@ -233,7 +234,8 @@ local function OnNewFrame(_, _, parent)
     for _ = 1, 30 do
         if type(parent) ~= "table" or walked[parent] == nil then return end
         walked[parent] = true
-        parent = parent.GetParent and parent:GetParent() or nil
+        local up = parent.GetParent
+        parent = type(up) == "function" and up(parent) or nil
     end
 end
 
@@ -272,7 +274,7 @@ function S.Install()
     for _, name in ipairs(NEXT) do
         if type(rawget(_G, name)) == "function" then hooksecurefunc(name, function() After(true) end) end
     end
-    hooksecurefunc("CreateFrame", OnNewFrame)
+    U.OnNewFrame(OnNewFrame)
     local gui = AceLib("AceGUI-3.0")
     U.SafeCall(ns.Claim.Install, gui)
     if type(gui) == "table" and type(gui.Release) == "function" then

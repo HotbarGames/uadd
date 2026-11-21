@@ -23,12 +23,43 @@ local idx, bareIdx = U.TextIndex({}), U.TextIndex({})
 local memo, memoSize, MEMO_MAX = {}, 0, 500
 
 local Text
+local gate = { lens = {}, pre = {}, suf = {}, any = false }   -- W.MaybeBare: lengths and edge hashes only
+
+local function Gate(data)
+    local g = { lens = {}, pre = {}, suf = {}, any = false }
+    for key in pairs(type(data.exact) == "table" and data.exact or {}) do
+        local len, h = tostring(key):match("^(%d+):(%x+)$")
+        len = tonumber(len)
+        if len then g.lens[len] = g.lens[len] or {} g.lens[len][h] = true end
+    end
+    for _, d in ipairs(type(data.templates) == "table" and data.templates or {}) do
+        local L, H = type(d.len) == "table" and d.len or {}, type(d.hash) == "table" and d.hash or {}
+        local a, z = tonumber(L[1]) or 0, tonumber(L[#L]) or 0
+        if a > 0 and H[1] then g.pre[a] = g.pre[a] or {} g.pre[a][H[1]] = true
+        elseif z > 0 and H[#H] then g.suf[z] = g.suf[z] or {} g.suf[z][H[#H]] = true
+        else g.any = true end                              -- starts and ends with a slot: always tried
+    end
+    return g
+end
 
 function W.Build()
     idx = U.TextIndex(ns.AP or {})
     bareIdx = U.TextIndex(ns.AP_BARE or {})
+    gate = Gate(ns.AP_BARE or {})
     wipe(memo)
     memoSize = 0
+end
+
+-- Could t be one of the lines it prints alone? Every chat line of the game passes here (lesson 12): a length
+-- compare, then a hash of the line (only at a length of ours) or of a few edge bytes; no look-up, no cache.
+function W.MaybeBare(t)
+    if not U.Plain(t) then return false end                -- a secret line: no string op on it (lesson 35)
+    local n = #t
+    if n == 0 or n > MAX_LEN then return false end
+    if gate.any or (gate.lens[n] and gate.lens[n][U.Hash(t)]) then return true end
+    for L, hs in pairs(gate.pre) do if n >= L and hs[U.Hash(t:sub(1, L))] then return true end end
+    for L, hs in pairs(gate.suf) do if n >= L and hs[U.Hash(t:sub(n - L + 1))] then return true end end
+    return false
 end
 
 -- A value the addon puts in a %s as it is: no letters at all ("4.0.9", "12", "--"), colour codes
