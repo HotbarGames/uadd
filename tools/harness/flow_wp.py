@@ -3,13 +3,14 @@ stand-in holds none of its English. This flow reads the texts from the installed
 (flow_wp_texts.py) and gives them to the stand-in before the game starts. The expected Ukrainian is the
 module's own data (ns.WP, read by M.want and M.fill in flow_wp.lua). Steps: flow_wp_steps.py.
 
-  * Game A (English client): 1 at login: prompts, footer and pinpoint ours; destination and Navigator never.
+  * Game A (English client): 1 at login: prompts, footer and pinpoint ours; destination and Navigator kept.
     2 busy flag. 3 footer ticks (lesson 12). 4 distance and time, odd ones too. 5 replace prompts (free slot).
-    6 pin names (lesson 13). 7 off/on and the hold key (lessons 15, 23). 8 fonts (lessons 2, 18).
+    6 pin names (lesson 13). 13 a pin named after its map: the map's name from UADD.UALL.Zone (made-up maps).
+    7 off/on and the hold key (lessons 15, 23). 8 fonts (lessons 2, 18).
     9 settings built late, the 1 s walk stops. 10 keyboard free (lesson 16). 11 10 KB speed (lesson 22).
     No half-translated line (halves_mods.wp).
   * Game B: roots missing. Game E: errors in its SetText (lesson 26). Game C: ruRU client.
-  * Mutants (Screen.lua with one fix cut, in memory only): steps 2, 3 and 12 must fail, so they have teeth.
+  * Mutants (one fix cut from the module, in memory only): steps 2, 3, 12 and 13 must fail, so they have teeth.
 """
 import collections
 import gc
@@ -60,6 +61,7 @@ def game_a(check, p, src, temps):
     S.units(check, M)
     S.prompts(check, M, p)
     S.pins(check, M, p)
+    S.place(check, M)
     S.offon(check, M, p)
     S.fonts(check, M, p)
     S.settings(check, M, p)
@@ -91,12 +93,13 @@ def game_e(check, p):
 def mutants(check, p):
     def quiet(name, ok, detail=""): out.append(ok)  # noqa: E704
     for cut, step, run in (("busy", "2", lambda M: S.busy(quiet, M, p)), ("cache", "3", lambda M: S.ticks(quiet, M)),
-                           ("fault", "12", lambda M: S.faults(quiet, M, p))):
+                           ("fault", "12", lambda M: S.faults(quiet, M, p)), ("place", "13", lambda M: S.place(quiet, M)),
+                           ("pinplace", "13", lambda M: S.place(quiet, M)), ("wait", "13", lambda M: S.place(quiet, M))):
         out = []
         c, M = _game(p, cut=cut)
         ok = run(M)
-        check(f"mutant {cut} (Screen.lua without that fix, in memory only): step {step} fails",
-              M.wasCut and not ok, "cut not found in Screen.lua" if not M.wasCut else "it passed" if ok else "")
+        check(f"mutant {cut} (the module without that fix, in memory only): step {step} fails",
+              M.wasCut and not ok, "cut not found" if not M.wasCut else "it passed" if ok else "")
         del c, M
         gc.collect()
 

@@ -35,6 +35,7 @@ AceFont.lua
 uall.lua
 uall_test.lua
 Words.lua
+Place.lua
 Lines.lua
 QuestVariants.lua
 Routes.lua

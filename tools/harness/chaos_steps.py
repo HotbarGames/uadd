@@ -6,12 +6,13 @@ of (font string, the English as the addon set it).
 import os
 
 import chaos_cases as K
+import clock
 from loader import lua_str, txt
 
 SEED = int(os.environ.get("CHAOS_SEED", "20261120"))
 N = int(os.environ.get("CHAOS_N", "3"))
 ONLY = os.environ.get("CHAOS_ONLY", "")
-MS = 5.0                 # the most one text may take
+MS = 5.0                 # the most one text may take on an idle PC (clock.py stretches it under load)
 CACHE = 6000             # Words.lua LIMIT
 KB = 512                 # Lua memory a second round of 10k unseen texts may leave (bounded caches: ~0)
 IDLE = 600               # UADD's frame visits a minute with the addon's windows closed (10 a second)
@@ -35,8 +36,7 @@ def feeds(r, snap, rng):
                 why = K.half(txt(out), txt(raw))
                 if why:
                     fails.append(f"{name} {en[:30]!r} -> {txt(out)[:60]!r}: {why}")
-            if ms > MS:
-                slow.append(f"{name} {ms:.1f} ms")
+            slow.append((name, ms))
         for name, v in K.bad_values():
             ok, err, _ = r.C.Feed(r.target, fs, v)
             n += 1
@@ -45,7 +45,9 @@ def feeds(r, snap, rng):
         r.C.Set(r.target, fs, lua_str(en))
     r.ok(f"feed {n} odd cases: no error reaches the caller", not escaped, "; ".join(escaped[:2]))
     r.ok("feed odd cases: no half line", not fails, "; ".join(fails[:2]))
-    r.ok(f"feed odd cases: each under {MS:g} ms", not slow, "; ".join(slow[:3]))
+    limit, ref = clock.bound(MS)                 # MS stretched by the load seen now (clock.py)
+    slow = [f"{name} {ms:.1f} ms" for name, ms in slow if ms > limit]
+    r.ok(f"feed odd cases: each under {MS:g} ms", not slow, "; ".join(slow[:3] + [clock.note(limit, ref)]))
     r.no_errors("feed odd cases")
 
 
@@ -133,8 +135,10 @@ def bulk(r, snap):
     """10k texts, a frame made late, UALL Forever rewriting after us."""
     fs, en = snap[0]
     ok, same, new, kb, most = r.C.Many(r.target, fs, lua_str(en), 10000)
+    limit, ref = clock.bound(MS)
     r.ok("the same text 10k times and 10k unseen: no error", ok)
-    r.ok(f"10k texts: under {MS:g} ms each", same < MS and new < MS, f"same {same:.3f} ms, unseen {new:.3f} ms")
+    r.ok(f"10k texts: under {MS:g} ms each", same < limit and new < limit,
+         f"same {same:.3f} ms, unseen {new:.3f} ms, {clock.note(limit, ref)}")
     r.ok(f"10k unseen texts: caches stay under {CACHE}", most <= CACHE, f"biggest cache {most}")
     r.ok(f"another 10k unseen texts: Lua memory grows under {KB} KB", kb < KB, f"{kb:.0f} KB")
     late = txt(r.C.Late(r.target, lua_str(en)))

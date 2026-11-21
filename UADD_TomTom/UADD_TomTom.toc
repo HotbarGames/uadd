@@ -12,6 +12,7 @@
 data/text01.lua
 data/text02.lua
 data/text03.lua
+Title.lua
 Module.lua
 Fonts.lua
 Settings.lua

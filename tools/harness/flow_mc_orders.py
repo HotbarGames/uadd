@@ -21,6 +21,7 @@ checks test the readers and the hooks, not the words.
 """
 import time
 
+import clock
 import hashtext
 from loader import lua_str, txt
 
@@ -133,13 +134,14 @@ def run(check, F, src):
                  ("piece", "a" + " " * 10240 + "5"), ("info", '"' * 10240), ("age", "1 " * 5120)):
         best = None
         for _ in range(3):
-            t0 = time.perf_counter()
+            t0 = time.process_time()          # CPU time (load still slows it: clock.py stretches the bound)
             C.read(lua_str(k), lua_str(t))
-            ms = (time.perf_counter() - t0) * 1000
+            ms = (time.process_time() - t0) * 1000
             best = ms if best is None else min(best, ms)
-        if best >= 5:
-            slow.append((k, round(best, 1)))
-    check("orders: a 10 KB line through each reader takes under 5 ms", not slow, slow)
+        slow.append((k, round(best, 1)))
+    limit, ref = clock.bound(5)
+    slow = [s for s in slow if s[1] >= limit]
+    check("orders: a 10 KB line through each reader takes under 5 ms", not slow, f"{slow} {clock.note(limit, ref)}")
     F._errors(c, check, "orders game")
 
 

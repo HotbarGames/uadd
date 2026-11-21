@@ -17,11 +17,13 @@ local CUTS = {
     usable = { "Locale.lua", '    if type(en) ~= "string" or type(uk) ~= "string" or en == "" or uk == "" then return false end\n',
                '    do return type(uk) == "string" end\n' },
     menu = { "Menu.lua", '    Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", Callback)\n', "" },
+    draw = { "Menu.lua", "                d:AddInitializer(Drawer(new))\n", "" },
     hold = { "Module.lua", "        U.SafeCall(ns.Locale.Sync)\n        U.SafeCall(ns.Screen.Apply)\n    end, ",
              "        U.SafeCall(ns.Locale.Sync)\n    end, " },
     names = { "Breadcrumb.lua", "        if not (u2 and uz) then return nil end\n", "        u2, uz = u2 or t2, uz or z\n" },
     restore = { "Screen.lua", "function S.Restore() Run(false) end", "function S.Restore() end" },
-    fault = { "Menu.lua", "    if not ok then U.Fault(KEY, err) end\n", "" },
+    fault = { "Menu.lua", "    local ok, err = pcall(Retext, owner, root)\n    if not ok then U.Fault(KEY, err) end\n",
+              "    pcall(Retext, owner, root)\n" },
     range = { "Screen.lua", '    local head, tail = t:match("^(.-)( %(%d+%-%d+%))$")\n', "    local head, tail = nil, nil\n" },
     tiphook = { "Screen.lua", '        f:HookScript("OnEnter", TipHook)\n', '        f:HookScript("OnEnter", SafeTip)\n' },
     pages = { "Screen.lua", "    Subs(main)\n", "" },
@@ -81,14 +83,15 @@ function M.left()
     return n
 end
 
--- The World Map tracking menu, opened: the texts after its title, "|"-joined, and how many have Cyrillic.
+-- The World Map tracking menu, opened: the texts drawn after its title (what the player sees, not the
+-- descriptions' .text), "|"-joined, and how many have Cyrillic.
 function M.menu()
     local out, after, n = {}, false, 0
     for _, d in ipairs(H.menuOpen("MENU_WORLD_MAP_TRACKING")) do
-        if d.text == CAT then after = true
-        elseif after and d.text then
-            out[#out + 1] = d.text
-            if d.text:find(CYR) then n = n + 1 end
+        if d.shown == CAT then after = true
+        elseif after and d.shown then
+            out[#out + 1] = d.shown
+            if d.shown:find(CYR) then n = n + 1 end
         end
     end
     return table.concat(out, " | "), #out, n

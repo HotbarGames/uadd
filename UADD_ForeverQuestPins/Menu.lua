@@ -31,6 +31,21 @@ local function SetText(d, t)
     end
 end
 
+-- The client's checkbox draws the text it was made with (MenuTemplates.CreateCheckbox keeps it in its own
+-- initializer), not the description's text, so SetText alone changes nothing on screen. Our initializer runs
+-- after its own, on the drawn line (button.fontString), before the menu measures its width. An error here
+-- counts (U.Fault) and leaves the line as it drew it: English.
+local function Drawer(new)
+    return function(button)
+        local ok, err = pcall(function()
+            local fs = type(button) == "table" and button.fontString or nil
+            if type(fs) ~= "table" then return end
+            if type(fs.SetTextToFit) == "function" then fs:SetTextToFit(new) else fs:SetText(new) end
+        end)
+        if not ok then U.Fault(KEY, err) end
+    end
+end
+
 local function Retext(_, root)
     if type(root) ~= "table" or type(root.EnumerateElementDescriptions) ~= "function" then return end
     local want = ns.WordsWanted()
@@ -43,7 +58,10 @@ local function Retext(_, root)
             left = left - 1
             local new
             if want then new = Lc.Uk(t) else new = Lc.En(t) end
-            if new and new ~= t then SetText(d, new) end
+            if new and new ~= t and type(d.AddInitializer) == "function" then
+                SetText(d, new)
+                d:AddInitializer(Drawer(new))
+            end
         end
     end
 end

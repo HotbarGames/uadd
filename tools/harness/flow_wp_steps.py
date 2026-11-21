@@ -8,6 +8,7 @@ from loader import lua_str, txt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import hashtext  # noqa: E402
+import clock  # noqa: E402
 
 UNITS = {"1 yds": "1 ярд", "21 yds": "21 ярд", "5 yds": "5 ярдів", "250 m": "250 м", "1.25 km": "1.25 км"}
 TIMES = {"1h 5m 3s": "1 год 5 хв 3 с", "5m ": "5 хв", "12s": "12 с"}
@@ -30,7 +31,7 @@ def login(check, M, p):
     got = {k: t(M, k) for k in ("button", "input", "pin", "info", "nav", "dist", "time")}
     check("1 at login: button and input prompt ours", got["button"] == w(M, p["button"]) and
           got["input"] == w(M, p["input"]), f'{got["button"]!r} {got["input"]!r}')
-    check("1 at login: the destination line and the Navigator stay as they are (never looked up)",
+    check("1 at login: the destination line (not a map's name) and the Navigator stay as they are",
           got["info"] == p["info"] and got["nav"] == p["nav"], f'{got["info"]!r} {got["nav"]!r}')
     check("1 at login: distance and arrival time ours", got["dist"] == "12 ярдів" and got["time"] == "12 с",
           f'{got["dist"]!r} {got["time"]!r}')
@@ -96,6 +97,52 @@ def pins(check, M, p):
     c = put(M, "nav", cap)
     check("6 pin name equal to our text stays as typed (lesson 13); the Navigator too",
           a == cap + "\n" + w(M, p["grey"]) and b == cap and c == cap, f"{a!r} {b!r} {c!r}")
+
+
+ZONES = {"Zorpwood Vale": "Зорпова долина", "Blatter Reach": "Блатерський край", "Glorp Hollow": "Глорпова западина"}
+GREY = "\n|cFF808080" + "45.2, 60.1|r"
+
+
+def place(check, M):
+    """A pin named after its map (OpenMap's pin with no note through TomTom, or Waypoint UI's own): the destination
+    line and the pinpoint name are the map's name from UADD.UALL.Zone. Made-up maps: 7001 Zorpwood Vale under 7000
+    Blatter Reach; 7002 Fizzle Marsh, which no source knows; Glorp Hollow is known but not the pin's map."""
+    for en, uk in ZONES.items():
+        M.zone(lua_str(en), lua_str(uk))
+    M.place(7001)
+    a = (put(M, "info", "Zorpwood Vale"), put(M, "info", "Blatter Reach"), put(M, "info", "Glorp Hollow"))
+    ok_info = a == ("Зорпова долина", "Блатерський край", "Glorp Hollow")
+    check("13 destination line: the pin's map name (and the map above it) from ClassicUA / UALL Forever; a known "
+          "zone that is not the pin's map stays as typed", ok_info, a)
+    b = (put(M, "pin", "Zorpwood Vale" + GREY), put(M, "pin", "Zorpwood Vale"), put(M, "pin", "Glorp Hollow" + GREY))
+    ok_pin = b == ("Зорпова долина" + GREY, "Зорпова долина", "Glorp Hollow" + GREY)
+    check("13 pinpoint: its name too, the coordinates kept; another name stays as typed", ok_pin, b)
+    M.place(7002)
+    c = (put(M, "info", "Fizzle Marsh"), put(M, "pin", "Fizzle Marsh" + GREY))
+    ok_unknown = c == ("Fizzle Marsh", "Fizzle Marsh" + GREY) and not cyr(c[0] + c[1])
+    check("13 a map no source knows: whole English", ok_unknown, c)
+    M.place(7001)
+    put(M, "info", "Zorpwood Vale")
+    M.key(True)
+    held = t(M, "info")
+    M.key(False)
+    after = t(M, "info")
+    M.uadd(lua_str("waypointui off"))
+    off = t(M, "info")
+    M.uadd(lua_str("waypointui on"))
+    on = t(M, "info")
+    ok_back = (held, after, off, on) == ("Zorpwood Vale", "Зорпова долина", "Zorpwood Vale", "Зорпова долина")
+    check("13 the destination: English while held and off, ours after", ok_back, (held, after, off, on))
+    M.wait4(True)
+    w0 = put(M, "info", "Blatter Reach")
+    M.wait4(False)
+    M.wait(3.5)
+    w1 = t(M, "info")
+    ok_wait = w0 == "Blatter Reach" and w1 == "Блатерський край"
+    check("13 a name not known yet (ClassicUA / UALL Forever still loading): English, then ours a few seconds later",
+          ok_wait, (w0, w1))
+    M.place(None)
+    return ok_info and ok_pin and ok_unknown and ok_back and ok_wait
 
 
 def offon(check, M, p):
@@ -182,8 +229,9 @@ def speed(check, M):
     ms = {"Text": M.slow(lua_str("Text"), lua_str(long)), "Units": M.slow(lua_str("Units"), lua_str("1" * 10240)),
           "Pinpoint": M.slow(lua_str("Pinpoint"), lua_str("Quix\n" + long)),
           "frame": M.slow(lua_str("frame"), lua_str(long))}
-    check(f"11 10 KB text under {SPEED_MS} ms on each path (lesson 22)", max(ms.values()) < SPEED_MS,
-          {k: round(v, 2) for k, v in ms.items()})
+    limit, ref = clock.bound(SPEED_MS)
+    check(f"11 10 KB text under {SPEED_MS} ms on each path (lesson 22)", max(ms.values()) < limit,
+          f"{ {k: round(v, 2) for k, v in ms.items()} } {clock.note(limit, ref)}")
 
 
 def faults(check, M, p):

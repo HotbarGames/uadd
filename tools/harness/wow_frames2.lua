@@ -92,13 +92,34 @@ end
 SettingsPanel.GetLayout = function(_, cat) return { GetFrame = function() return cat and cat.frame end } end
 -- The client's Menu and MenuUtil, opt in (a flow calls HARNESS.menuApi() before its game starts): other modules
 -- check for MenuUtil, so a global one would change their flows. HARNESS.menuOpen(tag) runs each ModifyMenu
--- callback of that tag on a fresh root and returns its element descriptions; HARNESS.menuThrow makes
--- MenuUtil.SetElementText fail.
+-- callback of that tag on a fresh root, then draws each element as the client does (its initializers in order on
+-- a fresh button; d.shown is the drawn text) and returns the element descriptions; HARNESS.menuThrow makes
+-- MenuUtil.SetElementText fail. As in the client (Blizzard_Menu MenuTemplates.CreateCheckbox/CreateTitle), the
+-- drawn text is the one the element was made with, kept by its own initializer: d.text alone changes nothing.
 function HARNESS.menuApi()
     local callbacks = {}
     local Root = {}
     Root.__index = Root
-    local function Desc(text) return { text = text, SetEnabled = function() end } end
+    local function FontString()
+        local fs = {}
+        function fs:SetText(t) self.t = t end
+        fs.SetTextToFit = fs.SetText
+        function fs:GetText() return self.t end
+        return fs
+    end
+    local function Desc(text)
+        local d = { text = text, inits = {}, SetEnabled = function() end }
+        function d:AddInitializer(fn) self.inits[#self.inits + 1] = fn end
+        if text then
+            d:AddInitializer(function(button) button.fontString = FontString() button.fontString:SetTextToFit(text) end)
+        end
+        return d
+    end
+    local function Draw(d)
+        local button = {}
+        for _, fn in ipairs(d.inits or {}) do fn(button, d, nil) end
+        d.shown = button.fontString and button.fontString:GetText() or nil
+    end
     function Root:CreateDivider() self.items[#self.items + 1] = Desc(nil) end
     function Root:CreateTitle(t) self.items[#self.items + 1] = Desc(t) end
     function Root:Insert(d) self.items[#self.items + 1] = d end
@@ -116,6 +137,7 @@ function HARNESS.menuApi()
     function HARNESS.menuOpen(tag)
         local root = setmetatable({ items = {} }, Root)
         for _, fn in ipairs(callbacks[tag] or {}) do fn(nil, root) end
+        for _, d in ipairs(root.items) do Draw(d) end
         return root.items
     end
 end

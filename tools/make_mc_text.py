@@ -197,12 +197,32 @@ def build(rows, folder, out_dir, glossary, ver="?"):
         loose += lo
         if problems:
             bad.append((n, k, problems))
-    entries = [f"E[{H.lua_str(k)}] = {v}" for k, v in sorted(exact.items())]
+    entries = [wrap(f"E[{H.lua_str(k)}] = {v}") for k, v in sorted(exact.items())]
     entries += ["T[#T + 1] = " + H.lua_value({x: y for x, y in t.items() if x != "lit"})
                 for _, t in sorted(temps.items())]
     write_data(entries, out_dir, ver)
     return {"done": len(rows) - left - len(bad), "left": left, "bad": bad, "loose": loose,
             "exact": len(exact), "templates": len(temps)}
+
+
+WRAP = 300                      # check_repo.py allows 400 chars a line; a longer E line is cut into pieces
+
+
+def wrap(line):
+    """An E line whose value is one long string literal, as `"a " ..` lines of at most WRAP chars, cut after a
+    space (lua_str never puts a space inside an escape). Other lines stay as they are."""
+    head, sep, lit = line.partition(" = ")
+    if len(line) <= WRAP or not (lit.startswith('"') and lit.endswith('"')):
+        return line
+    words, pieces, cur = lit[1:-1].split(" "), [], ""
+    for n, w in enumerate(words):
+        w += " " if n < len(words) - 1 else ""
+        if cur and len(cur) + len(w) > WRAP - 10:
+            pieces.append(cur)
+            cur = ""
+        cur += w
+    pieces.append(cur)
+    return head + sep + ' ..\n    '.join(f'"{p}"' for p in pieces)
 
 
 def write_data(entries, out_dir, ver):
@@ -212,15 +232,15 @@ def write_data(entries, out_dir, ver):
     head = [h.replace("{ver}", ver) for h in DATA_HEAD]
     files = [[] for _ in range(FILES)]
     room = MAX_BYTES - len("\n".join(head).encode("utf-8"))
-    i, size = 0, 0
+    i, size, lines = 0, 0, 0
     for e in entries:
-        b = len(e.encode("utf-8")) + 1
-        if files[i] and (len(files[i]) >= MAX_LINES - len(head) - 1 or size + b > room):
-            i, size = i + 1, 0
+        b, n = len(e.encode("utf-8")) + 1, e.count("\n") + 1
+        if files[i] and (lines + n > MAX_LINES - len(head) - 1 or size + b > room):
+            i, size, lines = i + 1, 0, 0
             if i == FILES:
                 raise SystemExit(f"the data does not fit in {FILES} files: raise FILES (and the TOC)")
         files[i].append(e)
-        size += b
+        size, lines = size + b, lines + n
     for n, f in enumerate(files, 1):
         text = "\n".join(head + f) + "\n"
         (out_dir / f"text{n:02d}.lua").write_text(text, encoding="utf-8", newline="\n")

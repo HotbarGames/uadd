@@ -6,7 +6,7 @@ and odd cases (chaos_ops.lua, chaos_cases.py, the steps in chaos_steps.py). Afte
   * no Lua error from UADD's code reaches the game's error handler or the caller;
   * each text UADD changed is whole: exactly the English fed, or no made-up English left (no half line);
   * "/uadd <key> off" gives back the exact English (also after 100 fast off/on, a reinstall, a throw);
-  * no text takes over 5 ms (best of 3), no cache grows past its bound over 10k calls;
+  * no text takes over 5 ms (best of 3; more under load, clock.py), no cache grows past its bound over 10k calls;
   * the keyboard is free and no tooltip line stays pinned to a file (tipfont, run.py's segment);
   * other code's tooltip lines, chat lines and font strings cost UADD no Translate and no debugstack;
   * idle, UADD's frame visits stay in budget and stop when the addon's windows close.

@@ -21,6 +21,7 @@ import os
 import sys
 
 import flow_litemount_globals as G
+import flow_litemount_shots as Sh
 import flow_litemount_steps as S
 import halves_mods
 import session
@@ -45,6 +46,7 @@ def _game(cut=None, bad=False, locale="enUS", noL=False):
     c = Client(addons, None, locale)
     c.lua.execute(read_text(os.path.join(HERE, "flow_litemount.lua")))
     G.load(c)
+    Sh.load(c)
     M = c.H.litemount
     M.feed(None if noL else lua_str(read_text(os.path.join(root(), "Localization.lua"))), noL or None)
     for k, w in S.TESTS.items():
@@ -157,6 +159,7 @@ def game_a(check):
     S.hold(check, M)
     S.names(check, M)
     G.steps(check, M)               # game globals on its frames (flow_litemount_globals.py)
+    Sh.steps(check, M)              # the owner's shots and game names (flow_litemount_shots.py)
     S.status(check, c, M)
     S.off(check, c, M)
     S.changed(check, M)
@@ -202,6 +205,7 @@ MUTANTS = {
     "uidebug": ("uidebug", {}, lambda q, c, M: glued(q, M, "uidebug")),
 }
 MUTANTS.update(G.MUTANTS)
+MUTANTS.update(Sh.MUTANTS)
 
 
 def mutants(check):
@@ -224,7 +228,7 @@ def run(check, facts):
     if not installed():
         check("LiteMount checks (skipped: LiteMount is not installed)", True, "")
         return halves_mods.litemount(check, None, [], halves_mods.SKIP)
-    S.code(check, root(), GLUED_CODE + G.CODE)
+    S.code(check, root(), GLUED_CODE + G.CODE + Sh.CODE)
     for game in (lambda: game_a(check), lambda: game_b(check), lambda: elsewhere(check), lambda: mutants(check)):
         game()
         gc.collect()

@@ -32,6 +32,8 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import clock  # noqa: E402
 import halves_cover  # noqa: E402
 import hashtext  # noqa: E402
 
@@ -40,7 +42,7 @@ GLUES = ("   ", "\n", " - ")   # marks addons join two texts with (glued()); a n
 NAME = "Quix"
 VALUE = {"d": "7", "f": "7.5", "x": "ff", "x2": "0f", "t": "|TInterface\\Icons\\INV_Misc_QuestionMark:0|t"}
 GOOD = "7"
-BOUND = 0.005   # seconds: the most one text may take, at best of three
+BOUND = 0.005   # seconds: the most one text may take, at best of three, on an idle PC (clock.py stretches it)
 
 
 def tpl(id, en, free=None, good=None, **extra):
@@ -126,17 +128,19 @@ def hard(tp, v):
 
 
 def slowest(tp, translate):
-    """(seconds, text): the slowest hard text, each at the best of its three variants."""
-    worst = (0.0, "")
+    """(seconds, text, reference samples): the slowest hard text, each at the best of its three variants;
+    a run of clock.py's reference job before each, so the bound sees the same load."""
+    worst, refs = (0.0, ""), []
     for row in zip(*(hard(tp, v) for v in range(3))):
+        refs.append(clock.sample())
         best = None
         for t in row:
-            t0 = time.perf_counter()
+            t0 = time.process_time()          # CPU time, as chaos's os.clock (load still slows it: clock.py)
             translate(tp, t)
-            dt = time.perf_counter() - t0
+            dt = time.process_time() - t0
             best = dt if best is None else min(best, dt)
         worst = max(worst, (best, row[0]))
-    return worst
+    return worst + (refs,)
 
 
 def _outs(got):
@@ -168,12 +172,14 @@ def run(check, module, templates, translate, note="", hard=None, glue=False, fre
             bad += [(tp["id"], t, o) for o in _outs(translate(tp, t)) if o != t and f in o]
     known = halves_cover.UNFIT.get(module, {})
     new, stale = [i for i in unfit if i not in known], [i for i in known if i not in unfit]
-    sec, text = slowest(first, hard or translate) if first else (0.0, "")
-    slow = sec > BOUND and {"too slow (ms)": round(sec * 1000, 1), "text": text[:80]}
+    sec, text, refs = slowest(first, hard or translate) if first else (0.0, "", None)
+    limit, ref = clock.bound(BOUND * 1000, refs)      # BOUND stretched by the load seen meanwhile (clock.py)
+    slow = sec * 1000 > limit and {"too slow (ms)": round(sec * 1000, 1), "text": text[:80],
+                                   "time": clock.note(limit, ref)}
     detail = (bad[:3] or slow or (new and {"unfit, not in UNFIT": new[:8]})
               or (stale and {"stale UNFIT": stale[:8]})
               or f"{n} templates, {n - len(unfit)} fit, {len(unfit)} known unfit")
     glues = f"{nglue} glued to a free slot, " if glue else ""
     check(f"{name} ({n} templates, {count} texts, {glues}{n - len(unfit)} fit, "
-          f"{len(unfit)} unfit, slowest {sec * 1000:.1f} ms)",
+          f"{len(unfit)} unfit, slowest {sec * 1000:.1f} ms, {clock.note(limit, ref)})",
           (n > 0 or (free_only and nglue > 0)) and not bad and not slow and not new and not stale, detail)

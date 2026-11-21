@@ -9,7 +9,7 @@ tools/harness/halves.py fills each slot with made-up English and runs the text t
 - every free-slot mark is a %s slot of a real template (read from the installed addon; skipped without it);
 - the check itself catches a made-up module that keeps English in a slot, and passes a strict one;
   a template that does not fit fails unless UNFIT lists it, and a stale UNFIT entry fails; a path that
-  is slow on a long or tricky text fails.
+  is slow on a long or tricky text fails, under any load (the bound follows a reference job: clock.py).
 
 python3 -m unittest tools.test_halves
 """
@@ -155,16 +155,36 @@ class Engine(unittest.TestCase):
                    lambda tp, t: "7 — 7" if t == "7 in 7" else None)
         self.assertEqual(got, [True])
 
-    def test_slow_fails(self):
-        """A path that takes long on a long text (a shared note: it would freeze the game) fails."""
+    def _burn(self, sec):
+        """A path that burns `sec` of CPU on long texts, as a slow pattern does (the bound counts CPU time)."""
         def slow(tp, t):
             if len(t) > 150:
-                time.sleep(2 * halves.BOUND)
+                end = time.process_time() + sec
+                while time.process_time() < end:
+                    pass
             return self._strict(tp, t)
-        name, ok, detail = self._run(slow)
+        return slow
+
+    def test_slow_fails(self):
+        """A path that takes long on a long text (a shared note: it would freeze the game) fails, under any
+        load: it burns more than the most the bound may stretch to (clock.CAP)."""
+        name, ok, detail = self._run(self._burn((halves.clock.CAP + 1) * halves.BOUND))
         self.assertFalse(ok)
         self.assertIn("too slow", str(detail))
+        self.assertIn("reference", str(detail))
         self.assertTrue(self._run(self._strict)[1])
+
+    def test_bound_follows_load(self):
+        """The bound grows with the reference job's time (load), never under BOUND, never over CAP x."""
+        clock, ref = halves.clock, halves.clock.REF_MS
+        self.assertEqual(clock.bound(5, ref / 2)[0], 5)              # a fast PC: never under 5 ms
+        self.assertAlmostEqual(clock.bound(5, ref * 3)[0], 15)
+        self.assertEqual(clock.bound(5, ref * 1000)[0], 5 * clock.CAP)   # a broken reference hides no slow path
+        slow = self._burn(2 * halves.BOUND)
+        with mock.patch.object(clock, "sample", return_value=ref):        # idle: 10 ms fails
+            self.assertFalse(self._run(slow)[1])
+        with mock.patch.object(clock, "sample", return_value=ref * 3):    # 3x load: the bound is 15 ms
+            self.assertTrue(self._run(slow)[1])
 
     def test_fill(self):
         self.assertEqual(halves.fill("%d%% of %s", lambda k, kind: f"<{k}{kind}>"), "<1d>% of <2s>")

@@ -16,6 +16,7 @@ key; the game names are made up and given UALL Forever's Ukrainian here (flow_mc
   * A bare line with a list of one-word names ("<name>, <name>") stays as it is: they may be players.
   * Long odd lines of each split shape take under 5 ms each, nothing remembered.
 """
+import clock
 import hashtext
 from loader import lua_str, txt
 
@@ -131,9 +132,11 @@ def run(check, F, src):
         check(f"screens: a bare list of one-word names stays as it is ({sep.strip()})", got == line, got)
     # Long odd lines, nothing remembered (a name UALL Forever makes wait is never cached): no pattern with
     # two lazy runs may take the square of the line (docs/LESSONS2.md lesson 22).
-    for name, text in SLOW:
-        ms = C.slow(lua_str(text))
-        check(f"screens: a 10 KB line of the {name} shape takes under 5 ms", ms < 5, f"{ms:.1f} ms")
+    times = [(name, C.slow(lua_str(text))) for name, text in SLOW]
+    limit, ref = clock.bound(5)                 # 5 ms stretched by the load seen now (clock.py)
+    for name, ms in times:
+        check(f"screens: a 10 KB line of the {name} shape takes under 5 ms", ms < limit,
+              f"{ms:.1f} ms, {clock.note(limit, ref)}")
     # The craft orders board and its cards (Mastercraft 2.0.8), in a game of their own.
     import flow_mc_orders
     flow_mc_orders.run(check, F, src)

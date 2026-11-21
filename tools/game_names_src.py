@@ -118,7 +118,7 @@ def mastercraft():
         return None
     uk = {}
     for path in sorted(M.DATA.glob("*.lua")):
-        for line in path.read_text(encoding="utf-8").splitlines():
+        for line in re.sub(r'" \.\.\n    "', "", path.read_text(encoding="utf-8")).splitlines():   # joins M.wrap's cuts
             m = re.match(r'E\["(\d+:[0-9a-f]{8})"\] = ("(?:[^"\\]|\\.)*")$', line)
             if m:
                 uk[m.group(1)] = FW.unlua(m.group(2))

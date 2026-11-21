@@ -14,7 +14,9 @@
 --     are in L. Settings.lua translates what its settings pages get from code, not from L; Fonts.lua gives every
 --     shown Ukrainian text a font with Ukrainian letters (read back, lesson 2).
 -- Zone and quest names come from UALL Forever; without one the whole line stays English. Waypoint titles
--- and other text the player wrote stay as they are. The words /way and /ttpaste read stay English.
+-- and other text the player wrote stay as they are; a title that is its waypoint's map name (OpenMap's pin
+-- with no note) is that map's name from ClassicUA or UALL Forever, on the arrow and the pin's tooltip
+-- (Title.lua). The words /way and /ttpaste read stay English.
 -- While the hold key is held (UADD/Original.lua) new texts are English. "/uadd tomtom off" puts TomTom.L
 -- and the pop-ups back as TomTom had them; settings pages built already change after /reload. On a client
 -- that is not English the module does nothing.
@@ -131,6 +133,9 @@ function Arrow.Install()
     hooksecurefunc(fs, "SetText", Arrow.OnStatus)
 end
 
+-- The arrow's title (a waypoint named after its map): Title.lua, loaded before this file.
+local Title = ns.Title
+
 -- ── Tooltips and chat ─────────────────────────────────────────────────────────────────────────
 
 -- The pin tooltip's "zone (x, y)" line (tools/tt_rules.py SORTS 15) has no word to find it by, so it is read
@@ -145,7 +150,7 @@ end
 -- coordinates line's shape. A line that fails it never reaches Translate.
 ns.Tips = U.TipLines({ tips = { "GameTooltip" }, own = { "TomTomTooltip" }, from = FROM, wanted = ns.WordsWanted,
     missed = "tomtom", words = {
-        Translate = function(s) return ns.Words.Translate(s) or Coords(s) end,
+        Translate = function(s) return ns.Words.Translate(s) or Coords(s) or ns.TipPlace(s) end,
         Maybe = function(s) return ns.Words.Maybe(s) or (type(s) == "string" and s:find(COORDS) ~= nil) end } })
 ns.Chat = U.ChatLines({ prefix = PREFIX, words = ns.Words, wanted = ns.WordsWanted })
 ns.ChatPlain = U.ChatLines({ from = FROM, words = ns.Words, wanted = ns.WordsWanted })
@@ -158,15 +163,18 @@ local function Begin()
     U.SafeCall(ns.Popups.Apply)
     U.SafeCall(ns.Settings.Install)
     U.SafeCall(Arrow.Install)
+    U.SafeCall(Title.Install)
     U.SafeCall(ns.Tips.Install)
     U.SafeCall(ns.Chat.Install)
     U.SafeCall(ns.ChatPlain.Install)
     U.SafeCall(ns.Fonts.Install)
     U.SafeCall(ns.Fonts.Scan)
+    U.SafeCall(Title.Redo)
     U.SafeCall(ns.Fonts.Sync)
 end
 
 local function End()
+    U.SafeCall(Title.Restore)
     U.SafeCall(ns.SwapOut)
     U.SafeCall(ns.Popups.Restore)
     U.SafeCall(ns.Fonts.Sync)
@@ -206,6 +214,8 @@ frame:SetScript("OnEvent", function(_, event, name)
         if ns.On() then
             U.SafeCall(ns.Popups.Apply)
             U.SafeCall(Arrow.Install)
+            U.SafeCall(Title.Install)
+            U.SafeCall(Title.Redo)
             U.SafeCall(ns.Chat.Install)
             U.SafeCall(ns.ChatPlain.Install)
             U.SafeCall(ns.Tips.Install)
@@ -220,11 +230,13 @@ if U.OnOriginal then
     U.OnOriginal(function()
         if not ns.On() then return end
         if U.originalShown then
+            U.SafeCall(Title.Restore)
             U.SafeCall(ns.SwapOut)
             U.SafeCall(ns.Popups.Restore)
         else
             U.SafeCall(ns.SwapIn)
             U.SafeCall(ns.Popups.Apply)
+            U.SafeCall(Title.Redo)
         end
         U.SafeCall(ns.Fonts.Sync)
     end, "TomTom")

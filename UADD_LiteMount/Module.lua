@@ -47,9 +47,12 @@ local function Begin()
     U.Popups.Sync(KEY)
     U.SafeCall(ns.Screen.Hook)
     U.SafeCall(ns.Screen.Apply)
+    U.SafeCall(ns.Rows.Hook)
+    U.SafeCall(ns.Rows.Sync)
 end
 
 local function End()
+    U.SafeCall(ns.Rows.Restore)
     U.SafeCall(ns.Copies.Restore)
     U.SafeCall(ns.Tables.Restore)
     U.Popups.Off(KEY)
@@ -97,6 +100,7 @@ if U.OnOriginal then
         U.Popups.Sync(KEY)
         U.SafeCall(ns.Tables.Sync)
         U.SafeCall(ns.Screen.Apply)
+        U.SafeCall(ns.Rows.Sync)
     end, "LiteMount")
 end
 

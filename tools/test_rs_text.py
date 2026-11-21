@@ -82,14 +82,15 @@ class NoEnglish(unittest.TestCase):
         rows, _ = M.source(addon)
         if not rows:
             self.skipTest("RareScanner is not installed")
-        english = {en for _, en, *_ in rows if len(en) > 3}
+        english = {M.H.lua_str(en) for _, en, *_ in rows if len(en) > 3}      # as Lua strings, made once
+        stay = tuple(f"T[{M.H.lua_str(k)}]" for k in R.STAY)
         for p in sorted(M.DATA.glob("text*.lua")):
             for line in p.read_text(encoding="utf-8").split("\n"):
                 if line.startswith("T["):
                     value = line.split("] = ", 1)[1]
-                    self.assertFalse(any(M.H.lua_str(en) == value for en in english), f"{p.name}: {line[:60]}")
+                    self.assertFalse(value in english, f"{p.name}: {line[:60]}")
                     self.assertRegex(value, R.CYR.pattern, f"{p.name}: no Ukrainian in {line[:40]}")
-                    self.assertFalse(any(line.startswith(f"T[{M.H.lua_str(k)}]") for k in R.STAY), line[:60])
+                    self.assertFalse(line.startswith(stay), line[:60])
 
 
 AL_KEY = re.compile(r'\bAL\["([A-Z0-9_]+)"\]')

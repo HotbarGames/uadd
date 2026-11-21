@@ -71,15 +71,47 @@ function ns.Units(en)
     return Cached(last.units, en, Units)
 end
 
--- Pinpoint: "<pin name>\n<grey line>". The name is the player's or a game name (lesson 13): kept as it is.
--- Only a grey line that is one of our texts whole is changed; else nil.
+-- ── Place: a pin named after its map ─────────────────────────────────────────────────────────────
+-- A pin with no name of the player's is named with its map's name: Waypoint UI's own pins, and OpenMap's pins
+-- with no note through TomTom. The core helper (UADD/Place.lua) asks ClassicUA / UALL Forever for it, only when
+-- it is the name of the user waypoint's map or the player's map, or of a map above them (lesson 13).
+
+-- The Ukrainian of a map's name, or nil; nil, true: not known yet (ask again later, do not keep the answer).
+function ns.Place(en)
+    local ok, w = false, nil
+    if type(C_Map) == "table" and type(C_Map.GetUserWaypoint) == "function" then ok, w = pcall(C_Map.GetUserWaypoint) end
+    return U.Place(en, U.UALL and U.UALL.Zone, ok and type(w) == "table" and w.uiMapID or nil)
+end
+
+-- The maps a Place answer depends on (the waypoint's and the player's), so a kept answer is asked again
+-- when either changes.
+function ns.PlaceMaps()
+    if type(C_Map) ~= "table" then return "" end
+    local ok, w = false, nil
+    if type(C_Map.GetUserWaypoint) == "function" then ok, w = pcall(C_Map.GetUserWaypoint) end
+    local ok2, p = false, nil
+    if type(C_Map.GetBestMapForUnit) == "function" then ok2, p = pcall(C_Map.GetBestMapForUnit, "player") end
+    return tostring(ok and type(w) == "table" and w.uiMapID) .. ":" .. tostring(ok2 and p)
+end
+
+-- Pinpoint: "<pin name>" or "<pin name>\n<grey line>". The name is the player's or a game name (lesson 13):
+-- kept as it is, unless it is its map's name (Place). The grey line: one of our texts whole, or a line with
+-- no English (the coordinates) kept as it is. Any other English in it keeps the whole text English (nil).
 function ns.Pinpoint(en)
     en = U.Plain(en)
     if not en then return nil end
     local name, rest = en:match("^([^\n]*)\n(.*)$")
-    if not rest or rest:find("\n", 1, true) then return nil end
+    if not rest then return ns.Place(en) end
+    if rest:find("\n", 1, true) then return nil end
     local c, inner = rest:match("^(|c%x%x%x%x%x%x%x%x)(.*)|r$")
-    local uk = ns.Text(inner or rest)
-    if not uk then return nil end
-    return name .. "\n" .. (c and (c .. uk .. "|r") or uk)
+    local grey = inner or rest
+    local uk = ns.Text(grey)
+    if not uk then
+        if U.HasLatin(grey) then return nil end
+        uk = grey
+    end
+    local place, wait = ns.Place(name)
+    local out = (place or name) .. "\n" .. (c and (c .. uk .. "|r") or uk)
+    if out == en then return nil, wait end
+    return out, wait
 end

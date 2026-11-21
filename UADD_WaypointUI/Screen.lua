@@ -31,20 +31,39 @@ local function Put(f, text)
     return ok or TextOf(f) == text
 end
 
+-- A map's name that ClassicUA or UALL Forever does not know yet (Words.lua Place: "wait"): ask again a few
+-- times, a few seconds apart; the answer is not kept meanwhile. Then it stays English.
+local tries, later = 0, false
+local function Later()
+    if later or tries >= 10 or not (C_Timer and C_Timer.After) then return end
+    later, tries = true, tries + 1
+    C_Timer.After(3, U.Safe("waypointui", function()
+        later = false
+        if ns.On() then S.Apply() end
+    end))
+end
+
 local function Changed(f, text)
     if busy then return end
     local st = state[f]
     if not st then return end
     text = U.Plain(text) or TextOf(f)
     if text == nil or text == st.uk then return end
-    st.en, st.uk = text, nil
+    st.en, st.uk, st.wait = text, nil, nil
     if not ns.WordsWanted() or not ns.Fonts.CanDraw(f) then return end
-    local uk                                    -- each frame keeps its last answer: the footer sets its
-    if st.ken == text and st.klook == st.look then uk = st.kuk   -- two lines on every tick (lesson 12)
-    else uk = st.look(text) st.ken, st.kuk, st.klook = text, uk, st.look end
+    local uk, wait          -- each frame keeps its last answer: the footer sets two lines on every tick (lesson
+    -- 12). A map name's answer also hangs on the waypoint's and the player's map, so those are in the key.
+    local maps = (st.look == ns.Place or st.look == ns.Pinpoint) and ns.PlaceMaps() or nil
+    if st.ken == text and st.klook == st.look and st.kmaps == maps then uk = st.kuk
+    else
+        uk, wait = st.look(text)
+        if not wait then st.ken, st.kuk, st.klook, st.kmaps = text, uk, st.look, maps end
+    end
+    if wait then st.wait = true Later() end
     if uk and uk ~= text and Put(f, uk) then
         st.uk = uk
-    elseif not uk and st.look ~= ns.Units and st.look ~= ns.Pinpoint and U.MissedOn() and text:find("%a%a%a") then
+    elseif not uk and not wait and st.look ~= ns.Units and st.look ~= ns.Pinpoint and st.look ~= ns.Place
+        and U.MissedOn() and text:find("%a%a%a") then
         U.Missed("waypointui", text, f.__Text)
     end
 end
@@ -80,8 +99,9 @@ local function Walk(root, look, skip)
 end
 S.Walk = Walk
 
--- What each root shows (local/new-addon/WaypointUI.md, stage 1 map 3). Player and game names are never
--- looked up (lesson 13): the waypoint's destination line and the Navigator (step and destination names).
+-- What each root shows (local/new-addon/WaypointUI.md, stage 1 map 3). The player's names stay as typed
+-- (lesson 13): the waypoint's destination line and the pinpoint's name change only when they are the pin's
+-- map name (Words.lua Place); the Navigator (step and destination names) is never looked up.
 local function TextOrUnits(t) return ns.Text(t) or ns.Units(t) end
 local function Field(f, ...)
     for i = 1, select("#", ...) do
@@ -92,10 +112,12 @@ local function Field(f, ...)
 end
 
 function S.Scan()
-    for _, name in ipairs({ "DistanceText", "ArrivalTimeText" }) do  -- not its InfoText: the destination
+    for _, name in ipairs({ "DistanceText", "ArrivalTimeText" }) do
         local f = Field(_G.WUIWaypointFrame, "Footer", name)
         if IsText(f) then Hook(f, ns.Units) end
     end
+    local info = Field(_G.WUIWaypointFrame, "Footer", "InfoText")   -- the destination: a map's name only
+    if IsText(info) then Hook(info, ns.Place) end
     Walk(_G.WUIPinpointFrame, ns.Pinpoint)
     Walk(_G.WUISharedPrompt, ns.Text)
     Walk(_G.WUISharedInputPrompt, ns.Text)
@@ -146,7 +168,10 @@ end
 function S.Apply()
     for f, st in pairs(state) do
         local t = TextOf(f)
-        if t and t ~= st.uk then Changed(f, t) end
+        if t and t ~= st.uk then Changed(f, t)
+        elseif t and st.wait and st.en and ns.WordsWanted() then      -- ours, but a part was not known yet
+            Changed(f, st.en)
+        end
     end
 end
 

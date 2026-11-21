@@ -13,6 +13,20 @@ local U = UADD
 local Lc = {}
 ns.Locale = Lc
 
+-- A guard for the module's hooks (lesson 19), like U.Safe, but it stops only with our on flag, which each hook
+-- checks (ns.WordsWanted). When Safe.lua turns the module off for errors, its own off runs, so the hooks go quiet;
+-- "/uadd litemount on" then brings them back with the rest. U.Safe would keep them dead for the session, and
+-- a line LiteMount sets again would stay English. An error is reported and counted as U.Safe does; never throws.
+function Lc.Guard(fn)
+    return function(...)
+        local ok, err = pcall(fn, ...)
+        if ok then return end
+        err = tostring(err)
+        pcall(U.ReportError, err)
+        if type(U.Fault) == "function" then pcall(U.Fault, "litemount", err) end
+    end
+end
+
 local SPEC = "%%[%d%$%-%+#0]*%.?%d*[%a%%]"
 local ESC = { "|c", "|r", "|T", "|t", "|H", "|h", "|A", "|a", "|n", "\n" }
 local NOT = "LM_NOT_FORMAT"
@@ -22,7 +36,6 @@ Lc.NEVER = {
     FAVORITES = "game global", Unknown = "game global", RIDEALONG = "game global",
     DRAGONRIDING = "game global", SKYRIDING = "game global", FLY = "game global", RUN = "game global",
     SWIM = "game global", DRIVE = "game global",
-    LM_PRIORITY_DESC0 = "game global", LM_PRIORITY_DESC4 = "game global",
     LM_SUMMON_CHAT_MESSAGE = "a mount name (game name)",
     LM_SUMMON_CHAT_MESSAGE_RARITY = "a mount name (game name)",
     LM_DISABLING_MOUNT = "a mount name (game name)",
@@ -58,7 +71,12 @@ Lc.GLUED = { { "CHAT", " + ", "LM_ON_SCREEN_DISPLAY" }, { "BUG_CATEGORY5", " ", 
 Lc.EXTRA = { BINDING_1 = true, BINDING_2 = true, BINDING_3 = true, BINDING_4 = true, Import = true,
     BRAWL_TOOLTIP_RULES = true, STRING_ENVIRONMENTAL_DAMAGE_FALLING = true, ADD = true, DELETE = true, EDIT = true,
     PET_RENAME = true, CANCEL = true, OKAY = true, REVERT = true, SETTINGS_DEFAULTS = true, KEY_BINDING = true,
-    INSTANCE = true, LEVEL = true, BRAWL_TOOLTIP_MAP = true }
+    INSTANCE = true, LEVEL = true, BRAWL_TOOLTIP_MAP = true, MOUNTS = true, MACROS = true, GROUP = true,
+    UNAVAILABLE = true, COMBAT = true, ENABLE = true, ENTER_MACRO_LABEL = true, SEARCH = true, TOTAL = true,
+    COLLECTED = true, MACROFRAME_CHAR_LIMIT = true }
+-- L keys LiteMount fills from a game global alone (Localization.lua: L.LM_PRIORITY_DESC0 = DISABLE): our word in
+-- L while that global is English at load; a global already Cyrillic stays (another Ukrainian addon's word).
+Lc.FROM_GLOBAL = { LM_PRIORITY_DESC0 = "DISABLE", LM_PRIORITY_DESC4 = "ALWAYS" }
 -- Its conditions named by a game global (Conditions.lua: name = INSTANCE): condition id -> that global.
 Lc.GLOBAL_CONDS = { instance = "INSTANCE", level = "LEVEL", map = "BRAWL_TOOLTIP_MAP",
     falling = "STRING_ENVIRONMENTAL_DAMAGE_FALLING" }
@@ -109,7 +127,10 @@ local function Build()
     if not L then return end
     built = true
     for k, uk in pairs(ns.UK or {}) do
-        if type(k) == "string" and k:find("^LM_") and not Lc.NEVER[k] then
+        local g = type(k) == "string" and Lc.FROM_GLOBAL[k]
+        local gs = g and rawget(_G, g)
+        local cyr = type(gs) == "string" and gs:find("[\208-\211][\128-\191]") ~= nil
+        if type(k) == "string" and k:find("^LM_") and not Lc.NEVER[k] and not cyr then
             local en = rawget(L, k)
             if (en == nil or type(en) == "string") and Lc.Usable(en or k, uk) then
                 EN[k], UK[k] = en, uk

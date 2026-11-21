@@ -14,5 +14,7 @@ data/uk.lua
 Locale.lua
 Tables.lua
 Copies.lua
+Fonts.lua
 Screen.lua
+Rows.lua
 Module.lua

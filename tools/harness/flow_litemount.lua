@@ -16,9 +16,9 @@ local function L() return LM().L end
 local CUTS = {
     usable = { "Locale.lua", '    if type(en) ~= "string" or type(uk) ~= "string" or en == "" or uk == "" then return false end\n',
                '    do return type(uk) == "string" end\n' },
-    restore = { "Screen.lua", "function S.Restore() Run(false) end", "function S.Restore() end" },
-    hold = { "Module.lua", '        U.SafeCall(ns.Tables.Sync)\n        U.SafeCall(ns.Screen.Apply)\n    end, "LiteMount")',
-             '        U.SafeCall(ns.Tables.Sync)\n    end, "LiteMount")' },
+    restore = { "Screen.lua", "    Run(false)\n    U.SafeCall(ns.Fonts.Restore)\n", "" },
+    hold = { "Module.lua", '        U.SafeCall(ns.Screen.Apply)\n        U.SafeCall(ns.Rows.Sync)\n    end, "LiteMount")',
+             '    end, "LiteMount")' },
     falling = { "Tables.lua",
                 "                if Want() and text == Lc.En(SLOT) and Lc.Word(SLOT) then text = Lc.Word(SLOT) end\n", "" },
     fields = { "Tables.lua", "            if want and d[p[2]] == en then d[p[2]] = uk\n", "            if false then\n" },

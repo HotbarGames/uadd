@@ -83,6 +83,7 @@ def game_b(check):
 MUTANTS = {
     "usable": ("spoiled", dict(bad=True), lambda q, c, M, K: S.spoiled(q, M)),
     "menu": ("menu", {}, lambda q, c, M, K: S.menu(q, M)),
+    "draw": ("menu", {}, lambda q, c, M, K: S.menu(q, M)),
     "hold": ("hold", {}, lambda q, c, M, K: S.hold(q, M)),
     "range": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
     "names": ("names", {}, lambda q, c, M, K: S.names(q, c, M, K)),

@@ -9,28 +9,63 @@ H.fontFiles[M.CUSTOM:lower()] = true
 
 -- The proof that a step has teeth: with M.cut set, Screen.lua runs without one fix (this run's copy, in memory
 -- only; the module's file is never changed). fault: lesson 26 (its SetText failing after it drew ours);
--- cache: lesson 12 (each frame's last answer); busy: our own SetText runs our handler again.
+-- cache: lesson 12 (each frame's last answer); busy: our own SetText runs our handler again. place: the
+-- destination line's hook; pinplace: the pinpoint name's map look-up (Words.lua); wait: a "not known yet"
+-- answer kept as if final, so the later ask never comes.
 local CUTS = {
     busy = { { "    busy = true\n    local ok, err", "local ok, err", "    local ok, err" } },
     fault = { { "    if not ok then U.Fault(", "return ok or TextOf(f) == text\n", "    return ok\n" },
               { "            if TextOf(f) ~= en then pcall(", "its SetText failed first\n", "" } },
-    cache = { { "    local uk                ", "st.ken, st.kuk, st.klook = text, uk, st.look end\n",
-                "    local uk = st.look(text)\n" } },
+    cache = { { "    local uk, wait          ", "st.kmaps = text, uk, st.look, maps end\n    end\n",
+                "    local uk, wait = st.look(text)\n" } },
+    place = { { "    if IsText(info) then Hook(info, ns.Place)", "\n", "" } },
+    pinplace = { { "    local place, wait = ns.Place(name)", "\n", "    local place, wait = nil, nil\n",
+                   file = "Words.lua" } },
+    wait = { { "        if not wait then st.ken", "\n", "        st.ken, st.kuk, st.klook, st.kmaps = text, uk, st.look, maps\n" } },
 }
 M.cut, M.wasCut = nil, false
+local hits = 0
 local runFile = H.runFile
 function H.runFile(addon, path, code)
-    if addon == "UADD_WaypointUI" and path == "Screen.lua" and M.cut then
-        local all = true
+    if addon == "UADD_WaypointUI" and M.cut then
         for _, c in ipairs(CUTS[M.cut]) do
-            local a = code:find(c[1], 1, true)
-            local b = a and select(2, code:find(c[2], a, true))
-            if a and b then code = code:sub(1, a - 1) .. c[3] .. code:sub(b + 1) else all = false end
+            if path == (c.file or "Screen.lua") then
+                local a = code:find(c[1], 1, true)
+                local b = a and select(2, code:find(c[2], a, true))
+                if a and b then
+                    code = code:sub(1, a - 1) .. c[3] .. code:sub(b + 1)
+                    hits = hits + 1
+                end
+            end
         end
-        M.wasCut = all
+        M.wasCut = hits == #CUTS[M.cut]
     end
     return runFile(addon, path, code)
 end
+
+-- The pin's map (Words.lua Place): the user waypoint on a made-up map tree, and a made-up UADD.UALL.Zone
+-- (lesson 20: the stub patches UADD.UALL, never the root). zones: English -> Ukrainian; wait: every answer
+-- is "not known yet".
+M.zones, M.waiting = {}, false
+function M.place(mapID)
+    local tree = { [7001] = { name = "Zorpwood Vale", parentMapID = 7000 },
+                   [7002] = { name = "Fizzle Marsh", parentMapID = 7000 },
+                   [7000] = { name = "Blatter Reach", parentMapID = 0 } }
+    local info = C_Map.GetMapInfo
+    if not M.mapInfo then M.mapInfo = info end
+    C_Map.GetMapInfo = function(id)
+        local t = tree[id]
+        if t then return { mapID = id, name = t.name, mapType = 3, parentMapID = t.parentMapID } end
+        return M.mapInfo(id)
+    end
+    C_Map.GetUserWaypoint = function() return mapID and { uiMapID = mapID, position = { x = 0.5, y = 0.5 } } end
+    UADD.UALL.Zone = function(en)
+        if M.waiting then return nil, true end
+        return M.zones[en]
+    end
+end
+function M.zone(en, uk) M.zones[en] = uk end
+function M.wait4(on) M.waiting = on and true or false end
 
 WaypointUIStandInFeed = { settings = {}, missing = {} }
 function M.feed(k, v) WaypointUIStandInFeed[k] = v end

@@ -2,8 +2,9 @@
 -- arrival time, the pinpoint's grey line). Words.lua: the look-up and the units; Screen.lua: the route (each
 -- ui-kit Text frame's own OnTextChanged event); Fonts.lua: a Cyrillic file on its own font objects.
 -- Waypoint UI has no licence file (all rights reserved): data/text01.lua keeps only hashes of its English.
--- Player and game names are never changed (lesson 13); its default pin names stay English, because they are
--- saved with the pin (lesson 14, tools/wp_rules.py). Any error turns the module off: English as it was.
+-- The player's names are never changed (lesson 13); its default pin names stay English in its data, because
+-- they are saved with the pin (lesson 14, tools/wp_rules.py). A pin named after its map shows the map's name
+-- from ClassicUA or UALL Forever where it is drawn (Words.lua Place). Any error turns the module off: English.
 local ADDON, ns = ...
 local U = UADD
 local TARGET = "WaypointUI"

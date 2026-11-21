@@ -55,7 +55,7 @@ def shipped():
     exact, temps = {}, {}
     for name in sorted(os.listdir(DATA)):
         with open(os.path.join(DATA, name), encoding="utf-8") as f:
-            for line in f:
+            for line in re.sub(r'" \.\.\n    "', "", f.read()).splitlines():   # joins make_mc_text's wrap() cuts
                 m = re.match(r'E\["([^"]+)"\] = "(.*)"$', line.rstrip("\n"))
                 if m:
                     exact[m.group(1)] = m.group(2)

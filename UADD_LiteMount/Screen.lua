@@ -8,10 +8,10 @@
 local _, ns = ...
 local U = UADD
 local Lc = ns.Locale
+local Guard = Lc.Guard                                -- kept at load (Locale.lua)
 local S = {}
 ns.Screen = S
 
-local KEY = "litemount"
 local DEPTH = 3
 local ROOTS = { "LiteMountBasePanel", "LiteMountGroupsPanel", "LiteMountRulesPanel", "LiteMountMountsPanel",
     "LiteMountMacroPanel", "LiteMountAdvancedPanel", "LiteMountFallingPanel", "LiteMountFallingAdd",
@@ -33,7 +33,8 @@ local IMPORT = "Import"                            -- its Import button: plain t
 -- text="ADD"): UALL Forever leaves them English there. Ours only on these frames, while the global is not
 -- Cyrillic; the global itself is never written (Lc.Global). Read again on each run.
 local GLOBALS = { "BRAWL_TOOLTIP_RULES", "STRING_ENVIRONMENTAL_DAMAGE_FALLING", "ADD", "DELETE", "EDIT",
-    "PET_RENAME", "CANCEL", "OKAY", "REVERT", "SETTINGS_DEFAULTS", "INSTANCE", "LEVEL", "BRAWL_TOOLTIP_MAP" }
+    "PET_RENAME", "CANCEL", "OKAY", "REVERT", "SETTINGS_DEFAULTS", "INSTANCE", "LEVEL", "BRAWL_TOOLTIP_MAP",
+    "MOUNTS", "MACROS", "GROUP", "UNAVAILABLE", "COMBAT", "ENABLE", "ENTER_MACRO_LABEL", "SEARCH" }
 
 local toUk, toEn = nil, nil
 local gUk, gEn = {}, {}
@@ -79,12 +80,15 @@ local function Swap(fs, want)
     if new then seen = seen + 1 end
     if new and new ~= t then
         fs:SetText(new)
+        U.SafeCall(ns.Fonts.Settle, fs)                -- its font: ours for Ukrainian, LiteMount's for English
         if want then ours = ours + 1 end
         return true
     end
     if want and Turn(t, false) then seen, ours = seen + 1, ours + 1 end
+    U.SafeCall(ns.Fonts.Settle, fs)
     return false
 end
+S.Swap = Swap
 
 -- Scroll lists (group, mount, profile and class names) and edit boxes (the player's text) are left alone.
 local function Skip(c)
@@ -113,9 +117,14 @@ local function Walk(f, depth, want)
     for _, r in ipairs(U.Regions(f)) do
         if not skip[r] and r.GetObjectType and r:GetObjectType() == "FontString" and Swap(r, want) then changed = true end
     end
-    if type(f.GetFontString) == "function" and Swap(f:GetFontString(), want) then changed = true end
+    if type(f.GetFontString) == "function" then
+        U.SafeCall(ns.Fonts.HookButton, f)             -- a label set later gets our font too
+        if Swap(f:GetFontString(), want) then changed = true end
+    end
     for _, c in ipairs(U.Children(f)) do
         if not skip[c] and not Skip(c) and Walk(c, depth - 1, want) then changed = true end
+        -- A search box's grey hint (SearchBoxTemplate: SEARCH) is its own; the box's text is the player's.
+        if not skip[c] and Skip(c) and Swap(rawget(c, "Instructions"), want) then changed = true end
     end
     return changed
 end
@@ -168,14 +177,17 @@ local function Run(want, only)
 end
 
 function S.Apply() Run(ns.WordsWanted()) end
-function S.Restore() Run(false) end               -- off: End runs before db.enabled is false
+function S.Restore()                               -- off: End runs before db.enabled is false
+    Run(false)
+    U.SafeCall(ns.Fonts.Restore)
+end
 function S.Count() return seen, ours end
 
 -- Its panels redraw some texts on show; after that ours go back on. Like the English going back, this must
 -- run once the module is off too, even after U.Safe turned it off for errors (lesson 19): then it only puts
 -- the English back, and an error there is swallowed.
 local function OnShowHook(name)
-    local safe = U.Safe(KEY, function() Run(true, name) end)
+    local safe = Guard(function() Run(true, name) end)  -- not U.Safe: "on" after an off for errors brings it back
     return function()
         local ok, want = pcall(ns.WordsWanted)
         if ok and want then return safe() end

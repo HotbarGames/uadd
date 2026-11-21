@@ -8,10 +8,10 @@
 local _, ns = ...
 local U = UADD
 local Lc = ns.Locale
+local Guard = Lc.Guard                                -- kept at load (Locale.lua)
 local T = {}
 ns.Tables = T
 
-local KEY = "litemount"
 
 -- Condition id -> its name key (the ones built with L at load; the area ones use a game word: English).
 local CONDS = {
@@ -271,7 +271,7 @@ local function Hook()
     local f = rawget(_G, "LiteMountFallingAdd")
     if type(f) ~= "table" or type(f.HookScript) ~= "function" then return end
     hooked = true
-    f:HookScript("OnShow", U.Safe(KEY, function() if Want() then T.Falling() end end))
+    f:HookScript("OnShow", Guard(function() if Want() then T.Falling() end end))
 end
 
 function T.Sync()

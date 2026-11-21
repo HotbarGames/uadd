@@ -1,4 +1,4 @@
--- Made by tools/make_mc_text.py build from Mastercraft 2.0.8. Do not edit: change the review files
+-- Made by tools/make_mc_text.py build from Mastercraft 2.0.9. Do not edit: change the review files
 -- (local/mastercraft/NN.txt) and build again. No English here: only hashes of it (UADD/Hash.lua) and
 -- our Ukrainian. sort: what each slot holds, v value, f free name, n game name, t our text, b blank.
 local _, ns = ...
@@ -6,6 +6,26 @@ local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil
 local M = ns.MC or { exact = {}, templates = {} }
 ns.MC = M
 local E, T = M.exact, M.templates
+T[#T + 1] = { id = "7:32a7c1ce", len = { 0, 5 }, hash = { "00001505", "0a7b1c56" }, kinds = { "s" }, uk = { 1, "/шт." }, sort = { "v" } }
+T[#T + 1] = { id = "7:36308b32", len = { 0, 5 }, hash = { "00001505", "0e03e5ba" }, kinds = { "s" }, uk = { 1, "Готово" }, sort = { "v" } }
+T[#T + 1] = { id = "7:889e7b7e", len = { 5, 0 }, hash = { "0fe02cc6", "00001505" }, kinds = { "s" }, uk = { "збиток ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "7:8b227988", len = { 5, 0 }, hash = { "10592050", "00001505" }, kinds = { "s" }, uk = { "бачили ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "7:9ae2be25", len = { 5, 0 }, hash = { "0fa849fc", "00001505" }, kinds = { "d" }, uk = { "рівень предм. ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "7:a657dfa8", len = { 5, 0 }, hash = { "0d512ebf", "00001505" }, kinds = { "d" }, uk = { "Сховати ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "7:ac58eefd", len = { 5, 0 }, hash = { "0fac64d4", "00001505" }, kinds = { "d" }, uk = { "предмет ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "7:ec810837", len = { 5, 0 }, hash = { "0e16373f", "00001505" }, kinds = { "s" }, uk = { "Надіслано ", 1 }, sort = { "t" } }
+T[#T + 1] = { id = "7:f3943faf", len = { 5, 0 }, hash = { "0e17e106", "00001505" }, kinds = { "d" }, uk = { "Показати ", 1 }, sort = { "v" } }
+T[#T + 1] = { id = "80:354b056f", len = { 10, 68 }, hash = { "fa358adc", "ca31fbe0" }, kinds = { "s" }, uk = { "|cffffb833", 1, "|r теж увімкнено — вимкніть один із них, якщо вони заважають одне одному." }, sort = { "f" } }
+T[#T + 1] = { id = "81:819c7226", len = { 0, 58, 19 }, hash = { "00001505", "9296e939", "06146a60" }, kinds = { "d", "d" }, uk = { "У мережі на вашому сервері й у вашій фракції гравців Mastercraft: ", 1, ", доступно майстрів: ", 2 }, sort = { "v", "v" } }
+T[#T + 1] = { id = "81:f01dc2e9", len = { 5, 4, 13, 24, 25, 0 }, hash = { "0d321cf9", "7c709788", "f4a85125", "c413e547", "bd00a6f4", "00001505" }, kinds = { "d", "d", "d", "d", "s" }, uk = { "Від ", 1, " до ", 2, ":  |cffeef0f5", 3, "|r матеріалів, ще купити |cffeef0f5", 4, "|r  -  вартість ", 5 }, sort = { "v", "v", "v", "v", "v" } }
+T[#T + 1] = { id = "81:fe5fadab", len = { 21, 58 }, hash = { "bd788bf2", "29261cc6" }, kinds = { "s" }, uk = { "Немає очок вміння від ", 1, " - сірі, щойно ви їх вивчите на Forever. Продовжуйте видобуток." }, sort = { "n" } }
+T[#T + 1] = { id = "85:3f692cb6", len = { 6, 3, 8, 62 }, hash = { "d146dc24", "0b8740f2", "2d9ab3ae", "10be3c06" }, kinds = { "d", "d", "d" }, uk = { "Вміння ", 1, " - ", 2, ". Приблизно ", 3, " {раз|рази|разів} - зелений із самого початку: не кожне виготовлення дає очко." }, sort = { "v", "v", "v" } }
+T[#T + 1] = { id = "85:88e353be", len = { 11, 28, 25, 15 }, hash = { "6200d57f", "32fa837e", "6a8b0607", "4f3a321f" }, kinds = { "s", "d", "d" }, uk = { "Клік: з'їсти ", 1, " - сидіти 10 секунд: +", 2, " до риболовлі на 15 хвилин (у ваших сумках: ", 3, ")." }, sort = { "n", "v", "v" } }
+T[#T + 1] = { id = "85:b4499002", len = { 15, 68 }, hash = { "293550c8", "20bf9f87" }, kinds = { "s" }, uk = { "Не вдалося знайти «", 1, "». Клацніть предмет із Shift у команді замість введення його назви." }, sort = { "n" } }
+T[#T + 1] = { id = "86:78962932", len = { 33, 50 }, hash = { "6d61e317", "4b6b3b43" }, kinds = { "s" }, uk = { "Ціни з Auctionator (оновлено ", 1, ") і Mastercraft. Значення подано після 5% комісії аукціону." }, sort = { "v" } }
+T[#T + 1] = { id = "86:799c88c7", len = { 28, 56 }, hash = { "483a0fdd", "ed3aed77" }, kinds = { "s" }, uk = { "Відкрити Mastercraft: |cffffd140", 1, "|r - змінити можна в «Прив'язки клавіш» гри, у розділі «Аддони»." }, sort = { "f" } }
+T[#T + 1] = { id = "86:a36fa116", len = { 9, 6, 5, 60 }, hash = { "5e6bda43", "5ae6609b", "0a7be5ec", "320495e2" }, kinds = { "d", "s", "s" }, uk = { "Прикріплено ", 1, " {стос|стоси|стосів}", 2, " для: ", 3, " - лист повний: надішліть його, потім натисніть ще раз для решти." }, sort = { "v", "b", "n" } }
+T[#T + 1] = { id = "86:d680037b", len = { 64, 20 }, hash = { "93c18048", "df9c0580" }, kinds = { "s" }, uk = { "Налаштування > Ціни: аукціон лише тоді, коли він платить принаймні на ", 1, " більше, ніж торговець." }, sort = { "v" } }
 T[#T + 1] = { id = "88:0ed75d39", len = { 35, 51 }, hash = { "448f8ffd", "f370bfc9" }, kinds = { "s" }, uk = { "Ваші ціни на аукціоні від ", 1, " - скануйте їх, коли наступного разу будете на аукціоні." }, sort = { "v" } }
 T[#T + 1] = { id = "89:280439c8", len = { 7, 8, 1, 1, 64 }, hash = { "9f736ad3", "c3b58f65", "0002b5c5", "0002b5c5", "30c6cf09" }, kinds = { "s", "d", "s", "s" }, uk = { "Видалити ", 1, " (", 2, " рівень, ", 3, " ", 4, ") і всі його збережені дані з Mastercraft? Це неможливо скасувати." }, sort = { "f", "v", "n", "n" } }
 T[#T + 1] = { id = "8:05494310", len = { 0, 6 }, hash = { "00001505", "5a317de7" }, kinds = { "d" }, uk = { 1, " {предмет|предмети|предметів}" }, sort = { "v" } }

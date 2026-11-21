@@ -1,4 +1,4 @@
--- Made by tools/make_mc_text.py build from Mastercraft 2.0.8. Do not edit: change the review files
+-- Made by tools/make_mc_text.py build from Mastercraft 2.0.9. Do not edit: change the review files
 -- (local/mastercraft/NN.txt) and build again. No English here: only hashes of it (UADD/Hash.lua) and
 -- our Ukrainian. sort: what each slot holds, v value, f free name, n game name, t our text, b blank.
 local _, ns = ...
@@ -6,6 +6,8 @@ local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil
 local M = ns.MC or { exact = {}, templates = {} }
 ns.MC = M
 local E, T = M.exact, M.templates
+E["149:af2480c9"] = "Предмети з позначкою Прив'язаний до душі ніколи не надсилаються на аукціон, а «Розчаклувати» радять лише коли ви маєте професію Накладання чарів - або коли предмет можна надіслати поштою тому, хто її має."
+E["14:0249446a"] = "Мін. вміння: будь-яке"
 E["14:0b82e685"] = "Поки ви ловите"
 E["14:0dc5e3e5"] = "Найближчий торговець"
 E["14:1f25f07a"] = "Копіювати в чат"
@@ -169,11 +171,3 @@ E["16:1b05fbcd"] = "З GatherMate2"
 E["16:2819252b"] = "Темний і округлий"
 E["16:47fe3e96"] = "Лишити мінікарту"
 E["16:53c0ee80"] = "Прибуток на аукціоні"
-E["16:605820a4"] = "Сховати цього гравця"
-E["16:63f7aaef"] = "Готово до здачі"
-E["16:681bb9af"] = "Уже знає"
-E["16:686b04cc"] = "У власності на акаунті"
-E["16:6d1e8b77"] = "Лише кнопки"
-E["16:72471091"] = "Безпечніші Майстри"
-E["16:78ff7868"] = "Кнопки, що вміщаються"
-E["16:7f18fc8c"] = "+ предмети без ціни"

@@ -43,6 +43,21 @@ our words to another addon. The logic is now the core helper `UADD/SushiPopups.l
 `python3 -m unittest tools.test_sushi_popups` fails on a popup of the installed addons whose global or body is not
 handled and not in ALLOW.
 
+**Lesson 19 again, in LiteMount (2026-11-21).** Its SetText hooks (the macro count, rows, the mount list, the
+Falling page) ran under `U.Safe`. After 5 errors the module went off, and `U.Safe` stays dead for the session, so
+after "/uadd litemount on" the count was ours once and then English again. Rule: a hook that must work again after
+"on" runs under `Lc.Guard` (pcall, `U.ReportError`, `U.Fault`) and checks `ns.WordsWanted()` itself, not Safe's off
+flag. Check: `CHAOS_ONLY=UADD_LiteMount python3 tools/harness/chaos.py` (off for errors, then on). TomTom's title
+and Forever Quest Pins' breadcrumb hooks have the same shape: not fixed yet.
+
+**Lesson 22 again, time bounds under load (2026-11-21).** Other projects' tests kept the PC's load at 12-50 on 8
+cores. Then Mastercraft's half-translation time (5.2-8.5 ms) and the orders 10 KB line failed "under 5 ms" on fine
+code: even CPU time grows when cores are shared. Rule: a time bound is measured against a reference job run in the
+same check (`tools/harness/clock.py`: fixed Lua string work). The bound is 5 ms times the reference's slowdown, never
+under 5 ms and never over 8 times. The slow pattern takes 280-460 ms, so it still fails by far. Check:
+`python3 -m unittest tools.test_halves` (`test_slow_fails`: a CPU busy-loop past the cap; `test_bound_follows_load`);
+`python3 tools/harness/chaos.py` with lesson 22's old pattern put back still fails "Mastercraft 10 KB under 5 ms".
+
 ## 28. Another addon's hook that writes over ours
 
 **What went wrong.** With ClassicUA on, the OpenMap zone title on the World Map stayed Ukrainian while Shift was
@@ -94,3 +109,55 @@ money as they are, and leaves the whole cell English when one part is missing.
 
 **Check.** `python3 tools/harness/run.py`, the "orders:" steps (`tools/harness/flow_mc_orders.py`): each card and
 row, a player named like our word, odd input, and a 10 KB line in under 5 ms.
+
+## 32. A button label that inherits a font without Cyrillic
+
+**What went wrong.** LiteMount's Profiles buttons showed boxes for our words (the owner's shots, 2026-11-21). Their
+template's label inherits GameFontNormal, and on Forever that font object has no Ukrainian letters. Our text was
+right; the font under it was not. The harness never looked at the font a text is drawn in, so nothing failed.
+
+**Rule.** A text we put on another addon's frame is drawn in a font with Cyrillic: set UADD's font on it, keep it when
+the addon sets its font object again (hook `SetFont` and `SetFontObject`), and give the addon's font back when off
+(`UADD_LiteMount/Fonts.lua`). Look at the template, not only at the text: a button's label inherits its font.
+
+**Check.** `python3 tools/harness/run.py`, "litemount: 9 no Cyrillic in a font without it"
+(`tools/harness/flow_litemount_shots.py`, `H.cyrBoxes`): no LiteMount line shows Cyrillic in a font without it, on,
+held and released; its mutant `sfont` takes the font fix out and wants that step to fail.
+
+## 33. A menu checkbox that draws its text in its own initializer
+
+**What went wrong.** Forever Quest Pins' World Map menu stayed English (the owner's shots, 2026-11-21). The game's
+menu checkbox draws its label in its own initializer, from the text it got when it was made. We changed the
+element's text with `SetElementText`, but nothing on screen read it again. Our stand-in menu never drew through
+initializers, so the harness saw our word and passed.
+
+**Rule.** For a client menu, add our own initializer that sets the font string the button draws
+(`button.fontString`, `Drawer` in `UADD_ForeverQuestPins/Menu.lua`). The stand-in draws through the initializers
+too (`HARNESS.menuApi` in `tools/harness/wow_frames2.lua`), so a test reads what is drawn, not what is stored.
+
+**Check.** `python3 tools/harness/run.py`, "fqp: 2 World Map menu" (`tools/harness/flow_fqp.lua`, `M.menu()` reads
+the drawn text); its mutant `draw` takes our initializer out and wants that step to fail.
+
+## 34. A game name the addon builds from the map API
+
+**What went wrong.** Waypoint UI showed zone names in English (the owner's shots, 2026-11-21). The name comes from
+`C_Map.GetMapInfo().name`, which is English on Forever. It travels from an OpenMap pin with no note, through
+TomTom, into Waypoint UI's info text and pinpoint. No locale table holds it, so the map stage never listed it.
+
+**Rule.** Tell such a name apart by its source: Latin text of at most 120 bytes that equals the waypoint's map, the
+player's map, or a map up to 5 levels above (`ns.Place` in `UADD_WaypointUI/Words.lua`). Translate it through
+`UADD.UALL.Zone`; we write no game names. Never cache a "wait" answer, and try again later (every 3 s, at most 10
+times). In the map stage, follow each shown text back to its source, not only to the locale table.
+
+**Check.** `python3 tools/harness/run.py`, "wp: 13" (`tools/harness/flow_wp_steps.py`, `M.place` in
+`tools/harness/flow_wp.lua`) and its mutants `place`, `pinplace`, `wait`; `python3 -m unittest
+tools.test_uall_routes` (`UADD_WaypointUI` asks the Zone route).
+
+**Lesson 34 again, in TomTom (2026-11-21).** TomTom's arrow showed "Tirisfal Glades" in English (the owner's shots).
+OpenMap gives TomTom the map's English name as the title of a pin with no note. We had fixed it only in Waypoint UI.
+Rule: a title an addon builds from the map API is a game name wherever it travels. Every module that shows a
+waypoint title asks for it through the core helper `U.Place` (`UADD/Place.lua`), only for the waypoint's or the
+player's map chain, through `UADD.UALL.Zone`. A hook that runs every frame keeps its last answer; it never keeps a
+"wait". When one fix fits several addons, follow the text to every addon that shows it. Check:
+`python3 tools/harness/run.py`, "tt: place 1-6" (`tools/harness/flow_tomtom_place.py`); its mutants `hook`, `map`,
+`cache`, `wait`, `back` and `tip` each take one fix out and want their step to fail. Also "wp: 13".
