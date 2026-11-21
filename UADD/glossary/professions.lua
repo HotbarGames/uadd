@@ -101,3 +101,12 @@ E{ id = "ui.faq", en = "FAQ", uk = "Запитання", note = "Page name; as a
 E{ id = "ui.merge", en = "Merge", uk = "Об'єднати", note = "Action: join imported data with yours. GatherMate2 text agent, 2026-11-20." }
 E{ id = "ui.overwrite", en = "Overwrite", uk = "Перезаписати", note = "Action: replace your data with the imported. GatherMate2 text agent, 2026-11-20." }
 E{ id = "ui.yards", en = "yards", uk = "ярдів", note = "Distance unit after a number (1 ярд, 2 ярди, 5 ярдів). GatherMate2 text agent, 2026-11-20." }
+-- Mastercraft 2.0.8 words (lead's choice, 2026-11-21; the owner may change them)
+E{ id = "prof.craft_order", en = { "Craft Order", "Craft Orders", "craft order" }, uk = "замовлення на виготовлення", note = "An order a player posts for a crafter to make an item. Mastercraft, 2026-11-21." }
+E{ id = "prof.crafter", en = { "Crafter", "crafter" }, uk = "майстер", note = "A player who makes items with a profession (many: майстри). Mastercraft, 2026-11-21." }
+E{ id = "prof.keeper", en = "Keeper", uk = "Зберігач", note = "Mastercraft: the one who keeps a shared list. Mastercraft, 2026-11-21." }
+E{ id = "prof.skill_road", en = "Skill Road", uk = "Дорога вмінь", note = "Mastercraft: the path of recipes to level a profession. 2026-11-21." }
+E{ id = "prof.loot_advisor", en = "Loot Advisor", uk = "Порадник зі здобичі", note = "Mastercraft: tells which loot to keep. Like gear.advisor «Порадник». 2026-11-21." }
+E{ id = "prof.tip", en = { "Tip", "tip" }, uk = "чайові", note = "Money a buyer adds for the crafter. Not a hint («порада»). Mastercraft, 2026-11-21." }
+E{ id = "prof.camping_object", en = "camping object", uk = "похідний предмет", note = "Mastercraft Camping: an object you set up at camp. 2026-11-21." }
+E{ id = "prof.catch_key", en = "catch key", uk = "підсікання", note = "Fishing: the key that hooks the fish. Mastercraft, 2026-11-21." }

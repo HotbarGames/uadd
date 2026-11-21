@@ -1,13 +1,13 @@
--- Attune's four StaticPopup dialogs in Ukrainian: EXPORT_ATTUNE_GUILD (copy the guild export),
--- SYNC_CONFIRM and SYNC_ATTUNE (a sync request sent or received) and ATTUNE_SHOW_URL (a web link).
--- The same way as UADD_Auctionator/Popup.lua:
---   * hooksecurefunc("StaticPopup_Show"): after the game has shown the dialog, its text and button
---     labels get our words and a font with Ukrainian letters (only texts Words.lua knows). The
---     player name in a sync question stays. StaticPopupDialogs is never written, nor any field of
---     the dialog. The edit box (the export string, the link) is never touched.
---   * The dialog grows or shrinks by what the text's height changed (SetHeight only; the game's
---     StaticPopup_Resize writes fields, so it is not called).
---   * When the dialog hides (or the game shows another question in it), its fonts go back.
+-- Attune's StaticPopup dialogs in Ukrainian, through the core helper UADD.Popups (UADD/Popups.lua):
+-- EXPORT_ATTUNE_GUILD (copy the guild export), SYNC_CONFIRM and SYNC_ATTUNE (a sync request sent or
+-- received), ATTUNE_SHOW_URL (a web link), ACHIEVEANNOUNCE_CONFIRM (the achievement survey question),
+-- INVITE_ATTUNE_RAID (a raid invite) and RENAME_ATTUNE_RAID (a raid's new name).
+--   * Their buttons hold Attune's own words (its AttuneLang: Yes, No, Accept, Reject, Save, Close): our
+--     glossary word while the field or the shown button holds that English, the English again on the hold
+--     key and off.
+--   * The shown dialog's text gets our words where Words.lua knows them, in a font with Ukrainian letters.
+--     The player name in a sync question stays. The edit box (the export string, the link, the raid name
+--     the player types) is never touched.
 --   * The hold key and "/uadd attune off": the English and the fonts back. Nothing in combat.
 
 local _, ns = ...
@@ -15,99 +15,36 @@ local U = UADD
 local P = {}
 ns.Popup = P
 
-local open = {}          -- dialog -> { which, text = FontString, parts = { { fs, en, uk } } }
-local hookedHide = {}    -- dialog -> true once its OnHide is hooked
-local installed = false
-local WHICH = { EXPORT_ATTUNE_GUILD = true, SYNC_CONFIRM = true, SYNC_ATTUNE = true, ATTUNE_SHOW_URL = true }
+local KEY = "attune"
+local WHICH = { EXPORT_ATTUNE_GUILD = true, SYNC_CONFIRM = true, SYNC_ATTUNE = true, ATTUNE_SHOW_URL = true,
+    ACHIEVEANNOUNCE_CONFIRM = true, INVITE_ATTUNE_RAID = true, RENAME_ATTUNE_RAID = true }
 
-local function Dialogs()
-    local out, n = {}, tonumber(rawget(_G, "STATICPOPUP_NUMDIALOGS")) or 4
-    for i = 1, n do
-        local d = rawget(_G, "StaticPopup" .. i)
-        if type(d) == "table" then out[#out + 1] = d end
-    end
-    return out
+-- Attune's English for one of its locale keys. rawget: AceLocale reports a missing key, and that report
+-- must never come from us. A key it has not set yet is the English itself (AceLocale's default).
+local function L(k)
+    local t = rawget(_G, "AttuneLang")
+    local v = type(t) == "table" and rawget(t, k) or nil
+    return type(v) == "string" and v or k
 end
 
-local function Button(d, i)
-    local name = d.GetName and d:GetName() or ""
-    local b = rawget(d, "button" .. i) or rawget(_G, name .. "Button" .. i)
-    if not b and type(rawget(d, "ButtonContainer")) == "table" and type(d.ButtonContainer.Buttons) == "table" then
-        b = d.ButtonContainer.Buttons[i]
-    end
-    return type(b) == "table" and b.GetFontString and b:GetFontString() or nil
-end
+U.Popups.Register(KEY, {
+    names = WHICH,
+    own = { Yes = "ui.yes", No = "ui.no", Accept = "ui.accept", Reject = "ui.reject", Save = "ui.save",
+        Close = "ui.close" },
+    L = L,
+    text = function(en) return ns.Words.Text(en) end,
+    wanted = function() return ns.WordsWanted() end,
+    fix = function(fs) ns.Fonts.Fix(fs) end,
+    back = function(fs) ns.Fonts.Back(fs) end,
+})
 
--- Its text and buttons as the game set them: English, or Ukrainian (uk) where we know the words.
-local function Show(d, rec, uk)
-    local h0 = rec.text and rec.text:GetHeight()
-    for _, p in ipairs(rec.parts) do
-        local want, other = uk and p.uk or p.en, uk and p.en or p.uk
-        if UADD.Plain(p.fs:GetText()) == other then p.fs:SetText(want) end
-        if uk then ns.Fonts.Fix(p.fs) else ns.Fonts.Back(p.fs) end
-    end
-    local h1 = rec.text and rec.text:GetHeight()
-    local h = d.GetHeight and d:GetHeight()
-    if h and h0 and h1 and h1 ~= h0 then d:SetHeight(h + h1 - h0) end
-end
+function P.Install() U.Popups.Sync(KEY) end
 
--- The dialog as the game left it, and forgotten.
-local function Forget(d)
-    local rec = open[d]
-    if not rec then return end
-    open[d] = nil
-    Show(d, rec, false)
-end
-
-local function OnShow(which)
-    for d, rec in pairs(open) do               -- the game put another question in one of ours
-        if not d:IsShown() or rawget(d, "which") ~= rec.which then U.SafeCall(Forget, d) end
-    end
-    if not WHICH[which] or not ns.WordsWanted() then return end
-    if InCombatLockdown and InCombatLockdown() then return end
-    for _, d in ipairs(Dialogs()) do
-        if d:IsShown() and rawget(d, "which") == which then
-            if open[d] then Forget(d) end      -- shown again: the game set its English again
-            local name = d.GetName and d:GetName() or ""
-            local text = rawget(d, "text") or rawget(_G, name .. "Text")
-            local rec = { which = which, text = text, parts = {} }
-            for _, fs in ipairs({ text, Button(d, 1), Button(d, 2), Button(d, 3) }) do
-                local en = fs and fs.GetText and UADD.Plain(fs:GetText())
-                local uk = en and ns.Words.Text(en)
-                if uk then rec.parts[#rec.parts + 1] = { fs = fs, en = en, uk = uk } end
-            end
-            if rec.parts[1] then
-                open[d] = rec
-                if not hookedHide[d] and d.HookScript then
-                    hookedHide[d] = true
-                    d:HookScript("OnHide", function(self) U.SafeCall(Forget, self) end)
-                end
-                Show(d, rec, true)
-            end
-        end
-    end
-end
-
-function P.Install()
-    if installed or type(StaticPopup_Show) ~= "function" then return end
-    installed = true
-    hooksecurefunc("StaticPopup_Show", function(which) U.SafeCall(OnShow, which) end)
-end
-
--- The hold key: English or ours on the shown dialogs.
-function P.Sync()
-    local uk = ns.WordsWanted()
-    for d, rec in pairs(open) do U.SafeCall(Show, d, rec, uk) end
-end
+-- The hold key: English or ours on the fields and the shown dialogs.
+function P.Sync() U.Popups.Sync(KEY) end
 
 -- "/uadd attune off": English and the fonts back.
-function P.Restore()
-    for d in pairs(open) do U.SafeCall(Forget, d) end
-end
+function P.Restore() U.Popups.Off(KEY) end
 
 -- For the checks: how many dialogs show our words.
-function P.Count()
-    local n = 0
-    for _ in pairs(open) do n = n + 1 end
-    return n
-end
+function P.Count() return U.Popups.Count(KEY) end

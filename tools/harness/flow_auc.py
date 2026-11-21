@@ -116,15 +116,15 @@ def chat_dialogs_tips(check, c, M, Cyr, u, uo):
     n = int(name.replace("AuctionatorDialog", ""))
     _eq(check, "own dialog made later: Ukrainian at once", M.text("dialog", n, "text"), u("CONFIRM_UNHIDE_ALL"))
     check("own dialog: Cyrillic font", Cyr(M.font("dialog", n, "text")[0]), M.font("dialog", n, "text"))
-    lua = c.lua.globals()
-    _eq(check, "own dialog: game's ACCEPT / CANCEL stay", M.text("dialog", n, "acceptButton") + "|" + M.text("dialog", n, "cancelButton"),
-        txt(lua.ACCEPT) + "|" + txt(lua.CANCEL))
+    gl = c.lua.globals().UADD.Glossary.Text
+    ours = txt(gl("ui.accept")) + "|" + txt(gl("ui.cancel"))   # the globals are English: ours (flow_auc_popup.py)
+    _eq(check, "own dialog: the game's ACCEPT / CANCEL ours", M.text("dialog", n, "acceptButton") + "|" + M.text("dialog", n, "cancelButton"),
+        ours)
     M.dialogHide(n)
     M.confirmPost()
     _eq(check, "popup: question, link kept", M.text("popup", "text"), u("CONFIRM_POST_LOW_PRICE") % link)
     check("popup: Cyrillic font", Cyr(M.font("popup", "text")[0]), M.font("popup", "text"))
-    _eq(check, "popup: buttons stay the game's", M.text("popup", "button1") + "|" + M.text("popup", "button2"),
-        txt(lua.ACCEPT) + "|" + txt(lua.CANCEL))
+    _eq(check, "popup: the game's buttons ours", M.text("popup", "button1") + "|" + M.text("popup", "button2"), ours)
     M.tooltip(3)
     _eq(check, "tooltip: item name untouched", M.text("tip", 1), "Linen Cloth")
     _eq(check, "tooltip: Vendor + count", M.text("tip", 2), u("VENDOR") + cnt)

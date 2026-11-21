@@ -66,7 +66,11 @@ T["Choose Options"] = "Обрати налаштування"
 -- The page labels that Config.lua uses too are in uk_config.lua (one wording for both).
 T["Quest categories"] = "Категорії завдань"
 
+-- Sparkle.lua
+T["Quest item sparkles are off. Restart the game to remove them; /reload is not enough."] = "Блиск предметів завдань вимкнено. Щоб він зник, перезапустіть гру; /reload не досить."
+
 -- What's New (WhatsNew.lua lines, and the header printed by Setup.lua)
--- stays English: the line that names two quests (game names are ClassicUA's or UALL Forever's, lesson 9).
+-- stays English: a line that quotes quest names (game names are ClassicUA's or UALL Forever's, lesson 9).
 T["What is new in %s:"] = "Що нового у %s:"
-T["Show a quest title once on a map pin when several quests at that spot share it."] = "Якщо в одному місці кілька завдань мають однакову назву, на значку вона показується один раз."
+T["Let Shift-click hide quest pins on world and continent maps, where pins ignored clicks so the map could still be dragged. Pin tooltips there now mention Shift-click."] = "Shift-клік тепер ховає значки завдань і на картах світу й континентів. Раніше там значки не реагували на кліки, щоб карту можна було тягнути. Підказки значків там тепер згадують Shift-клік."
+T["Recover hidden quest pins saved before 1.1.0. Those lists were keyed by realm name, so they looked empty after 1.1.0 changed the character key."] = "Сховані значки завдань, збережені до 1.1.0, тепер відновлюються. Ці списки були прив'язані до назви сервера, тож після 1.1.0, де змінився ключ персонажа, вони здавалися порожніми."

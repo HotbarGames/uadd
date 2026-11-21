@@ -53,8 +53,15 @@ Lc.WITH_GLOBAL = { LM_EVERY_TIME = "DEFAULT", LM_SUMMON_STYLE_PRIORITY = "DEFAUL
 -- SlashCommand.lua uidebug). Switched where the line is drawn (Copies.lua), through Lc.Unglue.
 Lc.GLUED = { { "CHAT", " + ", "LM_ON_SCREEN_DISPLAY" }, { "BUG_CATEGORY5", " ", "LM_DEBUGGING_ENABLED" },
     { "BUG_CATEGORY5", " ", "LM_DEBUGGING_DISABLED" } }
--- Not L keys (Tables.lua, Screen.lua): its key binding names and one button.
-Lc.EXTRA = { BINDING_1 = true, BINDING_2 = true, BINDING_3 = true, BINDING_4 = true, Import = true }
+-- Not L keys (Tables.lua, Screen.lua): its key binding names and one button; and the game globals it shows on its
+-- own frames (Lc.Global): two page names, its buttons, its binding dropdowns, four condition names.
+Lc.EXTRA = { BINDING_1 = true, BINDING_2 = true, BINDING_3 = true, BINDING_4 = true, Import = true,
+    BRAWL_TOOLTIP_RULES = true, STRING_ENVIRONMENTAL_DAMAGE_FALLING = true, ADD = true, DELETE = true, EDIT = true,
+    PET_RENAME = true, CANCEL = true, OKAY = true, REVERT = true, SETTINGS_DEFAULTS = true, KEY_BINDING = true,
+    INSTANCE = true, LEVEL = true, BRAWL_TOOLTIP_MAP = true }
+-- Its conditions named by a game global (Conditions.lua: name = INSTANCE): condition id -> that global.
+Lc.GLOBAL_CONDS = { instance = "INSTANCE", level = "LEVEL", map = "BRAWL_TOOLTIP_MAP",
+    falling = "STRING_ENVIRONMENTAL_DAMAGE_FALLING" }
 
 local EN, UK, keys, count = {}, {}, {}, 0    -- key -> English (nil: none); key -> uk; sorted keys
 local toUk, toEn, values = {}, {}, {}        -- shown English -> uk (false: two differ); uk -> English
@@ -145,6 +152,25 @@ local function Cyr(g)
     end
     local s = rawget(_G, g)
     return type(s) == "string" and s:find("[\208-\211][\128-\191]") ~= nil
+end
+
+-- A game global of Lc.EXTRA as LiteMount shows it: its text and our word while it is not Cyrillic (any: also
+-- then, to put the text back), else nil. Our word goes only on LiteMount's own frames and fields; the global
+-- itself is never written.
+function Lc.Global(g, any)
+    local en = rawget(_G, g)
+    if type(en) ~= "string" or (Cyr(g) and not any) then return nil end
+    local uk = Lc.Extra(g, en)
+    if uk then return en, uk end
+    return nil
+end
+-- The text of a condition name of Lc.GLOBAL_CONDS that is our word, or nil.
+function Lc.GlobalBack(t)
+    for _, g in pairs(Lc.GLOBAL_CONDS) do
+        local en, uk = Lc.Global(g, true)
+        if uk and t == uk then return en end
+    end
+    return nil
 end
 
 -- The keys of Lc.WITH_GLOBAL: our word while its game globals are Cyrillic, else the English.

@@ -1,7 +1,8 @@
 -- Ukrainian for Forever Quest Pins: the L keys used in its Config.lua (settings panel, /fqp help, map filter menu).
 -- stays English (debug only, not written): the /fqp help lines for nameplatedebug, stats, settings, wipe, apis, why,
 -- available; the stats/settings/wipe/why/available output lines ("QuestieDB %s | ...", "Usage: /fqp why <questID>",
--- "would pin", "hidden", "Would pin on map ", "  count ", ...).
+-- "would pin", "would paint on map", "hidden", "Would pin on map ", "  count ", "  auto-accept %s | ...",
+-- "  hidden quest pins on this character: %d", ...), and the /fqp wipe how-to (its "Close the game..." lines).
 local _, ns = ...
 local T = ns.UK or {}
 ns.UK = T
@@ -66,6 +67,12 @@ T["  /fqp hidden   List quest pins hidden with Shift-click on this character"] =
 T["  /fqp unhide <id|all> Restore one or all hidden quest pins"] = "  /fqp unhide <id|all> Повернути один або всі сховані значки"
 T["  /fqp debug    Toggle debug tooltips and chat diagnostics"] = "  /fqp debug    Підказки й повідомлення для налагодження"
 T["  /fqp refresh  Rebuild pins on the current map"] = "  /fqp refresh  Перебудувати значки на поточній карті"
+T["  /fqp nearest  Select the nearest tracked quest"] = "  /fqp nearest  Вибрати найближче відстежуване завдання"
+
+-- /fqp nearest replies
+T["Select nearest quest is unavailable in combat."] = "Вибір найближчого завдання недоступний у бою."
+T["Selected the nearest quest."] = "Вибрано найближче завдання."
+T["No tracked quest with a location was found."] = "Не знайдено відстежуваного завдання з відомим місцем."
 
 -- World map filter menu
 T["Quest start"] = "Початок завдання"
@@ -142,6 +149,31 @@ T["Only auto-accept quests within the level range around your level. Unknown que
 T["Don't auto-accept grey quests"] = "Не приймати автоматично сірі завдання"
 T["Skip quests the game shows as grey (trivial) for your level. You can still accept them manually."] = "Пропускати завдання, які гра показує сірими (низькорівневими) для вашого рівня. Їх усе одно можна взяти вручну."
 T["Turn in completed quests automatically. Does not pick when there are multiple rewards. Hold Shift to skip."] = "Автоматично здавати виконані завдання. Не здає, якщо є кілька нагород. Утримуйте Shift, щоб пропустити."
+
+-- Quest tracker (its settings page, and the tracker header's right-click menu in Tracker.lua). The sort and
+-- filter names sit in its own tables, made at load (Locale.lua switches them there).
+-- stays English: L["Other"], the tracker's group for quests with no zone. It is also the key of that group's
+-- collapsed state, which Forever Quest Pins saves; the zone groups' names are game names (UALL Forever's tracker).
+T["Quest tracker"] = "Трекер завдань"
+T["Group tracked quests by zone and add sort and filter options to Blizzard's tracker."] = "Групувати відстежувані завдання за зонами й додати сортування та фільтри до трекера Blizzard."
+T["Enhance quest tracker"] = "Покращений трекер завдань"
+T["Sort quests"] = "Сортувати завдання"
+T["Blizzard order"] = "Порядок Blizzard"
+T["Distance"] = "Відстань"
+T["Level"] = "Рівень"
+T["Title"] = "Назва"
+T["Show quests"] = "Показувати завдання"
+T["All tracked quests"] = "Усі відстежувані завдання"
+T["Current zone only"] = "Лише поточна зона"
+T["Instance quests"] = "Завдання в підземеллях"
+T["Completed quests only"] = "Лише виконані завдання"
+T["Select nearest quest"] = "Вибирати найближче завдання"
+T["Super-track the closest tracked quest and update it as you move."] = "Робити найближче відстежуване завдання пріоритетним і оновлювати вибір, поки ви рухаєтеся."
+
+-- Interface
+T["Interface"] = "Інтерфейс"
+T["Show quest item sparkles"] = "Показувати блиск предметів завдань"
+T["Keeps the game's quest item sparkle on. The same setting also makes quest givers sparkle. Turning it off requires a full game restart; /reload is not enough."] = "Тримає ввімкненим ігровий блиск предметів завдань. Це саме налаштування додає блиск і тим, хто видає завдання. Щоб вимкнути блиск, потрібен повний перезапуск гри; /reload не досить."
 
 -- Other
 T["Hide quest tracker in combat"] = "Ховати трекер завдань у бою"

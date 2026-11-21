@@ -5,6 +5,7 @@ local E = UADD.Glossary.Add
 E{ id = "ui.close", en = "Close", uk = "Закрити", note = "Button that closes a window. Not 'near' (that is 'Поруч')." }
 E{ id = "ui.back", en = "Back", uk = "Назад", note = "Button that returns to the previous page. Not the gear slot (that is gear.cloak)." }
 E{ id = "ui.cancel", en = "Cancel", uk = "Скасувати", note = "Button that stops an action and closes the dialog." }
+E{ id = "ui.accept", en = "Accept", uk = "Прийняти", note = "Button that agrees to the question and closes the dialog. UALL Forever's word for the game's Accept (UALLF/UI.lua); first used in Auctionator's dialogs, 2026-11-21." }
 E{ id = "ui.ok", en = { "OK", "Okay" }, uk = "Гаразд", note = "Button that agrees and closes the dialog." }
 E{ id = "ui.yes", en = "Yes", uk = "Так", note = "Answer button in a yes/no dialog." }
 E{ id = "ui.no", en = "No", uk = "Ні", note = "Answer button in a yes/no dialog." }
@@ -13,6 +14,11 @@ E{ id = "ui.disable", en = "Disable", uk = "Вимкнути", note = "Action: t
 E{ id = "ui.show", en = "Show", uk = "Показати", note = "Action: make a frame or icon visible." }
 E{ id = "ui.hide", en = "Hide", uk = "Сховати", note = "Action: make a frame or icon invisible. Not 'a hiding place'." }
 E{ id = "ui.reset", en = "Reset", uk = "Скинути", note = "Action: put settings or a frame back to the start values." }
+E{ id = "ui.reject", en = "Reject", uk = "Відхилити", note = "Button that says no to an invite or offer and closes the dialog. UALL Forever's word for the game's Reject (UALLF/UI.lua); first used in Attune's raid invite, 2026-11-21." }
+E{ id = "ui.save", en = "Save", uk = "Зберегти", note = "Button that keeps what was typed or changed. UALL Forever's word for the game's Save (UALLF/UI.lua); first used in Attune's raid rename dialog, 2026-11-21." }
+E{ id = "ui.empty", en = "Empty", uk = "Порожньо", note = "State: a list or slot holds nothing. UALL Forever's word for the game's EMPTY (UALLF/UI.lua); first used on Auctionator's shopping lists, 2026-11-21." }
+E{ id = "ui.unlock", en = "Unlock", uk = "Відкрити", note = "Button that unlocks something locked (Bagnon's vault). UALL Forever's word for the game's UNLOCK (UALLF/UI.lua), 2026-11-21." }
+E{ id = "ui.leave", en = "Leave", uk = "Покинути", note = "Button that leaves a place or a group (Bagnon's vault). UALL Forever's word for the game's CHAT_LEAVE (UALLF/UI.lua), 2026-11-21." }
 E{ id = "ui.delete", en = "Delete", uk = "Видалити", note = "Button that removes something for good (a profile, a note)." }
 E{ id = "ui.import", en = "Import", uk = "Імпорт", note = "Button or tab that loads data from somewhere else." }
 E{ id = "ui.search", en = "Search", uk = "Пошук", note = "Search button, search box label or search tab." }
@@ -82,3 +88,11 @@ E{ id = "ui.profile_reset", en = "Reset Profile", uk = "Скинути проф�
 E{ id = "ui.profile_delete", en = "Delete a Profile", uk = "Видалити профіль", note = "Heading or drop-down for deleting a profile." }
 E{ id = "ui.profile_manage", en = "Manage Profiles", uk = "Керування профілями", note = "Heading of the profiles page." }
 E{ id = "ui.classic_look", en = "Classic", uk = "Класика", note = "Name of a look in a list of styles or themes (bar text layout, level card theme). A noun, so it fits any gender. Not the OpenMap map choice (map.classic_map)." }
+
+-- Buttons and page names first needed by LiteMount (lead's choice, 2026-11-21; the owner may change them)
+E{ id = "ui.add", en = "Add", uk = "Додати", note = "Button: add an item to a list. LiteMount, 2026-11-21." }
+E{ id = "ui.edit", en = "Edit", uk = "Змінити", note = "Button: change the picked item. LiteMount, 2026-11-21." }
+E{ id = "ui.revert", en = "Revert", uk = "Відкотити", note = "Button: undo changes not saved yet. LiteMount, 2026-11-21." }
+E{ id = "ui.defaults", en = "Defaults", uk = "Типові", note = "Button: put settings back to defaults (short form of «Типові налаштування»). LiteMount, 2026-11-21." }
+E{ id = "ui.rename", en = "Rename", uk = "Перейменувати", note = "Button or menu item: give a new name. LiteMount, 2026-11-21." }
+E{ id = "ui.rules_page", en = "Rules", uk = "Правила", note = "Page of rules that pick what happens (LiteMount's mount rules). lead's choice, 2026-11-21." }

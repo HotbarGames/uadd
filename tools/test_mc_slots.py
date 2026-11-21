@@ -25,7 +25,13 @@ GAME = {"zone", "zoneName", "subzone", "subZone", "race", "class", "className", 
         "profession", "ProfName", "itemName", "ItemName", "GetItemInfo", "recipeName", "RecipeName",
         "npc", "npcName", "vendor", "trainer", "spellName", "GetSpellInfo", "questName", "mapName"}
 # (English key, slot): checked by hand, the name in the code is not a game name there.
-ALLOW = {}
+ALLOW = {
+    # Mastercraft 2.0.8, Tabs/Alts.lua, a move row (from one character to another): its local ClassName(c)
+    # gives the character's own name (ns.CharName: the name and the surname the player picked) in its class
+    # colour, never the class's name. A player's name: free (F), kept as it is.
+    ("48:2da42a30", 1): "the character an item moves from: its name in class colour",
+    ("48:2da42a30", 3): "the character it moves to: its name in class colour",
+}
 
 
 def shipped():

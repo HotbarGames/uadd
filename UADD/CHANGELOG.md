@@ -22,8 +22,18 @@
   при першому запуску і сповіщення про вступне завдання українською.
 - New module UADD_LiteMount: LiteMount's settings, rules, mount lists, menus and dialogs are in Ukrainian.
   Новий модуль UADD_LiteMount: налаштування LiteMount, його правила, списки маунтів, меню й діалоги українською.
-- LayerSwap: updated for 1.14.41; its new texts are in Ukrainian.
-  LayerSwap: оновлено для 1.14.41; його нові тексти українською.
+- LayerSwap: updated for 1.14.42; its new texts are in Ukrainian.
+  LayerSwap: оновлено для 1.14.42; його нові тексти українською.
+- Auto Potion: updated for 4.1.1; its new texts are in Ukrainian.
+  Auto Potion: оновлено для 4.1.1; його нові тексти українською.
+- Dungeon Journal: updated for 2.1.2; its new texts are in Ukrainian.
+  Dungeon Journal: оновлено для 2.1.2; його нові тексти українською.
+- Mastercraft: updated for 2.0.8; its new texts are in Ukrainian.
+  Mastercraft: оновлено для 2.0.8; його нові тексти українською.
+- OpenMap: updated for v0.8.11; its new texts are in Ukrainian. With ClassicUA, the zone name on the World Map
+  now shows in English while you hold the show-original key.
+  OpenMap: оновлено для v0.8.11; його нові тексти українською. З ClassicUA назва зони на карті світу тепер
+  показується англійською, поки ви тримаєте клавішу оригіналу.
 - Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
   Ukrainian; pick another language and that language shows whole.
   Mastercraft: «Українська» є в його власному меню мов (кнопка з глобусом). Оберіть її, щоб читати Mastercraft

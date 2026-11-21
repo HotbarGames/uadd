@@ -187,7 +187,17 @@ Apply = function(fs)
     if busy then return end
     local raw, up = English(fs)
     local uk, waited
-    if ns.WordsWanted() and type(raw) == "string" then uk, waited = W.Try(raw) end
+    if ns.WordsWanted() and type(raw) == "string" then
+        -- A raw cell whose words are glued to a player's name or note (Raw.lua) has its own reader, which
+        -- knows the layout; any error there leaves Mastercraft's English.
+        local own = rawget(fs, "mcWords")
+        if type(own) == "function" then
+            local ok, a, b = pcall(own, raw)
+            if ok and (a == nil or type(a) == "string") then uk, waited = a, b and true or false end
+        else
+            uk, waited = W.Try(raw)
+        end
+    end
     if uk or not waited then retry[fs] = nil else Later(fs, raw) end
     if uk and up then uk = W.Upper(uk) end
     -- No Cyrillic font: Mastercraft's English stays (no boxes), and it is not a missed text.

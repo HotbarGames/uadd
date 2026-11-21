@@ -162,3 +162,53 @@ function C.tip(line)
     GameTooltip:Hide()
     return got
 end
+
+-- The craft orders board and cards (raw strings, Raw.lua's readers): made, then found on the next frame.
+function C.orders()
+    S().Orders()
+    H.step(0.05) H.step(0.05)
+end
+local function Cell(card, field) return S().orders[card][field] end
+function C.ordSet(card, field, text)
+    local fs = Cell(card, field)
+    fs:SetText(text)
+    return fs:GetText() or ""
+end
+function C.ordGet(card, field) return Cell(card, field):GetText() or "" end
+function C.ordCyr(card, field) return UADD.IsCyrFont((Cell(card, field):GetFont())) and true or false end
+-- A board row's buyer cell, as Mastercraft fills it: "you" on your own order (row.mine set first).
+function C.ordBuyer(text, mine)
+    local row = S().orders.row
+    row.mine = mine and 1 or nil
+    row.buyer:SetText(text)
+    return row.buyer:GetText() or ""
+end
+
+-- Our Ukrainian for a few of the board's words, for these checks only (whatever the data has today):
+-- a text taught here wins over the data in Words.Try, the path every reader takes.
+local taught, wrapped = {}, false
+function C.teach(en, uk)
+    taught[en] = uk
+    if wrapped then return end
+    wrapped = true
+    local W = NS().Words
+    local real = W.Try
+    W.Try = function(s)
+        if taught[s] then return taught[s], false end
+        return real(s)
+    end
+end
+-- A reader alone (Raw.lua R.Reader): its Ukrainian, or "" when the line stays English.
+function C.read(kind, text)
+    local R = NS().Raw.Reader
+    local fn = kind == "piece" and R.Piece or kind == "age" and R.Age or kind == "deal" and R.Deal
+        or kind == "gaps" and R.Gapped() or R.Gapped(R.Who)
+    return fn(text) or ""
+end
+
+-- The new-order toast (a named window made late, one of Mastercraft's own strings).
+function C.toast(text)
+    S().Toast(text)
+    H.step(0.05) H.step(0.05)
+    return S().texts.toast:GetText() or ""
+end

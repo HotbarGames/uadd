@@ -9,6 +9,7 @@ local MOD = "UADD_ForeverQuestPins"
 local CAT = "Forever Quest Pins"
 local CYR = "[\208-\211]"
 local function NS() return H.ns[MOD] end
+M.subs = {}                                      -- its pages under the main one (flow_fqp_pages.lua)
 
 -- The proof that a step has teeth: with M.cut set, one file runs without one fix (this run's copy, in memory
 -- only; the module's file is never changed). Each: { file, plain text found, its replacement }.
@@ -23,6 +24,9 @@ local CUTS = {
     fault = { "Menu.lua", "    if not ok then U.Fault(KEY, err) end\n", "" },
     range = { "Screen.lua", '    local head, tail = t:match("^(.-)( %(%d+%-%d+%))$")\n', "    local head, tail = nil, nil\n" },
     tiphook = { "Screen.lua", '        f:HookScript("OnEnter", TipHook)\n', '        f:HookScript("OnEnter", SafeTip)\n' },
+    pages = { "Screen.lua", "    Subs(main)\n", "" },
+    rename = { "Screen.lua", "    for _, cat in ipairs(subs) do U.SafeCall(Rename, cat, want) end\n", "" },
+    labels = { "Locale.lua", "                    t[k] = uk\n", "" },
     plain = { "Breadcrumb.lua",
               '    if type(t) ~= "string" or type(word) ~= "string" or word == QUEST then return t end\n',
               "    do return t end\n" },
@@ -110,11 +114,22 @@ local function Root(which)
     end
     return rawget(_G, which == "setup" and "ForeverQuestPinsSetup" or "ForeverQuestPinsBreadcrumb")
 end
+-- "canvas": its main page and every page under it.
+local function Roots(which)
+    local out = { Root(which) }
+    if which == "canvas" then for _, c in ipairs(M.subs) do out[#out + 1] = c.frame end end
+    return out
+end
+local function CollectAll(which)
+    local out = {}
+    for _, f in ipairs(Roots(which)) do Collect(f, out, 0) end
+    return out
+end
 function M.there(which) local f = Root(which) return f ~= nil and (which ~= "canvas" or f.built == true) end
 
 -- The canvas text with the player's level range glued on (" (50-61)"), or nil.
 function M.label()
-    for _, t in ipairs(Collect(Root("canvas"), {}, 0)) do
+    for _, t in ipairs(CollectAll("canvas")) do
         if t:find(" %(%d+%-%d+%)$") then return t end
     end
     return nil
@@ -136,7 +151,7 @@ end
 -- (how many texts, how many Cyrillic, the texts we have a word for that still show English, the Cyrillic ones;
 -- both "|"-joined).
 function M.scan(which)
-    local all, cyr, miss = Collect(Root(which), {}, 0), {}, {}
+    local all, cyr, miss = CollectAll(which), {}, {}
     for _, t in ipairs(all) do
         if t:find(CYR) then cyr[#cyr + 1] = t
         elseif NS().Locale.Uk(UADD.Plain(t) or t) then miss[#miss + 1] = t end
@@ -160,8 +175,11 @@ tip.SetOwner = function(self, owner) self.__owner = owner Clear(self) end
 tip.SetText = function(self, t) Clear(self) Add(self, t) end
 tip.AddLine = function(self, t) Add(self, t) end
 
+-- The settings window opened on its main page, then each page under it (each builds on its first show).
 function M.openCanvas()
     SettingsPanel:Show()
+    SettingsPanel:SelectCategory(Settings.GetCategory(CAT))
+    for _, c in ipairs(M.subs) do SettingsPanel:SelectCategory(c) end
     SettingsPanel:SelectCategory(Settings.GetCategory(CAT))
 end
 
@@ -187,7 +205,7 @@ function M.tips()
         end
         for _, c in ipairs(UADD.Children(f)) do Visit(c, depth + 1) end
     end
-    Visit(Root("canvas"), 0)
+    for _, f in ipairs(Roots("canvas")) do Visit(f, 0) end
     return shown, cyr
 end
 

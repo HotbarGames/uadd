@@ -31,6 +31,7 @@ function M.zone(en)
 end
 function M.uallf() return (UADD.UALL and UADD.UALL.Zone and UADD.UALL.Zone("Tirisfal Glades")) ~= nil end
 function M.glossary(id) return UADD.Glossary.Text(id) end
+function M.cuaOff() if CUA_LABEL then CUA_LABEL.on = false end end
 """
 
 
@@ -94,4 +95,62 @@ def run(s, M, check):
     s.uadd("openmap on")
     on = _shown(M, RFK, "24-33")
     check("map label, /uadd openmap on: Ukrainian again", on == (f"{rfk_uk} {RED}(24-33)|r", fish_uk), on)
+    classicua(s, M, check, rfk_uk)
     _shown(M, None)   # the cursor off the map: the label is empty
+
+
+# A HARNESS STAND-IN for ClassicUA's world-map label hook on Forever (its frame_hooks.lua, hook_forever_zone_text):
+# a SetText hook on the label's Name, put on after ours (ClassicUA hooks at PLAYER_ENTERING_WORLD, we at
+# PLAYER_LOGIN). It cuts the text at the first colour code, swaps the name for its word and sets "<word><levels>"
+# again, with its own flag down meanwhile. It does not know the hold key. Off (CUA_LABEL.on = false) after the step.
+CUA_HOOK = r"""
+CUA_LABEL = { on = true, words = { ["Stranglethorn Vale"] = "Терниста долина" } }
+local allowed = true
+hooksecurefunc(OpenMapStandIn.label.Name, "SetText", function(self, text)
+    if not CUA_LABEL.on or not allowed or type(text) ~= "string" then return end
+    local name, levels = text:match("^(.-)(|c.*)$")
+    name = name or text
+    local uk = CUA_LABEL.words[(name:gsub("^%s+", ""):gsub("%s+$", ""))] or name
+    if uk ~= name then allowed = false self:SetText(uk .. (levels or "")) allowed = true end
+end)
+"""
+STV, STV_UK = "Stranglethorn Vale", "Терниста долина"
+
+
+def classicua(s, M, check, rfk_uk):
+    """ClassicUA's own hook writes its word over OpenMap's zone line ("Терниста долина(30-45)", the owner,
+    2026-11-21). The hold key must still give OpenMap's whole English, at once and on each frame, also for a
+    zone the cursor reaches while held; Ukrainian again on release; never a Ukrainian name with English around."""
+    s.lua.execute(lua_str(CUA_HOOK))
+    en = f"{STV} {RED}(30-45)|r"
+    cua = f"{STV_UK}{RED}(30-45)|r"
+    try:
+        normal = _shown(M, STV, "30-45")[0]
+        check("map label with ClassicUA's hook: whole Ukrainian",
+              normal is not None and CYR.search(normal) and normal.endswith(f"{RED}(30-45)|r")
+              and STV not in normal, normal)
+        M.key(True)
+        M.wait(HELD)
+        now = txt(M.label()[0])
+        held = _shown(M, STV, "30-45")[0]
+        moved = _shown(M, RFK, "24-33")[0]
+        held2 = _shown(M, STV, "30-45")[0]
+        M.key(False)
+        M.wait(0.1)
+        back = _shown(M, STV, "30-45")[0]
+        rfk = _shown(M, RFK, "24-33")[0]
+        check("map label with ClassicUA's hook, hold key: OpenMap's English at once, each frame and on another "
+              "zone; Ukrainian on release",
+              [now, held, moved, held2] == [en, en, f"{RFK} {RED}(24-33)|r", en] and back == cua
+              and rfk == f"{rfk_uk} {RED}(24-33)|r", [now, held, moved, held2, back, rfk])
+        s.uadd("openmap off")
+        M.key(True)
+        M.wait(HELD)
+        off = _shown(M, STV, "30-45")[0]
+        M.key(False)
+        M.wait(0.1)
+        s.uadd("openmap on")
+        check("map label with ClassicUA's hook, /uadd openmap off and the key held: ClassicUA's line left alone",
+              off == cua, off)
+    finally:
+        M.cuaOff()

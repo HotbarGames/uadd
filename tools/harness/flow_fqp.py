@@ -1,12 +1,15 @@
 """UADD_ForeverQuestPins on the real Forever Quest Pins (GPL-3.0), read from the installed AddOns folder; when it
-is not installed every check is skipped. Lua helpers: flow_fqp.lua (HARNESS.fqp). Steps: flow_fqp_steps.py.
+is not installed every check is skipped. Lua helpers: flow_fqp.lua (HARNESS.fqp) and flow_fqp_pages.lua (its pages
+under the main one, its tracker). Steps: flow_fqp_steps.py.
 
-  * Game A (English client): 1 at login: menu, setup window, settings page, tips and What's New ours.
+  * Game A (English client): 1 at login: menu, setup window, settings pages (its main one and the 5 under it,
+    found through the category links flow_fqp.lua gives the stand-in), tips and What's New ours.
     2 World Map menu, off and on. 3 hold key (lessons 15, 23), its canvas label with the level range apart.
     4 names in the breadcrumb and abandoned lines (lessons 9, 20), What's New lines with quest names English;
     an untitled quest ("Quest 5", our word) in a line that stays English (lesson 27). 5 off and on (its canvas label apart),
-    then 5 errors turn it off and the English comes back, tooltips too (lesson 19). 6 no half-translated line
-    (halves_mods.fqp).
+    then 5 errors turn it off and the English comes back, tooltips too (lesson 19). 6 its pages' names in the
+    settings tree, its tracker's sort and filter names and its tracker menu: ours, English held and off. 6 no
+    half-translated line (halves_mods.fqp).
   * Game B: two spoiled words (a % spec, an escape the English lacks) are not used.
   * Mutants (one fix cut from one module file, in memory only): each named step must fail, so it has teeth.
 """
@@ -33,7 +36,8 @@ def _game(cut=None, bad=False, locale="enUS"):
     addons = [Addon("ForeverQuestPins", os.path.join(session.addons_dir(), "ForeverQuestPins"), session.FLAVOR)]
     addons += [Addon(n, os.path.join(session.REPO, n), session.FLAVOR) for n in ("UADD", MODULE)]
     c = Client(addons, None, locale)
-    c.lua.execute(read_text(os.path.join(HERE, "flow_fqp.lua")))
+    for name in ("flow_fqp.lua", "flow_fqp_pages.lua"):
+        c.lua.execute(read_text(os.path.join(HERE, name)))
     M = c.H.fqp
     M.cut = cut and lua_str(cut)
     M.bad = bad or None
@@ -62,6 +66,7 @@ def game_a(check, K):
     S.names(check, c, M, K)
     S.untitled(check, c, M, K)
     S.off(check, c, M, K)
+    S.pages(check, M)
     halves_mods.fqp(check, M, S.templates(M, K))
     _errors(c, check, "game A before the errors")
     S.faults(check, c, M)
@@ -85,6 +90,9 @@ MUTANTS = {
     "restore": ("off", {}, lambda q, c, M, K: S.off(q, c, M, K)),
     "fault": ("faults", {}, lambda q, c, M, K: S.faults(q, c, M)),
     "tiphook": ("tips", {}, lambda q, c, M, K: S.faults(q, c, M)),
+    "pages": ("tree", {}, lambda q, c, M, K: S.pages(q, M)),
+    "rename": ("tree", {}, lambda q, c, M, K: S.pages(q, M)),
+    "labels": ("labels", {}, lambda q, c, M, K: S.pages(q, M)),
 }
 
 

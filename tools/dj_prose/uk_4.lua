@@ -1,5 +1,17 @@
 -- uk_4.lua: Ukrainian for en_4.lua (Dungeon Journal long texts).
 return {
+  ["107dd487"] = "Поверніться до замовника у локації «{zone:Dustwallow Marsh}».",
+  ["3540a053"] = "Зустріньтеся із замовником у локації «{zone:Dustwallow Marsh}» і дізнайтеся більше про своє завдання.",
+  ["d432088b"] = "Знайдіть командира всередині підземелля «{zone:Alcaz Prison}».",
+  ["5e1b868c"] = "Поговоріть з НІП у місцевості «{zone:Aerie Peak}» у локації «{zone:The Hinterlands}».",
+  ["0a9c0c02"] = "Убийте НІП «{npc:Bael'Gar}», потім використайте предмет «{item:Altered Black Dragonflight Molt}» на його залишках, щоб отримати предмет «{item:Encased Fiery Essence}».",
+  ["74fa8b27"] = "Здобудьте предмет «{item:Fragment of the Firelands}» у НІП «{npc:Magmus}» у підземеллі «{zone:Blackrock Depths}» для НІП «{npc:Alaana Stormwalker}» у локації «{zone:Mulgore}».",
+  ["3a075135"] = "Предмет «{item:Fragment of the Firelands}» випадає з НІП «{npc:Magmus}», вартового біля дверей до місцевості «{zone:The Imperial Seat}» у підземеллі «{zone:Blackrock Depths}». Його бачили підібраним на 49 рівні.",
+  ["ece710ad"] = "Поговоріть з НІП «{npc:Squire Maltrake}».",
+  ["9b77a0e3"] = "Підпаліть північну, південну, східну і західну сторожові вежі, використавши предмет «{item:Torch of Retribution}» усередині кожної будівлі.",
+  ["23663398"] = "Елітне завдання.",
+  ["d80b149d"] = "Відкрийте скриню.",
+  ["f42ff3f9"] = "Покажіть НІП «{npc:Cyrus Therepentous}» предмет «{item:Black Dragonflight Molt}», який ви отримали.",
   ["7ae370b0"] = "Здобудьте предмет «{item:Zarla's Journal}» з глибин підземелля «{zone:Alcaz Prison}».",
   ["c41dcb40"] = "Передайте НІП «{npc:Thrall}» у місті «{zone:Orgrimmar}» звістку про долю НІП «{npc:Varian Wrynn}».",
   ["2818f7d7"] = "Увійдіть до підземелля «{zone:Alcaz Prison}» і зберіть «{item:Blood Red Bandana}»: 8 шт. з тамтешніх вартових-людей.",

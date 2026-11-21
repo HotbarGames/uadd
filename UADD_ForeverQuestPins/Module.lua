@@ -28,9 +28,19 @@ end
 function ns.On() return ready and db ~= nil and db.enabled == true and EnglishClient() end
 function ns.WordsWanted() return ns.On() and not U.originalShown end
 
+-- Its Wowhead link popup (QuestLinks.lua) puts the game's CLOSE on its button: ours while the global is
+-- English, through the core helper (UADD/Popups.lua). The popup is made on first use; the helper flips it when
+-- it shows. Its text is L's, so Locale.lua gives it ours.
+U.Popups.Register(KEY, {
+    names = { FOREVER_QUEST_PINS_WOWHEAD_URL = true },
+    globals = { CLOSE = "ui.close" },
+    wanted = function() return ns.WordsWanted() end,
+})
+
 local function Begin()
     if not ns.On() then return end
     U.SafeCall(ns.Locale.Sync)
+    U.Popups.Sync(KEY)
     U.SafeCall(ns.Chat.Install)
     U.SafeCall(ns.Menu.Install)
     U.SafeCall(ns.Breadcrumb.Hook)
@@ -42,6 +52,7 @@ local function End()
     U.SafeCall(ns.Locale.Restore)
     U.SafeCall(ns.Screen.Restore)
     U.SafeCall(ns.Chat.Restore)
+    U.Popups.Off(KEY)
 end
 ns.Begin, ns.End = Begin, End
 
@@ -80,6 +91,7 @@ end))
 if U.OnOriginal then
     U.OnOriginal(function()
         if not ns.On() then return end
+        U.Popups.Sync(KEY)
         U.SafeCall(ns.Locale.Sync)
         U.SafeCall(ns.Screen.Apply)
     end, "Forever Quest Pins")

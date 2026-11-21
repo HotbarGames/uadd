@@ -55,6 +55,11 @@ ALLOW = {
         "167:7fe635ae": "270:cc1584c2",  # two example items UALLF lacks: our Ukrainian leaves them out
         "134:750b46f4": "286:a5b49e1f",  # a buff name UALLF lacks, in our words: the owner to confirm
         "206:d52285e4": "390:4b6e80d6",  # the same buff name: the owner to confirm
+        "12:06f889ca": "19:c3497a4e",    # 4.1.1 stat labels: plain stat words in capitals, no game name
+        "12:0b506c0c": "38:36e8fe9a",
+        "10:8fc6e8b3": "31:ea033f9a",
+        "17:583b028f": "27:7071cdd6",
+        "176:f52dda02": "395:f37de361",  # the warlock option: the spell is ClassicUA's word, the rest UALLF's
     },
     "UADD_LayerSwap": {
         "66:9351f041": "107:3afd6b7c",   # the addon's own option name (auto-leave), not a game name

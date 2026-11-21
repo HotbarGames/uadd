@@ -224,6 +224,11 @@ end
 
 function Lc.Install() Wrap() end
 function Lc.Ukrainian(en) return reverse[en] end
+-- Bagnon's English for one whole text of ours (a shown pop-up's body on the hold key); a slow walk, run rarely.
+function Lc.English(uk)
+    if type(uk) ~= "string" then return nil end
+    for en, u in pairs(reverse) do if u == uk then return en end end
+end
 function Lc.LateConfig() return wrapLost end
 
 -- How many of Bagnon's texts show our words now.

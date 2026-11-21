@@ -4,6 +4,7 @@
 
 @docs/LESSONS.md
 @docs/LESSONS2.md
+@docs/LESSONS3.md
 
 When a new kind of problem is found, add a lesson there and a check in the same commit as the fix.
 

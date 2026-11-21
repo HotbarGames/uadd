@@ -23,13 +23,12 @@ local CUTS = {
                 "                if Want() and text == Lc.En(SLOT) and Lc.Word(SLOT) then text = Lc.Word(SLOT) end\n", "" },
     fields = { "Tables.lua", "            if want and d[p[2]] == en then d[p[2]] = uk\n", "            if false then\n" },
     keep = { "Locale.lua", "now == uk or (Lc.DYNAMIC[k] and now == EN[k])", "true" },
-    filter = { "Copies.lua", "            return function(_, text, ...) return v(root, FilterWord(text), ...) end\n",
-               "            return function(_, ...) return v(root, ...) end\n" },
+    filter = { "Copies.lua", "local ok = pcall(theirs, owner, Stand(root, FilterWord))", "local ok = pcall(theirs, owner, root)" },
     general = { "Copies.lua", "            data.name = new\n", "" }, rules = { "Copies.lua", '    if type(cache) == "table" then wipe(cache) end\n', "" },
     walk = { "Screen.lua", "    local skip = Theirs(f)\n", "    local skip = {}\n" },
     default = { "Locale.lua", "rawset(L, k, Cyr(g) and uk or EN[k])", "rawset(L, k, now)" },
     counts = { "Locale.lua", ', LM_USABLE = { "TOTAL", "COLLECTED" }', "" },
-    whole = { "Copies.lua", "            if not pcall(theirs, owner, Stand(DRY)) then broken = true return theirs(owner, root) end\n", "" },
+    whole = { "Copies.lua", "            if not pcall(theirs, owner, Stand(DRY, FilterWord)) then broken = true return theirs(owner, root) end\n", "" },
     announce = { "Copies.lua", "        pcall(Labels, list)\n", "" }, uidebug = { "Copies.lua", "                if ok then msg = t end\n", "" },
 }
 M.cut, M.wasCut, M.bad = nil, false, nil

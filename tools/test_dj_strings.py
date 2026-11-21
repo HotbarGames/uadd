@@ -28,7 +28,8 @@ sys.path.insert(0, str(HERE))
 import glossary  # noqa: E402
 import luatok  # noqa: E402
 
-STRINGS = [REPO / "UADD_DungeonJournal" / "ui" / n for n in ("strings.lua", "strings_systems.lua")]
+STRINGS = sorted((REPO / "UADD_DungeonJournal" / "ui").glob("strings*.lua"))
+TOC = REPO / "UADD_DungeonJournal" / "UADD_DungeonJournal.toc"
 FDJ_DEFAULT = ("/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/"
                "ForeverDungeonJournal/Localization/Localization.lua")
 FDJ_LOCALE = Path(os.environ.get("FDJ_LOCALIZATION", FDJ_DEFAULT))
@@ -123,6 +124,12 @@ def shape(s):
 
 
 class OurStrings(unittest.TestCase):
+    def test_every_strings_file_loads(self):
+        """A strings file the TOC does not list never loads in the game (its words stay English)."""
+        listed = {ln.strip().replace("\\", "/") for ln in TOC.read_text(encoding="utf-8").splitlines()}
+        missing = [p.name for p in STRINGS if f"ui/{p.name}" not in listed]
+        self.assertEqual(missing, [], "add to UADD_DungeonJournal.toc")
+
     def test_no_key_twice(self):
         _, twice = ours()
         self.assertEqual(twice, [])

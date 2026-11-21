@@ -1,5 +1,6 @@
 -- uk_1.lua: Ukrainian for en_1.lua (Forever Dungeon Journal long texts).
 return {
+  ["0e1e4a2b"] = "Здобудьте предмет «{item:The Founding of Dalaran}» і доставте його адресатові.",
   ["a3f04017"] = "Упокойте дух загиблого.",
   ["3ea9ba68"] = "Зберіть «{item:Dwarven Heirloom}»: 8 шт. у підземеллі «{zone:The Hall of Thanes}».",
   ["5bafb465"] = "Убийте 15 розлючених привидів і 10 змучених душ, а потім упокойте дух Анвілмара.",

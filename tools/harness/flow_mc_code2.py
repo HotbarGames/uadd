@@ -134,3 +134,6 @@ def run(check, F, src):
     for name, text in SLOW:
         ms = C.slow(lua_str(text))
         check(f"screens: a 10 KB line of the {name} shape takes under 5 ms", ms < 5, f"{ms:.1f} ms")
+    # The craft orders board and its cards (Mastercraft 2.0.8), in a game of their own.
+    import flow_mc_orders
+    flow_mc_orders.run(check, F, src)

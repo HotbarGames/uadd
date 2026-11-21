@@ -10,6 +10,7 @@ Localization.lua; when LiteMount is not installed every check is skipped. Lua he
     BUG_CATEGORY5): whole English while that global is English. A filter menu whose generator throws: whole English.
     4 hold key. 6 the player's names stay as typed, also on a rule's argument button and a Name label (lesson 13). 7 status. 8 off and on. 5 never English over a
     text LiteMount changed since (lesson 23). No half line (halves_mods.litemount). 10 five errors turn it off.
+  * Game A also: game globals on its own frames (page names, buttons, binding dropdowns, conditions): G.
   * Game B: two spoiled words (a % spec, an escape the English lacks) are not used.
   * A Russian client and a LiteMount with no L: nothing changes.
   * Mutants (one fix cut from one module file, in memory only): each named step must fail, so it has teeth.
@@ -19,6 +20,7 @@ import gc
 import os
 import sys
 
+import flow_litemount_globals as G
 import flow_litemount_steps as S
 import halves_mods
 import session
@@ -42,6 +44,7 @@ def _game(cut=None, bad=False, locale="enUS", noL=False):
     addons += [Addon(n, os.path.join(session.REPO, n), session.FLAVOR) for n in ("UADD", MODULE)]
     c = Client(addons, None, locale)
     c.lua.execute(read_text(os.path.join(HERE, "flow_litemount.lua")))
+    G.load(c)
     M = c.H.litemount
     M.feed(None if noL else lua_str(read_text(os.path.join(root(), "Localization.lua"))), noL or None)
     for k, w in S.TESTS.items():
@@ -153,6 +156,7 @@ def game_a(check):
     S.rules(check, M)
     S.hold(check, M)
     S.names(check, M)
+    G.steps(check, M)               # game globals on its frames (flow_litemount_globals.py)
     S.status(check, c, M)
     S.off(check, c, M)
     S.changed(check, M)
@@ -197,6 +201,7 @@ MUTANTS = {
     "announce": ("announce", {}, lambda q, c, M: glued(q, M, "announce")),
     "uidebug": ("uidebug", {}, lambda q, c, M: glued(q, M, "uidebug")),
 }
+MUTANTS.update(G.MUTANTS)
 
 
 def mutants(check):
@@ -219,7 +224,7 @@ def run(check, facts):
     if not installed():
         check("LiteMount checks (skipped: LiteMount is not installed)", True, "")
         return halves_mods.litemount(check, None, [], halves_mods.SKIP)
-    S.code(check, root(), GLUED_CODE)
+    S.code(check, root(), GLUED_CODE + G.CODE)
     for game in (lambda: game_a(check), lambda: game_b(check), lambda: elsewhere(check), lambda: mutants(check)):
         game()
         gc.collect()

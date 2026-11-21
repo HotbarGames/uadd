@@ -302,8 +302,21 @@ local MAP = {
     ["Coming in the next version."] = "Буде в наступній версії.",
     ["Newer"] = "Новіші",
     ["Older"] = "Старіші",
-    ["OpenMap is made by |cffe6b85cJi|r, and it's open source: join in on GitHub"] =
-        "OpenMap створив |cffe6b85cJi|r, і це відкритий код: долучайтеся на GitHub",
+    ["OpenMap is made by |cffe6b85cJi Unit (RP-PvP Horde)|r, and it's open source: join in on GitHub"] =
+        "OpenMap створив |cffe6b85cJi Unit (RP-PvP Horde)|r, і це відкритий код: долучайтеся на GitHub",
+    ["OpenMap %s is out (you have %s). Update through CurseForge."] =
+        "Вийшла OpenMap %s (у вас %s). Оновіть через CurseForge.",
+    ["Say when OpenMap has an update"] = "Повідомляти, коли в OpenMap є оновлення",
+    ["When a friend, guild member or group member has a newer OpenMap, a line in chat says so, once a session. Your version goes only in messages OpenMap already sends them. Off, nothing is said and your version isn't sent."] =
+        "Коли в друга, члена гільдії чи групи новіша OpenMap, у чаті з'явиться рядок про це, раз за сеанс. Вашу версію бачать лише в повідомленнях, які OpenMap їм і так надсилає. Вимкнено: нічого не повідомляється, і ваша версія не надсилається.",
+    ["The game's map"] = "Карта гри",
+    ["Inside dungeons, open the game's own map instead of OpenMap's dungeon map. Turn it back on any time: OpenMap's menu > Dungeons > Dungeon maps inside dungeons."] =
+        "У підземеллях відкривати звичайну карту гри замість карти підземелля від OpenMap. Знову ввімкнути можна будь-коли: меню OpenMap > Підземелля > Карти підземель усередині підземель.",
+    ["OpenMap's dungeon maps are off inside dungeons. To turn them back on: OpenMap's menu > Dungeons > Dungeon maps inside dungeons."] =
+        "Карти підземель від OpenMap усередині підземель вимкнено. Щоб ввімкнути їх знову: меню OpenMap > Підземелля > Карти підземель усередині підземель.",
+    ["place names and quest areas on the controller map, and it reopening as you set"] =
+        "назви місць і ділянки завдань на карті для контролера, і повторне відкриття карти, як ви налаштували",
+    ["the quest level on OpenMap's quest icons"] = "рівень завдання на значках завдань OpenMap",
     ["Released %s."] = "Випуск: %s.",
     ["Thank you to everyone who has made OpenMap better."] = "Дякуємо всім, хто зробив OpenMap кращим.",
     ["Upcoming"] = "Незабаром",
@@ -337,7 +350,7 @@ local MAP = {
     ["Notes (%d)"] = "Нотатки (%d)",
     ["Open the world map first."] = "Спершу відкрийте карту світу.",
     ["Remove every note (click twice)"] = "Прибрати всі нотатки (клацніть двічі)",
-    ["Save"] = "Зберегти",
+    ["Save"] = G"ui.save",
     ["Take back the last note (Ctrl-Z)"] = "Відмінити останню нотатку (Ctrl-Z)",
     ["They're also saved in WTF\\Account\\<account>\\SavedVariables\\OpenMap.lua once you /reload or log out."] =
         "Вони також зберігаються у WTF\\Account\\<account>\\SavedVariables\\OpenMap.lua, щойно ви зробите /reload або вийдете з гри.",
@@ -430,7 +443,7 @@ local MAP = {
     ["Ctrl-click drops a pin"] = "Ctrl-клік ставить позначку",
     ["Darkening"] = "Затемнення",
     ["Deepest zoom"] = G"map.deepest_zoom",
-    ["Defaults"] = "Типові",
+    ["Defaults"] = G"ui.defaults",
     ["Dungeons and raids"] = "Підземелля й рейди",
     ["Flight masters"] = G"map.flight_masters",
     ["Fold your buttons away"] = "Згорнути ваші кнопки",

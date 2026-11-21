@@ -295,4 +295,4 @@ each "without <addon>" step against the module's TOC.
 ## 12 and up
 
 Lessons 12 and up (hooks on game-wide paths, the player's own text, saved data, words set after load, widgets
-that take the keyboard) are in `docs/LESSONS2.md`. Read that file too.
+that take the keyboard) are in `docs/LESSONS2.md`; 28 and up in `docs/LESSONS3.md`. Read both too.

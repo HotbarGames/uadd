@@ -19,7 +19,8 @@ local walked = setmetatable({}, { __mode = "k" })
 local ROOTS = { "MastercraftFrame", "MastercraftCompact", "MastercraftMinimapButton", "MastercraftFarmHUD",
     "MastercraftFishBar", "MastercraftFishRecap", "MastercraftFishWindow", "MastercraftGoals",
     "MastercraftLFGPanel", "MastercraftMiniGuide", "MastercraftNeverBank", "MastercraftRecipePanel",
-    "MastercraftAltView", "MastercraftDetails", "MastercraftTradeBoard", "MastercraftConfirm" }
+    "MastercraftAltView", "MastercraftDetails", "MastercraftTradeBoard", "MastercraftConfirm",
+    "MastercraftOrderToast" }
 local KINDS = { "Frame", "Button", "CheckButton", "StatusBar", "ScrollFrame", "Slider", "EditBox" }
 
 local function Forbidden(f) return f.IsForbidden and f:IsForbidden() end

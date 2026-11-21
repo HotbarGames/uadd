@@ -96,7 +96,7 @@ OVERRIDE = {
     # for; a character; who, recipe, link; a vendor line from the data, favour count.
     "6:66679401": "TT", "16:cbe63335": "VN", "48:2da42a30": "FTFN", "20:6b8bd5b8": "VVBT",
     "21:d9ebf7b8": "TVT", "15:1e6df1ed": "VNF", "39:d6528a38": "NVT", "18:9436262a": "FT",
-    "42:c33a0463": "N", "32:27231f3c": "NVNNT", "21:c858716a": "NNNT", "21:c3a7c5ff": "VNVV",
+    "42:c33a0463": "N", "32:27231f3c": "NVNNT", "21:c858716a": "NNNT", "21:c3a7c5ff": "VNTV",
     "16:589231fd": "NV", "13:e0813675": "FFT", "5:10147f1a": "F", "18:1490fe3a": "FNF",
     "71:eb2d9b36": "NV", "23:cd938ab2": "F",
     # Found by tools/test_mc_slots.py: a vendor and its zone; a recipe (never a player there).
@@ -108,6 +108,22 @@ OVERRIDE = {
     # finds a bare game name too); a vendor line from the data holds an NPC and its price. (Built in code
     # and too short to ship: "<count>x <fish>" is Words.lua step 12, the guide's "<label>:  <what>" step 9c.)
     "10:27784c65": "N",
+    # Mastercraft 2.0.8, read from the code that fills each slot. Orders and the toast: a recipe or an
+    # item (N), the crafter or buyer (F), money or a date (V).
+    "29:f6ed2bcb": "V", "58:d65f5259": "N", "29:0fb815bd": "NV", "62:372a5a93": "NVV", "29:005902ce": "NV",
+    "41:ea904d2c": "NV", "32:f2775b5a": "N", "36:4967ae44": "NFV", "26:b71e1aa9": "FN",
+    # Asking a crafter (Network2): the crafter is F; a state or a reason is ours (T); "Sent <ago>" is T.
+    "16:e23a8692": "F", "34:fc3d8c40": "F", "39:c9fdd5ba": "F", "37:1275d045": "T-", "11:f773f36b": "T",
+    "20:8f82288f": "F", "51:b087c1bc": "F", "18:d54ea95e": "F", "18:b981b982": "FT", "31:fe4c49f1": "F",
+    "29:3a8ee254": "F", "71:749ef707": "F", "28:9f336705": "FN", "7:ec810837": "T",
+    # Professions road and art: a material or recipe (N), money and a duration (V), a step title (T), a rank
+    # and a guide's own name (N T).
+    "13:b7bc081a": "-N", "22:657ca76a": "VV", "12:a9091d68": "-V", "11:13a10516": "-T", "8:bc11fac1": "T",
+    "8:3e77406c": "T", "10:bf086172": "T", "29:081eb61d": "--T", "44:9424e42f": "-T", "11:75376cfb": "-N",
+    "11:e5b95a33": "NT", "11:9dcae1b3": "NT-", "19:74edb57d": "-N-",
+    # The guide's crafts line (a step title, then money); a blocked player (F); the rank help's trainer (N);
+    # the debug join line's channel names (F).
+    "43:7a72cb6f": "T-V", "31:8de805b9": "T-", "115:d2786336": "F", "36:0b74e2c6": "N", "47:54f3e859": "-F",
 }
 
 # Texts Mastercraft builds in its code, not in its locales (tools/mc_text_lib.py code_rows): by

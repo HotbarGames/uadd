@@ -33,7 +33,7 @@ ns.UA = {
     ["Your Level"] = "Ваш рівень",
     ["Quest Level"] = G"quest.level",
 
-    ["Accept"] = "Прийняти", -- sic: DialogueUI's typo for Accept
+    ["Accept"] = G"ui.accept", -- sic: DialogueUI's typo for Accept
     ["Continue"] = "Продовжити",
     ["Complete Quest"] = "Здати", -- verb: hand in the quest
     ["Incomplete"] = G"quest.state_incomplete",

@@ -105,3 +105,47 @@ end
 function S.TipAdd(left) GameTooltip:AddLine(left) end    -- its block at the bottom of an item's tooltip
 
 function S.Print(text) DEFAULT_CHAT_FRAME:AddMessage(S.PREFIX .. text) end
+
+-- Its craft orders board and cards (2.0.8), made after login, every cell a RawText, found by its fields:
+-- a board row, a recipe found while posting, the post, offer, mine and deal cards, an offer on yours.
+-- S.orders.row / sug / post / offer / mine / mrow / deal.
+function S.Orders()
+    local board = CreateFrame("Frame", nil, MastercraftFrame)
+    local function Make(fields, parent)
+        local f = CreateFrame("Frame", nil, parent or board)
+        for _, k in ipairs(fields) do f[k] = RawText(f, 11) end
+        return f
+    end
+    local row = Make({ "name", "sub", "qty", "mats", "tip", "buyer", "age" })
+    row.btn = CreateFrame("Button", nil, row)
+    local sug = Make({ "text" })
+    sug.dark, sug.edge, sug.hl, sug.icon = sug:CreateTexture(), sug:CreateTexture(), sug:CreateTexture(), sug:CreateTexture()
+    local post = Make({ "selName", "selSub", "qtyText" })
+    post.sugs = { sug }
+    local offer = Make({ "item", "info" })
+    offer.price, offer.note = CreateFrame("EditBox", nil, offer), CreateFrame("EditBox", nil, offer)
+    for _, b in ipairs({ offer.price, offer.note }) do b:SetAutoFocus(false) b:ClearFocus() end   -- as Mastercraft's
+    offer.send, offer.withdraw = CreateFrame("Button", nil, offer), CreateFrame("Button", nil, offer)
+    local mrow = Make({ "name", "sub" })
+    mrow.bg = mrow:CreateTexture()
+    mrow.yes, mrow.no = CreateFrame("Button", nil, mrow), CreateFrame("Button", nil, mrow)
+    local mine = Make({ "info", "none" })
+    mine.rows, mine.cancel = { mrow }, CreateFrame("Button", nil, mine)
+    local deal = Make({ "body" })
+    deal.invite, deal.whisper, deal.done = CreateFrame("Button", nil, deal), CreateFrame("Button", nil, deal),
+        CreateFrame("Button", nil, deal)
+    S.orders = { row = row, sug = sug, post = post, offer = offer, mine = mine, mrow = mrow, deal = deal }
+    return S.orders
+end
+
+-- Its new-order toast: a named window made the first time an order comes in, one of its own strings.
+function S.Toast(text)
+    local f = rawget(_G, "MastercraftOrderToast")
+    if not f then
+        f = CreateFrame("Frame", "MastercraftOrderToast", UIParent)
+        f.text = Text(f, "toast", 12)
+    end
+    f.text:SetText(text)
+    f:Show()
+    return f
+end

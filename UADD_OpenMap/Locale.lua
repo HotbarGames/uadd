@@ -96,8 +96,9 @@ Lc.FREE = {
     ["A map addon brings its own HereBeDragons (%s), which OpenMap doesn't know: its pins keep the game's own placement."] = { 1 },
     ["Back to %s"] = { 1 }, ["Map by %s"] = { 1 }, ["Somewhere in %s"] = { 1 }, ["Shared by %s"] = { 1 },
     ["From %s: about %s"] = { 1 }, ["No flight route from %s to %s."] = { 1, 2 }, ["Drawing on the pin: %s"] = { 1 },
-    ["Updated to %s: see What's new in the OpenMap menu."] = { 1 }, ["%s shared %d map pin(s) with you:"] = { 1 },
-    ["Added %d map pin(s) from %s."] = { 2 }, ["That isn't a code of map pins (it starts %s)."] = { 1 },
+    ["OpenMap %s is out (you have %s). Update through CurseForge."] = { 1, 2 },
+    ["Updated to %s: see What's new in the OpenMap menu."] = { 1 }, ["%s shared %d map pin(s) with you:"] = { 1 }, ["Added %d map pin(s) from %s."] = { 2 },
+    ["That isn't a code of map pins (it starts %s)."] = { 1 },
     ["Sharing %d map pin(s) with %s (players with OpenMap are asked whether to add them)."] = { 2 },
 }
 
@@ -268,7 +269,6 @@ function Lc.Uninstall()
     saved = nil
     wipe(wrote)
 end
-
 function Lc.Installed() return saved ~= nil end
 
 -- How many of our words are in L now.

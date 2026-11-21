@@ -87,7 +87,7 @@ end
 -- with English in it the whole line stays English. "Not %s" follows the same choice (Lc.SetNot).
 local function Leaf(c, a)
     if type(c) ~= "string" then return c, false end
-    local en = Lc.Back(c)
+    local en = Lc.Back(c) or Lc.GlobalBack(c)
     if not en then return c, false end
     if NoEnglish(a) then return c, true end
     return en, false
@@ -183,6 +183,15 @@ local function Fields(want)
             if okC and type(c) == "table" and w then
                 if want and c.name == Lc.En(k) then c.name = w
                 elseif not want and c.name == w then c.name = Lc.En(k) end
+            end
+        end
+        -- Named by a game global (Instance, Level, Map, Falling): our word while the global is not Cyrillic.
+        for id, g in pairs(Lc.GLOBAL_CONDS) do
+            local okC, c = pcall(C.GetCondition, C, id)
+            local en, uk = Lc.Global(g, not want)
+            if okC and type(c) == "table" and uk then
+                if want and c.name == en then c.name = uk
+                elseif not want and c.name == uk then c.name = en end
             end
         end
     end

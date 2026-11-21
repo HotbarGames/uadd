@@ -1,5 +1,6 @@
 -- uk_5.lua: Ukrainian for en_5.lua (Forever Dungeon Journal long texts).
 return {
+  ["2f6639d8"] = "Принесіть предмет «{item:Darkstone Tablet}» замовникові у місцевості «{zone:Kargath}».",
   ["e2d4cdbd"] = "Знайдіть три самоцвіти командування: «{item:Gemstone of Smolderthorn}», «{item:Gemstone of Spirestone}» і «{item:Gemstone of Bloodaxe}». Принесіть їх разом із предметом «{item:Unadorned Seal of Ascension}» до НІП «{npc:Vaelan}». Генерали: «{npc:War Master Voone}» із клану Тліючого Шипа, «{npc:Highlord Omokk}» із клану Шпилекаменя і «{npc:Overlord Wyrmthalak}» із клану Кривавої Сокири.",
   ["958e536b"] = "Знайдіть предмет «{item:Bijou's Belongings}» і поверніть його власниці. Хай щастить!",
   ["4dcabca9"] = "НІП «{npc:Bijou}» ховається в ніші за першими мостами. Її речі з’являються в одному з кількох місць біля залів тролів та орків.",

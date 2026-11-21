@@ -31,6 +31,7 @@ local function AfterLogin()
     U.SafeCall(L.AddEntry)
     U.SafeCall(Search.Install)
     U.SafeCall(ns.Prose.HookNotes)
+    ns.Popup.Sync()                    -- its questions' YES and NO (Popup.lua)
     Screen.Schedule()
 end
 
@@ -62,7 +63,12 @@ frame:SetScript("OnEvent", function(self, event, name)
     end
 end)
 
-if U.OnOriginal then U.OnOriginal(function(show) U.SafeCall(L.OnOriginal, show) end) end
+if U.OnOriginal then
+    U.OnOriginal(function(show)
+        U.SafeCall(L.OnOriginal, show)
+        if db and db.enabled then ns.Popup.Sync() end
+    end)
+end
 
 -- ── Status ────────────────────────────────────────────────────────────────────────────────────
 
@@ -108,6 +114,7 @@ local function Command(args)
         db.enabled = false
         N.Stop()
         ns.held = false
+        ns.Popup.Off()
         ns.Fonts.Restore()
         U.SafeCall(L.Redraw)           -- the wrappers pass FDJ's answers through from now on
         L.Uninstall()

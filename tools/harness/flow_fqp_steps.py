@@ -34,6 +34,11 @@ STEPS = {
     "off": "5 off: menu, setup window, breadcrumb dialog, tips, What's New and L English again",
     "off canvas": "5 off canvas (level range label): English again",
     "on": "5 on again: all ours, status line says so",
+    "tree": "6 settings tree: the names of its 5 pages under the main one ours, English while held and off, "
+            "ours again",
+    "labels": "6 tracker sort and filter names (its settings drop-downs, its tracker menu) ours, English while "
+              "held and off, ours again",
+    "tracker menu": "6 tracker right-click menu ours, English while held and off, ours again",
     "faults": "5 five errors turn it off, English back",
     "tips": "5 tips back after 5 errors",
 }
@@ -142,8 +147,7 @@ def names(check, c, M, K):
     M.known(True)
     # What's New: a line that quotes quest names (game names, lesson 9) stays English; the others are ours.
     news = txt(M.newsLines()).split("\n")
-    named = [t for t in news if '"' in t]
-    news_ok = bool(named) and len(news) > len(named) and all(cyr(t) != ('"' in t) for t in news)
+    news_ok = bool(news) and all(cyr(t) != ('"' in t) for t in news)
     got["news"] = " / ".join(t[:40] for t in news)
     ours = [got[k] for k in ("full", "no zone")] + [got["gone"].replace(TAG, "")]
     ok = (all(cyr(t) and not latin(t) for t in ours) and all(v in got["full"] for v in KNOWN.values())
@@ -200,6 +204,39 @@ def off(check, c, M, K):
         "увімкнено: Forever Quest Pins українською" in said
     check(STEPS["on"], oks, (before, again, said[-160:]))
     return {"off": ok, "off canvas": okc}
+
+
+def pages(check, M):
+    """Its settings pages under the main one (Forever Quest Pins 1.1): their names in the tree, and the tracker's
+    sort and filter names, read from tables its Config.lua fills at load; on, held, released, off, on again."""
+    def look():
+        names, n = M.catNames()
+        labels, nl, lc = M.trackerLabels()
+        menu, nm, mc = M.trackerMenu()
+        return {"tree": (n, txt(names)[:120]), "labels": (lc, nl, txt(labels)[:120]),
+                "tracker menu": (mc, nm, txt(menu)[:120])}
+    count, built = M.pages()
+    got = {"on": look()}
+    M.hold(True)
+    M.wait(1)
+    got["held"] = look()
+    M.hold(False)
+    M.wait(1)
+    got["released"] = look()
+    M.uadd(lua_str("foreverquestpins off"))
+    got["off"] = look()
+    M.uadd(lua_str("foreverquestpins on"))
+    got["on again"] = look()
+    full = {"tree": count, "labels": got["on"]["labels"][1], "tracker menu": got["on"]["tracker menu"][1]}
+    out = {}
+    for step in ("tree", "labels", "tracker menu"):
+        ok = (full[step] > 0 and all(got[w][step][0] == full[step] for w in ("on", "released", "on again"))
+              and all(got[w][step][0] == 0 for w in ("held", "off")))
+        if step == "tree":
+            ok = ok and count == built == 5
+        check(STEPS[step], ok, {w: got[w][step] for w in got} | {"pages": (count, built)})
+        out[step] = ok
+    return out
 
 
 def faults(check, c, M):

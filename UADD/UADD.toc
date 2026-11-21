@@ -29,6 +29,8 @@ glossary/rares.lua
 glossary/gear.lua
 Font.lua
 Guard.lua
+Popups.lua
+SushiPopups.lua
 AceFont.lua
 uall.lua
 uall_test.lua

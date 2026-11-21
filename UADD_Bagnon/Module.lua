@@ -44,6 +44,7 @@ local function Refresh()
     if type(A) == "table" and type(A.Frames) == "table" and A.Frames.Update then
         U.SafeCall(A.Frames.Update, A.Frames)
     end
+    U.SafeCall(U.SushiPopups.Sync, "bagnon")
     U.SafeCall(ns.Fonts.Sync)
     local tip, owner = GameTooltip, GameTooltip and GameTooltip:GetOwner()
     if tip and tip:IsShown() and owner and ns.Fonts.Ours(owner) and owner.GetScript then
@@ -52,10 +53,15 @@ local function Refresh()
     end
 end
 
+-- Bagnon's own Sushi pop-ups (the core helper UADD/SushiPopups.lua): its code lives in these folders.
+local OWNERS = { BagBrother = true, Bagnon = true, Bagnon_Config = true, Bagnon_Bank = true, Bagnon_GuildBank = true }
+
 local function Begin()
     if not ns.On() then return end
     U.SafeCall(ns.Locale.Set, ns.WordsWanted())
     U.SafeCall(ns.Fonts.Install)
+    U.SafeCall(U.SushiPopups.Register, "bagnon", { owners = OWNERS, wanted = ns.WordsWanted,
+        uk = ns.Locale.Ukrainian, en = ns.Locale.English, decide = ns.Fonts.Decide })
     U.SafeCall(ns.Fonts.Scan)
     Refresh()
 end

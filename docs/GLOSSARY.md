@@ -76,6 +76,12 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Camping | waiting at a spawn for a mob | not this entry («чатування» is banned in UADD_Mastercraft) |
 | Lure | a fishing lure, Mastercraft ("приманка", never «принада») | `prof.lure` |
 | Map Icons | marks an addon draws on the map, RareScanner's too ("Значки") | `map.map_pins` |
+| Resistance | one resistance to a spell school, AutoPotion ("Опір") | `stat.resistance` |
+| Resistances | a filter heading for all of them, Dungeon Journal ("Опори") | `game.resistances` |
+| Tip | money a buyer adds for the crafter, Mastercraft ("чайові") | `prof.tip` |
+| Tip | a hint ("порада") | not this entry |
+| Defaults | a button that puts settings back, LiteMount ("Типові") | `ui.defaults` |
+| default (value) | the value before you change it | not this entry |
 | Vignettes | the game's own map marks for rares and treasures ("Ігрові позначки") | `rare.vignettes` |
 | Map pin | a pin the player drops, OpenMap ("Позначка") | `map.pin` |
 | Quest start pin | Forever Quest Pins: the icon it draws where a quest is given ("Значок початку завдання": lead's choice, 2026-11-20) | `quest.start_pin`, not `map.pin` |

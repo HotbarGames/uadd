@@ -12,13 +12,13 @@ H.fontFiles["interface\\addons\\auctionator\\fonts\\standin.ttf"] = true
 local function S() return rawget(_G, "AuctionatorStandIn") end
 local function NS() return H.ns.UADD_Auctionator end
 
--- StaticPopup1 as the game has it: a text and two buttons that StaticPopup_Show fills from
+-- StaticPopup1 as the game has it: a text and three buttons that StaticPopup_Show fills from
 -- StaticPopupDialogs (the harness's own StaticPopup_Show does nothing). Its text is 12 high per
 -- 40 bytes, and the dialog 60 + that.
 local pop = StaticPopup1
 pop.text = pop:CreateFontString("StaticPopup1Text", "ARTWORK", "GameFontHighlight")
 pop.text.GetHeight = function(self) local t = self:GetText() or "" return 12 * math.ceil(#t / 40) end
-for i = 1, 2 do
+for i = 1, 3 do
     local b = CreateFrame("Button", "StaticPopup1Button" .. i, pop)
     b:GetFontString():SetFontObject(GameFontNormal)
     pop["button" .. i] = b
@@ -30,6 +30,7 @@ function StaticPopup_Show(which)
     pop.text:SetText(info.text)
     pop.button1:SetText(info.button1)
     pop.button2:SetText(info.button2)
+    pop.button3:SetText(info.button3)
     pop:SetHeight(60 + pop.text:GetHeight())
     pop:Show()
     return pop

@@ -1,4 +1,5 @@
--- UADD_LiteMount: Ukrainian for LiteMount's own locale table (L), keyed by its L key; plus BINDING_1..4 and Import.
+-- UADD_LiteMount: Ukrainian for LiteMount's own locale table (L), keyed by its L key; plus BINDING_1..4, Import
+-- and the game globals it shows on its own frames, keyed by the global's name (Locale.lua: Lc.EXTRA).
 -- Mount = «маунт» (glossary game.mount). Keys left out stay English: see Locale.lua (Lc.NEVER).
 local _, ns = ...
 ns.UK = {
@@ -143,4 +144,18 @@ ns.UK = {
     BINDING_3 = "Прив'язка клавіші LiteMount 3",
     BINDING_4 = "Прив'язка клавіші LiteMount 4",
     Import = "Імпорт",
+    BRAWL_TOOLTIP_RULES = "Правила",
+    STRING_ENVIRONMENTAL_DAMAGE_FALLING = "Падіння",
+    ADD = "Додати",
+    DELETE = "Видалити",
+    EDIT = "Змінити",
+    PET_RENAME = "Перейменувати",
+    CANCEL = "Скасувати",
+    OKAY = "Гаразд",
+    REVERT = "Відкотити",
+    SETTINGS_DEFAULTS = "Типові",
+    KEY_BINDING = "Прив'язка клавіші",
+    INSTANCE = "Підземелля",
+    LEVEL = "Рівень",
+    BRAWL_TOOLTIP_MAP = "Карта",
 }

@@ -28,3 +28,9 @@ E{ id = "stat.block_chance", en = "Block Chance", uk = "Шанс блокува�
 E{ id = "stat.spell_penetration", en = "Spell Penetration", uk = "Проникнення чарів", note = "Item stat." }
 E{ id = "stat.movement_speed", en = "Movement Speed", uk = "Швидкість пересування", note = "Item stat." }
 E{ id = "stat.mp5", en = "Mana per 5 sec.", uk = "Мана за 5 сек.", note = "Item stat: mana back every 5 seconds." }
+-- Stat groups first needed by AutoPotion 4.1.1 (lead's choice, 2026-11-21)
+E{ id = "stat.primary", en = "Primary Stat", uk = "Основна характеристика", note = "The class's main stat (strength, agility or intellect). AutoPotion, 2026-11-21." }
+E{ id = "stat.health_regen", en = "Health Regen", uk = "Відновлення здоров'я", note = "Health back over time. AutoPotion, 2026-11-21." }
+E{ id = "stat.mana_regen", en = "Mana Regen", uk = "Відновлення мани", note = "Mana back over time. AutoPotion, 2026-11-21." }
+E{ id = "stat.armor_penetration", en = "Armor Penetration", uk = "Пробиття броні", note = "Item stat. AutoPotion, 2026-11-21." }
+E{ id = "stat.resistance", en = "Resistance", uk = "Опір", note = "One resistance to a spell school (many: game.resistances «Опори»). AutoPotion, 2026-11-21." }

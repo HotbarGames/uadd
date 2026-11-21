@@ -6,7 +6,8 @@ ForeverDungeonJournal and UALLF are in that folder; otherwise they are skipped w
 UADD_OpenMap's checks run with them, on a stand-in for OpenMap (flow_openmap.py).
 UADD_DialogueUI's checks run next, on a stand-in for DialogueUI (flow_dialogueui.py).
 UADD_ForeverXPBar's checks run next, on a stand-in for ForeverXP Bar (flow_fxpb.py).
-UADD_Auctionator's checks run next, on a stand-in for Auctionator (flow_auc.py).
+UADD_Auctionator's checks run next, on a stand-in for Auctionator (flow_auc.py; its popup buttons: flow_auc_popup.py;
+the same core popup helper in LiteMount, TomTom, Forever Quest Pins and Attune: flow_popups.py).
 UADD_Attune's checks run next, on a stand-in for Attune (flow_att.py).
 UADD_LayerSwap's checks run next, on a stand-in for LayerSwap (flow_lsw.py).
 UADD_AutoPotion's checks run next, on a stand-in for Auto Potion (flow_autopotion.py).
@@ -67,6 +68,8 @@ def run_all():
     import flow
     import flow_att
     import flow_auc
+    import flow_auc_popup
+    import flow_popups
     import flow_autopotion
     import flow_bagnon
     import flow_mastercraft
@@ -79,6 +82,7 @@ def run_all():
     import flow_pawn
     import flow_gm
     import flow_scrap
+    import flow_sushi_popup
     import flow_sal
     import flow_litemount
     import flow_dialogueui
@@ -108,10 +112,11 @@ def run_all():
         facts["dj_module"] = dj_facts
         gc.collect()
     # (facts key, flow module), in run order; each also gets the tooltip font check (tipfont.py)
-    for key, mod in (("dialogueui", flow_dialogueui), ("fxpb", flow_fxpb), ("auc", flow_auc), ("att", flow_att),
+    for key, mod in (("dialogueui", flow_dialogueui), ("fxpb", flow_fxpb), ("auc", flow_auc), ("aucpop", flow_auc_popup),
+                     ("att", flow_att),
                      ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
                      ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("wp", flow_wp),
-                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sal", flow_sal), ("litemount", flow_litemount), ("missed", flow_missed),
+                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("pops", flow_popups), ("missed", flow_missed),
                      ("hash", flow_hash), ("cua", flow_classicua), ("keynotice", flow_keynotice),
                      ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):

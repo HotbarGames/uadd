@@ -127,6 +127,15 @@ E{ id = "item.reagent", en = "Crafting Reagent", uk = "Реагент для р�
 E{ id = "item.reagent_class", en = "Reagent", uk = "Реагент", note = "Item class on its own (Righteous Orb, Skin of Shadow): a reagent for spells or crafting." }
 E{ id = "item.misc", en = "Miscellaneous", uk = "Різне", note = "Item type: anything else." }
 
+-- Dungeon Journal 2.1.2 words (lead's choice, 2026-11-21; «тір» and «Шлях привида»: no word in UALL Forever
+-- or ClassicUA, the owner may change them)
+E{ id = "game.tier", en = "Tier", uk = "Тір", note = "A raid gear tier (T1, T2). Dungeon Journal, 2026-11-21." }
+E{ id = "game.tier_sets", en = "Tier Sets", uk = "Комплекти тіру", note = "Class gear sets of a tier. Dungeon Journal, 2026-11-21." }
+E{ id = "game.dungeon_run", en = "Run", uk = "Проходження", note = "One clear of a dungeon or raid (a noun). Dungeon Journal, 2026-11-21." }
+E{ id = "game.trash", en = "Trash", uk = "Звичайні вороги", note = "The enemies in a dungeon that are not bosses (game.trash_loot). Dungeon Journal, 2026-11-21." }
+E{ id = "game.character_logs", en = "Character Logs", uk = "Записи персонажа", note = "Dungeon Journal's page of a character's runs. 2026-11-21." }
+E{ id = "game.death_walk", en = "Death Walk", uk = "Шлях привида", note = "The ghost's run back to the body after death. Dungeon Journal, 2026-11-21." }
+
 -- Dungeon wings with no game name of their own. Shown after the dungeon name and a colon,
 -- "<dungeon>: <wing>", so the word stands alone in the nominative and agrees with nothing.
 E{ id = "wing.living", en = "Living", uk = "Живі", note = "Stratholme wing of the living (Scarlet side): 'Стратгольм: Живі'." }

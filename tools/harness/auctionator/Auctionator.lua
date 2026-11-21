@@ -259,6 +259,10 @@ end
 
 -- ── A StaticPopup question, tooltip lines, a menu ─────────────────────────────────────────────
 StaticPopupDialogs.AUCTIONATOR_SELLING_CONFIRM_POST = { text = "", button1 = ACCEPT, button2 = CANCEL }
+-- Its other two: three buttons (Selling/Dialogs.lua), and a name in mixed case (LegacyAH Cancelling/Main.lua).
+StaticPopupDialogs.AUCTIONATOR_SELLING_CONFIRM_POST_SKIP = { text = "", button1 = ACCEPT,
+    button2 = AUCTIONATOR_L_SKIP, button3 = CANCEL }
+StaticPopupDialogs.AuctionatorConfirmBidPricePopupDialog = { text = "", button1 = ACCEPT, button2 = CANCEL }
 function S.ConfirmPost()                                           -- Selling/SaleItem.lua
     StaticPopupDialogs.AUCTIONATOR_SELLING_CONFIRM_POST.text = AUCTIONATOR_L_CONFIRM_POST_LOW_PRICE:format(S.LINK)
     StaticPopup_Show("AUCTIONATOR_SELLING_CONFIRM_POST")

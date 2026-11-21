@@ -29,8 +29,26 @@ local KEYS = {
 }
 local TAIL = { ["LM_CURRENT_PROFILE"] = " :" }     -- "Current Profile :" (Profiles.lua OnLoad)
 local IMPORT = "Import"                            -- its Import button: plain text in its XML
+-- Game globals it puts on its own frames (Rules.xml, Falling.xml: a panel name `type="global"`; its buttons'
+-- text="ADD"): UALL Forever leaves them English there. Ours only on these frames, while the global is not
+-- Cyrillic; the global itself is never written (Lc.Global). Read again on each run.
+local GLOBALS = { "BRAWL_TOOLTIP_RULES", "STRING_ENVIRONMENTAL_DAMAGE_FALLING", "ADD", "DELETE", "EDIT",
+    "PET_RENAME", "CANCEL", "OKAY", "REVERT", "SETTINGS_DEFAULTS", "INSTANCE", "LEVEL", "BRAWL_TOOLTIP_MAP" }
 
 local toUk, toEn = nil, nil
+local gUk, gEn = {}, {}
+
+local function GlobalMaps()
+    wipe(gUk)
+    wipe(gEn)
+    for _, g in ipairs(GLOBALS) do
+        local en, uk = Lc.Global(g, true)
+        if uk then
+            if Lc.Global(g) then gUk[en] = uk end   -- ours on while the global is not Cyrillic
+            gEn[uk] = en                            -- the text back always
+        end
+    end
+end
 local seen, ours = 0, 0
 local hooked = {}
 
@@ -49,8 +67,8 @@ end
 
 local function Turn(t, want)
     Maps()
-    if want then return toUk[t] end
-    return toEn[t]
+    if want then return toUk[t] or gUk[t] end
+    return toEn[t] or gEn[t]
 end
 
 local function Swap(fs, want)
@@ -143,6 +161,7 @@ local function One(name, want)
 end
 
 local function Run(want, only)
+    U.SafeCall(GlobalMaps)
     if only then return One(only, want) end
     seen, ours = 0, 0
     for _, name in ipairs(ROOTS) do U.SafeCall(One, name, want) end

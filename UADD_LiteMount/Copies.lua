@@ -1,4 +1,4 @@
--- UADD_LiteMount: four more places where LiteMount keeps a copy of its words, switched both ways (lesson 15).
+-- UADD_LiteMount: five more places where LiteMount keeps a copy of its words, switched both ways (lesson 15).
 -- 1. Its Mounts panel's filter menu (LiteMountFilter.FilterDropdown): a file-local list copies four of L's words
 --    at load; the menu is built from it each time it opens. As with the Falling dropdown (Tables.lua), our
 --    generator builds it through a stand-in for the menu root that swaps only those four words, and only when
@@ -13,6 +13,7 @@
 --    around them. Its compiled sets are dropped on every change (as LiteMount does on a profile change), so the
 --    next compile and its print read the same L: the line is whole English or whole Ukrainian.
 -- 4. Lines glued to a game global (Lc.GLUED): the "Announce via" option (section 2) and the uidebug chat line.
+-- 5. Its key binding dropdowns (Rules, Advanced): "Key Binding n" built from a game global in their generator.
 -- Putting the English back (Restore) runs also when the module is off for errors, under plain pcall.
 local _, ns = ...
 local U = UADD
@@ -36,11 +37,11 @@ local function FilterWord(text)
     return text
 end
 
-local function Stand(root)
+local function Stand(root, word)
     return setmetatable({}, { __index = function(_, k)
         local v = root[k]
         if MAKERS[k] and type(v) == "function" then
-            return function(_, text, ...) return v(root, FilterWord(text), ...) end
+            return function(_, text, ...) return v(root, word(text), ...) end
         end
         if type(v) == "function" then return function(_, ...) return v(root, ...) end end
         return v
@@ -67,8 +68,8 @@ local function Filter()
         ours = function(owner, root)
             if broken or not Want() then return theirs(owner, root) end
             -- All or nothing: a dry run first, so a generator that throws part-way builds the menu whole English.
-            if not pcall(theirs, owner, Stand(DRY)) then broken = true return theirs(owner, root) end
-            local ok = pcall(theirs, owner, Stand(root))
+            if not pcall(theirs, owner, Stand(DRY, FilterWord)) then broken = true return theirs(owner, root) end
+            local ok = pcall(theirs, owner, Stand(root, FilterWord))
             if not ok then broken = true end
         end
         dd:SetupMenu(ours)
@@ -202,10 +203,60 @@ local function Print(want)
     end
 end
 
+-- ── 5. Its key binding dropdowns ────────────────────────────────────────────────────────────────
+
+-- The Rules and Advanced pages name their four bindings format('%s %s', KEY_BINDING, n) in their dropdown's
+-- generator, and the dropdown shows the picked one. KEY_BINDING is a game global left English there: the
+-- stand-in swaps a radio text that is exactly "<its English> <n>" for "<our word> <n>", never the global. On each
+-- sync (on, off, the hold key) the menu is set up again, so the shown text follows. All or nothing, as above.
+local BIND_PANELS = { "LiteMountRulesPanel", "LiteMountAdvancedPanel" }
+local bTheirs, bOurs, bBroken = {}, {}, {}
+
+local function BindWord(text)
+    local en, uk = Lc.Global("KEY_BINDING")
+    if not uk or type(text) ~= "string" or text:sub(1, #en + 1) ~= en .. " " then return text end
+    local n = text:sub(#en + 2)
+    if n:find("^%d+$") then return uk .. " " .. n end
+    return text
+end
+
+local function BindDropdown(name)
+    local p = rawget(_G, name)
+    local dd = type(p) == "table" and rawget(p, "BindingDropDown")
+    if type(dd) == "table" and type(dd.SetupMenu) == "function" then return dd end
+    return nil
+end
+
+local function Binding(name)
+    local dd = BindDropdown(name)
+    local g = dd and rawget(dd, "menuGenerator")
+    if type(g) ~= "function" then return end
+    if g ~= bOurs[name] then
+        local theirs0 = g
+        bTheirs[name] = theirs0
+        bOurs[name] = function(owner, root)
+            if bBroken[name] or not Want() then return theirs0(owner, root) end
+            if not pcall(theirs0, owner, Stand(DRY, BindWord)) then bBroken[name] = true return theirs0(owner, root) end
+            if not pcall(theirs0, owner, Stand(root, BindWord)) then bBroken[name] = true end
+        end
+    end
+    dd:SetupMenu(bOurs[name])
+end
+
+local function BindingBack()
+    for _, name in ipairs(BIND_PANELS) do
+        local dd = BindDropdown(name)
+        if dd and bTheirs[name] and rawget(dd, "menuGenerator") == bOurs[name] then dd:SetupMenu(bTheirs[name]) end
+    end
+end
+
 -- ── Sync / Restore ──────────────────────────────────────────────────────────────────────────────
 
 function C.Sync()
-    if ns.On() then U.SafeCall(Filter) end
+    if ns.On() then
+        U.SafeCall(Filter)
+        for _, name in ipairs(BIND_PANELS) do U.SafeCall(Binding, name) end
+    end
     local want = Want()
     U.SafeCall(General, want)
     U.SafeCall(Rules, want)
@@ -214,6 +265,7 @@ end
 
 function C.Restore()
     pcall(FilterBack)
+    pcall(BindingBack)
     pcall(General, false)
     pcall(Rules, false)
     pcall(Print, false)

@@ -155,6 +155,17 @@ local POPUPS = { "TOMTOM_REMOVE_ALL_CONFIRM", "TOMTOM_RESET_SETTINGS_PAGE", "TOM
 local FIELDS = { "text", "button1", "button2" }
 local Popups = { orig = {} }
 ns.Popups = Popups
+local KEY = "tomtom"
+
+-- The game's ACCEPT and CANCEL on their buttons: ours while the global is English (the core helper; the
+-- globals are never written). Fonts.lua gives the shown dialog its font.
+local NAMES = {}
+for _, which in ipairs(POPUPS) do NAMES[which] = true end
+U.Popups.Register(KEY, {
+    names = NAMES,
+    globals = { ACCEPT = "ui.accept", CANCEL = "ui.cancel" },
+    wanted = function() return ns.WordsWanted() end,
+})
 
 function Popups.Apply()
     if not ns.WordsWanted() or type(StaticPopupDialogs) ~= "table" then return end
@@ -164,22 +175,31 @@ function Popups.Apply()
             local o = Popups.orig[which] or {}
             Popups.orig[which] = o
             for _, f in ipairs(FIELDS) do
-                if o[f] == nil and type(d[f]) == "string" then o[f] = d[f] end
+                -- Only an English we have a word for is kept: a field the core helper already holds in
+                -- Ukrainian (the game's ACCEPT, CANCEL) is not TomTom's English and must never come back.
+                if o[f] == nil and type(d[f]) == "string" and ns.Swap(d[f]) then o[f] = d[f] end
                 local uk = ns.Swap(o[f])
-                if uk then d[f] = uk end
+                if uk and d[f] == o[f] then d[f] = uk end
             end
         end
     end
+    U.Popups.Sync(KEY)                             -- the game's button words (UADD/Popups.lua)
 end
 
+-- TomTom's English back, only where the field still holds our word (a field TomTom changed stays its own).
 function Popups.Restore()
-    if type(StaticPopupDialogs) ~= "table" then return end
-    for which, o in pairs(Popups.orig) do
-        local d = StaticPopupDialogs[which]
-        if type(d) == "table" then
-            for f, en in pairs(o) do d[f] = en end
+    if type(StaticPopupDialogs) == "table" then
+        for which, o in pairs(Popups.orig) do
+            local d = StaticPopupDialogs[which]
+            if type(d) == "table" then
+                for f, en in pairs(o) do
+                    local uk = ns.Swap(en)
+                    if uk and d[f] == uk then d[f] = en end
+                end
+            end
         end
     end
+    U.Popups.Off(KEY)
 end
 
 function Popups.Ours(which)

@@ -41,10 +41,6 @@ local P = ns.Patterns            -- Patterns.lua: a template -> its pattern
 -- Texts Auctionator compares with what a widget shows: never ours.
 --   EXTENDED_SEARCH_ACTIVE_TEXT: put in the search box and read back from it (SearchOptions.lua).
 local NEVER = { EXTENDED_SEARCH_ACTIVE_TEXT = true }
--- The game's own words Auctionator puts on its buttons (ACCEPT, CANCEL, BACK ...): an exact text equal
--- to one of them stays English everywhere, Auctionator's own "Cancel" too (the two look the same).
-local BLIZZARD = { "ACCEPT", "CANCEL", "BACK", "NOT_BOUND", "EMPTY" }
-local blizzard = {}
 local days, months = {}, {}   -- English weekday (DAY_1..7) / month (MONTH_1..12) -> our Ukrainian
 
 -- The %s slots that take any text (a name the player or the game gives), by locale key: kept as
@@ -112,7 +108,7 @@ local function Add(en, uk, key)
             formats[#formats + 1], count = f, count + 1
             if key then byKey[key] = { f = f } end
         end
-    elseif good and not blizzard[en] then
+    elseif good then
         if exact[en] == nil then exact[en], count = uk, count + 1 end
         if key then byKey[key] = { en = en, uk = uk } end
     end
@@ -136,11 +132,9 @@ end
 
 function W.Build()
     wipe(exact) wipe(formats) wipe(nlFormats) wipe(memo) wipe(byKey)
-    wipe(blizzard)
-    for _, name in ipairs(BLIZZARD) do
-        local v = rawget(_G, name)
-        if type(v) == "string" then blizzard[v] = true end
-    end
+    -- The game's words on its frames and buttons (ACCEPT, CANCEL, BACK, NOT_BOUND, EMPTY: Popup.lua) first,
+    -- while the global is English: the glossary word, as on the popups' buttons.
+    for _, p in ipairs(ns.Popup and ns.Popup.Pairs() or {}) do Add(p[1], p[2]) end
     memoSize, count = 0, 0
     local UA = ns.UA or {}
     local keys = {}

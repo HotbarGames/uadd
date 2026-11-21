@@ -700,7 +700,7 @@
   },
   "UADD_AutoPotion": {
    "addon": "AutoPotion",
-   "version": "4.1.0",
+   "version": "4.1.1",
    "interface": "120105, 120107",
    "files": [
     "Bindings.lua",
@@ -782,11 +782,11 @@
     "code.lua",
     "embeds.xml"
    ],
-   "count": 89,
+   "count": 115,
    "tags": {
-    "X": 89
+    "X": 115
    },
-   "ids": "257cb3129e216b6c1b24bbd9288cccdd655afd4d"
+   "ids": "0455ac8495f0dce43a5ea4d2d0f1ef9a77f08d9d"
   },
   "UADD_Bagnon": {
    "addon": "BagBrother",
@@ -1035,7 +1035,7 @@
   },
   "UADD_DungeonJournal": {
    "addon": "ForeverDungeonJournal",
-   "version": "2.1.0",
+   "version": "2.1.2",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1070,6 +1070,7 @@
     "Systems/DoneTickTooltip.lua",
     "Systems/Favourites.lua",
     "Systems/ForeverFilter.lua",
+    "Systems/GamePad.lua",
     "Systems/HomeBottomBand.lua",
     "Systems/ItemCharges.lua",
     "Systems/ItemIdLearner.lua",
@@ -1101,17 +1102,17 @@
     "UI/ItemComparisonData.lua",
     "UI/ThemeData.lua"
    ],
-   "count": 1602,
+   "count": 1640,
    "tags": {
-    "L": 337,
-    "P": 1090,
-    "S": 175
+    "L": 338,
+    "P": 1095,
+    "S": 207
    },
-   "ids": "9767332cb6f8a1410853706daed0a9b99734282e"
+   "ids": "0d7d9556c9c0880e1a81715e6a5d44ec25f0577c"
   },
   "UADD_ForeverQuestPins": {
    "addon": "ForeverQuestPins",
-   "version": "v1.0.13",
+   "version": "v1.1.1",
    "interface": "16001",
    "files": [
     "AutoQuests.lua",
@@ -1129,20 +1130,21 @@
     "HiddenQuests.lua",
     "Localization.lua",
     "MapPins.lua",
-    "MapPins.xml",
     "NPCTooltips.lua",
     "Nameplates.lua",
     "QuestLinks.lua",
     "Setup.lua",
+    "Sparkle.lua",
+    "Tracker.lua",
     "WarEffort.lua",
     "Waypoints.lua",
     "WhatsNew.lua"
    ],
-   "count": 196,
+   "count": 220,
    "tags": {
-    "L": 196
+    "L": 220
    },
-   "ids": "fbfc7a7e011481dd6ef8ee1aa5c3020ec87a370e"
+   "ids": "ba5e908e435e314e5c019a328e5d9358c84e897f"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
@@ -1207,17 +1209,17 @@
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
-   "version": "1.14.41",
+   "version": "1.14.42",
    "interface": "11509, 16001, 20506",
    "files": [
     "Bindings.xml",
     "LayerSwap.lua"
    ],
-   "count": 405,
+   "count": 431,
    "tags": {
-    "X": 405
+    "X": 431
    },
-   "ids": "169e3a8147022f4b68b73b6f656d589a6f8e2232"
+   "ids": "36c667a5a496763ba818bc73d0c9de1202cee4d8"
   },
   "UADD_LiteMount": {
    "addon": "LiteMount",
@@ -1320,7 +1322,7 @@
   },
   "UADD_Mastercraft": {
    "addon": "Mastercraft",
-   "version": "2.0.7",
+   "version": "2.0.8",
    "interface": "16001",
    "files": [
     "AHPanel.lua",
@@ -1374,6 +1376,8 @@
     "NodeIcons.lua",
     "Nodes.lua",
     "Nodes.xml",
+    "Orders.lua",
+    "OrdersArt.lua",
     "Perf.lua",
     "Places.lua",
     "Prices.lua",
@@ -1383,6 +1387,7 @@
     "RecipeData.lua",
     "RecipePanel.lua",
     "Recipes.lua",
+    "Reputation.lua",
     "Setup.lua",
     "Shopping.lua",
     "SiteInbox.lua",
@@ -1396,9 +1401,11 @@
     "Tabs/Forever.lua",
     "Tabs/Gold.lua",
     "Tabs/Home.lua",
+    "Tabs/ProfArt.lua",
     "Tabs/ProfExtra.lua",
     "Tabs/ProfFishing.lua",
     "Tabs/ProfMore.lua",
+    "Tabs/ProfRoad.lua",
     "Tabs/Professions.lua",
     "Tabs/Settings.lua",
     "Tabs/Specs.lua",
@@ -1408,19 +1415,20 @@
     "TradeWatch.lua",
     "Trainer.lua",
     "TrainerData.lua",
+    "UI/Blizz.lua",
     "UI/Style.lua",
     "VendorData.lua",
     "Widgets.lua"
    ],
-   "count": 2810,
+   "count": 3103,
    "tags": {
-    "X": 2810
+    "X": 3103
    },
-   "ids": "6f4ae9a3508e8f97ec8b9bcda25dafe7d924dde3"
+   "ids": "b710c18813716f68dab37a7f6d6d4e738440d2a6"
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
-   "version": "v0.8.10",
+   "version": "v0.8.11",
    "interface": "16001",
    "files": [
     "API.lua",
@@ -1492,15 +1500,15 @@
     "Map/Window.lua",
     "Map/WorldMap.lua"
    ],
-   "count": 554,
+   "count": 562,
    "tags": {
-    "L": 554
+    "L": 562
    },
-   "ids": "f7318b1ec4279766bf89eab896c762aea81b9b2d"
+   "ids": "5b7fd9445e1aadcd7223b4f374b13e9aeb43693c"
   },
   "UADD_Pawn": {
    "addon": "Pawn",
-   "version": "2.14.5",
+   "version": "2.14.7",
    "interface": "16001",
    "files": [
     "AskMrRobot.lua",

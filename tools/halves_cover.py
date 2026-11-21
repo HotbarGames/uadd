@@ -89,8 +89,12 @@ def _src(rel):
 
 
 def _block(text, start):
+    # A block it cannot find (say, a closing brace moved onto the last line) would read as "no free slots"
+    # and fail far away, in the half-translation check: say so here instead.
     m = re.search(r"\n" + re.escape(start) + r" = \{\n(.*?)\n\}", text, re.S)
-    return m.group(1) if m else ""
+    if not m:
+        raise ValueError(f"{start} = {{ ... }} not found: its closing brace must stand alone on a line")
+    return m.group(1)
 
 
 def auc_free():

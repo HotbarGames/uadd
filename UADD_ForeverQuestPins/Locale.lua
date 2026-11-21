@@ -30,6 +30,8 @@ Lc.CHAT = { ["What is new in %s:"] = true }
 local entries, rev, count = {}, {}, 0      -- en -> uk; uk -> en (false: two English share it)
 local pats = {}                             -- { en, uk, enPat, ukPat } for keys with number slots only
 local wrote, saved, whats = {}, {}, {}      -- en -> uk we wrote; en -> { what was there }; What's New lines
+local LABELS = { "TrackerSortLabels", "TrackerFilterLabels" }
+local labels = {}                           -- table name -> { key -> { en, uk } } we switched
 local built = false
 
 local function Specs(s)
@@ -195,6 +197,21 @@ local function Install()
             end
         end
     end
+    -- Its tracker's sort and filter names: tables its Config.lua fills from L once, at load (before our words
+    -- came in); its settings drop-downs and Tracker.lua's menu read them there, so they are switched in place.
+    for _, name in ipairs(LABELS) do
+        local t = fqp[name]
+        if type(t) == "table" then
+            labels[name] = labels[name] or {}
+            for k, v in pairs(t) do
+                local uk = type(v) == "string" and entries[v]
+                if uk and not labels[name][k] then
+                    labels[name][k] = { v, uk }
+                    t[k] = uk
+                end
+            end
+        end
+    end
 end
 
 local function Uninstall()
@@ -212,6 +229,13 @@ local function Uninstall()
         if type(news) == "table" and news[i] == pair[2] then news[i] = pair[1] end
     end
     wipe(whats)
+    for name, done in pairs(labels) do
+        local t = fqp and fqp[name]
+        for k, pair in pairs(done) do
+            if type(t) == "table" and t[k] == pair[2] then t[k] = pair[1] end
+        end
+        labels[name] = nil
+    end
 end
 
 function Lc.Written() local n = 0 for _ in pairs(wrote) do n = n + 1 end return n end

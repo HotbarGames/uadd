@@ -1,5 +1,18 @@
 -- uk_2.lua: Ukrainian for en_2.lua (Forever Dungeon Journal long texts).
 return {
+  ["ab3b1089"] = "Це може вдатися не з першого разу: використовуйте його на живому слизні, доки не вийде.",
+  ["30eec9b4"] = "Убийте боса в підземеллі «{zone:The Drowned City}».",
+  ["0df9aed3"] = "Знайдіть потрібного НІП у підземеллі «{zone:Scarlet Monastery}».",
+  ["2ec1cbd7"] = "Вилікуйте НІП (за повідомленнями гравців — до повного здоров’я).",
+  ["65409b20"] = "Зустріньте НІП у місцевості «{zone:Cathedral of Light}» у місті «{zone:Stormwind}».",
+  ["eb3eaaa6"] = "Поговоріть з НІП «{npc:Katherine the Pure}» у місцевості «{zone:Cathedral of Light}» у місті «{zone:Stormwind}».",
+  ["0bcceec2"] = "Поговоріть з НІП «{npc:Ursula Deline}» у місцевості «{zone:Mage Quarter}» міста «{zone:Stormwind}».",
+  ["c9670fd8"] = "Зберіть 14 предметів «{item:Summoner's Salt}» з орків у локації «{zone:Redridge Mountains}» і поверніться до НІП «{npc:Ursula Deline}».",
+  ["31adc48a"] = "Принесіть предмет «{item:Orb Fragments}» до НІП «{npc:Delgren the Purifier}» у локації «{zone:Ashenvale}». Нагорода: предмет «{item:Cloak of the Divine Storm}».",
+  ["67269279"] = "Знайдіть предмет «{item:Torn Letter}» (гравець повідомляє, що він випадає з НІП «{npc:Burning Blade Summoner}») і поверніться до НІП «{npc:Katherine the Pure}».",
+  ["caea8a17"] = "Перш ніж почати це завдання, переконайтеся, що кожен гравець у вашій групі виконав попередній крок.",
+  ["462b0c6a"] = "Це завдання виконується ПОЗА цим підземеллям: зробіть його до входу в підземелля.",
+  ["3865ced2"] = "Знайдіть НІП у місцевості «{zone:Forlorn Gardens}» у локації «{zone:Shen'dralas}».",
   ["1d9e56ae"] = "Принесіть предмет «{item:Techbot's Memory Core}» до НІП «{npc:Tinkmaster Overspark}» у місті «{zone:Ironforge}».",
   ["4cc054f0"] = "Використайте предмет «{item:Empty Leaden Collection Phial}» на опромінених загарбниках або опромінених грабіжниках, потім віднесіть повну колбу до НІП «{npc:Ozzie Togglevolt}».",
   ["2f5849b0"] = "Принесіть предмети «{item:High Potency Radioactive Fallout}» і «{item:Heavy Leaden Collection Phial}» назад до цього НІП. Опади швидко розпадаються.",

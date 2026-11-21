@@ -72,8 +72,30 @@ def _mc():
         return None
     c, M = F._game([F._stand_in(), F._addon("UADD"), F._addon(F.MODULE)], "enUS", p)
     M.later()
+    _mc_orders(c, src)
     c.H.pump(5)
     return c
+
+
+def _mc_orders(c, src):
+    """The craft orders board and cards (raw cells with a reader each, Raw.lua), filled the way Mastercraft
+    glues them, with whatever of its English is there (a word our data lacks keeps its line English)."""
+    import hashtext
+    en = {hashtext.key(e): e for e, _ in src}
+    w = {k: en.get(key, "") for k, key in (("prof", "9:468c47ae"), ("all", "16:ab6884aa"), ("asked", "8:5e94e301"),
+                                          ("now", "3:0b880d79"), ("crafter", "7:3a3ece0c"), ("buyer", "5:0ceb89ec"),
+                                          ("mats", "9:55c2e867"), ("when", "4:7c8e8c57"), ("tip", "3:0b882632"))}
+    c.lua.globals().MastercraftStandIn.Orders()
+    c.H.pump(2)
+    o = c.lua.globals().MastercraftStandIn.orders
+    gold = "5|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t"
+    texts = (("row", "sub", f"{w['prof']} 150"), ("row", "mats", w["all"]), ("post", "selSub", f"{w['prof']} 300"),
+             ("mrow", "sub", f"{w['prof']} 150   {w['asked']}   {w['now']}   \"bags, ask me\""),
+             ("offer", "info", f"{w['buyer']}: Thrallix   {w['all']}   {w['tip']} {gold}\n\"soon\""),
+             ("deal", "body", f"{w['crafter']}: Thrallix\nWobbly Vest  x2\n{w['mats']}: {w['all']}\n"
+                              f"{w['when']}: {w['now']}"))
+    for card, field, text in texts:
+        o[card][field].SetText(o[card][field], text)
 
 
 def _wt():

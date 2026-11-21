@@ -51,12 +51,18 @@ local function Apply(on)
         U.SafeCall(ns.Swap.SwapOut)
     end
     U.SafeCall(ns.Screen.Tutorial)
+    U.SafeCall(U.SushiPopups.Sync, "scrap")
     U.SafeCall(ns.Fonts.Sync)
 end
+
+-- Scrap's own Sushi pop-ups (the core helper UADD/SushiPopups.lua): its code lives in these folders.
+local OWNERS = { Scrap = true, Scrap_Config = true, Scrap_Merchant = true }
 
 local function Begin()
     if not ns.On() then return end
     U.SafeCall(ns.Fonts.Install)
+    U.SafeCall(U.SushiPopups.Register, "scrap", { owners = OWNERS, wanted = ns.WordsWanted,
+        uk = ns.Swap.Translate, en = ns.Swap.English, decide = ns.Fonts.Decide })
     Apply(ns.WordsWanted())
     U.SafeCall(ns.Fonts.Scan)
 end

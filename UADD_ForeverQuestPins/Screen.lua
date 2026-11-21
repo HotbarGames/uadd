@@ -1,8 +1,12 @@
 -- UADD_ForeverQuestPins: the frames Forever Quest Pins builds once, switched both ways (lesson 15).
--- Its settings page (built on its first show), its first-run setup window and its breadcrumb dialog read L only
--- when they are made or redrawn, so a text drawn before our words came in, or while the hold key was down,
--- stays as it was drawn. Apply walks only these frames (U.Regions / U.Children) and swaps each FontString that
--- is our word or its English. A text that is neither (a quest title, another addon's) is never touched.
+-- Its settings (a main page and, since 1.1, five pages under it, each built on its first show), its first-run
+-- setup window and its breadcrumb dialog read L only when they are made or redrawn, so a text drawn before our
+-- words came in, or while the hold key was down, stays as it was drawn. Apply walks only these frames
+-- (U.Regions / U.Children) and swaps each FontString that is our word or its English. A text that is neither (a
+-- quest title, another addon's) is never touched.
+-- Its pages under the main one are found through the main category's subcategory links, never by their names
+-- (common words: "Interface", "Navigation"). Their names in the settings tree are set from L at its load, before
+-- our words came in: they are renamed both ways too, only while they hold our word or its English.
 -- Its settings checkboxes keep their label and tooltip in an OnEnter closure: a tooltip hook swaps the lines
 -- of GameTooltip while one of its own checkboxes owns it.
 local _, ns = ...
@@ -17,8 +21,10 @@ local ROOTS = { "ForeverQuestPinsSetup", "ForeverQuestPinsBreadcrumb" }
 local DEPTH = 5
 
 local canvas = nil
+local pages, subs, known = {}, {}, {}           -- its pages under the main one; their categories; both, as a set
 local seen, ours = 0, 0
 local tipped = {}                                -- frames whose OnEnter we already follow
+local shown = {}                                 -- pages whose OnShow we already follow
 
 -- A text in the words wanted, or nil. Its Config.lua glues the player's level range (" (50-61)") onto the
 -- auto-accept label: the head is swapped and the range kept, so off and the hold key bring it back too.
@@ -93,14 +99,33 @@ local function Walk(f, depth, want, tips)
     for _, c in ipairs(U.Children(f)) do Walk(c, depth - 1, want, tips) end
 end
 
+-- A page's name in the settings tree, in the words wanted (only while it is our word or its English).
+local function Rename(cat, want)
+    if type(cat) ~= "table" then return end
+    local ok, name = false, nil
+    if type(cat.GetName) == "function" then ok, name = pcall(cat.GetName, cat) end
+    if not ok then name = rawget(cat, "name") end
+    if type(name) ~= "string" or name == "" then return end
+    local new = Turn(name, want)
+    if not new or new == name then return end
+    if type(cat.SetName) == "function" then cat:SetName(new) else cat.name = new end
+end
+
 -- Its settings page: an unnamed frame, found through the settings window by its category name.
 local function IsCanvas(f)
     return type(f) == "table" and rawget(f, "name") == NAME and type(f.GetObjectType) == "function"
 end
 
+local Look
+
 local function Run(want)
     seen, ours = 0, 0
+    U.SafeCall(Look)
     if canvas and canvas.built then Walk(canvas, DEPTH, want, true) end
+    for _, p in ipairs(pages) do
+        if p.built then Walk(p, DEPTH, want, true) end
+    end
+    for _, cat in ipairs(subs) do U.SafeCall(Rename, cat, want) end
     for _, name in ipairs(ROOTS) do
         local f = rawget(_G, name)
         if type(f) == "table" then Walk(f, DEPTH, want, false) end
@@ -118,31 +143,79 @@ function S.Apply() Run(ns.WordsWanted()) end
 function S.Restore() Run(false) end           -- off: End runs before db.enabled is false
 function S.Count() return seen, ours end
 
+-- Each page is walked again after its own OnShow builds and syncs it.
+local function Hook(f)
+    if type(f) ~= "table" or shown[f] or type(f.HookScript) ~= "function" then return end
+    shown[f] = true
+    f:HookScript("OnShow", U.Safe(KEY, S.Apply))
+end
+
+local function Frame(cat)
+    local P = rawget(_G, "SettingsPanel")
+    if type(P) ~= "table" or type(P.GetLayout) ~= "function" then return nil end
+    local okL, layout = pcall(P.GetLayout, P, cat)
+    if not okL or type(layout) ~= "table" or type(layout.GetFrame) ~= "function" then return nil end
+    local okF, f = pcall(layout.GetFrame, layout)
+    return okF and type(f) == "table" and f or nil
+end
+
 local function Found(f)
     if canvas or not IsCanvas(f) then return end
     canvas = f
-    if type(f.HookScript) == "function" then
-        f:HookScript("OnShow", U.Safe(KEY, S.Apply))  -- after its own OnShow builds and syncs it
-    end
-    S.Apply()
+    Hook(f)
 end
 
-local function FromCategory(cat)
-    local P = rawget(_G, "SettingsPanel")
-    if type(cat) ~= "table" or type(P) ~= "table" then return end
+local function IsMain(cat)
+    if type(cat) ~= "table" or type(cat.GetName) ~= "function" then return false end
     local ok, name = pcall(cat.GetName, cat)
-    if not ok or name ~= NAME then return end
-    if type(P.GetLayout) == "function" then
-        local okL, layout = pcall(P.GetLayout, P, cat)
-        if okL and type(layout) == "table" and type(layout.GetFrame) == "function" then
-            local okF, f = pcall(layout.GetFrame, layout)
-            if okF then Found(f) end
+    return ok and name == NAME
+end
+
+local function Parent(cat)
+    if type(cat.GetParentCategory) == "function" then
+        local ok, p = pcall(cat.GetParentCategory, cat)
+        if ok then return p end
+    end
+    return rawget(cat, "parentCategory")
+end
+
+-- Its pages under the main category, through the category's own links.
+local function Subs(main)
+    local list
+    if type(main.GetSubcategories) == "function" then
+        local ok, l = pcall(main.GetSubcategories, main)
+        if ok then list = l end
+    end
+    if type(list) ~= "table" then list = rawget(main, "subcategories") end
+    if type(list) ~= "table" then return end
+    for _, cat in ipairs(list) do
+        if type(cat) == "table" and not known[cat] then
+            local f = Frame(cat)
+            if f then
+                known[cat] = true
+                subs[#subs + 1] = cat
+                pages[#pages + 1] = f
+                Hook(f)
+            end
         end
     end
 end
 
-local function Look()
-    if canvas then return end
+-- true when cat is its main category or one of the pages under it.
+local function FromCategory(cat)
+    if type(cat) ~= "table" then return false end
+    local main = cat
+    if not IsMain(cat) then
+        local ok, p = pcall(Parent, cat)
+        if not (ok and IsMain(p)) then return false end
+        main = p
+    end
+    if not canvas then Found(Frame(main)) end
+    Subs(main)
+    return true
+end
+
+function Look()
     local ok, cat = false, nil
     if Settings and type(Settings.GetCategory) == "function" then ok, cat = pcall(Settings.GetCategory, NAME) end
     if ok and cat then FromCategory(cat) end
@@ -158,7 +231,7 @@ local function Look()
     end
 end
 
--- Hook the settings window (Blizzard's, made at load): when its page is picked, find our canvas.
+-- Hook the settings window (Blizzard's, made at load): when it opens or one of its pages is picked, find ours.
 local hooked, waiting = false, nil
 function S.HookPanel()
     if hooked then return end
@@ -176,11 +249,10 @@ function S.HookPanel()
         return
     end
     hooked = true
-    P:HookScript("OnShow", U.Safe(KEY, Look))
+    P:HookScript("OnShow", U.Safe(KEY, S.Apply))
     if type(P.SelectCategory) == "function" then
         hooksecurefunc(P, "SelectCategory", U.Safe(KEY, function(_, cat)
-            FromCategory(cat)
-            if canvas and canvas.IsShown and canvas:IsShown() then S.Apply() end
+            if FromCategory(cat) then S.Apply() end
         end))
     end
 end
