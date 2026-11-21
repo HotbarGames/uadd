@@ -96,3 +96,24 @@ E{ id = "ui.revert", en = "Revert", uk = "Відкотити", note = "Button: u
 E{ id = "ui.defaults", en = "Defaults", uk = "Типові", note = "Button: put settings back to defaults (short form of «Типові налаштування»). LiteMount, 2026-11-21." }
 E{ id = "ui.rename", en = "Rename", uk = "Перейменувати", note = "Button or menu item: give a new name. LiteMount, 2026-11-21." }
 E{ id = "ui.rules_page", en = "Rules", uk = "Правила", note = "Page of rules that pick what happens (LiteMount's mount rules). lead's choice, 2026-11-21." }
+
+-- Chat and messenger words first needed by WhatTheWhisper (lead's choice, 2026-11-22; the owner may change them)
+E{ id = "chat.toast", en = "Toast", uk = "Сповіщення", note = "A small pop-up that tells of a new whisper. WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.skin", en = "Skin", uk = "Скін", note = "A look for a window (its colours and frame). WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.spam", en = "Spam", uk = "Спам", note = "Unwanted mass messages. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.report", en = "Report", uk = "Поскаржитися", note = "Button: report a player to the game. Not ui.report_bug. WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.layout_tabbed", en = "Tabbed", uk = "З вкладками", note = "A window layout with tabs; not the Tabs page («Вкладки»). WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.layout_hybrid", en = "Hybrid", uk = "Змішане", note = "A window layout that mixes two others. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.emoticons", en = "Emoticons", uk = "Смайли", note = "Small faces typed in chat. WhatTheWhisper, 2026-11-22." }
+E{ id = "game.realm", en = "Realm", uk = "Реалм", note = "A game server. UALL Forever's UI word (реалм, реалму). WhatTheWhisper, 2026-11-22." }
+E{ id = "game.race", en = "Race", uk = "Раса", note = "A character's race (the field, not a race name). WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.whisper_verb", en = "Whisper", uk = "Шепнути", note = "Button or menu item: send a whisper. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.nickname", en = "Nickname", uk = "Прізвисько", note = "A name the player gives another player in their own list. Not «псевдонім». WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.pop_out", en = "Pop out", uk = "Відокремити", note = "Move a tab into its own window. WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.dock", en = "Dock", uk = "Приєднати", note = "Put a separate window back as a tab. WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.pin_item", en = "Pin to top", uk = "Закріпити", note = "Keep a conversation at the top of a list. Not map.pin («Позначка»). WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.aka", en = "aka", uk = "або", note = "Before another name of the same player. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.online", en = "Online", uk = "У мережі", note = "A friend's state: logged in. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.muted", en = "Muted", uk = "Без звуку", note = "A conversation that plays no sound. WhatTheWhisper, 2026-11-22." }
+E{ id = "ui.markers", en = "Markers", uk = "Мітки", note = "Small marks on list rows (unread, pinned). WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.messenger", en = "Messenger", uk = "Месенджер", note = "A chat window for private talks. WhatTheWhisper, 2026-11-22." }

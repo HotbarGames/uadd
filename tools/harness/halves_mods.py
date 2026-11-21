@@ -17,8 +17,6 @@ NAME = "Quix"
 SKIP = halves_cover.SKIP
 # What's Training?: Words.Translate (M.uk) on whole lines (glue=True); tps: flow_whatstraining_texts.py.
 def wt(check, M, tps, note=""): run(check, "UADD_WhatsTraining", tps, lambda tp, t: _t(M.uk(lua_str(t))), note, glue=True)  # noqa: E704,E501
-
-
 def _s_slots(en): return [k for k, kind in enumerate(halves_cover.kinds(en), 1) if kind == "s"]  # noqa: E704
 def _t(v): return txt(v) if isinstance(v, str) else None  # noqa: E704
 
@@ -40,6 +38,7 @@ def _words(M, p):
 def fxpb(check, M): run(check, "UADD_ForeverXPBar", *_words(M, "fxpb"), glue=True)  # noqa: E704
 def lsw(check, M): run(check, "UADD_LayerSwap", *_words(M, "lsw"), glue=True)  # noqa: E704
 def sal(check, M, tps, note=""): run(check, "UADD_SpeedyAutoLoot", tps, M and (lambda tp, t: _t(M.tr(lua_str(t)))), note)  # noqa: E704,E501  Speedy AutoLoot: each text through its real chat hook after the addon's name (M.tr); tps: flow_sal.templates()
+def wtw(check, M, tps, note=""): run(check, "UADD_WhatTheWhisper", tps, M and (lambda tp, t: (lambda a: t if a is None else _t(M.line(lua_str(tp["key"]), *map(lua_str, a))))(tp["args"](t))), note)  # noqa: E704,E501  WhatTheWhisper: its own L[key]:format (M.line); tps: flow_wtw.templates()
 
 
 def ap(check, M):

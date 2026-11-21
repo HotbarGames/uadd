@@ -30,6 +30,7 @@ move-folders:
   UADD/UADD_WaypointUI: UADD_WaypointUI
   UADD/UADD_ForeverQuestPins: UADD_ForeverQuestPins
   UADD/UADD_LiteMount: UADD_LiteMount
+  UADD/UADD_WhatTheWhisper: UADD_WhatTheWhisper
 
 # names come from UALL Forever or ClassicUA when one is installed; without them the menus are still Ukrainian
 optional-dependencies:

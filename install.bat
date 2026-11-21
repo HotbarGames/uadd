@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft, UADD_WhatsTraining, UADD_TomTom, UADD_RareScanner, UADD_Pawn, UADD_GatherMate2, UADD_Scrap, UADD_SpeedyAutoLoot, UADD_WaypointUI
-rem UADD_ForeverQuestPins and UADD_LiteMount into the WoW Forever AddOns folder. See docs\TESTING.md.
+rem UADD_ForeverQuestPins, UADD_LiteMount and UADD_WhatTheWhisper into the WoW Forever AddOns folder. See docs\TESTING.md.
 rem
 rem   install.bat            -> _forever_
 rem
@@ -23,14 +23,14 @@ if not exist "%CLIENT%\.flavor.info" (
 )
 if not exist "%ADDONS%" mkdir "%ADDONS%"
 
-for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap UADD_SpeedyAutoLoot UADD_WaypointUI UADD_ForeverQuestPins UADD_LiteMount) do (
+for %%A in (UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap UADD_SpeedyAutoLoot UADD_WaypointUI UADD_ForeverQuestPins UADD_LiteMount UADD_WhatTheWhisper) do (
     echo Installing %%A ...
     robocopy "%~dp0%%A" "%ADDONS%\%%A" /MIR /NFL /NDL /NJH /NJS /NP /R:1 /W:1
     if errorlevel 8 goto :copyfail
 )
 
 echo.
-for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap UADD_SpeedyAutoLoot UADD_WaypointUI UADD_ForeverQuestPins UADD_LiteMount) do (
+for %%A in (Questie QuestieDB UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap UADD_SpeedyAutoLoot UADD_WaypointUI UADD_ForeverQuestPins UADD_LiteMount UADD_WhatTheWhisper) do (
     rem a folder check: QuestieDB has only QuestieDB_Forever.toc
     if exist "%ADDONS%\%%A\" (
         echo   ok       %%A
@@ -142,6 +142,11 @@ if exist "%ADDONS%\LiteMount\" (
     echo   ok       LiteMount ^(for UADD_LiteMount^)
 ) else (
     echo   optional LiteMount not installed: the LiteMount module stays off
+)
+if exist "%ADDONS%\WhatTheWhisper\" (
+    echo   ok       WhatTheWhisper ^(for UADD_WhatTheWhisper^)
+) else (
+    echo   optional WhatTheWhisper not installed: the WhatTheWhisper module stays off
 )
 echo.
 echo Done: %ADDONS%

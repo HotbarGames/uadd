@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New module UADD_WhatTheWhisper: WhatTheWhisper's messenger window, settings, dialogs, emoji tabs, key bindings and weekday stamps are in Ukrainian.
+  Новий модуль UADD_WhatTheWhisper: вікно месенджера WhatTheWhisper, його налаштування, діалоги, вкладки емодзі, назви клавіш і дні тижня українською.
 - Game names (zones, NPCs, items, quests) now come from ClassicUA too. With both installed, UADD takes
   ClassicUA's name first and UALL Forever's where ClassicUA has none. Either one works, and so do both.
   Назви з гри (зони, НІП, предмети, завдання) тепер беруться й з ClassicUA. Коли встановлено обидва, UADD

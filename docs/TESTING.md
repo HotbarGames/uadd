@@ -122,6 +122,14 @@ Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom,
 AutoLoot (steps 42-148): `docs/TESTING-ADDONS.md`. Waypoint UI, Forever Quest Pins, LiteMount and the popups of
 all modules (steps 149 and on): `docs/TESTING-ADDONS2.md`.
 
+### WhatTheWhisper
+
+Type `/uadd missed on` first. Log in: `/uadd` lists "WhatTheWhisper". Open its window and its settings, each tab
+and dialog, the emoji picker tabs and the key binding names (Esc, Key Bindings): every text is Ukrainian, with
+letters, not boxes, and it fits. Send or receive a whisper: the weekday stamps in the list are Ukrainian; player
+names and saved texts stay as they are. Open the export and the sound list. `/uadd missed` shows what stayed
+English. `/uadd wtw off`: English; `on`: Ukrainian.
+
 ## Not checked outside the game
 
 - Whether `Fonts\FRIZQT___CYR.TTF` exists in the Forever client (the addon falls back to `Fonts\ARIALN.TTF`).
@@ -170,6 +178,9 @@ all modules (steps 149 and on): `docs/TESTING-ADDONS2.md`.
   register), its Mounts filter menu and Falling dropdown on the game's menu, the fonts (letters or boxes), whether
   the Ukrainian fits its tabs and buttons, and that mount names stay as the game gives them are only seen in the
   real client.
+- WhatTheWhisper's real windows: the messenger window, settings and dialogs, the emoji picker tabs, the key
+  binding list font (letters or boxes), whether the Ukrainian fits, and the weekday stamps in the list are only
+  seen in the real client.
 
 ## Without the game
 

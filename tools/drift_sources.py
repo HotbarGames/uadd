@@ -194,6 +194,7 @@ MODULES = {
     "UADD_SpeedyAutoLoot": ("SpeedyAutoLoot", ex_sal, None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_TomTom": ("TomTom", ex_tt, None, ()),   # All Rights Reserved; our data holds hashes only
     "UADD_WaypointUI": ("WaypointUI", ex_wp, None, ()),   # no licence file: all rights reserved; our data holds hashes only
+    "UADD_WhatTheWhisper": ("WhatTheWhisper", lambda p: __import__("drift_wtw").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_WhatsTraining": ("WhatsTraining", ex_wt, None, ()),   # MIT, but our data holds hashes only, so no tracked English
 }
 

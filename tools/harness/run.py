@@ -26,6 +26,7 @@ UADD_Scrap's checks run next, on stand-ins for Scrap and its two load-on-demand 
 locale file (flow_scrap.py).
 UADD_SpeedyAutoLoot's checks run next, on a stand-in for Speedy AutoLoot that runs its own two files (flow_sal.py).
 UADD_LiteMount's checks run next, on a stand-in for LiteMount that runs its own Localization.lua (flow_litemount.py).
+UADD_WhatTheWhisper's checks run next, on a stand-in for WhatTheWhisper that runs its own locale files (flow_wtw.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run next.
 ClassicUA as the first name source (flow_classicua.py, lesson 25: its zone hook is a harness stand-in that calls
@@ -86,6 +87,7 @@ def run_all():
     import flow_sushi_popup
     import flow_sal
     import flow_litemount
+    import flow_wtw
     import flow_dialogueui
     import flow_dj_module
     import flow_classicua
@@ -117,7 +119,7 @@ def run_all():
                      ("att", flow_att),
                      ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
                      ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("ttp", flow_tomtom_place),("wp", flow_wp),
-                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("pops", flow_popups), ("missed", flow_missed),
+                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw),("pops", flow_popups), ("missed", flow_missed),
                      ("hash", flow_hash), ("cua", flow_classicua), ("keynotice", flow_keynotice),
                      ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):

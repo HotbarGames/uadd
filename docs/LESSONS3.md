@@ -43,12 +43,40 @@ our words to another addon. The logic is now the core helper `UADD/SushiPopups.l
 `python3 -m unittest tools.test_sushi_popups` fails on a popup of the installed addons whose global or body is not
 handled and not in ALLOW.
 
+**Lesson 14 again, in WhatTheWhisper (2026-11-22).** What went wrong: its "save to a file" writes a whole
+conversation into the player's saved data, with its own words for the player's side and the day lines. With the
+module on, that file got our Ukrainian, and it would stay there after the module went off. The STAY list did not
+help: these are words it shows on screen too. The review found it. Rule: when the addon saves a text it also shows,
+wrap the save, not the word: for the length of that one call its English is back in its table (and its own day
+names), then ours comes back (`W.WithEnglish` in `UADD_WhatTheWhisper/Swap.lua`). The screen stays ours, the file is
+whole English, and its own error still reaches it. Check: `python3 -m unittest tools.test_wtw_text` (`SwapLua`: the
+save in a small Lua world; its mutants take the wrap out and swallow the error, and want it to fail);
+`python3 tools/harness/flow_wtw.py --prove`, step "4 the saved-file export" and its mutant `export`.
+
 **Lesson 19 again, in LiteMount (2026-11-21).** Its SetText hooks (the macro count, rows, the mount list, the
 Falling page) ran under `U.Safe`. After 5 errors the module went off, and `U.Safe` stays dead for the session, so
 after "/uadd litemount on" the count was ours once and then English again. Rule: a hook that must work again after
 "on" runs under `Lc.Guard` (pcall, `U.ReportError`, `U.Fault`) and checks `ns.WordsWanted()` itself, not Safe's off
 flag. Check: `CHAOS_ONLY=UADD_LiteMount python3 tools/harness/chaos.py` (off for errors, then on). TomTom's title
 and Forever Quest Pins' breadcrumb hooks have the same shape: not fixed yet.
+
+**Lesson 19 again, in WhatTheWhisper (2026-11-22).** What went wrong: the hook on its language list (its
+`Options.Apply` and `ApplyAll`) ran under `U.Safe`. After 5 errors the module went off, and `U.Safe` stays dead for
+the session. So after "/uadd wtw on", a language picked in its list left ours in its English table. That language
+fills its gaps from the English table, so it showed a mix. The review found it. Rule: a hook that takes ours out
+again runs under a plain `pcall`, reports and counts its error (`U.ReportError`, `U.Fault`), and checks `ns.On()`
+itself (`Guard` in `UADD_WhatTheWhisper/Module.lua`). Check: `python3 tools/harness/flow_wtw.py`, step 7 "after the
+off for errors" (5 errors, on, another language: none of ours, the English table exact; English again: ours); its
+mutant `guard` puts `U.Safe` back and wants that step to fail.
+
+**Lesson 23 again, in WhatTheWhisper (2026-11-22).** What went wrong: two of its keys can share one Ukrainian word
+of ours (5 such words; in 4 the English differs). A text it draws once, and first sees showing that word, could not
+find its key, so with the module off it would stay Ukrainian. Today only the Smileys emoji tab is drawn once with
+such a word, and its category gives the key. Rule: a text drawn once keeps the key it was last known by (the
+object's kept key, the category, or the export label's kept key in `Labels` in `UADD_WhatTheWhisper/Swap.lua`); a
+word two keys share, also in its other languages, gives no key by itself. Check: `python3 tools/harness/flow_wtw.py`,
+step 3 "a built-once text whose Ukrainian another key shares" (it wants at least one such text); its mutant `dups`
+takes the category away and wants that step to fail.
 
 **Lesson 22 again, time bounds under load (2026-11-21).** Other projects' tests kept the PC's load at 12-50 on 8
 cores. Then Mastercraft's half-translation time (5.2-8.5 ms) and the orders 10 KB line failed "under 5 ms" on fine

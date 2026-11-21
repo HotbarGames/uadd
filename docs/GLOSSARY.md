@@ -98,6 +98,12 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Trainer | any trainer, in an addon's own sentence ("наставник") | not an entry |
 | Skinning Trainer, ... | the title over a named trainer, as UALL Forever shows it ("Тренер Білування"; owner 2026-11-20) | `npc.trainer_*` |
 | Guide | Mastercraft's levelling guide ("Посібник"; UALL Forever's «Наставник» is a person who guides) | `prof.guide` |
+| Pin | a mark the player drops on the map ("Позначка") | `map.pin` |
+| Pin to top | keep a conversation at the top of a list ("Закріпити"; WhatTheWhisper) | `ui.pin_item` |
+| Report | tell the addon's author about a bug ("Повідомити про помилку") | `ui.report_bug` |
+| Report | report a player to the game ("Поскаржитися"; WhatTheWhisper) | `chat.report` |
+| Tabbed, Tabs | a window layout with tabs ("З вкладками") is not the Tabs page ("Вкладки") | `ui.layout_tabbed` |
+| Markers | small marks on list rows ("Мітки"; WhatTheWhisper), not Waypoint UI's pinpoint ("Мітка", one waypoint) | `ui.markers` |
 | RFD, BRD, Scholo, ... Key | Attune's left list: short dungeon names, and "Key" after them, stay English (owner 2026-11-20) | not an entry: never translate |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.

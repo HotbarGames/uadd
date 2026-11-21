@@ -1,0 +1,8 @@
+## Interface: 16001, 16000
+## Title: WhatTheWhisper (harness stand-in)
+## Notes: Not WhatTheWhisper. Shim.lua: what its locale, date, sound and export files need first; then the harness runs the installed addon's own files (read only); then Stand.lua: a made-up window drawn from them.
+## Version: 0
+## SavedVariables: WhatTheWhisperDB
+
+Shim.lua
+Stand.lua

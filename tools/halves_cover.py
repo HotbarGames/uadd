@@ -42,6 +42,7 @@ COVERED = {
     "UADD_WaypointUI": ("flow_wp.py", "wp"),
     "UADD_ForeverQuestPins": ("flow_fqp.py", "fqp"),
     "UADD_LiteMount": ("flow_litemount.py", "litemount"),
+    "UADD_WhatTheWhisper": ("flow_wtw.py", "wtw"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -64,6 +65,10 @@ UNFIT = {
     "UADD_Scrap": {k: "stays English on purpose: a chat line with an item link (a game name) in it; the module "
                       "never writes this key into Scrap's table (scrap_rules.STAY)"
                    for k in ("L.Added", "L.Destroyed", "L.Forgotten", "L.Removed")},
+    "UADD_WhatTheWhisper": {
+        "L.17d2f1f2": "stays English on purpose: its slot holds a size with English units (sort u in "
+                      "tools/wtw_rules.py); the module never writes this key into its table (Swap.lua W.Skip)",
+    },
     "UADD_ForeverQuestPins": dict(
         {k: "debug line, kept English on purpose (Lc.NAMES): never written into its L"
          for k in ("59:a05b813a", "32:7421be4c", "19:716b8f42")},
