@@ -1,0 +1,18 @@
+## Interface: 16001, 16000
+## Title: UADD - LiteMount
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: LiteMount's own words in Ukrainian: its settings, rules, menus and tooltips. Part of UADD. Type /uadd litemount.
+## Author: HotbarGames
+## Version: 1.2.2
+## Dependencies: UADD, LiteMount
+## OptionalDeps: UALLF, ClassicUA
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (keyed by its locale keys), then the code.
+data/uk.lua
+Locale.lua
+Tables.lua
+Copies.lua
+Screen.lua
+Module.lua

@@ -107,6 +107,12 @@ def ex_fqp(path):
     return drift_fqp.extract(path)
 
 
+def ex_lm(path):
+    import game_names_src as G   # LiteMount (GPL-2.0): its L keys, the enUS part of its Localization.lua
+    with mock.patch.dict("os.environ", {"UADD_ADDONS_DIR": str(path.parent)}):
+        return [("L", k, en, "Localization.lua") for k, en, _ in G.litemount()[0]]
+
+
 def old_fqp():
     import drift_fqp
     return drift_fqp.old()
@@ -178,6 +184,7 @@ MODULES = {
     "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),
     "UADD_GatherMate2": ("GatherMate2", ex_gm, None, ()),   # treated as all rights reserved (TOC: ARR); our data holds hashes only
     "UADD_LayerSwap": ("LayerSwap", ex_lsw, None, ()),
+    "UADD_LiteMount": ("LiteMount", ex_lm, None, ()),   # GPL-2.0; our data is keyed by its L keys, no tracked English
     "UADD_Mastercraft": ("Mastercraft", ex_mc, None, ()),     # Mastercraft_Inbox has no texts of its own
     "UADD_OpenMap": ("OpenMap", ex_openmap, old_openmap, ()),
     "UADD_Pawn": ("Pawn", ex_pawn, None, ()),   # CC BY-NC-ND 3.0, treated as all rights reserved; our data holds its keys only

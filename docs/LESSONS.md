@@ -69,6 +69,14 @@ last. Rule: such a page is found by what it holds (its one button's text, by has
 and its texts are hooked at once. Check: `python3 tools/harness/run.py`, the Dialogue UI canvas steps
 (`tools/harness/flow_dialogueui_canvas.py`; game E makes the page after login).
 
+**Again in LiteMount (2026-11-21).** The Mounts filter menu stayed English. LiteMount copies L's words into a list
+(`DROPDOWNS`) when it loads, before UADD writes into L, and builds the menu from that list each time it opens. The
+harness had no filter menu, so nothing failed; the independent review found it. Rule: grep the addon for tables that
+copy `L.` words at load, not only for `L.` reads; reach each one where it is drawn (here the menu's generator,
+`menuGenerator`, wrapped to swap each English word for ours, and given back when off). Check:
+`python3 tools/harness/run.py`, "litemount: 3 Mounts filter menu"; its mutant `filter` takes the fix out
+(`UADD_LiteMount/Copies.lua`) and wants that step to fail.
+
 ## 3. The same text translated by two addons
 
 **What went wrong.** UALL Forever (UALLF) is a separate Ukrainian addon. It is installed at

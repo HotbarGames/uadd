@@ -43,6 +43,13 @@ shows Pawn's own "no scale" text), never by what the name says.
 **Check.** `python3 tools/harness/run.py`: TomTom's "review 1" (also: the installed TomTom still names its
 profile settings that way) and Pawn's "4 lesson 13" step.
 
+**Again in LiteMount (2026-11-21).** The window walk skipped a few of the player's texts, but a rule's argument
+button (it shows a group or mount the player picked) and the add box's Name label were walked like LiteMount's
+own words, so a group named like one of them showed our Ukrainian. Rule: the walk skips each part that shows a
+name by where it is (`PLAYER` in `UADD_LiteMount/Screen.lua`: `CurrentProfile`, `ArgDropDown`, `Name`). Check:
+`python3 tools/harness/run.py`, "litemount: 6 the player's names" (five names, each the English of a word we swap,
+shown in each pane); its mutant `walk` takes the skip out and wants that step to fail.
+
 ## 14. The addon's own text saved into the player's data
 
 **What went wrong.** RareScanner (2026-11-20) names the first custom NPC group and the first custom item group
@@ -73,6 +80,19 @@ A line whose slot the addon fills with its own English stays English unless that
 checkbox label, so the whole label never matched our word and stayed English, on and off. Rule: split the range off,
 swap the head, keep the range as it is (`Turn` in `UADD_ForeverQuestPins/Screen.lua`), both ways. Check:
 `python3 tools/harness/run.py`, "fqp: 3 hold canvas"; "fqp: mutant range" takes the fix out and wants step 3 to fail.
+
+**Again in LiteMount (2026-11-21).** Its General page names its options once, when the game's Settings window
+registers it, and a compiled rule set keeps its error lines formatted with the words of that moment. So the page
+stayed English (built before UADD wrote into L), and a rule error could print a line built while held or off. Rule:
+after each on, off and hold key, swap the names the page keeps (each initializer's `data.name`) to the words of now,
+and drop the compiled rule sets so they are built again (`UADD_LiteMount/Copies.lua`). Check:
+`python3 tools/harness/run.py`, "litemount: 3 General page" and "litemount: 3 rule errors" (each: ours, English
+while held, ours, English off, ours); the mutants `general` and `rules` take each fix out.
+
+**Again in LiteMount (2026-11-21).** Its code glues the game's English globals to our words: «Щоразу (Default)»,
+"Chat + «Показ на екрані»", the counts. Rule: our word there only while each such global is Cyrillic: L gated
+(`Lc.WITH_GLOBAL`), or fixed where drawn if the word also shows alone (`Lc.GLUED`). Check: `python3 -m unittest
+tools.test_litemount_glue` finds each such statement; run.py, litemount mutants `default`, `announce`, `uidebug`, `counts`.
 
 ## 16. A throwaway text box that took the keyboard
 

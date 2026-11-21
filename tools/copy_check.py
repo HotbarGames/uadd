@@ -11,7 +11,7 @@ This file looks for them:
   2. flags a tracked file that is a byte-for-byte copy of one of its text files, and a tracked file named like
      an English locale file (en.lua, enUS.lua, en_*.lua) in a module folder or in tools/dj_prose/.
 An addon that is not installed is skipped with a note. Only exact matches count. Questie and Forever Quest Pins
-(GPL-3.0), OpenMap and What's Training? (MIT) may be copied with their notices (THIRD-PARTY-NOTICES.md). Standard library only.
+(GPL-3.0), LiteMount (GPL-2.0), OpenMap and What's Training? (MIT) may be copied with their notices (THIRD-PARTY-NOTICES.md). Standard library only.
 """
 import hashlib
 import os

@@ -20,6 +20,10 @@
   breadcrumb notice are in Ukrainian.
   Новий модуль UADD_ForeverQuestPins: налаштування Forever Quest Pins, його меню на карті світу, налаштування
   при першому запуску і сповіщення про вступне завдання українською.
+- New module UADD_LiteMount: LiteMount's settings, rules, mount lists, menus and dialogs are in Ukrainian.
+  Новий модуль UADD_LiteMount: налаштування LiteMount, його правила, списки маунтів, меню й діалоги українською.
+- LayerSwap: updated for 1.14.41; its new texts are in Ukrainian.
+  LayerSwap: оновлено для 1.14.41; його нові тексти українською.
 - Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
   Ukrainian; pick another language and that language shows whole.
   Mastercraft: «Українська» є в його власному меню мов (кнопка з глобусом). Оберіть її, щоб читати Mastercraft

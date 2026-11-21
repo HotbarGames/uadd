@@ -119,7 +119,7 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 ### The other addons
 
 Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy
-AutoLoot, Waypoint UI and Forever Quest Pins (steps 42 and on): `docs/TESTING-ADDONS.md`.
+AutoLoot, Waypoint UI, Forever Quest Pins and LiteMount (steps 42 and on): `docs/TESTING-ADDONS.md`.
 
 ## Not checked outside the game
 
@@ -165,6 +165,10 @@ AutoLoot, Waypoint UI and Forever Quest Pins (steps 42 and on): `docs/TESTING-AD
 - Forever Quest Pins' real windows: its settings page and World Map filter menu, the setup and breadcrumb notice
   fonts (letters or boxes), whether the Ukrainian fits their boxes, and that the game's quest, NPC and zone names
   stay as the game gives them are only seen in the real client.
+- LiteMount's real windows: the names on its Settings pages (the game's initializers, built when its pages
+  register), its Mounts filter menu and Falling dropdown on the game's menu, the fonts (letters or boxes), whether
+  the Ukrainian fits its tabs and buttons, and that mount names stay as the game gives them are only seen in the
+  real client.
 
 ## Without the game
 

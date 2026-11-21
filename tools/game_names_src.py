@@ -272,5 +272,29 @@ def foreverquestpins():
     return rows, own | glossary_ranks()
 
 
+def litemount():
+    """(rows, own words) for UADD_LiteMount, or None without LiteMount. Keyed by its L key: the English is the enUS
+    part of its Localization.lua (before the first locale block), our Ukrainian is data/uk.lua (KEY = "...")."""
+    loc = Path(os.environ.get("UADD_ADDONS_DIR") or WOW_ADDONS) / "LiteMount" / "Localization.lua"
+    if not loc.is_file():
+        return None
+    en = {}
+    for line in loc.read_text(encoding="utf-8", errors="replace").split("\nif locale ==")[0].splitlines():
+        m = re.match(r'^L\["(\w+)"\]\s*=\s*("(?:[^"\\]|\\.)*")\s*$', line)
+        if m:
+            en[m.group(1)] = FW.unlua(m.group(2))
+    uk = {}
+    for line in (HERE.parent / "UADD_LiteMount" / "data" / "uk.lua").read_text(encoding="utf-8").splitlines():
+        m = re.match(r'^\s*(\w+)\s*=\s*("(?:[^"\\]|\\.)*"),\s*$', line)
+        if m:
+            uk[m.group(1)] = FW.unlua(m.group(2))
+    rows = [(k, e, uk.get(k, "")) for k, e in sorted(en.items())]
+    # Its Title Case labels, pages and macros ("Delete Flag", "Advanced Options"), read 2026-11-21: no game name.
+    own = {"LiteMount", "Blizzard", "WoW", "Shift", "Ctrl", "Alt", "Flag", "Advanced", "Click", "View", "Display",
+           "Unavailable", "AddOn", "Issue", "Options"}
+    return rows, own | glossary_ranks()
+
+
 MODULES = {"UADD_AutoPotion": autopotion, "UADD_LayerSwap": layerswap, "UADD_Mastercraft": mastercraft,
-           "UADD_WhatsTraining": whatstraining, "UADD_TomTom": tomtom, "UADD_ForeverQuestPins": foreverquestpins}
+           "UADD_WhatsTraining": whatstraining, "UADD_TomTom": tomtom, "UADD_ForeverQuestPins": foreverquestpins,
+           "UADD_LiteMount": litemount}

@@ -54,6 +54,10 @@ E{ id = "ui.scale", en = "Scale", uk = "Масштаб", note = "Scale slider of
 -- Mouse
 E{ id = "ui.left_click", en = "Left Click", uk = "Лівий клік", note = "Mouse action, in tooltips that list what a click does." }
 E{ id = "ui.right_click", en = "Right Click", uk = "Правий клік", note = "Mouse action, in tooltips that list what a click does." }
+E{ id = "ui.key_binding", en = "Key Binding", uk = "Прив'язка клавіші", note = "A key the player sets in the game's Key Bindings for an addon's action. lead's choice 2026-11-20, LiteMount." }
+E{ id = "ui.rule", en = "Rule", uk = "Правило", note = "One line of an addon's if-then list the player builds (LiteMount's mount rules). lead's choice 2026-11-20." }
+E{ id = "ui.condition", en = "Condition", uk = "Умова", note = "The 'if' part of a rule (LiteMount). lead's choice 2026-11-20." }
+E{ id = "ui.action", en = "Action", uk = "Дія", note = "The 'then' part of a rule: what the addon does (LiteMount). lead's choice 2026-11-20." }
 
 -- The addon's own button on the minimap (LibDBIcon). Not the quest pins on the minimap: see map.minimap_pins.
 E{ id = "ui.minimap_button", en = { "Minimap Button", "Minimap Icon" }, uk = "Кнопка на мінікарті", note = "The addon's own round button at the edge of the minimap." }

@@ -6,8 +6,7 @@ import os
 import sys
 
 from halves import run, tpl
-from halves_shapes import (ATT_BY_KEY, ATT_FREE, ATT_LUA, DUI_FREE, OM_LABEL, OM_SHAPES, bgn_value, named,
-                           parts)
+from halves_shapes import ATT_BY_KEY, ATT_FREE, ATT_LUA, DUI_FREE, OM_LABEL, OM_SHAPES, bgn_value, named, parts
 from loader import lua_str, txt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -226,6 +225,7 @@ def mc(check, M, src, temps):
 def tomtom(check, M, tps, note=""): run(check, "UADD_TomTom", tps, M and (lambda tp, t: _t(M.uk(lua_str(t)))), note, glue=True)  # noqa: E704,E501 Words.Translate on whole lines; tps: flow_tomtom_texts.templates()
 def wp(check, M, tps, note=""): run(check, "UADD_WaypointUI", tps, M and (lambda tp, t: _t(M.Text(lua_str(t)))), note, glue=True, free_only=True)  # noqa: E704,E501 ns.Text on a whole text, as its Text frames hand it over; tps: flow_wp_texts.templates()
 def fqp(check, M, tps, note=""): run(check, "UADD_ForeverQuestPins", tps, M and (lambda tp, t: _t(M.half(lua_str(tp.get("path", tp["id"])), lua_str(t)))), note, glue=True)  # noqa: E704,E501 each text as Forever Quest Pins builds it (M.half in flow_fqp.lua); tps: flow_fqp_steps.templates()
+def litemount(check, M, tps, note=""): run(check, "UADD_LiteMount", tps, M and (lambda tp, t: [_t(x) for x in (lambda v: v if isinstance(v, tuple) else (v,))(M.half(lua_str(tp["id"]), lua_str(t)))]), note)  # noqa: E704,E501 each text as LiteMount builds it from L (M.half in flow_litemount.lua; "Not %s" both ways); tps: flow_litemount_steps.templates()
 
 
 def rs(check, M, note=""):

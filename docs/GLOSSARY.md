@@ -64,6 +64,9 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Drink, Repair | what a vendor sells (nouns) | `vendor.drink`, `vendor.repair` |
 | Layer | a drawn layer of the map, OpenMap ("Шар") | `map.layer` |
 | Layer | a copy of the server's world, LayerSwap ("Лейер": the owner's word, 2026-11-18) | `game.server_layer` |
+| Mount | what you ride or fly on, LiteMount ("Маунт": the owner's word, 2026-11-20; RareScanner's older texts: «їздові тварини») | `game.mount` |
+| Flag | LiteMount: a tag on a mount, Fly or Favorite ("Прапор": lead's choice, 2026-11-20) | `game.mount_flag` |
+| Flags | Questie's debug bit flags ("Прапорці") | not this entry |
 | Pinpoint | Waypoint UI: the waypoint once the player is close ("Мітка": the owner's word, 2026-11-20; «точна позначка» banned in UADD_WaypointUI) | `map.pinpoint` |
 | Pin | a pin the player drops on the map ("Позначка") | `map.pin`, not `map.pinpoint` |
 | Navigator | Waypoint UI: the arrow at the screen's edge ("Навігатор": the owner's word, 2026-11-20; «покажчик» banned there) | `map.navigator` |

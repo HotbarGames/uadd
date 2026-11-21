@@ -41,6 +41,7 @@ COVERED = {
     "UADD_SpeedyAutoLoot": ("flow_sal.py", "sal"),
     "UADD_WaypointUI": ("flow_wp.py", "wp"),
     "UADD_ForeverQuestPins": ("flow_fqp.py", "fqp"),
+    "UADD_LiteMount": ("flow_litemount.py", "litemount"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "

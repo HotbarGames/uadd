@@ -14,6 +14,10 @@ E{ id = "game.objective", en = "Objective", uk = "Ціль", note = "One step a 
 E{ id = "game.objectives", en = "Objectives", uk = "Цілі", note = "The steps of a quest; also a heading." }
 E{ id = "game.zone", en = "Zone", uk = "Зона", note = "An area of the world map (Elwynn Forest). Zone names themselves come from UALLF." }
 E{ id = "game.server_layer", en = "Layer", uk = "Лейер", note = "A copy of the server's world: players on another layer do not see you (LayerSwap). Owner's word, 2026-11-18, for now: keep it one term so it can be swapped. Not «шар»: that is a drawn map layer (map.layer)." }
+E{ id = "game.mount", en = "Mount", uk = "Маунт", note = "A creature or machine you ride or fly on (LiteMount). The owner's word, 2026-11-20: маунт, маунта, маунти, маунтів, на маунті. Not «їздова тварина» (UALL Forever) or «верхове створіння» (ClassicUA): a mechanostrider is no animal. RareScanner's older texts still say «їздові тварини»." }
+E{ id = "game.mount_summon", en = "Summon", uk = "Викликати", note = "Call a mount (LiteMount): «викликати маунта», animate accusative. lead's choice 2026-11-20." }
+E{ id = "game.mount_family", en = "Family", uk = "Родина", note = "LiteMount: a group of mounts with one model (all mechanostriders). Not a pet family. lead's choice 2026-11-20." }
+E{ id = "game.mount_flag", en = "Flag", uk = "Прапор", note = "LiteMount: a tag on a mount (Fly, Swim, Favorite). Not Questie's bit flags («Прапорці»). lead's choice 2026-11-20." }
 E{ id = "game.level", en = "Level", uk = "Рівень", note = "Character, NPC or quest level (a number). Not sound volume." }
 E{ id = "game.level_n", en = "Level %s", uk = "Рівень %s", note = "Level with its number." }
 E{ id = "game.item_level", en = "Item Level", uk = "Рівень предмета", note = "An item's level (a number): a heading, a search range, a tooltip line. A narrow column header: game.item_level_short." }

@@ -60,6 +60,11 @@ BANNED_IN = {
         r"контекстн\w* знач": ("значок цілі (glossary map.context_icon)",
                                "the owner's word for Context Icon, 2026-11-20"),
     },
+    "UADD_LiteMount": {
+        r"їздов\w* (?:тварин|звір|створін)|верхов\w* створін|скакун": (
+            "маунт (маунта, маунти, маунтів, на маунті; glossary game.mount)",
+            "the owner's word for a mount, 2026-11-20"),
+    },
     "UADD_LayerSwap": {
         r"\bшар(?:а|у|ом|і|и|ів|ам|ами|ах|е)?\b": ("лейер (лейера, на лейері, лейерів; glossary game.server_layer)",
                    "the owner's word for a server layer, 2026-11-18; «шар» is a map layer (map.layer)"),

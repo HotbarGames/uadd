@@ -56,6 +56,7 @@ ALLOW = {
     ("UADD_Auctionator/Fonts.lua", "set font"): (3, FONT_FIX),
     ("UADD_AutoPotion/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
     ("UADD_AutoPotion/Bindings.lua", "global write"): (2, SWAP),
+    ("UADD_LiteMount/Tables.lua", "global write"): (2, SWAP),
     ("UADD_Bagnon/Locale.lua", "global write"): (1, SWAP),
     ("UADD_DialogueUI/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
     ("UADD_DungeonJournal/Fonts.lua", "set font"): (2, FONT_FIX + "; " + TODO),

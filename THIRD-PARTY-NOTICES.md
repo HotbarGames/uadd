@@ -1,7 +1,7 @@
 # Third-party notices
 
 UADD translates other addons. Most of them do not allow copying (see "Rules for contributors" in `README.md`).
-Three do, under these licences. Where this repo copies from them, these notices go with the copies.
+Five do, under these licences. Where this repo copies from them, these notices go with the copies.
 
 ## OpenMap (MIT)
 
@@ -75,3 +75,12 @@ https://github.com/TylerAkins/forever-quest-markers
 Forever Quest Pins is by Tyler Akins. It is shared under the GNU General Public License, version 3 or later
 (its TOC says GPL-3.0; its `LICENSE` file holds the terms). UADD_ForeverQuestPins keeps its English locale keys,
 each with our Ukrainian. UADD is GPL-3.0 too; the full licence text is in `LICENSE`.
+
+## LiteMount (GPL-2.0)
+
+https://www.curseforge.com/wow/addons/litemount (CurseForge project 30359)
+
+LiteMount is by Xodiv-Nagrand (its TOC; its code says Copyright 2011 Mike Battersby). It is shared under the GNU
+General Public License, version 2 (its `LICENSE.txt` holds the terms). UADD_LiteMount keeps its locale keys, each
+with our Ukrainian. The test stand-in `tools/harness/litemount/` and `tools/harness/flow_litemount_steps.py` copy a
+few of its code lines, to build its texts the way it does.

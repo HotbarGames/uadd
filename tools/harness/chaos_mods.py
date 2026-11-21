@@ -161,6 +161,15 @@ def _scrap():
     return c
 
 
+def _lm():
+    import flow_litemount as F
+    if not F.installed():
+        return None
+    c, M = F._game()
+    M.showAdd()
+    return c
+
+
 def _sal():
     import flow_sal as F
     if not F.installed():
@@ -213,6 +222,7 @@ RECIPES = [
     ("UADD_Pawn", "Pawn", _pawn),
     ("UADD_GatherMate2", "GatherMate2", _gm),
     ("UADD_Scrap", "Scrap", _scrap),
+    ("UADD_LiteMount", "LiteMount", _lm),
     ("UADD_SpeedyAutoLoot", "SpeedyAutoLoot", _sal),
     ("UADD_Attune", "Attune", _att),
     ("UADD_OpenMap", "OpenMap", _om),
