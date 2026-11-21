@@ -79,6 +79,7 @@ ALLOW = {
     },
     "UADD_ForeverQuestPins": {   # reviewed 2026-11-20
         "89:a188e9e3": "177:f584fb5c",   # the event's name: ClassicUA's word (UALLF's tables lack the event)
+        "48:6fd894f0": "91:f78ef03d",    # a plain verb (Select) on a slash-command help line, no game name
     },
 }
 
