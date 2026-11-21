@@ -119,7 +119,8 @@ These need Dialogue UI on an English client. Test once with Dialogue UI - UALL a
 ### The other addons
 
 Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy
-AutoLoot, Waypoint UI, Forever Quest Pins and LiteMount (steps 42 and on): `docs/TESTING-ADDONS.md`.
+AutoLoot (steps 42-148): `docs/TESTING-ADDONS.md`. Waypoint UI, Forever Quest Pins, LiteMount and the popups of
+all modules (steps 149 and on): `docs/TESTING-ADDONS2.md`.
 
 ## Not checked outside the game
 
