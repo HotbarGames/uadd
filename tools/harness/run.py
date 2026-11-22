@@ -90,6 +90,7 @@ def run_all():
     import flow_litemount
     import flow_wtw
     import flow_lt
+    import flow_dci
     import flow_dialogueui
     import flow_dj_module
     import flow_classicua
@@ -121,7 +122,8 @@ def run_all():
                      ("att", flow_att),
                      ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
                      ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("ttp", flow_tomtom_place),("wp", flow_wp),
-                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw), ("lt", flow_lt), ("pops", flow_popups), ("missed", flow_missed),
+                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw), ("lt", flow_lt), ("dci", flow_dci),
+                     ("pops", flow_popups), ("missed", flow_missed),
                      ("hash", flow_hash), ("cua", flow_classicua), ("keynotice", flow_keynotice),
                      ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):

@@ -25,6 +25,7 @@
 - **LiteMount**
 - **WhatTheWhisper**
 - **LootTriage**
+- **DeleteCheapestItem Reloaded**
 - **Questie**: its menus and settings. The quest tracker and quest texts come from UALL Forever.
 
 Each module needs its addon installed. A module whose addon is missing stays off.
@@ -77,6 +78,7 @@ Write the English text, our Ukrainian, and what it should say.
 - LiteMount by Xodiv-Nagrand: https://www.curseforge.com/wow/addons/litemount
 - WhatTheWhisper by JugoBetrugoTV: https://www.curseforge.com/wow/addons/what-the-whisper
 - LootTriage by Krelock: https://www.curseforge.com/wow/addons/loot-triage
+- DeleteCheapestItem Reloaded by Sander Vispoel and MDHippie: https://www.curseforge.com/wow/addons/delete-cheapest-item-reloaded
 - Questie by the Questie team: https://www.curseforge.com/wow/addons/questie
 - UALL Forever by the UALL team: https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization
 - ClassicUA by Greenya, Jakanis and others: https://www.curseforge.com/wow/addons/classicua
@@ -114,6 +116,7 @@ Source code (GPL-3.0): https://github.com/HotbarGames/uadd
 - **LiteMount**
 - **WhatTheWhisper**
 - **LootTriage**
+- **DeleteCheapestItem Reloaded**
 - **Questie**: його меню й налаштування. Трекер і тексти завдань перекладає UALL Forever.
 
 Кожен модуль працює, коли встановлено його аддон. Якщо аддона немає, модуль вимкнений.

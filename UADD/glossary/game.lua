@@ -115,4 +115,6 @@ E{ id = "game.train", en = "Train", uk = "Вивчити", note = "Learn a spell
 E{ id = "game.auto_loot", en = "Auto Loot", uk = "Автозбір здобичі", note = "Taking all loot at once, as the game's setting does. lead's choice 2026-11-20, Speedy AutoLoot." }
 E{ id = "game.inventory", en = "Inventory", uk = "Інвентар", note = "Your bags as a whole (\"inventory is full\"). lead's choice 2026-11-20, Speedy AutoLoot." }
 E{ id = "game.bind_on_pickup", en = "Bind on Pickup", uk = "Прив'язується при отриманні", note = "An item that binds when you loot it. lead's choice 2026-11-20, Speedy AutoLoot." }
+E{ id = "game.need_greed", en = "Need/Greed", uk = "Потреба/Жадібність", note = "The group loot roll. Neither UALL Forever nor ClassicUA names it (checked 2026-11-22). lead's choice, DeleteCheapestItem Reloaded." }
+E{ id = "game.bag_slot", en = "slot", uk = "комірка", note = "One place in a bag (many: комірки), as LootTriage says it. Not a gear slot. 2026-11-22." }
 E{ id = "game.loot_display", en = "Loot Display", uk = "Показ здобичі", note = "Speedy AutoLoot's list of what you just looted. lead's choice 2026-11-20, Speedy AutoLoot." }

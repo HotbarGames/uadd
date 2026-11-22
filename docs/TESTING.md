@@ -122,6 +122,14 @@ Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom,
 AutoLoot (steps 42-148): `docs/TESTING-ADDONS.md`. Waypoint UI, Forever Quest Pins, LiteMount and the popups of
 all modules (steps 149 and on): `docs/TESTING-ADDONS2.md`.
 
+### DeleteCheapestItem Reloaded
+
+Type `/uadd missed on` first. Log in: `/uadd` lists "DeleteCheapestItem Reloaded". Open its window (the minimap
+button), its ignored-items window, its settings page (Options > AddOns) with the profile dropdowns and a profile
+question; hover the minimap button, the info circle and the Sell / Delete button: every text is Ukrainian, with
+letters, not boxes, and it fits. Item names come from the game as they are; profile names stay as the player typed
+them. `/uadd missed` shows what stayed English. `/uadd dci off`: English; `on`: Ukrainian.
+
 ### LootTriage
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
@@ -192,6 +200,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - LootTriage's real windows: its settings window, its dropdown menus, its row in the AddOns settings panel, the loot window's Delete
   button, the tooltip lines, the chat messages and the What's New window, the fonts (letters or boxes), and whether
   the Ukrainian fits, are only seen in the real client.
+- DeleteCheapestItem Reloaded's real windows: its main window's top lines (money, links, counts), the fixed-width
+  Remove and Delete buttons, its settings page on the game's Settings window, the profile question, the minimap
+  tooltip, the fonts (letters or boxes), and whether the Ukrainian fits, are only seen in the real client.
 
 ## Without the game
 

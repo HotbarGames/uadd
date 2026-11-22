@@ -217,6 +217,14 @@ def _lt():
     return c
 
 
+def _dci():
+    import flow_dci as F
+    if not (F.installed() and F.module_there()):
+        return None
+    c, _ = F.game()
+    return c
+
+
 def _att():
     import flow_att_game as G
     if not G.libraries_there():
@@ -266,6 +274,7 @@ RECIPES = [
     ("UADD_OpenMap", "OpenMap", _om),
     ("UADD_WhatTheWhisper", "WhatTheWhisper", _wtw),
     ("UADD_LootTriage", "LootTriage", _lt),
+    ("UADD_DeleteCheapestItem", "DeleteCheapestItem", _dci),
 ]
 
 

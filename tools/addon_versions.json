@@ -900,6 +900,23 @@
    },
    "ids": "e2ee4b606c524ad9218895fc1f8f833192711bca"
   },
+  "UADD_DeleteCheapestItem": {
+   "addon": "DeleteCheapestItem",
+   "version": "v1.9.1",
+   "interface": "11509, 20506, 50504, 16001",
+   "files": [
+    "Broker.lua",
+    "DeleteCheapestItem.lua",
+    "Localization.lua",
+    "ProfileUI.lua",
+    "Profiles.lua"
+   ],
+   "count": 105,
+   "tags": {
+    "L": 105
+   },
+   "ids": "cb7579510134260f2c29d703f6609c5fe6a4490a"
+  },
   "UADD_DialogueUI": {
    "addon": "DialogueUI",
    "version": "1.0.7 c",

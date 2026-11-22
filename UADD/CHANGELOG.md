@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New module UADD_DeleteCheapestItem: DeleteCheapestItem Reloaded's window, its ignored-items window, its settings page, profiles, tooltips and the minimap button's tooltip are in Ukrainian.
+  Новий модуль UADD_DeleteCheapestItem: вікно DeleteCheapestItem Reloaded, вікно ігнорованих предметів, сторінка налаштувань, профілі, підказки й підказка кнопки біля мінімапи українською.
 - New module UADD_LootTriage: LootTriage's settings window, its row in the game's AddOns settings, tooltip lines, chat messages, the loot window's Delete button and its What's New window are in Ukrainian.
   Новий модуль UADD_LootTriage: вікно налаштувань LootTriage, його рядок у налаштуваннях аддонів гри, рядки підказок, повідомлення в чаті, кнопка видалення у вікні здобичі та вікно «Що нового» українською.
 - New module UADD_WhatTheWhisper: WhatTheWhisper's messenger window, settings, dialogs, emoji tabs, key bindings and weekday stamps are in Ukrainian.

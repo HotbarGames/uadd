@@ -32,6 +32,7 @@ from test_ukrainian_letters import shipped_lua  # noqa: E402
 
 ROUTES = {"Text", "Zone", "Npc", "Item", "Spell", "Class", "Quest"}
 CORE_WORDS = "UADD/Words.lua"
+CODE_TEXT = "UADD/CodeText.lua"
 # module -> the routes its windows need (what it shows; see each module's notes)
 SHOWS = {
     "UADD_AutoPotion": {"Class", "Spell", "Item"},     # class headers, spell and potion boxes (Game.lua)
@@ -47,6 +48,7 @@ SHOWS = {
     "UADD_ForeverQuestPins": {"Quest", "Zone"},        # breadcrumb dialog and abandoned line (Breadcrumb.lua)
     "UADD_WaypointUI": {"Zone"},                       # a pin named after its map (Words.lua Place)
     "UADD_LootTriage": {"Item", "Quest"},              # item and quest links, quest titles (Slots.lua, Words.lua)
+    "UADD_DeleteCheapestItem": {"Item"},               # item names and links in its chat lines (CodeText, Words.lua)
 }
 # Still broken the same way (other work): file -> why. Remove the entry once the file is fixed.
 KNOWN = {}
@@ -141,6 +143,8 @@ def module_reached(mod, paths, texts):
         got |= reached(t)
         for m in re.finditer(r"NewWords\(([^\n]*)", t):
             got |= (spells if re.search(r"spells\s*=\s*true", m.group(1)) else names) & via_core
+        if re.search(r"\bU(?:ADD)?\.CodeText\(", t):   # the core link reader (UADD/CodeText.lua) asks for it
+            got |= reached(texts.get(CODE_TEXT, ""))
     return got
 
 

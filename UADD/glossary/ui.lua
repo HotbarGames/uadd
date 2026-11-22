@@ -20,6 +20,8 @@ E{ id = "ui.empty", en = "Empty", uk = "Порожньо", note = "State: a list
 E{ id = "ui.unlock", en = "Unlock", uk = "Відкрити", note = "Button that unlocks something locked (Bagnon's vault). UALL Forever's word for the game's UNLOCK (UALLF/UI.lua), 2026-11-21." }
 E{ id = "ui.leave", en = "Leave", uk = "Покинути", note = "Button that leaves a place or a group (Bagnon's vault). UALL Forever's word for the game's CHAT_LEAVE (UALLF/UI.lua), 2026-11-21." }
 E{ id = "ui.delete", en = "Delete", uk = "Видалити", note = "Button that removes something for good (a profile, a note)." }
+E{ id = "ui.remove_from_list", en = "Remove", uk = "Прибрати", note = "Button that takes an entry off a list; the thing itself stays (not ui.delete). DeleteCheapestItem Reloaded, 2026-11-22." }
+E{ id = "ui.ignore_list", en = "Ignore List", uk = "Список ігнорування", note = "Items an addon skips (\"Ignored Items\": «Ігноровані предмети»). DeleteCheapestItem Reloaded, 2026-11-22." }
 E{ id = "ui.import", en = "Import", uk = "Імпорт", note = "Button or tab that loads data from somewhere else." }
 E{ id = "ui.search", en = "Search", uk = "Пошук", note = "Search button, search box label or search tab." }
 E{ id = "ui.reload_ui", en = "Reload UI", uk = "Перезавантажити інтерфейс", note = "Button or action that runs /reload." }

@@ -37,11 +37,6 @@ def _hashed(gen):
     return run
 
 
-def ex_fxpb(path):
-    import make_fxpb_data
-    return _hashed(make_fxpb_data)(path)
-
-
 def ex_lsw(path):
     import make_lsw_data
     return _hashed(make_lsw_data)(path)
@@ -177,10 +172,11 @@ MODULES = {
     "UADD_Auctionator": ("Auctionator", ex_auc, None, ()),
     "UADD_AutoPotion": ("AutoPotion", ex_ap, None, ()),
     "UADD_Bagnon": ("BagBrother", ex_bgn, None, ()),          # Bagnon's texts live in BagBrother
+    "UADD_DeleteCheapestItem": ("DeleteCheapestItem", lambda p: __import__("drift_dci").extract(p), None, ()),   # TOC: All Rights Reserved; our data holds hashes only
     "UADD_DialogueUI": ("DialogueUI", ex_dui, None, ()),
     "UADD_DungeonJournal": ("ForeverDungeonJournal", ex_dj, None, ("tools/dj_prose",)),
     "UADD_ForeverQuestPins": ("ForeverQuestPins", ex_fqp, old_fqp, ()),   # GPL-3.0: our data is keyed by its English
-    "UADD_ForeverXPBar": ("ForeverXPbar", ex_fxpb, None, ()),
+    "UADD_ForeverXPBar": ("ForeverXPbar", lambda p: _hashed(__import__("make_fxpb_data"))(p), None, ()),
     "UADD_GatherMate2": ("GatherMate2", ex_gm, None, ()),   # treated as all rights reserved (TOC: ARR); our data holds hashes only
     "UADD_LayerSwap": ("LayerSwap", ex_lsw, None, ()),
     "UADD_LiteMount": ("LiteMount", ex_lm, None, ()),   # GPL-2.0; our data is keyed by its L keys, no tracked English

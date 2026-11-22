@@ -103,6 +103,7 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Report | tell the addon's author about a bug ("Повідомити про помилку") | `ui.report_bug` |
 | Report | report a player to the game ("Поскаржитися"; WhatTheWhisper) | `chat.report` |
 | Tabbed, Tabs | a window layout with tabs ("З вкладками") is not the Tabs page ("Вкладки") | `ui.layout_tabbed` |
+| Remove | take an entry off a list, the thing stays ("Прибрати"; DeleteCheapestItem Reloaded), not Delete ("Видалити", for good) | `ui.remove_from_list` |
 | Markers | small marks on list rows ("Мітки"; WhatTheWhisper), not Waypoint UI's pinpoint ("Мітка", one waypoint) | `ui.markers` |
 | RFD, BRD, Scholo, ... Key | Attune's left list: short dungeon names, and "Key" after them, stay English (owner 2026-11-20) | not an entry: never translate |
 

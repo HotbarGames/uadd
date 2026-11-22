@@ -44,6 +44,7 @@ COVERED = {
     "UADD_LiteMount": ("flow_litemount.py", "litemount"),
     "UADD_WhatTheWhisper": ("flow_wtw.py", "wtw"),
     "UADD_LootTriage": ("flow_lt.py", "lt"),
+    "UADD_DeleteCheapestItem": ("flow_dci.py", "dci"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "

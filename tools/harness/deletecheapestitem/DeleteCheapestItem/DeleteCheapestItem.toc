@@ -1,0 +1,8 @@
+## Interface: 16001, 16000
+## Title: DeleteCheapestItem (harness stand-in)
+## Notes: Not DeleteCheapestItem Reloaded. It draws the shapes that addon draws; its English comes at run time from the installed addon (tools/harness/dci_feed.py).
+## Version: 0
+
+Stand.lua
+Ignored.lua
+Config.lua

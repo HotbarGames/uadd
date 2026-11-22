@@ -13,106 +13,17 @@
 
 local _, ns = ...
 local U = UADD
-local P = { asked = false }               -- asked: a game-name route was asked for this text (its answer may come later)
-ns.Slots = P
 ns.LT = ns.LT or {}
 ns.SORT = ns.SORT or {}
+local P = U.CodeText(ns.LT, ns.SORT)      -- the shared base (UADD/CodeText.lua); P.asked: a game-name route was asked
+ns.Slots = P
 
-local find, sub, byte, match, format = string.find, string.sub, string.byte, string.match, string.format
-local concat, unpack = table.concat, unpack
-local CYR = "[\208-\210]"
+local find, sub, byte = string.find, string.sub, string.byte
+local unpack = unpack
 local PREFIX = "LootTriage: "             -- the addon's name: its tooltip lines start so
 local MAXWORDS = 20
 
-local function Key(s) return "Code." .. U.Hash(s) end
-
--- One literal of its code (not a template).
-local function Exact(s)
-    if type(s) ~= "string" or s == "" then return nil end
-    local k = Key(s)
-    if ns.SORT[k] then return nil end
-    local uk = ns.LT[k]
-    return type(uk) == "string" and uk or nil
-end
-
--- ── Shapes ────────────────────────────────────────────────────────────────────────────────────
-
--- The escape codes of a text, in order: { a, b, link } (a link with its colour and |r is one range).
-local function Codes(s)
-    local out, i, n = {}, 1, #s
-    while i < n do
-        local p = find(s, "|", i, true)
-        if not p or p >= n then break end
-        local c, e, link = sub(s, p + 1, p + 1), nil, false
-        if c == "c" then e = p + 9
-        elseif c == "T" then e = select(2, find(s, "|t", p + 2, true))
-        elseif c == "A" then e = select(2, find(s, "|a", p + 2, true))
-        elseif c == "H" then
-            local h1 = find(s, "|h", p + 2, true)
-            local h2 = h1 and find(s, "|h", h1 + 2, true)
-            e, link = h2 and h2 + 1, true
-        else e = p + 1 end
-        if not e then break end
-        local a = p
-        if link then
-            local last = out[#out]
-            if last and not last[3] and last[2] == p - 1 and sub(s, last[1], last[1] + 1) == "|c" then
-                a = last[1]
-                out[#out] = nil
-            end
-            if sub(s, e + 1, e + 2) == "|r" then e = e + 2 end
-        end
-        out[#out + 1] = { a, e, link }
-        i = e + 1
-    end
-    return out
-end
-
-local function InCode(codes, a, b)
-    for _, c in ipairs(codes) do if a <= c[2] and b >= c[1] then return true end end
-    return false
-end
-
--- A link with the name between its brackets in Ukrainian, or nil.
-local function Link(text)
-    local R = U.UALL
-    local o = find(text, "|h[", 1, true)
-    local c = o and find(text, "]|h", o + 3, true)
-    if type(R) ~= "table" or not c then return nil end
-    local name, kind = sub(text, o + 3, c - 1), match(text, "|H(%a+):")
-    local uk
-    P.asked = true
-    if kind == "item" and type(R.Item) == "function" then uk = R.Item(name)
-    elseif kind == "quest" and type(R.Quest) == "function" then uk = R.Quest(tonumber(match(text, "|Hquest:(%d+)")), name) end
-    if type(uk) ~= "string" or not find(uk, CYR) then return nil end
-    return sub(text, 1, o + 2) .. uk .. sub(text, c)
-end
-
--- Money as the game draws it (digits, spaces, colour and texture codes), then maybe one of our pieces.
-local function Value(x)
-    local uk = Exact(x)
-    if uk then return uk end
-    local i, n = 1, #x
-    while i <= n do
-        local c = byte(x, i)
-        if (c >= 48 and c <= 57) or c == 32 then i = i + 1
-        elseif c == 124 and sub(x, i + 1, i + 1) == "T" then
-            local _, e = find(x, "|t", i + 2, true)
-            if not e then break end
-            i = e + 1
-        elseif c == 124 and sub(x, i + 1, i + 1) == "c" then i = i + 10
-        elseif c == 124 and sub(x, i + 1, i + 1) == "r" then i = i + 2
-        else break end
-    end
-    while i > 1 and byte(x, i - 1) == 32 do i = i - 1 end
-    local money = sub(x, 1, i - 1)
-    if not find(money, "%d") then return nil end
-    if i > n then return money end
-    local rest = Exact(sub(x, i))
-    return rest and money .. rest or nil
-end
-
-local function Free(en) return type(en) == "string" and not find(" " .. en, "%s%l") end
+local Exact, Codes, InCode, Link, Value, Free = P.Exact, P.Codes, P.InCode, P.Link, P.Value, P.Free
 
 -- What one slot puts in the Ukrainian template, or nil (then the line stays English).
 local function Slot(sort, sl)
@@ -128,29 +39,7 @@ local function Slot(sort, sl)
 end
 
 -- The template the slots make of s, looked up; the line in Ukrainian or nil.
-local function Fill(s, slots)
-    table.sort(slots, function(x, y) return x.a < y.a end)
-    local parts, at = {}, 1
-    for _, sl in ipairs(slots) do
-        if sl.a < at then return nil end                  -- overlapping slots: not a shape
-        parts[#parts + 1] = (sub(s, at, sl.a - 1):gsub("%%", "%%%%"))
-        parts[#parts + 1] = sl.d and "%d" or "%s"
-        at = sl.b + 1
-    end
-    parts[#parts + 1] = (sub(s, at):gsub("%%", "%%%%"))
-    local k = Key(concat(parts))
-    local uk, sorts = ns.LT[k], ns.SORT[k]
-    if type(uk) ~= "string" or type(sorts) ~= "string" or #sorts ~= #slots then return nil end
-    P.matched = true
-    local vals = {}
-    for i, sl in ipairs(slots) do
-        local v = Slot(sub(sorts, i, i), sl)
-        if v == nil then return nil end
-        vals[i] = v
-    end
-    local ok, out = pcall(format, uk, unpack(vals, 1, #slots))
-    return ok and out or nil
-end
+local function Fill(s, slots) return P.Fill(s, slots, Slot) end
 
 -- The links and the numbers outside codes and outside `skip` ({a, b} ranges), as slots.
 local function Base(s, codes, skip)
@@ -297,4 +186,4 @@ local function Shapes(s)
 end
 function P.Forget() miss, nmiss = {}, 0 end
 
-P.Key, P.Exact, P.Codes, P.Link, P.Base, P.Shapes = Key, Exact, Codes, Link, Base, Shapes
+P.Base, P.Shapes = Base, Shapes
