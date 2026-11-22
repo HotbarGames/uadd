@@ -9,6 +9,8 @@
 --   H.Value(x)                    money as the game draws it (digits, |T|t, |c|r), maybe then our piece
 --   H.Free(en)                    can a free slot keep this as it is (no word in small letters, lesson 7)
 --   H.Fill(s, slots, Resolve)     the template the slots make of s, looked up and filled, or nil
+--   H.Flips(s, slots, Resolve, m) Fill again with up to m (4) %d number slots ({ kind = "num" }) as %s
+--   H.Numbers, H.OneLink, H.N, H.Item, H.Kept, H.OneName   slot readers (Shapes.lua says what each takes)
 --   H.asked                       a game-name route was asked (its answer may come later: not cached)
 --   H.matched                     a template of ours matched in the last Fill
 -- A slot is { a, b, en, d (a number: %d) }; Resolve(letter, slot) gives what it puts in, or nil: then the
@@ -56,6 +58,15 @@ local function InCode(codes, a, b)
 end
 
 local function Free(en) return type(en) == "string" and not find(" " .. en, "%s%l") end
+
+-- Marks an addon glues two texts with (a wide gap, a tab, a line break, a dash between spaces): a free slot
+-- that holds one says no, so a name never carries glued English (lesson 7).
+local GLUE = { "%s%s", "[\n\13\t|]", " %- ", " \226\128[\147\148] " }
+local function OneName(x)                                -- a free slot's text: one name, nothing glued on
+    if type(x) ~= "string" or x == "" or #x > 60 or not Free(x) then return nil end
+    for _, g in ipairs(GLUE) do if find(x, g) then return nil end end
+    return x
+end
 
 function U.CodeText(T, SORT)
     local H = { asked = false, matched = false, Codes = Codes, InCode = InCode, Free = Free }
@@ -110,6 +121,51 @@ function U.CodeText(T, SORT)
         return rest and money .. rest or nil
     end
 
+    -- Only digits, spaces, separators and colour or texture codes (a count, money), with a digit.
+    local function Numbers(x)
+        local i, n, digit = 1, #x, false
+        while i <= n do
+            local c = byte(x, i)
+            if c >= 48 and c <= 57 then digit, i = true, i + 1
+            elseif c == 32 or c == 44 or c == 46 or c == 47 or c == 58 then i = i + 1
+            elseif c == 124 then
+                local k = sub(x, i + 1, i + 1)
+                if k == "c" and find(sub(x, i + 2, i + 9), "^%x%x%x%x%x%x%x%x$") then i = i + 10
+                elseif k == "r" then i = i + 2
+                elseif k == "T" and find(x, "|t", i + 2, true) then i = select(2, find(x, "|t", i + 2, true)) + 1
+                else return nil end
+            else return nil end
+        end
+        return digit and x or nil
+    end
+
+    -- One whole link with its name from UALL Forever or ClassicUA; a name cut short ("...") gives nil.
+    local function OneLink(x)
+        local c = Codes(x)
+        if #c ~= 1 or not c[1][3] or c[1][1] ~= 1 or c[1][2] ~= #x then return nil end
+        local o = find(x, "|h[", 1, true)
+        local e = o and find(x, "]|h", o + 3, true)
+        if not e or sub(x, e - 3, e - 1) == "..." then return nil end
+        return Link(x)
+    end
+    local function N(x)                                  -- a link, or a count and a link ("3x" and the link)
+        local l = OneLink(x)
+        if l then return l end
+        local q = match(x, "^%d+x ?")
+        l = q and #q < #x and OneLink(sub(x, #q + 1))
+        return l and q .. l or nil
+    end
+    local function Item(x)                               -- an item's plain name (never cut short, no codes)
+        if #x > 80 or find(x, "[|\n%[%]]") or sub(x, -3) == "..." or not find(x, "%a") then return nil end
+        local R = U.UALL
+        if type(R) ~= "table" or type(R.Item) ~= "function" then return nil end
+        H.asked = true
+        local ok, uk = pcall(R.Item, x)
+        if ok and type(uk) == "string" and find(uk, CYR) then return uk end
+        return nil
+    end
+    local function Kept(x) return find(x, CYR) and not find(x, "%a") and x or nil end   -- Cyrillic, no Latin
+
     local function Fill(s, slots, Resolve)
         table.sort(slots, function(x, y) return x.a < y.a end)
         local parts, at = {}, 1
@@ -134,6 +190,23 @@ function U.CodeText(T, SORT)
         return ok and out or nil
     end
 
-    H.Key, H.Exact, H.Link, H.Value, H.Fill = Key, Exact, Link, Value, Fill
+    -- Fill again with the number slots that are %d ({ kind = "num", d = true }) tried as %s too, in every mix
+    -- (the addon formats a number into a %s); at most `max` (4) such slots, so at most 15 more keys.
+    local function Flips(s, slots, Resolve, max)
+        local nums = {}
+        for _, sl in ipairs(slots) do if sl.kind == "num" and sl.d then nums[#nums + 1] = sl end end
+        if #nums == 0 or #nums > (max or 4) then return nil end
+        local uk
+        for m = 1, 2 ^ #nums - 1 do
+            for i, sl in ipairs(nums) do sl.d = math.floor(m / 2 ^ (i - 1)) % 2 == 0 end
+            uk = Fill(s, slots, Resolve)
+            if uk then break end
+        end
+        for _, sl in ipairs(nums) do sl.d = true end
+        return uk
+    end
+
+    H.Key, H.Exact, H.Link, H.Value, H.Fill, H.Flips = Key, Exact, Link, Value, Fill, Flips
+    H.Numbers, H.OneLink, H.N, H.Item, H.Kept, H.OneName = Numbers, OneLink, N, Item, Kept, OneName
     return H
 end

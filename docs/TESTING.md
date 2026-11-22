@@ -149,6 +149,16 @@ Ukrainian. The Lua error text itself stays as the game gave it. The Font size me
 Hold the show-original key with the window open: English. `/uadd missed` shows what stayed English. `/uadd bugsack off`:
 English; `on`: Ukrainian.
 
+### Road to Sixty
+
+Type `/uadd missed on` first. Log in: `/uadd` lists "Road to Sixty". Open its journey map and its panel: the tabs,
+buttons, labels and tips are Ukrainian, with letters, not boxes, and they fit. Open its settings (Esc > Options >
+AddOns, or its minimap button): the section titles, options and tooltips are Ukrainian. Open its What's New
+window and its stats page: Ukrainian. Its chat lines are Ukrainian. Zone, quest, item and player names stay as the
+game gives them (UALL Forever or ClassicUA names them), and so do the lines it saved about your journey. Hold the
+show-original key with a window open: English. `/uadd missed` shows what stayed English. `/uadd rts off`: English;
+`on`: Ukrainian.
+
 ### LootTriage
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
@@ -228,6 +238,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - BugSack's real windows: the sack window (tabs, buttons, Filter label, session line) with a real error in it, its
   options page and tooltips, the send popup, the minimap tooltip, the fonts (letters or boxes), and whether the
   Ukrainian fits, are only seen in the real client.
+- Road to Sixty's real windows: the journey map, the panel and its tabs, the settings page, the What's New window,
+  the stats page, the minimap button's tooltip, the fonts (letters or boxes), whether the Ukrainian fits its fixed
+  boxes, and that the chat and the saved journey lines still work, are only seen in the real client.
 
 ## Without the game
 
@@ -239,4 +252,15 @@ checks that Questie hands the tracker to UALL Forever in its exact English (with
 Then it loads the real Dungeon Journal with UALL Forever and checks the journal module: the language
 menu, names on each page change (boss, tab, dungeon, search result), fonts, Shift, Русский and
 `/uadd dj off`/`on`. It prints how many dungeon, boss, quest and item names are Ukrainian.
+
+How fast it runs (2026-11-22, 8 cores): the whole suite takes about 80 s, `run.py` alone about 40 s.
+
+- `run.py` runs its flows side by side, one process per flow (`tools/harness/pool.py`, `jobs.py`). The checks come
+  out in the same order as one after another.
+- A flow that fails, dies or runs past its time gives a FAIL line with a repro line. The run then ends with code 1.
+- `UADD_JOBS=1` runs every flow in one process, one after another, as before. Use it to look at one failure
+  closely. `UADD_JOBS=4` runs 4 at a time.
+- `UADD_JOB_TIMEOUT` is the seconds one flow may take (default 900).
+- In the suite, `tools/test_harness.py` starts the harness as soon as it is imported, so it runs while the other
+  tests run. `UADD_HARNESS_EARLY=0` runs it at its own turn instead.
 `python3 tools/coverage.py` shows how much of Questie's text is translated.

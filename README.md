@@ -31,6 +31,7 @@ UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Fore
 - DeleteCheapestItem Reloaded
 - Wowhead Quick Link
 - BugSack
+- Road to Sixty
 - Questie: its menus and settings. The quest tracker and quest texts come from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization).
 
@@ -47,7 +48,7 @@ Each module needs its addon. UALL Forever and ClassicUA are optional.
 
 Copy the `UADD`, `UADD_Questie`, `UADD_DungeonJournal`, `UADD_OpenMap`, `UADD_DialogueUI`, `UADD_ForeverXPBar`,
 `UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft`, `UADD_WhatsTraining`, `UADD_TomTom`, `UADD_RareScanner`, `UADD_Pawn`, `UADD_GatherMate2`, `UADD_Scrap`, `UADD_SpeedyAutoLoot`,
-`UADD_WaypointUI`, `UADD_ForeverQuestPins`, `UADD_LiteMount`, `UADD_WhatTheWhisper`, `UADD_LootTriage`, `UADD_DeleteCheapestItem`, `UADD_WowheadQuickLink` and `UADD_BugSack` folders into `World of Warcraft\_forever_\Interface\AddOns\`,
+`UADD_WaypointUI`, `UADD_ForeverQuestPins`, `UADD_LiteMount`, `UADD_WhatTheWhisper`, `UADD_LootTriage`, `UADD_DeleteCheapestItem`, `UADD_WowheadQuickLink`, `UADD_BugSack` and `UADD_RoadToSixty` folders into `World of Warcraft\_forever_\Interface\AddOns\`,
 or run `install.bat`. Start the game. A module whose addon is not installed stays off.
 
 The first time, UADD collects the names from UALL Forever or ClassicUA in the background. When the chat says the names
@@ -114,6 +115,8 @@ Questie builds that list only once, when it starts.
 | `/uadd wql on` / `off` | Turns the Wowhead Quick Link translation on or off, at once. Off gives Wowhead Quick Link back as it is without UADD. The links themselves, and the names Armory and Raider.IO, stay as they are. |
 | `/uadd bugsack` | Shows the BugSack module's status and commands. |
 | `/uadd bugsack on` / `off` | Turns the BugSack translation on or off, at once. Off gives BugSack back as it is without UADD. The texts of the Lua errors themselves stay as they are. |
+| `/uadd rts` | Shows the Road to Sixty module's status and commands. |
+| `/uadd rts on` / `off` | Turns the Road to Sixty translation on or off, at once. Off gives Road to Sixty back as it is without UADD. Names of zones, quests, items and players, and what Road to Sixty saved about your journey, stay as they are. |
 | `/uadd combat off` / `on` | Off: the hold key works in a fight too. On (the default): in a fight it does nothing. |
 | `/uadd missed` | Shows, per module, how many texts stayed English because UADD has no Ukrainian for them yet. |
 | `/uadd missed on` / `off` | A tool for testers, off unless you turn it on. On: UADD notes each text it shows in English. Off (the default) costs nothing. The list stays on your PC; nothing is sent. |
@@ -138,7 +141,7 @@ Two tools tell you what needs work. They need no network.
 Do not copy another addon's text or code into this repo in bulk, unless its licence allows it.
 
 - **Not allowed** (all rights reserved): Auctionator (its LICENSE says so), Bagnon (its TOC says so), Mastercraft (its LICENSE.txt says so), TomTom, RareScanner, Scrap, DeleteCheapestItem Reloaded and BugSack (their TOCs say so), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (its TOC says all rights reserved, its LICENSE.txt says GPL; we keep to the stricter one), and Attune, Dialogue UI,
-  ForeverXP Bar, Dungeon Journal, LayerSwap, Auto Potion, Speedy AutoLoot, Waypoint UI, WhatTheWhisper, LootTriage and Wowhead Quick Link (no licence, so all rights are reserved).
+  ForeverXP Bar, Dungeon Journal, LayerSwap, Auto Potion, Speedy AutoLoot, Waypoint UI, WhatTheWhisper, LootTriage, Wowhead Quick Link and Road to Sixty (no licence, so all rights are reserved).
 - **Allowed**: Questie (GPL-3.0), Forever Quest Pins (GPL-3.0), LiteMount (GPL-2.0), OpenMap (MIT) and What's Training? (MIT). Their notices are in `THIRD-PARTY-NOTICES.md`.
 
 So for the addons that are not allowed:

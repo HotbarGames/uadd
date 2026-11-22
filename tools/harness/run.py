@@ -30,6 +30,8 @@ UADD_WhatTheWhisper's checks run next, on a stand-in for WhatTheWhisper that run
 UADD_LootTriage's checks run next, on a stand-in for LootTriage fed its English at run time (flow_lt.py).
 UADD_WowheadQuickLink's checks run next, on a stand-in for Wowhead Quick Link that runs its own Lua files (flow_wql.py).
 UADD_BugSack's checks run next, on a stand-in for BugSack fed its English at run time (flow_bs.py).
+UADD_RoadToSixty's checks run next, on a stand-in for Road to Sixty (flow_rts.py), then its half-translation
+check (flow_rts_halves.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run next.
 ClassicUA as the first name source (flow_classicua.py, lesson 25: its zone hook is a harness stand-in that calls
@@ -43,9 +45,10 @@ After each of these, "tooltip font object back after clear: <key>" (tipfont.py, 
 no tooltip line that UADD pinned to a font file stays pinned once the tooltip is cleared.
 Each module's flow also runs the half-translation check (halves.py, halves_mods.py); a module in
 halves_cover.COVERED whose flow gave no "no half-translated line: <module>" result fails here.
+The flows run side by side, one process each (pool.py, jobs.py), and print in the order above;
+UADD_JOBS=1 runs them one after another in this process (docs/TESTING.md).
 Exit code 0 = every check passed, 1 = a check failed, 2 = cannot run here.
 """
-import gc
 import json
 import os
 import sys
@@ -57,7 +60,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import halves_cover  # noqa: E402
 import loader  # noqa: E402
 import session  # noqa: E402
-import tipfont  # noqa: E402
 
 
 def halves_guard(checks, skipped=()):
@@ -69,7 +71,7 @@ def halves_guard(checks, skipped=()):
 
 
 def run_all():
-    """Every flow, one after another. Returns (checks, facts, notes)."""
+    """Every flow, side by side (jobs.py). Returns (checks, facts, notes)."""
     import flow
     import flow_att
     import flow_auc
@@ -97,6 +99,8 @@ def run_all():
     import flow_dci
     import flow_wql
     import flow_bs
+    import flow_rts
+    import flow_rts_halves
     import flow_dialogueui
     import flow_dj_module
     import flow_classicua
@@ -110,36 +114,19 @@ def run_all():
     import flow_missed
     import flow_safe
     import flow_whatstraining
-    tipfont.take()
-    f = flow.run()
-    checks, facts, notes = list(f.checks), dict(f.facts), []
-    del f
-    checks += tipfont.segment("main", flow.Check)
-    gc.collect()                       # the main flow's games go before the journal's starts
-    missing = flow_dj_module.missing_addons()
-    if missing:
-        notes.append("dj module checks skipped: missing addons: " + ", ".join(missing))
-    else:
-        dj_checks, dj_facts = flow_dj_module.run()
-        checks += dj_checks + tipfont.segment("dj", flow.Check)
-        facts["dj_module"] = dj_facts
-        gc.collect()
+    import jobs
     # (facts key, flow module), in run order; each also gets the tooltip font check (tipfont.py)
-    for key, mod in (("dialogueui", flow_dialogueui), ("fxpb", flow_fxpb), ("auc", flow_auc), ("aucpop", flow_auc_popup),
-                     ("att", flow_att),
-                     ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
-                     ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow), ("ttp", flow_tomtom_place),
-                     ("ttm", flow_tomtom_menu), ("wp", flow_wp),
-                     ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw), ("lt", flow_lt), ("dci", flow_dci),
-                     ("wql", flow_wql), ("bs", flow_bs),
-                     ("pops", flow_popups), ("missed", flow_missed),
-                     ("hash", flow_hash), ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice),
-                     ("focus", flow_focus), ("safe", flow_safe),
-                     ("chaos", chaos)):
-        seg_checks, seg_facts = mod.run_checks()
-        checks += seg_checks + tipfont.segment(key, flow.Check)
-        facts[key] = seg_facts
-        gc.collect()
+    checks, facts, notes, missing = jobs.run_all((
+        ("dialogueui", flow_dialogueui), ("fxpb", flow_fxpb), ("auc", flow_auc), ("aucpop", flow_auc_popup),
+        ("att", flow_att), ("lsw", flow_lsw), ("ap", flow_autopotion), ("bgn", flow_bagnon), ("mc", flow_mastercraft),
+        ("mcl", flow_mc_lang), ("wt", flow_whatstraining), ("tt", flow_tomtom), ("tta", flow_tomtom_arrow),
+        ("ttp", flow_tomtom_place), ("ttm", flow_tomtom_menu), ("wp", flow_wp), ("fqp", flow_fqp),
+        ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap),
+        ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw),
+        ("lt", flow_lt), ("dci", flow_dci), ("wql", flow_wql), ("bs", flow_bs), ("rts", flow_rts),
+        ("rtsh", flow_rts_halves), ("pops", flow_popups), ("missed", flow_missed), ("hash", flow_hash),
+        ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice), ("focus", flow_focus),
+        ("safe", flow_safe), ("chaos", chaos)))
     skipped = ["UADD_OpenMap"] if missing else []      # its flow runs with the journal's
     checks += [flow.Check(name, False, why) for name, why in halves_guard(checks, skipped)]
     return checks, facts, notes

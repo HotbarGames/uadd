@@ -39,7 +39,8 @@ class Coverage(unittest.TestCase):
             self.assertGreater(len(why), 20, f"{mod}: say why it fills no slots")
 
     def test_flows_call_the_check(self):
-        mods = (HERE / "harness" / "halves_mods.py").read_text(encoding="utf-8")
+        # halves_mods.py imports the rest of its functions from halves_mods2.py: read them all.
+        mods = "\n".join(p.read_text(encoding="utf-8") for p in sorted((HERE / "harness").glob("halves_mods*.py")))
         for mod, (flow, fn) in C.COVERED.items():
             with self.subTest(mod):
                 self.assertIn(f"\ndef {fn}(", mods)

@@ -28,12 +28,55 @@ def lua_runtime():
     return lua51
 
 
+_TEXT = {}       # path -> (pass, (mtime_ns, size), text): a run reads the same ~1000 files 27k times
+_XML = {}        # file text -> parsed root: keyed by the text, so a flow that serves a cut file gets its own parse
+_IS = {}         # path -> (pass, is a file)
+_PASS = [None]   # None: stat on every read; else one stat per path per pass (a stat on /mnt/c costs ~1.6 ms)
+
+
+def fresh():
+    """Starts a new pass: from now on each file is stat'ed once (its first read), then served from memory.
+    A file edited after its first read in this pass is seen at the next pass. pool.py starts one per run."""
+    _PASS[0] = object()
+
+
+def is_file(path):
+    """os.path.isfile, asked once per path per pass (see fresh())."""
+    if _PASS[0] is None:
+        return os.path.isfile(path)
+    hit = _IS.get(path)
+    if hit is None or hit[0] is not _PASS[0]:
+        hit = _IS[path] = (_PASS[0], os.path.isfile(path))
+    return hit[1]
+
+
 def read_text(path):
+    hit = _TEXT.get(path)
+    if hit and _PASS[0] is not None and hit[0] is _PASS[0]:
+        return hit[2]
+    st = os.stat(path)
+    key = (st.st_mtime_ns, st.st_size)          # an edit is seen at once (or at the next pass)
+    if hit and hit[1] == key:
+        _TEXT[path] = (_PASS[0], key, hit[2])
+        return hit[2]
     with open(path, "rb") as f:
         data = f.read()
     if data.startswith(b"\xef\xbb\xbf"):
         data = data[3:]
-    return data.decode("latin-1")   # bytes as-is: the Lua state converts strings with latin-1
+    text = data.decode("latin-1")   # bytes as-is: the Lua state converts strings with latin-1
+    _TEXT[path] = (_PASS[0], key, text)
+    return text
+
+
+def parse_xml(text):
+    """The XML root of a file's text (comments and stray namespace attributes taken out), parsed once per text.
+    Raises ET.ParseError. The root is shared: read it, never change it."""
+    root = _XML.get(text)
+    if root is None:
+        clean = re.sub(r"<!--.*?-->", "", text, flags=re.S)
+        clean = re.sub(r'\s[A-Za-z]+:[A-Za-z]+="[^"]*"', '', clean)  # xsi:... without xmlns:xsi
+        root = _XML[text] = ET.fromstring(clean)
+    return root
 
 
 def txt(v):
@@ -63,7 +106,7 @@ def parse_toc(path):
 def find_toc(folder, name, flavor):
     for candidate in (f"{name}_{flavor}.toc", f"{name}.toc"):
         p = os.path.join(folder, candidate)
-        if os.path.isfile(p):
+        if is_file(p):
             return p
     raise FileNotFoundError(f"no TOC for {name} in {folder}")
 
@@ -114,7 +157,7 @@ class Client:
     # ── running files ──────────────────────────────────────────────────────────────────────────
     def run_lua(self, addon, rel):
         path = os.path.join(addon.folder, *rel.replace("\\", "/").split("/"))
-        if not os.path.isfile(path):
+        if not is_file(path):
             self.lua.globals().HARNESS.report("missing file", f"{addon.name}/{rel}")
             return
         self.file_count += 1
@@ -122,14 +165,12 @@ class Client:
 
     def run_xml(self, addon, rel):
         path = os.path.join(addon.folder, *rel.replace("\\", "/").split("/"))
-        if not os.path.isfile(path):
+        if not is_file(path):
             self.H.report("missing file", f"{addon.name}/{rel}")
             return
         base = os.path.dirname(rel.replace("\\", "/"))
-        text = re.sub(r"<!--.*?-->", "", read_text(path), flags=re.S)
-        text = re.sub(r'\s[A-Za-z]+:[A-Za-z]+="[^"]*"', '', text)  # xsi:... without xmlns:xsi
         try:
-            root = ET.fromstring(text)
+            root = parse_xml(read_text(path))
         except ET.ParseError as e:
             self.H.report('xml ' + addon.name + '/' + rel, str(e))
             return

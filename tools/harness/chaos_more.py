@@ -170,12 +170,27 @@ def uallf_probe(check):
 
 
 def run(check, notes, spied, seed, only, hooks=None):
-    for name, fn in (("SafeCall flood", lambda: safecall_flood(check)), ("UALLF probe", lambda: uallf_probe(check)),
-                     ("locale compares", lambda: locale_compares(check)),
-                     ("addon missing or late", lambda: missing_and_late(check, seed, only)),
-                     ("install fails part-way", lambda: install_partway(check, spied, hooks or {}, seed, only))):
-        try:
-            fn()
-        except Exception as e:      # one broken case is a failure here, the others still run
-            check(f"chaos: {name} ran", False, f"{type(e).__name__}: {str(e)[:160]} | seed {seed}")
-    notes.append("chaos_more: install part-way covers " + ", ".join(sorted(f for f, n in (hooks or {}).items() if n >= 2)))
+    """The cases above. hooks=None: all but install part-way, which chaos.part runs per module (partway())."""
+    cases = [("SafeCall flood", lambda: safecall_flood(check)), ("UALLF probe", lambda: uallf_probe(check)),
+             ("locale compares", lambda: locale_compares(check)),
+             ("addon missing or late", lambda: missing_and_late(check, seed, only))]
+    for name, fn in cases:
+        _case(check, name, fn, seed)
+    if hooks is not None:
+        partway(check, spied, hooks, seed, only)
+        notes.append(covers(hooks))
+
+
+def partway(check, spied, hooks, seed, only):
+    _case(check, "install fails part-way", lambda: install_partway(check, spied, hooks, seed, only), seed)
+
+
+def covers(hooks):
+    return "chaos_more: install part-way covers " + ", ".join(sorted(f for f, n in hooks.items() if n >= 2))
+
+
+def _case(check, name, fn, seed):
+    try:
+        fn()
+    except Exception as e:      # one broken case is a failure here, the others still run
+        check(f"chaos: {name} ran", False, f"{type(e).__name__}: {str(e)[:160]} | seed {seed}")

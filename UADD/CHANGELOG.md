@@ -4,6 +4,8 @@
 
 - BugSack: new module; its windows, options, popup and chat lines are in Ukrainian. The error texts stay as they are.
   BugSack: новий модуль; його вікна, налаштування, спливне вікно і рядки в чаті українською. Тексти самих помилок лишаються як є.
+- Road to Sixty: new module; its journey map, panel, settings, minimap button, What's New window and stats are in Ukrainian. Names of zones, quests, items and players stay as the game gives them.
+  Road to Sixty: новий модуль; його карта подорожі, панель, налаштування, кнопка біля мінікарти, вікно «Що нового» і статистика українською. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра.
 
 ## 1.2.4
 

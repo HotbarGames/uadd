@@ -4,10 +4,12 @@ own builder (the stand-in, UADD, the module) and show the addon's windows, so th
 RECIPES: [(module folder, the addon its code is, build)]; build() -> Client, or None when the flow cannot run
 here (the addon is not installed). Questie and the Dungeon Journal need the real addons and UALL Forever
 (flow.py, flow_dj_module.py): they are left to those flows and named in SKIPPED.
+The builders from RareScanner on are in chaos_mods2.py.
 """
 import os
 
 import session
+from chaos_mods2 import _att, _bs, _dci, _gm, _lm, _lt, _pawn, _rs, _rts, _sal, _scrap, _wql, _wtw
 
 SKIPPED = {"UADD_Questie": "needs the real Questie and UALL Forever (flow.py)",
            "UADD_DungeonJournal": "needs the real ForeverDungeonJournal and UALL Forever (flow_dj_module.py)"}
@@ -146,107 +148,6 @@ def _fqp():
     return c
 
 
-def _rs():
-    import flow_rarescanner as F
-    if not F.installed():
-        return None
-    c, _ = F._game([F.TARGET])
-    return c
-
-
-def _pawn():
-    import flow_pawn_game as F
-    if not F.installed():
-        return None
-    data, _ = F.test_data()
-    c, M = F.game(data)
-    if hasattr(M, "open"):
-        M.open()
-    return c
-
-
-def _gm():
-    import flow_gm as F
-    if not F.installed():
-        return None
-    keys, data, _ = F.words()
-    c, _ = F.game(keys, data)
-    return c
-
-
-def _scrap():
-    import flow_scrap as F
-    if not F.installed():
-        return None
-    code, _ = F.words()
-    c, _ = F.game(code)
-    return c
-
-
-def _lm():
-    import flow_litemount as F
-    if not F.installed():
-        return None
-    c, M = F._game()
-    M.showAdd()
-    return c
-
-
-def _sal():
-    import flow_sal as F
-    if not F.installed():
-        return None
-    c, M = F.game()
-    M.show(True)
-    return c
-
-
-def _wtw():
-    import flow_wtw as F
-    if not (F.installed() and F.module_there()):
-        return None
-    c, _ = F.game()
-    return c
-
-
-def _lt():
-    import flow_lt as F
-    if not (F.installed() and F.module_there()):
-        return None
-    c, _ = F.game()
-    return c
-
-
-def _dci():
-    import flow_dci as F
-    if not (F.installed() and F.module_there()):
-        return None
-    c, _ = F.game()
-    return c
-
-
-def _wql():
-    import flow_wql as F
-    if not (F.installed() and F.module_there()):
-        return None
-    c, _ = F.game()           # the /wql window open and an item's link popup shown
-    return c
-
-
-def _bs():                    # the sack window open (session label, tabs, options) and the send popup shown
-    import flow_bs as F
-    c, M = F.game() if F.installed() and F.module_there() else (None, None)
-    return (M.popup(), c)[1] if M else None
-
-
-def _att():
-    import flow_att_game as G
-    if not G.libraries_there():
-        return None
-    c, _ = G.game()
-    return c
-
-
 def _om():
     import flow_openmap as F
     from loader import Client, lua_str, read_text
@@ -291,6 +192,7 @@ RECIPES = [
     ("UADD_DeleteCheapestItem", "DeleteCheapestItem", _dci),
     ("UADD_WowheadQuickLink", "WowheadQuickLink", _wql),
     ("UADD_BugSack", "BugSack", _bs),
+    ("UADD_RoadToSixty", "RoadToSixty", _rts),
 ]
 
 

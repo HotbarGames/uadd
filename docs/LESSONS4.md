@@ -37,6 +37,30 @@ late ClassicUA hook leaves no UALL Forever title saved (mutant `settle` takes th
 titles kept); objective lines whole Ukrainian or whole English. Manual, in the game: the real ClassicUA hook timing,
 and the objective lines in the quest list and in FDJ's tracker.
 
+## 41. A push check that grew too slow
+
+**What went wrong.** By 2026-11-22 the push check (the whole suite) took about 9 minutes, close to the hook's
+20-minute limit, and each new module made it longer. The harness ran its 40 flows one after another (275 s). The
+Lua tokenizer read every file letter by letter (54 s over the suite). `test_popups` tokenized every file of every
+addon, though only a few hold a dialog (30 s).
+
+**Rule.**
+
+- Make a check faster only in ways that lose none of it: the same checks, in the same order, each still failing
+  on its bug.
+- Flows run side by side, one process each (`tools/harness/pool.py`). A flow leaves nothing behind for the next
+  one, and its time bounds follow the load (`clock.py`, lesson 22 again in part 3).
+- A job that fails, dies or runs too long is a FAIL with a repro line, never a lost check.
+- A fast path keeps the old code as its reference (`luatok.slow_tokens`), and a test wants both to give the same
+  result.
+
+**Check.** `python3 -m unittest tools.test_pool`: the checks keep their order, and a job that raises, dies or
+runs past `UADD_JOB_TIMEOUT` gives a FAIL with a repro line, while the other jobs' checks stay.
+`python3 -m unittest tools.test_glossary` (`test_fast_reader_matches_slow`): the fast tokenizer gives exactly the
+old reader's tokens on every Lua file of the repo and on 20k odd made-up texts. On 2026-11-22 they also matched on
+all 8144 Lua, XML and TOC files of the installed addons and 200k made-up texts. `UADD_JOBS=1` gives the same
+check names as the side-by-side run.
+
 ## More cases of older lessons
 
 **Lesson 14 again, in WhatTheWhisper's group chats (2026-11-22).** It names a group thread (each kind of group) with its

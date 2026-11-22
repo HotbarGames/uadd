@@ -1,7 +1,7 @@
 ## Interface: 16001, 16000
 ## Title: UADD - Ukrainian for Addons
 ## IconTexture: Interface\AddOns\UADD\Logo
-## Notes: Ukrainian for: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy AutoLoot, Waypoint UI, Forever Quest Pins, LiteMount, WhatTheWhisper, LootTriage, DeleteCheapestItem Reloaded, Wowhead Quick Link, BugSack. Type /uadd for the list.
+## Notes: Ukrainian for: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy AutoLoot, Waypoint UI, Forever Quest Pins, LiteMount, WhatTheWhisper, LootTriage, DeleteCheapestItem Reloaded, Wowhead Quick Link, BugSack, Road to Sixty. See /uadd.
 ## Author: HotbarGames
 ## Version: 1.2.4
 ## SavedVariables: UADD_DB
@@ -38,6 +38,10 @@ Words.lua
 Place.lua
 Lines.lua
 CodeText.lua
+Dates.lua
+Shapes.lua
+WalkFrames.lua
+Walk.lua
 Print.lua
 QuestVariants.lua
 Routes.lua

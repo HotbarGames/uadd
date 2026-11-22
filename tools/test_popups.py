@@ -18,6 +18,7 @@ the WoW _forever_ folder, tools/copy_scan.py). Only dialog names are kept here, 
 import re
 import sys
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -89,8 +90,25 @@ def shows_word(value):
     return bool(GLOBAL.match(v) or LWORD.match(v))
 
 
+class _Stripped:
+    """The addon's files as _strip gives them, each stripped only when asked for. A file without the name in its
+    raw text cannot hold it as a word after _strip (a word token keeps its letters), so it is never stripped for
+    that name: the tokenizer is the slow part (30 s of 40 for every file, 2026-11-22)."""
+
+    def __init__(self, raws):
+        self.raws, self.done = raws, {}
+
+    def having(self, word):
+        for p, raw in self.raws.items():
+            if word in raw:
+                if p not in self.done:
+                    self.done[p] = _strip(raw)
+                yield p, self.done[p]
+
+
 def _name(raw, code, files):
-    """The dialog's name: a string in the brackets, or a variable set to one (this file first, then the addon)."""
+    """The dialog's name: a string in the brackets, or a variable set to one (this file first, then the addon:
+    `files`, a _Stripped)."""
     raw = _tidy(raw)
     m = STRING.match(raw)
     if m:
@@ -102,7 +120,10 @@ def _name(raw, code, files):
         m = re.search(r"\blocal\s+" + ident + r"\s*=\s*\"([^\"]+)\"", code)
         return m.group(1) if m else None
     pat = re.compile(r"\b" + ident + r"\s*=\s*\"([^\"]+)\"")
-    for text in [code] + files:
+    m = pat.search(code)
+    if m:
+        return m.group(1)
+    for _, text in files.having(ident):
         m = pat.search(text)
         if m:
             return m.group(1)
@@ -119,10 +140,12 @@ def _lua(top):
 
 def dialogs(top, folder):
     """[(key, name, [button values])] for each dialog whose buttons show a global or an L word."""
-    texts = {p: _strip(p.read_text(encoding="utf-8", errors="replace")) for p in _lua(top)}
-    every = list(texts.values())
+    paths = list(_lua(top))
+    with ThreadPoolExecutor(16) as pool:     # the WoW folder is on /mnt/c: each open waits, the reads overlap
+        raws = list(pool.map(lambda p: p.read_text(encoding="utf-8", errors="replace"), paths))
+    every = _Stripped(dict(zip(paths, raws)))
     found = {}
-    for p, code in texts.items():
+    for p, code in every.having("StaticPopupDialogs"):
         rel = str(p.relative_to(top)).replace("\\", "/")
         for m in ENTRY.finditer(code):
             if m.group(2):

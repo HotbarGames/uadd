@@ -26,10 +26,10 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
 6. If the module changes a font, test that the change really shows, also in windows made later (lesson 2).
 7. Look for lines that share a row with another text, and for names the addon glues extra text onto
    (lessons 5, 6 and 7).
-8. Before you call the module done, run `python3 tools/check_repo.py` and the module's own tests. The
-   full suite (`python3 -m unittest discover -s tools -p 'test_*.py'`, which runs `tools/harness/run.py`
-   too) runs once, in the push: the pre-push hook runs it on the commit. Never run it by hand right before
-   a push, and never `run.py` on top of it; run `run.py` alone only to look at one step.
+8. Before you call the module done, run `python3 tools/check_repo.py` and the module's own tests. The full suite
+   (`python3 -m unittest discover -s tools -p 'test_*.py'`, with `tools/harness/run.py`) runs once, in the push: the
+   pre-push hook runs it on the commit. Never run it by hand right before a push, nor `run.py` on top of it; run
+   `run.py` alone only to look at one step (`UADD_JOBS=1`: its flows one after another, `docs/TESTING.md`).
 
 ## 1. Text made in code or taken from the game is easy to miss
 

@@ -35,6 +35,7 @@ move-folders:
   UADD/UADD_DeleteCheapestItem: UADD_DeleteCheapestItem
   UADD/UADD_WowheadQuickLink: UADD_WowheadQuickLink
   UADD/UADD_BugSack: UADD_BugSack
+  UADD/UADD_RoadToSixty: UADD_RoadToSixty
 
 # names come from UALL Forever or ClassicUA when one is installed; without them the menus are still Ukrainian
 optional-dependencies:

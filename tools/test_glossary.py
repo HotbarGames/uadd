@@ -161,6 +161,24 @@ class Tokens(unittest.TestCase):
                                                                    ("str", "k", 5)])
         self.assertIn(("name", "x", 3), toks)
 
+    def test_fast_reader_matches_slow(self):
+        """tokens() (a regex for the common tokens) gives exactly what slow_tokens() (the letter-by-letter
+        reader) gives, errors too: on every Lua file of the repo and on odd made-up text."""
+        import random
+
+        def run(fn, text):
+            try:
+                return list(fn(text))
+            except Exception as e:      # the old reader raises on some letters; the fast one must too
+                return type(e).__name__
+        texts = [p.read_bytes().decode("utf-8", "replace") for p in sorted(REPO.rglob("*.lua"))
+                 if ".git" not in p.parts]
+        rng = random.Random(7)
+        alpha = list("ab_Z09x. \t\r\n\f\v\"'\\[]=-{}()é²Ж#;,") + ["--", "[[", "]]", "[==[", "]==]", "\\9", "\\\n"]
+        texts += ["".join(rng.choice(alpha) for _ in range(rng.randint(0, 30))) for _ in range(20000)]
+        bad = [t[:60] for t in texts if run(luatok.tokens, t) != run(luatok.slow_tokens, t)]
+        self.assertEqual(bad, [])
+
 
 class ThisRepo(unittest.TestCase):
     def test_no_problems_and_no_warnings(self):

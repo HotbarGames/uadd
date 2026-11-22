@@ -28,9 +28,19 @@ def take():
     return got
 
 
-def segment(key, check):
-    """[check] for what came in since the last call; `check` is flow.Check."""
-    got = take()
+def merge(takes):
+    """One take() result from several (the parts of one segment that ran in other processes, pool.py)."""
+    out = {"put": 0, "back": 0, "checked": 0, "bad": []}
+    for got in takes:
+        for k in ("put", "back", "checked"):
+            out[k] += got[k]
+        out["bad"] += [b for b in got["bad"] if b not in out["bad"]]
+    return out
+
+
+def segment(key, check, got=None):
+    """[check] for what came in since the last call (or for `got`, a take() result); `check` is flow.Check."""
+    got = take() if got is None else got
     name = f"tooltip font object back after clear: {key}"
     counts = f"put {got['put']}, back {got['back']}, checked {got['checked']}"
     if got["bad"]:

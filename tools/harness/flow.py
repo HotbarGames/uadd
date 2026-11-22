@@ -9,6 +9,7 @@ import os
 import time
 
 import flow_controls
+import flow_split
 import session
 from flow_dropdown import dropdown
 from flow_live import Live
@@ -32,6 +33,7 @@ L10N = {
 COMMANDS = ["", "questie", "questie on", "questie rebuild", "questie test", "questie nonsense", "nonsense"]
 # Globals our files may write: our own, the slash command and Questie's documented override.
 OUR_WRITES = {"UADD", "UADD_DB", "SLASH_UADD1", "QUESTIE_LOCALES_OVERRIDE"}
+ROUTES = ("world.zones", "interface.storage", "interface.loot", "gossip")   # 7d: UALLF parts switched off
 
 
 class Flow:
@@ -72,8 +74,11 @@ def _ok_text(got, want):
     return txt(got) == want, f"{txt(got)!r} (want {want!r})"
 
 
-def run():
+def run(spawn=None):
+    """`spawn`: pool.spawn, to run the parts with sessions of their own as jobs (flow_split.py); None: all here."""
     f = Flow()
+    parts = flow_split.Parts(f, spawn)
+    parts.start("reverse login", reverse_login)
 
     # 1-2. First login: every addon loads, Questie becomes ready, Questie speaks Ukrainian.
     t0 = time.time()
@@ -138,6 +143,9 @@ def run():
     f.check("font: tracker fonts left as Questie's", list(c.F.fonts()) == [DEFAULT_FONT] * 4, str(list(c.F.fonts())))
     qid, uk, en = c.F.ukQuest()
     f.check("names: QuestieDB has a Ukrainian quest name", qid, f"{qid}: {txt(en)} -> {txt(uk)}")
+    parts.start("combat", flow_split.combat, counts)
+    for key in ROUTES:
+        parts.start(key, route_off, key, (qid, uk, en), counts)
     f.check("names: quest found by a spelling variant", *_ok_text(c.F.questName(5147), ARNAK))
     T.stays_english(c, "collection")       # UALL Forever translates the tracker, not UADD
     f.no_errors(c, "collection")
@@ -160,6 +168,7 @@ def run():
 
     # 4b. /reload: the saved names are back before Questie builds its data, no new collection.
     saved = c.dump_saved()
+    parts.start("old fonts", old_fonts, saved)
     c2 = f.start(saved)
     f.check("reload: Questie ready", c2.ev("Questie.API.isReady"))
     f.check("reload: no second collection", c2.H.ns.UADD_Questie.Names.Progress() is None)
@@ -167,8 +176,8 @@ def run():
     T.stays_english(c2, "reload")
     live.same_after_reload(c2)
     f.no_errors(c2, "reload")
-    reverse_login(f)                           # UALLF reverse mode saved: English from the start
-    old_fonts(f, saved)                        # the old UADD's tracker fonts go back
+    parts.put("reverse login")                 # UALLF reverse mode saved: English from the start
+    parts.put("old fonts")                     # the old UADD's tracker fonts go back
 
     # 5. Every /uadd command. The rebuild runs without the Questie function the live path needs.
     for cmd in COMMANDS:
@@ -214,59 +223,15 @@ def run():
             and not any("назви готові" in x for x in c4.chat()), str(c4.F.resets))
     f.no_errors(c4, "on+reload")
 
-    # 7. Combat pauses the collection; it goes on after combat.
-    c5 = f.start()
-    c5.F.fillLog()
-    N5 = c5.H.ns.UADD_Questie.Names
-    c5.ev("function(N) return HARNESS.pump(2000, function() local a = N.Progress() return a and a > 0 end, 0.05) end")(N5)
-    # UALLF shows English while its key (Shift) is held, so UALL says "not now": the collection
-    # waits on the same name instead of saving it as a miss, then goes on.
-    pump = c5.ev("function(n) return HARNESS.pump(n, nil, 0.05) end")
-    c5.H["keys"].SHIFT = True
-    held = N5.Progress()
-    pump(400)
-    f.check("shift held: collection waits", N5.Progress() == held, f"{held} -> {N5.Progress()}")
-    c5.H["keys"].SHIFT = False
-    pump(60)
-    f.check("shift released: collection goes on", N5.Progress()[0] > held[0], str(N5.Progress()))
-    c5.H.combat = True
-    asked = N5.Progress()
-    pump(400)
-    paused = N5.Progress()
-    f.check("combat: collection pauses", paused is not None and paused[0] == asked[0], f"{asked} -> {paused}")
-    c5.H.combat = False
-    c5.F.combatAtFinish()                        # 7b. ...and ends in combat: Questie waits too
-    idle, _, _ = f.collect(c5)
-    f.check("combat: collection resumes and finishes", idle)
-    f.check("combat: same counts after combat", {k: int(N5.counts[k]) for k in counts} == counts)
-    pump(200)
-    f.check("combat at the end: no rebuild in combat", c5.H.combat and c5.F.resets == 0, str(c5.F.resets))
-    c5.H.combat = False
-    c5.H.fire("PLAYER_REGEN_ENABLED")
-    c5.F.settle()
-    f.check("after combat: Questie rebuilt once", c5.F.resets == 1, str(c5.F.resets))
-    live.shown(c5, "after combat")
-    # 7c. A rebuild that ends in combat, then /uadd questie off before combat is over: no rebuild.
-    c5.slash("questie rebuild")
-    c5.F.combatAtFinish()
-    f.collect(c5)
-    c5.slash("questie off")
-    c5.H.combat = False
-    c5.H.fire("PLAYER_REGEN_ENABLED")
-    pump(200)
-    f.check("off while waiting for combat to end: no rebuild", c5.F.resets == 1, str(c5.F.resets))
-    f.no_errors(c5, "combat")
+    # 7. Combat pauses the collection; it goes on after combat (its own session: flow_split.combat).
+    parts.put("combat")
 
     # 7d. A part of UALLF's translation switched off: that kind stays English, no stall.
-    for key in ("world.zones", "interface.storage", "interface.loot", "gossip"):
-        route_off(f, key, (qid, uk, en), counts)
+    for key in ROUTES:
+        parts.put(key)
 
-    # 8. Globals our files read but nobody defines, and globals they write.
-    for name, cl in (("first login", c), ("combat session", c5)):
-        missing = [txt(x) for x in cl.lines(cl.H.listOf(cl.H.ourMissing))]
-        f.check(f"globals: none undefined ({name})", not missing, ", ".join(missing))
-        boxes = session.cyr_boxes(cl)
-        f.check(f"guard: no Ukrainian text in a font without Ukrainian letters ({name})", not boxes, boxes[:3])
+    # 8. Globals our files read but nobody defines, and globals they write (the combat session's: in 7).
+    flow_split.globals_ok(f, c, "first login")
     writes = {txt(x) for x in c.lines(c.H.ourWriteList())}
     f.check("globals: only our own written", writes <= OUR_WRITES, ", ".join(sorted(writes - OUR_WRITES)))
     f.facts["globals_written"] = sorted(writes)

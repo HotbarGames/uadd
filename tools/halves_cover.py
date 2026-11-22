@@ -47,6 +47,7 @@ COVERED = {
     "UADD_DeleteCheapestItem": ("flow_dci.py", "dci"),
     "UADD_WowheadQuickLink": ("flow_wql.py", "wql"),
     "UADD_BugSack": ("flow_bs.py", "bs"),
+    "UADD_RoadToSixty": ("flow_rts_halves.py", "rts"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -78,6 +79,10 @@ UNFIT = {
          for k in ("59:a05b813a", "32:7421be4c", "19:716b8f42")},
         **{k: "/fqp debug or status output, kept English on purpose (data/uk_config.lua): no Ukrainian for it"
            for k in ("34:a889335a", "37:a5d0a754", "34:cc8dc0a3")}),
+    "UADD_RoadToSixty": dict(
+        {k: "stays English on purpose: a slot holds a duration in the addon's English units (sort u in ns.SORT)"
+         for k in ("Code.205f37f2", "Code.83a6ef2d", "Code.667eca79", "Code.16a2068b")},
+        **{"Code.9ff8af0a": "no Ukrainian for it yet: no sort and no text shipped in ns.RTS"}),
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")
 SKIP = "skipped: the addon is not installed"

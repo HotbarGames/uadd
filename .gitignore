@@ -12,3 +12,5 @@ local/
 # the CurseForge page text and its pictures: they go on CurseForge, never in this repo
 docs/curseforge-listing.md
 docs/media/
+# Road to Sixty's English (all rights reserved): drafts and review files
+local/rts/

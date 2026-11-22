@@ -1,0 +1,10 @@
+## Interface: 16001, 16000
+## Title: Road to Sixty
+## Notes: Harness stand-in, not Road to Sixty. It draws the frames that addon draws, with made-up English (tools/harness/rts).
+## Version: 0
+## SavedVariables: RoadToSixtyDB, RoadToSixtyCache
+## SavedVariablesPerCharacter: RoadToSixtyCharDB
+
+Stand.lua
+Windows.lua
+Hooks.lua

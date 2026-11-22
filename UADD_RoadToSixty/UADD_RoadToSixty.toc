@@ -1,0 +1,20 @@
+## Interface: 16001, 16000
+## Title: UADD - Road to Sixty
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: Road to Sixty українською: мапа шляху, панель, статистика, налаштування, повідомлення. Частина UADD.
+## Author: HotbarGames
+## Version: 1.2.4
+## Dependencies: UADD
+## OptionalDeps: UALLF, ClassicUA, RoadToSixty
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only, keyed by the hash of each English text, then the code.
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+Words.lua
+Screen.lua
+Chat.lua
+Module.lua

@@ -152,35 +152,74 @@ def module(folder, target, build, check, notes, hooks):
     notes.append(f"{folder}: {len(snap)} texts, {time.time() - t0:.1f} s")
 
 
-def run_checks():
-    """Every check of the chaos test. Returns (checks, facts)."""
-    import chaos_more
-    import tipfont
-    checks, notes, hooks = [], [], {}
-
+def _adder(checks):
     def check(name, ok, detail=""):
         checks.append(Check(name, bool(ok), str(detail)))
+    return check
+
+
+def part(folder):
+    """One module's games: its cases (module()), its tooltip font check, then its install failing part-way.
+    Returns (checks, facts); facts["later"] holds the part-way checks, which go after the extra cases (assemble)."""
+    import chaos_more
+    import tipfont
+    checks, later, notes, hooks = [], [], [], {}
+    check = _adder(checks)
+    target, build = next((t, b) for f, t, b in chaos_mods.RECIPES if f == folder)
     with Spied():
-        for folder in chaos_mods.folders():
-            if folder not in [x[0] for x in chaos_mods.RECIPES] and folder not in chaos_mods.SKIPPED:
-                check(f"chaos: {folder} has a recipe", False, "add it to chaos_mods.RECIPES")
-        for folder, target, build in chaos_mods.RECIPES:
-            if ONLY and folder != ONLY:
-                continue
-            try:
-                module(folder, target, build, check, notes, hooks)
-            except Exception as e:      # a broken recipe is a failure of this test, not a crash of run.py
-                check(f"chaos: {folder} ran", False, f"{type(e).__name__}: {e} | seed {SEED}")
-            checks += tipfont.segment("chaos " + folder, Check)
+        try:
+            module(folder, target, build, check, notes, hooks)
+        except Exception as e:      # a broken recipe is a failure of this test, not a crash of run.py
+            check(f"chaos: {folder} ran", False, f"{type(e).__name__}: {e} | seed {SEED}")
+        checks += tipfont.segment("chaos " + folder, Check)
+        chaos_more.partway(_adder(later), Spied, hooks, SEED, folder)
+    return checks, {"notes": notes, "hooks": hooks, "later": later}
+
+
+def rest():
+    """The cases after the modules: the BG mutant proof and chaos_more's extra cases (all but install part-way)."""
+    import chaos_more
+    checks, notes = [], []
+    check = _adder(checks)
+    with Spied():
         try:
             chaos_flood.prove(check, Spied, chaos_mods.RECIPES, ONLY)
         except Exception as e:
             check("chaos: in a BG, mutant 'unwrap' ran", False, f"{type(e).__name__}: {str(e)[:160]}")
         try:
-            chaos_more.run(check, notes, Spied, SEED, ONLY, hooks)
+            chaos_more.run(check, notes, Spied, SEED, ONLY)
         except Exception as e:
             check("chaos: the extra cases ran", False, f"{type(e).__name__}: {e} | seed {SEED}")
+    return checks, {"notes": notes}
+
+
+def pieces():
+    """The test as jobs that need nothing from each other: (fn, args), one per module, then rest. jobs.py runs
+    them side by side; assemble() puts their results together in this order."""
+    return [(part, (f,)) for f, _, _ in chaos_mods.RECIPES if not ONLY or f == ONLY] + [(rest, ())]
+
+
+def assemble(results):
+    """[(checks, facts)] of pieces(), in order -> (checks, facts), as one run in order gives them."""
+    import chaos_more
+    checks, later, notes, hooks = [], [], [], {}
+    for folder in chaos_mods.folders():
+        if folder not in [x[0] for x in chaos_mods.RECIPES] and folder not in chaos_mods.SKIPPED:
+            checks.append(Check(f"chaos: {folder} has a recipe", False, "add it to chaos_mods.RECIPES"))
+    *mods, (rest_checks, rest_facts) = results
+    for cs, facts in mods:
+        checks += cs
+        notes += facts.get("notes", [])
+        hooks.update(facts.get("hooks", {}))
+        later += facts.get("later", [])
+    checks += rest_checks + later
+    notes += rest_facts.get("notes", []) + [chaos_more.covers(hooks)]
     return checks, {"seed": SEED, "n": N, "notes": notes}
+
+
+def run_checks():
+    """Every check of the chaos test, one piece after another. Returns (checks, facts)."""
+    return assemble([fn(*args) for fn, args in pieces()])
 
 
 if __name__ == "__main__":
