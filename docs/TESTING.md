@@ -189,7 +189,7 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - WhatTheWhisper's real windows: the messenger window, settings and dialogs, the emoji picker tabs, the key
   binding list font (letters or boxes), whether the Ukrainian fits, and the weekday stamps in the list are only
   seen in the real client.
-- LootTriage's real windows: its settings window and its row in the AddOns settings panel, the loot window's Delete
+- LootTriage's real windows: its settings window, its dropdown menus, its row in the AddOns settings panel, the loot window's Delete
   button, the tooltip lines, the chat messages and the What's New window, the fonts (letters or boxes), and whether
   the Ukrainian fits, are only seen in the real client.
 
