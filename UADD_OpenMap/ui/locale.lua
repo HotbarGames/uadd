@@ -622,6 +622,8 @@ local MAP = {
         "Enhance QoL: якщо в ньому ввімкнено Mover > World Map, вимкніть це. І він, і OpenMap змінюють розмір карти, і її масштаб збивається.",
     ["Kept as it is. You can turn it off any time in ClassicUI Forever's options (World map)."] =
         "Залишено як є. Його можна будь-коли вимкнути в налаштуваннях ClassicUI Forever («World map»).",
+    ["OpenMap is free and made in spare time. To support it:"] =
+        "OpenMap безкоштовний і робиться у вільний час. Підтримати його:",
     ["Keeps the chat windows on show over the map while it's full screen, to keep talking while you look."] =
         "Лишає вікна чату поверх карти на весь екран, щоб ви могли спілкуватися, поки дивитеся.",
     ["MapUtils also changes the world map's zoom and scale: with it and OpenMap both on, the map and Blizzard's quest areas can jump while zooming. Turn one of them off if you see that."] =

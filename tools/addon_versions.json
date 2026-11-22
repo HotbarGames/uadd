@@ -1178,11 +1178,11 @@
     "Waypoints.lua",
     "WhatsNew.lua"
    ],
-   "count": 224,
+   "count": 225,
    "tags": {
-    "L": 224
+    "L": 225
    },
-   "ids": "ee91e4789c8f6733be9ebe5bcedbe1c9d1eb5139"
+   "ids": "c28f0e00b78bb7b85630aa860a1b75e7238b8c2d"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",

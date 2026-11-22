@@ -61,6 +61,28 @@ old reader's tokens on every Lua file of the repo and on 20k odd made-up texts. 
 all 8144 Lua, XML and TOC files of the installed addons and 200k made-up texts. `UADD_JOBS=1` gives the same
 check names as the side-by-side run.
 
+## 42. A version record that hid new texts
+
+**What went wrong.** To record OneForAll's version (2026-11-22), `python3 tools/drift.py --update-versions` ran over
+every module. Forever Quest Pins, Mastercraft and OpenMap had new versions that day, so their new texts were recorded
+too, and drift no longer showed them: the push check found them only by luck (three other tests failed on them).
+In the same push, drift could not see a new Forever Quest Pins What's New line at all: its extractor read L keys
+only, and the What's New lines are a plain list in `WhatsNew.lua`.
+
+**Rule.**
+
+- `--update-versions` records a module whose texts changed only when our data names each new or changed text, or
+  when the module is named with `--module` (its other texts stay English on purpose). Otherwise it leaves that
+  module out, says so, and exits 1.
+- An extractor reads every place the addon shows a text from, not only its locale table.
+- A key in our data is matched as the addon shows it: two OpenMap texts with `\n` and `\\` in their Lua keys
+  were held as "not named", though we had them.
+
+**Check.** `python3 -m unittest tools.test_drift`: `test_update_holds_untranslated` (a new text our data does not
+name is not recorded, its drift still shows; recorded once named, or with `--module`) and `test_whats_new_lines_read`
+(drift_fqp reads the `lines = { ... }` of a made-up WhatsNew.lua), `test_escaped_key_named` (a key with `\n` and
+`\\` names its text).
+
 ## More cases of older lessons
 
 **Lesson 14 again, in WhatTheWhisper's group chats (2026-11-22).** It names a group thread (each kind of group) with its

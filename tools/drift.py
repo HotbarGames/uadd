@@ -3,7 +3,9 @@
 python3 tools/drift.py                     "no drift" (exit 0), or per module the version old -> new and the
                                            counts (exit 1); the texts are in local/drift/<module>.txt
 python3 tools/drift.py --update-versions   after a resync: record today's addons in tools/addon_versions.json
-                                           (refused, exit 2, when a module's texts were not all read)
+                                           (refused, exit 2, when a module's texts were not all read; a
+                                           module with new texts our data does not name is left out, exit 1,
+                                           unless named with --module)
 python3 tools/drift.py --json              the same as machine output (holds the addons' English: never commit it)
 Options: --module NAME (more than once), --addons DIR, --versions FILE, --out DIR, --no-cache.
 
@@ -36,7 +38,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import copy_scan as C  # noqa: E402
 import hashtext as H  # noqa: E402
-from drift_sources import BLIND, MODULES, named, our_lines, our_terms, scan  # noqa: E402
+from drift_sources import BLIND, MODULES, scan  # noqa: E402
+from drift_ours import named, our_lines, our_terms  # noqa: E402
 
 REPO = HERE.parent
 VERSIONS = HERE / "addon_versions.json"
@@ -206,7 +209,8 @@ def main(argv=None):
     versions = load(a.versions, {"note": NOTE, "modules": {}})
     base = load(out / "base.json", {})
     cache = {} if a.no_cache else load(CACHE, {})
-    notes, report, drift, recorded, incomplete = [], {}, False, [], []
+    notes, report, drift, recorded, incomplete, held = [], {}, False, [], [], []
+    explicit = set(wanted) if a.module else set()
     with ThreadPoolExecutor(C.THREADS) as pool:
         for mod in wanted:
             folder = addons / MODULES[mod][0]
@@ -222,6 +226,16 @@ def main(argv=None):
             if bad:
                 incomplete.append(mod)
             if a.update_versions:
+                # A module whose texts changed is recorded only when our data names each new or changed text,
+                # or when it is named with --module: a record taken over untranslated texts hides them for good.
+                if rec and digest(cur) != rec.get("ids") and mod not in explicit:
+                    lines = our_lines(mod)
+                    new, _, changed, _, _ = texts_drift(mod, rec, cur, base, lines)
+                    terms, allowed = our_terms(lines), MODULES[mod][2] is not None
+                    open_ = [r for r in new + [n for _, n, _ in changed] if not named(terms, r, allowed)]
+                    if open_:
+                        held.append(f"{mod}: {len(open_)} new or changed text(s) our data does not name")
+                        continue
                 versions["modules"][mod], base[mod] = record(mod, got, cur), cur
                 recorded.append(mod)
                 continue
@@ -263,6 +277,10 @@ def main(argv=None):
         save(a.versions, versions, indent=1)
         save(out / "base.json", base)
         print("\n".join(notes + [f"recorded {len(recorded)} module(s) in {a.versions}"]))
+        if held:
+            print("\n".join(["not recorded (their drift stays shown):"] + held + [
+                "Translate them first, or, when the rest stays English on purpose, name each with --module."]))
+            return 1
         return 0
     drift = drift or bool(incomplete)
     if a.json:

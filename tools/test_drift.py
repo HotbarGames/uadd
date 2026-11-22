@@ -8,6 +8,8 @@ in code), so no game folder and no real English are needed:
 - no local/drift/base.json (a fresh clone): gone is a count only, and the output says so;
 - texts not all read (an extractor fails, or finds none where the record has some): a note and exit 1;
   --update-versions refuses (exit 2) and leaves the record as it was;
+- --update-versions leaves out (exit 1) a module with new texts our data does not name, unless --module names it;
+- Forever Quest Pins' extractor reads the What's New lines (WhatsNew.lua `lines = { ... }`);
 - the cache stamp follows the UALLF files (DungeonJournal only) and lupa; what drift.py cannot see is printed
   and in --help;
 - tools/addon_versions.json covers every UADD_* module that has addon data, holds hashes only, is small, and
@@ -29,6 +31,7 @@ from unittest import mock
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import drift  # noqa: E402
+import drift_ours  # noqa: E402
 import drift_sources  # noqa: E402
 
 DUI = {"ZORP_ONE": "Zorp the glimmer", "ZORP_TWO": "Polish %s brass knobs", "ZORP_SIX": "Sing to the kettle"}
@@ -131,6 +134,24 @@ class Drift(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("version 1.0 -> 2.0, same texts", text)
 
+    def test_update_holds_untranslated(self):
+        # lesson 42: --update-versions over new texts our data does not name would hide them for good
+        write_dui(self.addons, {**DUI, "ZORP_TEN": "Feed the %s robots"}, version="1.1")
+        before = json.loads(self.versions.read_text(encoding="utf-8"))["modules"]["UADD_DialogueUI"]
+        code, text = self.run_drift("--update-versions")
+        self.assertEqual(code, 1)
+        self.assertIn("UADD_DialogueUI: 1 new or changed text(s) our data does not name", text)
+        self.assertEqual(json.loads(self.versions.read_text(encoding="utf-8"))["modules"]["UADD_DialogueUI"], before)
+        self.assertEqual(self.run_drift()[0], 1)                    # its drift still shows
+        with mock.patch.object(drift, "named", lambda *a: True):    # our data names it: recorded
+            self.assertEqual(self.run_drift("--update-versions")[0], 0)
+        self.assertEqual(self.run_drift()[0], 0)
+        write_dui(self.addons, {**DUI, "ZORP_SIX": "Sing to the teapot"}, version="1.2")
+        code, text = self.run_drift("--update-versions", "--module", "DialogueUI")  # named by hand: recorded
+        self.assertEqual(code, 0)
+        self.assertEqual(json.loads(self.versions.read_text(encoding="utf-8"))["modules"]["UADD_DialogueUI"]["version"],
+                         "1.2")
+
     def test_new_file(self):
         (self.addons / "DialogueUI" / "Extra.lua").write_text("local x = 1\n", encoding="utf-8")
         code, rep = self.report()
@@ -175,6 +196,25 @@ class Drift(unittest.TestCase):
             drift.main(["--help"])
         self.assertIn("What drift.py cannot see:", buf.getvalue())
         self.assertIn("lupa", buf.getvalue())
+
+
+class FqpNews(unittest.TestCase):
+    def test_whats_new_lines_read(self):
+        # lesson 42: the What's New lines are shown on login, so drift reads them too
+        import drift_fqp
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            (d / "WhatsNew.lua").write_text('local news = { version = "1.0", lines = {\n  "Wobble the gizmo.",\n'
+                                            '  "Fold the crane." },\n}\nlocal x = "not a line"\n', encoding="utf-8")
+            rows = drift_fqp.extract(d)
+        self.assertEqual(sorted(r[2] for r in rows), ["Fold the crane.", "Wobble the gizmo."])
+
+    def test_escaped_key_named(self):
+        # lesson 42: a key with Lua escapes (\n, \\) names the text the addon shows, so the guard does not hold it
+        terms = drift_ours.our_terms(['["Fold it.\\n\\nIn C:\\\\Gizmo?"] = "Скласти."'])
+        row = ("L", "", "Fold it.\n\nIn C:\\Gizmo?", "")
+        self.assertTrue(drift_ours.named(terms, row, allowed=True))
+        self.assertFalse(drift_ours.named(terms, ("L", "", "Fold it. In C:\\Gizmo?", ""), allowed=True))
 
 
 class Coverage(unittest.TestCase):

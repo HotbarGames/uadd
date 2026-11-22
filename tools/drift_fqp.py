@@ -21,8 +21,21 @@ def _table_keys(toks):
             yield toks[i + 1][1]
 
 
+def _news_lines(toks):
+    """The strings of WhatsNew.lua's `lines = { ... }` (lesson 42: shown on login, keyed by their English)."""
+    for i in range(len(toks) - 2):
+        if toks[i][:2] == (luatok.NAME, "lines") and toks[i + 1][:2] == (luatok.SYM, "=") \
+                and toks[i + 2][:2] == (luatok.SYM, "{"):
+            for t in toks[i + 3:]:
+                if t[:2] == (luatok.SYM, "}"):
+                    return
+                if t[0] == luatok.STR:
+                    yield t[1]
+
+
 def extract(path):
-    """Every L["..."] key in the addon's own code and every key of its Localization.lua, as drift rows."""
+    """Every L["..."] key in the addon's own code, every key of its Localization.lua and every What's New line
+    (WhatsNew.lua), as drift rows."""
     keys = {}
     for f in sorted(path.rglob("*.lua")):
         rel = f.relative_to(path).as_posix()
@@ -33,6 +46,9 @@ def extract(path):
             keys.setdefault(k, rel)
         if rel == "Localization.lua":
             for k in _table_keys(toks):
+                keys.setdefault(k, rel)
+        if rel == "WhatsNew.lua":
+            for k in _news_lines(toks):
                 keys.setdefault(k, rel)
     return [("L", None, k, rel) for k, rel in sorted(keys.items())]
 
