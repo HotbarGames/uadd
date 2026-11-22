@@ -2,6 +2,7 @@
 fresh game with one fix of the module cut out (in memory, flow_wtw.lua M.cut)."""
 import flow_wtw as F
 from flow_pawn_game import cyr, diff
+from flow_wtw_gaps import gaps
 from loader import lua_str, txt
 
 STEPS = {
@@ -45,6 +46,7 @@ def locale(check, c, M, E, A):
     code = txt(M.locale(lua_str("ruRU")))
     R = F.snap(M)
     ru = {k: txt(M.ru(lua_str(k[2:]))) for k in R if k.startswith("L:")}   # its own Russian may match ours
+    ru.update({k: txt(M.ruRow(int(k.rsplit(":", 1)[1]))) for k in R if k.startswith("R:")})
     ours = [k for k in R if R[k] != E.get(k) and R[k] == A.get(k) and cyr(R[k]) and R[k] != ru.get(k)]
     exact, was = F.enus_exact(M), M.enusDiff()
     back = txt(M.locale(lua_str("auto")))
@@ -216,7 +218,7 @@ def refaults(check, c, M, E, A):
 
 def steps(check, facts, c, M, E, A):
     F.E_PATHS = facts.get("E_paths")
-    for fn in (loop, locale, once, copies, stay, combat, langcombat, dups, export):
+    for fn in (loop, locale, once, copies, stay, combat, langcombat, dups, export, gaps):
         fn(check, c, M, E, A)
     font(check, c, M, E, A, facts)
 
@@ -238,12 +240,20 @@ CUTS = {
     "combat": ("Module.lua", "        if U.AfterCombat(Try) then return end\n", "", combat),
     "langcombat": ("Module.lua", "    if not on then U.SafeCall(ns.Swap.SwapOut) end\n", "", langcombat),
     "export": ("Swap.lua", "    E.ToFile = fn\n", "", export),
-    "faults": ("Module.lua", "    U.SafeCall(ns.Swap.Remove)\n    Apply(false)\n", "    U.SafeCall(ns.Swap.Remove)\n", faults),
+    "faults": ("Module.lua", "    U.SafeCall(ns.Swap.Remove)\n    U.SafeCall(ns.Gaps.Remove)\n    Apply(false)\n",
+               "    U.SafeCall(ns.Swap.Remove)\n    U.SafeCall(ns.Gaps.Remove)\n", faults),
     # the language-list hook under U.Safe again: dead after the off for errors, so ours stays in its enUS table
     "guard": ("Module.lua", 'hooksecurefunc(O, "Apply", Guard(AfterApply))',
               'hooksecurefunc(O, "Apply", U.Safe("wtw", AfterApply))', refaults),
     # the emoji tab's own category label taken away: a shared word alone cannot find its key
     "dups": ("Screen.lua", "U.SafeCall(Button, c, Category(c.categoryID))", "U.SafeCall(Button, c)", dups),
+    # Gaps.lua: no KB; no size line of ours; panels made later not seen; ours also while held or off (rows, size)
+    "gapswant": ("Gaps.lua", "            if want and not was then\n", "            if not was then\n", gaps),
+    "gapsheld": ("Gaps.lua", '        if type(en) ~= "string" or not Want() then return en end\n',
+                 '        if type(en) ~= "string" then return en end\n', gaps),
+    "gapsunits": ("Gaps.lua", '{ "^(%d+%.%d) KB$", "%s КБ" }, ', "", gaps),
+    "gapssize": ("Gaps.lua", "        SizeRow(spec)\n", "", gaps),
+    "gapsnew": ("Gaps.lua", "        P.New = news.fn\n", "", gaps),
 }
 E_PATHS = None
 

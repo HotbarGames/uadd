@@ -2522,11 +2522,11 @@
     "UI/Widgets/Widgets.lua",
     "WhatTheWhisper.xml"
    ],
-   "count": 403,
+   "count": 416,
    "tags": {
-    "L": 403
+    "L": 416
    },
-   "ids": "90cf839a3476448c81ce2eb791a76b90b4ba5acf"
+   "ids": "51d87764f4b9bc1b6e93094bf1d7118491858f49"
   },
   "UADD_WhatsTraining": {
    "addon": "WhatsTraining",

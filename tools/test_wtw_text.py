@@ -128,17 +128,22 @@ class Checks(unittest.TestCase):
         self.assertEqual(R.check("L.x", "Wobbly %d gizmo", "Хиткий %d гвинтик"), [])
 
     def test_units_and_names_left_out(self):
-        units = [k for k, v in R.SORTS.items() if "u" in v or "n" in v]
-        self.assertTrue(units)
+        R.SORTS["L.0000000a"] = "u"       # a made-up u key: left out unless it is in OWN_UNITS
+        self.addCleanup(R.SORTS.pop, "L.0000000a")
+        units = [k for k, v in R.SORTS.items() if ("u" in v or "n" in v) and k not in R.OWN_UNITS]
         for key in units + list(R.NAMES):
             self.assertFalse(R.keep(key, "Wobbly %s gizmo")[0], key)
             self.assertTrue(R.check(key, "Wobbly %s gizmo", "Хиткий %s гвинтик"), key)
+        for key in R.OWN_UNITS:           # a u template whose units the module says: kept with its slot
+            self.assertEqual(R.SORTS.get(key), "u", key)
+            self.assertTrue(R.keep(key, "Wobbly %s gizmo")[0], key)
+            self.assertEqual(R.check(key, "Wobbly %s gizmo", "Хиткий %s гвинтик"), [], key)
+        self.assertTrue(units and R.OWN_UNITS)
 
     def test_batches_and_weekdays(self):
         self.assertEqual(R.batch_of("L.x", "nothing known"), 3)
         self.assertEqual(sorted(set(R.SECTIONS.values())), [1, 2, 3])
-        self.assertEqual(len(R.WEEKDAYS), 7)
-        self.assertEqual(len(set(R.WEEKDAYS)), 7)
+        self.assertEqual((len(R.WEEKDAYS), len(set(R.WEEKDAYS))), (7, 7))
 
 
 class Drafts(unittest.TestCase):

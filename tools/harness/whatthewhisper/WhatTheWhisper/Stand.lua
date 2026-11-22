@@ -4,6 +4,8 @@
 --   * the main window: one line per enUS key, L[key], redrawn by Options.Apply("appearance.locale")
 --   * the key binding names (set once at load), the options stub (game fonts), dialogs and the emoji
 --     picker's tabs (built once, never redrawn), the picker built only when first opened.
+--   * the profile panel (main window and popouts: rows through L, some keys its enUS lacks) and the settings
+--     schema (the History page's size line, captions its enUS lacks), redrawn with the rest.
 -- WhatTheWhisperStandIn.throw = n: the redraw throws while n > 0 (the module's 5-error guard, lesson 19).
 local _, ns = ...
 local L = ns.L
@@ -137,3 +139,82 @@ end
 
 -- The first half of the dialogs exist before the module loads; the rest are built later (flow_wtw).
 for i = 1, math.floor(#(feed.dialogs or {}) / 2) do S.buildDialog(i) end
+
+-- Its profile panel (UI/ProfilePanel.lua): New copies the methods onto a hidden frame; Refresh draws one row
+-- label per field through L (rows reused), and skips a hidden panel. The fields' labels come from the feed.
+local P = {}
+function P:Refresh()
+    if not self:IsShown() then return end
+    for i, k in ipairs(feed.profile or {}) do
+        local row = self.rows[i]
+        if not row then
+            row = { label = self:CreateFontString(nil, "ARTWORK") }
+            row.label:SetFontObject(font)
+            self.rows[i] = row
+        end
+        row.label:SetText(L[k])
+    end
+end
+function P:Relocalize() self:Refresh() end
+ns.ProfilePanel = ns.ProfilePanel or {}
+function ns.ProfilePanel.New(parent)
+    local panel = CreateFrame("Frame", nil, parent)
+    for k, fn in pairs(P) do panel[k] = fn end
+    panel.rows = {}
+    panel:Hide()
+    return panel
+end
+
+-- The main window's panel, made before the module loads; popouts (each with its own panel) made later.
+S.window = { view = { profile = ns.ProfilePanel.New(main) } }
+S.window.view.profile:Show()
+S.window.view.profile:Refresh()
+ns.MainWindow = { Existing = function() return S.window end }
+S.popouts = {}
+ns.Popout = { Each = function(fn)
+    for id, w in pairs(S.popouts) do if w:IsShown() then fn(id, w) end end
+end }
+function S.popout(id)
+    local w = CreateFrame("Frame", nil, UIParent)
+    w.view = { profile = ns.ProfilePanel.New(w) }
+    S.popouts[id] = w
+    w:Show()
+    w.view.profile:Show()
+    w.view.profile:Refresh()
+    return w
+end
+
+-- Its settings schema (Core/Options.lua BuildSchema), fresh on each call: the History page's size line (an info
+-- row whose value formats its template with Format.Bytes) and a toggle per caption the feed names. S.raw: a size
+-- text of another kind, put in the slot as it is.
+S.bytes, S.raw = 456, nil
+ns.Options.BuildSchema = function()
+    local rows = {}
+    if feed.size then
+        rows[1] = { type = "info", label = L[feed.size], value = function()
+            return L[feed.size]:format(S.raw or ns.Format.Bytes(S.bytes))
+        end }
+    end
+    for _, c in ipairs(feed.captions or {}) do rows[#rows + 1] = { type = "toggle", path = "x", caption = L[c] } end
+    return { { id = "history", cards = { { rows = rows } } } }
+end
+-- Its settings window: on each build it draws what the schema holds (an info row's value is called then).
+S.settings = { caps = {} }
+function S.render()
+    S.schema = ns.Options.BuildSchema()
+    S.settings.size, S.settings.caps = nil, {}
+    for _, row in ipairs(S.schema[1].cards[1].rows) do
+        if row.type == "info" then S.settings.size = row.value()
+        else S.settings.caps[#S.settings.caps + 1] = row.caption end
+    end
+end
+S.render()
+
+-- The language redraw also relocalizes the profile panels (the main one, each shown popout) and the settings.
+local relocalize = ns.UI.Relocalize
+function ns.UI.Relocalize()
+    relocalize()
+    S.window.view.profile:Relocalize()
+    ns.Popout.Each(function(_, w) w.view.profile:Relocalize() end)
+    S.render()
+end

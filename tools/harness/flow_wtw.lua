@@ -38,6 +38,8 @@ function M.combat(on)
     M.wait(on and 0.2 or 1.3)          -- U.AfterCombat looks again each second
 end
 function M.ru(key) return NS().LocaleData.ruRU[key] end
+-- Its own Russian for the profile panel's row i (some match ours letter for letter).
+function M.ruRow(i) return NS().LocaleData.ruRU[(WhatTheWhisperStandInFeed.profile or {})[i] or ""] end
 
 -- Keys whose word through its L shows Cyrillic now (another language picked: none may), and the first one.
 function M.cyrL()
@@ -105,8 +107,28 @@ function M.snap()
         end
     end
     for _, b in ipairs(s.tabs or {}) do out["E:" .. b.categoryID] = b:GetText() end
+    for i, row in ipairs(s.window.view.profile.rows) do out["R:main:" .. i] = row.label:GetText() end
+    for id, w in pairs(s.popouts) do
+        for i, row in ipairs(w.view.profile.rows) do out["R:pop" .. id .. ":" .. i] = row.label:GetText() end
+    end
+    out["S:size"] = s.settings.size
+    for i, c in ipairs(s.settings.caps) do out["S:cap:" .. i] = c end
     return out
 end
+
+-- The profile panel and the settings' size line (Stand.lua).
+function M.bytes(n) S().bytes, S().raw = n, nil S().render() end
+function M.raw(text) S().raw = text S().render() end
+function M.popout(id) S().popout(id) end
+function M.closePopout(id) local w = S().popouts[id] if w then w:Hide() S().popouts[id] = nil end end
+function M.hidePanel() S().window.view.profile:Hide() end
+function M.showPanel()
+    local p = S().window.view.profile
+    p:Show()
+    p:Refresh()
+end
+-- Its English size line for a size text, from its own template (the feed's key: its enUS value may be `true`).
+function M.sizeEn(text) return WhatTheWhisperStandInFeed.size:format(text) end
 
 -- The enUS table against its copy taken before the module loaded: keys whose value differs, added, gone.
 function M.enusDiff()

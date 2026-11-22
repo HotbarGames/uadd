@@ -14,12 +14,15 @@ window from them. Which keys its built-once texts use is read from the installed
     hooks turn it off, English back (lesson 19); then "/uadd wtw on" and another language picked: none of ours in
     its enUS table. Also: a built-once text whose Ukrainian another key shares (the emoji tab made after ours was
     in, the export labels) gets its own English back; the saved-file export (Export.ToFile) holds its English while
-    ours shows.
+    ours shows. 8 labels its enUS table lacks (the profile panel's rows, also a popout made later and a panel shown
+    again; settings captions) and the History page's size line: ours on, English held and off; a size in B, KB, MB
+    ours, any other the whole line English.
   * Mutants (--prove, flow_wtw_steps.py): each step fails with its fix cut out.
 """
 import os
 import re
 import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import halves_mods
@@ -74,12 +77,23 @@ def feed():
             dialogs.append((name, btns))
     recent = re.search(r'id = "recent", label = L\[' + LIT + r"\]", _src("UI/EmojiPicker.lua")).group(1)
     cats = re.findall(r'id = "(\w+)", label = ' + LIT, _src("Modules/Emoticons.lua"))
+    # the profile panel's row labels, the History page's size line (its key), the settings captions its enUS lacks
+    root = Path(addon_dir())
+    profile = [t for t, _ in G._labels(root / G.PROFILE, "FIELDS")]
+    size = re.search(r"L\[" + LIT + r"\]:format\(ns\.Format\.Bytes\(", _src("Core/Options.lua")).group(1)
+    enus = {e for e, *_ in G.read_enus(root / G.LOCALE)}
+    captions = [en for en, f, _ in G.missing(root, enus) if f == "Options.lua"]
     q = '"{}"'.format
+
+    def ql(s):
+        return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
     return ("WhatTheWhisperStandInFeed = { stub = { body = %s, button = %s }, bindings = { %s }, dialogs = { %s }, "
-            "emoji = { %s } }" % (q(body), q(button), ", ".join(f"{n} = {q(k)}" for n, k in binds),
-                                  ", ".join("{ name = %s, buttons = { %s } }" % (q(n), ", ".join(
-                                      "{ %s, %s }" % (q(f), q(k)) for f, k in b)) for n, b in dialogs),
-                                  ", ".join("{ %s, %s }" % (q(i), q(k)) for i, k in [("recent", recent)] + cats)),
+            "emoji = { %s }, profile = { %s }, size = %s, captions = { %s } }" % (
+                q(body), q(button), ", ".join(f"{n} = {q(k)}" for n, k in binds),
+                ", ".join("{ name = %s, buttons = { %s } }" % (q(n), ", ".join(
+                    "{ %s, %s }" % (q(f), q(k)) for f, k in b)) for n, b in dialogs),
+                ", ".join("{ %s, %s }" % (q(i), q(k)) for i, k in [("recent", recent)] + cats),
+                ", ".join(map(ql, profile)), ql(size), ", ".join(map(ql, captions))),
             len(dialogs))
 
 

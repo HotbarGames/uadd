@@ -36,6 +36,13 @@ SORTS = {
     "L.17d2f1f2": "u",    # Format.Bytes: a size in its own English units (lesson 15): the line stays English
 }
 
+# Sort-u templates whose units are ours (lesson 15): never put in its table (Swap.lua skips u), but our Ukrainian
+# is in the data, and the module's own code fills the slot where the line is drawn, else the line stays English.
+OWN_UNITS = {
+    "L.17d2f1f2": "the History page's size line: Gaps.lua says its B, KB and MB in Ukrainian; any other unit "
+                  "keeps the whole line English",
+}
+
 # Drawn in a game font (the stub page in the game's AddOns settings), not in its own Inter/Manrope (which have
 # the long dash and every Ukrainian letter): no long dash there.
 GAME_FONT = {"L.675b0b9c", "L.8aca3ff6"}
@@ -77,16 +84,16 @@ SECTIONS = {
     "3e6f103b": 1, "b7da324d": 1, "44aada94": 1, "3ec78c28": 1, "dcd0ce9f": 1, "723dd268": 1,
     "aa1ee99c": 2, "a29c1fce": 2, "99b199e0": 2, "6d6c576e": 2, "f94da8c2": 2, "7ebb92ec": 2, "cde5e0ea": 2,
     "a2e66583": 3, "59647266": 3, "17f15b75": 3, "31f99906": 3,
-    "e1fdadf7": 1, "51b294f9": 1, "11f711a8": 1,
+    "e1fdadf7": 3, "51b294f9": 1, "11f711a8": 1,    # the emoji picker went to 3 when batch 1 passed 150 (1.0.0 update)
     "534c8789": 3,
 }
 
 BATCHES = [
-    (1, "window, composer, conversation states, empty states, menu, dialogs, emoji, toasts, slash help",
+    (1, "window, composer, conversation states, empty states, menu, dialogs, toasts, slash help",
      lambda k, sec: SECTIONS.get(sec) == 1),
     (2, "settings: pages, general, appearance, layout, history, sounds, notifications",
      lambda k, sec: SECTIONS.get(sec) == 2),
-    (3, "settings: animations, combat, links, advanced, schema labels; sound names, missing labels, weekdays",
+    (3, "settings: animations, combat, links, advanced, schema labels; emoji picker; sound names, missing labels, weekdays",
      lambda k, sec: True),
 ]
 
@@ -105,7 +112,8 @@ def keep(key, en):
         return False, "stay"
     if key in NAMES:
         return False, "name kept"
-    if {"n", "u"} & set(sorts(key, en)):
+    letters = set(sorts(key, en))
+    if "n" in letters or ("u" in letters and key not in OWN_UNITS):
         return False, "own English in a slot"
     if not en.strip():
         return False, "empty"
@@ -126,7 +134,7 @@ def check(key, en, ua):
     if key in NAMES:
         problems.append("a name kept as it is")
     letters = sorts(key, en)
-    if "n" in letters or "u" in letters:
+    if "n" in letters or ("u" in letters and key not in OWN_UNITS):
         problems.append("a game name or English units slot: the line stays English")
     if re.match(r"\|c[0-9a-fA-F]{8}", en) and not ua.startswith(en[:10]):
         problems.append("the colour code at the start moved")

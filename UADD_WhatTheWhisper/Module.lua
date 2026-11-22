@@ -3,7 +3,8 @@
 -- WhatTheWhisper keeps its words in its own locale tables and has a language list of its own in its settings.
 -- Swap.lua puts ours in its English table (and in the copies it made at load), then this file asks it to
 -- redraw the way its language list does (Options.Apply of its language setting: theme, layout, every
--- window, every text). Screen.lua does the few texts it wrote once, Days.lua the weekday names.
+-- window, every text). Screen.lua does the few texts it wrote once, Days.lua the weekday names, Gaps.lua the
+-- labels its enUS table lacks (the profile panel's rows, settings captions) and the History page's size line.
 --   * Only while English is the language in force in it: when the player picks another language in its
 --     list, its English goes back first (its other languages fall back to that table), and ours comes back
 --     when English is picked again. Its saved setting is never changed by us.
@@ -91,6 +92,7 @@ local function Apply(on)
     if not ns.On() then
         U.SafeCall(ns.Days.Remove)
         U.SafeCall(ns.Swap.Remove)
+        U.SafeCall(ns.Gaps.Remove)
     end
     Redraw()
     U.SafeCall(on and ns.Screen.Apply or ns.Screen.Restore)
@@ -138,6 +140,7 @@ local function Begin()
     U.SafeCall(Hook)
     U.SafeCall(ns.Days.Install)
     U.SafeCall(ns.Swap.Install)
+    U.SafeCall(ns.Gaps.Install)
     Sync(true)
 end
 
@@ -146,6 +149,7 @@ local function End()
     if Fighting() then return Apply(false) end
     U.SafeCall(ns.Days.Remove)
     U.SafeCall(ns.Swap.Remove)
+    U.SafeCall(ns.Gaps.Remove)
     Apply(false)
 end
 ns.Begin, ns.End = Begin, End
