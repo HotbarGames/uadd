@@ -15,6 +15,7 @@ import halves_cover  # noqa: E402
 import hashtext  # noqa: E402
 
 def dci(check, M, tps, note=""): run(check, "UADD_DeleteCheapestItem", tps, M and (lambda tp, t: _t(M.translate(lua_str(t)))), note)  # noqa: E704,E501  DeleteCheapestItem Reloaded: Words.Translate on each whole text (M.translate); tps: flow_dci.templates(); What's Training? next: M.uk on whole lines (glue=True), tps: flow_whatstraining_texts.py
+def ofa(check, W, tps, note=""): run(check, "UADD_OneForAll", tps, W and (lambda tp, t: _t(W.Translate(lua_str(t)))), note, glue=True)  # noqa: E704,E501  OneForAll: Words.Translate on whole lines (glue=True); tps: flow_ofa_halves.templates()
 def wt(check, M, tps, note=""): run(check, "UADD_WhatsTraining", tps, lambda tp, t: _t(M.uk(lua_str(t))), note, glue=True)  # noqa: E704,E501
 
 

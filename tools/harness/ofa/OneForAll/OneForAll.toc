@@ -1,0 +1,7 @@
+## Interface: 16001, 16000
+## Title: OneForAll
+## Notes: Harness stand-in, not OneForAll. It draws a few frames shaped as that addon's, with made-up English (tools/harness/ofa).
+## Version: 0
+## SavedVariables: OneForAllDB
+
+Stand.lua

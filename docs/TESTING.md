@@ -159,6 +159,19 @@ game gives them (UALL Forever or ClassicUA names them), and so do the lines it s
 show-original key with a window open: English. `/uadd missed` shows what stayed English. `/uadd rts off`: English;
 `on`: Ukrainian.
 
+### OneForAll
+
+Needs OneForAll's own language set to English (its Settings > General). Type `/uadd missed on` first. Log in:
+`/uadd` lists "OneForAll". Open its main window and go through every tab (dungeons, quests, loot, professions,
+talents, hunter pets, and the rest): tabs, buttons, labels, tips and descriptions are Ukrainian, with letters, not
+boxes, and they fit. Open its Settings, the info bar, the minimap button and its menu, the world map button and menu,
+and its small windows (Welcome, What's New, craft list, trainer spells, skill-up guide, weight editor, quest chain):
+Ukrainian. Hover things: tooltips are Ukrainian. Its chat lines and loot feed lines are Ukrainian. Zone, quest, NPC,
+item, spell and player names, and your profile names, stay as the game gives them (UALL Forever or ClassicUA names
+them). Pick another language in its Settings (German, say), reload: UADD does nothing there. Hold the show-original
+key with a window open: English. `/uadd missed` shows what stayed English. `/uadd oneforall off`: English; `on`:
+Ukrainian.
+
 ### LootTriage
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
@@ -241,6 +254,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - Road to Sixty's real windows: the journey map, the panel and its tabs, the settings page, the What's New window,
   the stats page, the minimap button's tooltip, the fonts (letters or boxes), whether the Ukrainian fits its fixed
   boxes, and that the chat and the saved journey lines still work, are only seen in the real client.
+- OneForAll's real windows: every tab of the main window, the settings, the info bar, the map buttons and menus, the
+  small windows, the tooltips, the fonts (letters or boxes), whether the Ukrainian fits its fixed boxes, and that its
+  chat lines and loot feed still work, are only seen in the real client.
 
 ## Without the game
 

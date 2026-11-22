@@ -119,3 +119,35 @@ E{ id = "game.bind_on_pickup", en = "Bind on Pickup", uk = "Прив'язуєт�
 E{ id = "game.need_greed", en = "Need/Greed", uk = "Потреба/Жадібність", note = "The group loot roll. Neither UALL Forever nor ClassicUA names it (checked 2026-11-22). lead's choice, DeleteCheapestItem Reloaded." }
 E{ id = "game.bag_slot", en = "slot", uk = "комірка", note = "One place in a bag (many: комірки), as LootTriage says it. Not a gear slot. 2026-11-22." }
 E{ id = "game.loot_display", en = "Loot Display", uk = "Показ здобичі", note = "Speedy AutoLoot's list of what you just looted. lead's choice 2026-11-20, Speedy AutoLoot." }
+-- OneForAll (lead's choices 2026-11-23)
+E{ id = "game.pet", en = { "Pet", "Pets" }, uk = "Вихованець", note = "A hunter's or warlock's pet (many: вихованці). ClassicUA's word; UALL Forever says «улюбленець», banned in UADD_OneForAll. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.pet_ability", en = "Ability", uk = "Вміння", note = "A pet's ability (Bite, Claw). Not a profession's skill (game.skill_points). lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.pet_family", en = "Family", uk = "Родина", note = "A hunter pet's family (cats, wolves). Not game.mount_family. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.pet_diet", en = "Diet", uk = "Раціон", note = "What a hunter pet eats (meat, fish). Neither UALL Forever nor ClassicUA names it. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.stable", en = "Stable", uk = "Стайня", note = "Where a hunter keeps extra pets. UALL Forever's word. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.tame", en = "Tame", uk = "Приборкати", note = "Make a beast your pet (UALL Forever: Tame Beast «Приборкання звіра»). lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.pet_trainer", en = "Pet Trainer", uk = "Тренер вихованців", note = "NPC who teaches hunter pets. Not npc.trainer_battle_pet. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.training_points", en = "Training Points", uk = "Очки навчання", note = "A hunter pet's points to learn abilities; short form after a number «оч. навч.». lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.spell_rank", en = "Rank", uk = "Ранг", note = "A spell's or ability's rank (Rank 3). Not a profession rank (prof.rank_*). lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.skill_points", en = "Skill", uk = "Навичка", note = "A profession's skill points (150/300). Not a pet ability (game.pet_ability). lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.skill_up", en = "Skill-Up", uk = "Підвищення навички", note = "A craft that raises your profession skill. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.crafting_list", en = "Crafting List", uk = "Список ремесла", note = "OneForAll's list of things to craft. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.durability", en = "Durability", uk = "Міцність", note = "Gear wear. UALL Forever's word. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.disenchant", en = "Disenchant", uk = "Розчаклування", note = "A label for the enchanting action (UALL Forever's verb: «Розчаклувати»). lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.bind_on_equip", en = "Bind on Equip", uk = "Прив'язується при одяганні", note = "An item that binds when you put it on. Pairs with game.bind_on_pickup. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.talent_trees", en = "Talent Trees", uk = "Дерева талантів", note = "The three talent trees of a class (UALL Forever: Talents «Таланти»). lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.buff", en = { "Buff", "Buffs" }, uk = "Баф", note = "A helpful aura on you (many: бафи). «бафф» is banned in UADD_OneForAll. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.death_roll", en = "Death Roll", uk = "Смертельний кидок", note = "A /roll game for gold between players. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.tic_tac_toe", en = "Tic Tac Toe", uk = "Хрестики-нулики", note = "The game, played in OneForAll's guild games. lead's choice 2026-11-23, OneForAll." }
+E{ id = "item.junk_list", en = "junk list", uk = "список мотлоху", note = "The items you mark to sell as junk (item.junk «Мотлох»). lead's choice 2026-11-23, OneForAll." }
+E{ id = "gear.armory", en = "Armory", uk = "Арсенал", note = "OneForAll's gear window. lead's choice 2026-11-23, OneForAll." }
+E{ id = "gear.planner", en = "Gear Planner", uk = "Планувальник спорядження", note = "OneForAll's tab to plan gear. lead's choice 2026-11-23, OneForAll." }
+E{ id = "gear.value", en = "Gear Value", uk = "Цінність спорядження", note = "How good an item is for your spec, as one number. lead's choice 2026-11-23, OneForAll." }
+E{ id = "gear.pre_raid", en = "Pre Raid", uk = "Перед рейдом", note = "Gear to get before raiding (a list name). lead's choice 2026-11-23, OneForAll." }
+E{ id = "gear.cheap_upgrades", en = "Cheap Upgrades", uk = "Дешеві покращення", note = "Better gear that costs little (a list name; gear.upgrade «Покращення»). lead's choice 2026-11-23, OneForAll." }
+E{ id = "ui.wishlist", en = "Wishlist", uk = "Список бажань", note = "Items you want, kept in a list. lead's choice 2026-11-23, OneForAll." }
+E{ id = "ui.quality_of_life", en = "Quality of Life", uk = "Зручності", note = "A tab of small helpers. lead's choice 2026-11-23, OneForAll." }
+E{ id = "ui.lock_frame", en = "Lock", uk = "Закріпити", note = "Button: stop a window from moving. Not ui.locked (closed, «Замкнено»). lead's choice 2026-11-23, OneForAll." }
+E{ id = "ui.social", en = "Social", uk = "Спілкування", note = "A tab for chat, guild and friends. lead's choice 2026-11-23, OneForAll." }
+E{ id = "ui.info_bar", en = "Info bar", uk = "Інфопанель", note = "A thin bar of facts (gold, time, FPS). lead's choice 2026-11-23, OneForAll." }
+E{ id = "ui.unit_frames", en = "Unit Frames", uk = "Рамки істот", note = "The player, target and party frames. lead's choice 2026-11-23, OneForAll." }

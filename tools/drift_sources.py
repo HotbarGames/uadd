@@ -194,6 +194,7 @@ MODULES = {
     "UADD_WhatsTraining": ("WhatsTraining", ex_wt, None, ()),   # MIT, but our data holds hashes only, so no tracked English
     "UADD_BugSack": ("BugSack", lambda p: __import__("drift_bs").extract(p), None, ()),   # TOC: All Rights Reserved; our data holds hashes only
     "UADD_RoadToSixty": ("RoadToSixty", lambda p: __import__("drift_rts").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only
+    "UADD_OneForAll": ("OneForAll", lambda p: __import__("drift_ofa").extract(p), None, ()),   # GPL-3.0-or-later; our data is keyed by hashes, no tracked English
     "UADD_WowheadQuickLink": ("WowheadQuickLink", lambda p: __import__("drift_wql").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only
 }
 

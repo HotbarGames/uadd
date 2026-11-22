@@ -161,6 +161,21 @@ def _om():
     return c
 
 
+def _ofa():
+    """OneForAll: the stand-in (tools/harness/ofa/) with made-up Ukrainian in ns.OFA, its late window and a chat
+    line shown, so the module has changed texts. Its tooltip line is filled, then cleared and hidden, as the game does on hide: U.TipLines leaves a
+    tooltip already shown as it is until it is shown again (UADD/Lines.lua), which off cannot see."""
+    import flow_ofa as F
+    if not F.module_there():
+        return None
+    c, M, _ = F.game()
+    M.inject()
+    c.lua.execute("OneForAllStandIn.Late() OneForAllStandIn.Tip() GameTooltip:ClearLines() GameTooltip:Hide() "
+                 "OneForAllStandIn.Say(OneForAllStandIn.T.say)")
+    M.wait(0.5)
+    return c
+
+
 def _repo(name):
     from loader import Addon
     return Addon(name, os.path.join(session.REPO, name), session.FLAVOR)
@@ -193,6 +208,7 @@ RECIPES = [
     ("UADD_WowheadQuickLink", "WowheadQuickLink", _wql),
     ("UADD_BugSack", "BugSack", _bs),
     ("UADD_RoadToSixty", "RoadToSixty", _rts),
+    ("UADD_OneForAll", "OneForAll", _ofa),
 ]
 
 

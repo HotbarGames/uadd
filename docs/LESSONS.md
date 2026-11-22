@@ -42,8 +42,7 @@ These texts are not in the addon's locale tables: the addon builds them in its c
 texts in its locale tables. Translate each one, or write down why it stays English.
 
 **Check.** Manual for now: open every window and tab, in the game or in the harness (`tools/harness/`),
-and look for English. Only Questie has a tool for this (`python3 tools/coverage.py`); the other modules
-do not yet. This is a gap: automate it when we can.
+and look for English. Only Questie has a tool for this (`python3 tools/coverage.py`): a gap, automate it.
 
 ## 2. A font change that fails without a sign
 
@@ -100,8 +99,7 @@ same thing, and the Questie Settings tree became a mix of the two.
 - Before you pick a word for an addon's feature, grep UALL Forever for it: a Forever-only feature
   (Mastercraft's Camping) is named there, and a guess from the English word alone was wrong.
 
-**Check.** Manual: in the commit message or the module notes, list what you checked and the UALLF version
-(the `## Version:` line of `UALLF.toc`).
+**Check.** Manual: in the commit message or module notes, list what you checked and the UALLF version (`UALLF.toc`).
 
 ## 4. Words we decided against
 

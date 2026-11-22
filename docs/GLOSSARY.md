@@ -109,6 +109,12 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Error | the tag of an error message ("Помилка"): same word, its own entry | `ui.error` |
 | Wipe | delete saved entries for good, BugSack ("Стерти") | `ui.wipe` |
 | Clear | empty a field or a list on screen ("Очистити") | `ui.clear` |
+| Family | a hunter pet's family, OneForAll ("Родина"; lead's choice 2026-11-23) | `game.pet_family`, not `game.mount_family` |
+| Pet | a hunter's or warlock's pet, OneForAll ("Вихованець": ClassicUA's word; «улюбленець» banned there) | `game.pet` |
+| Ability | a pet's ability, OneForAll ("Вміння") | `game.pet_ability` |
+| Skill | a profession's skill points, OneForAll ("Навичка") | `game.skill_points`, not `game.pet_ability` |
+| Rank | a spell's rank ("Ранг") | `game.spell_rank`, not a profession rank (`prof.rank_*`) |
+| Lock | keep a window from moving, OneForAll ("Закріпити") | `ui.lock_frame`, not `ui.locked` ("Замкнено") |
 | RFD, BRD, Scholo, ... Key | Attune's left list: short dungeon names, and "Key" after them, stay English (owner 2026-11-20) | not an entry: never translate |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.

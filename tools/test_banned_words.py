@@ -69,6 +69,10 @@ BANNED_IN = {
         r"\bшар(?:а|у|ом|і|и|ів|ам|ами|ах|е)?\b": ("лейер (лейера, на лейері, лейерів; glossary game.server_layer)",
                    "the owner's word for a server layer, 2026-11-18; «шар» is a map layer (map.layer)"),
     },
+    "UADD_OneForAll": {
+        r"улюблен": ("вихованець (glossary game.pet)", "ClassicUA's word; lead's choice 2026-11-23, OneForAll"),
+        r"бафф": ("баф (glossary game.buff)", "lead's choice 2026-11-23, OneForAll"),
+    },
 }
 RULES = [(re.compile(p, re.IGNORECASE), p, use) for p, (use, _) in BANNED.items()]
 RULES_IN = {folder: [(re.compile(p, re.IGNORECASE), p, use) for p, (use, _) in rules.items()]

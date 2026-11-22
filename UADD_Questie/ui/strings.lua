@@ -492,7 +492,7 @@ ns.uiStrings = {
     ["Automatically abandoned quest %s because breadcrumb quest %s is not completed."] = "Завдання %s автоматично покинуто, бо вступне завдання %s не виконано.",
     ["Further Auto customization is coming in a future Questie update."] = "Більше налаштувань автоматизації з'явиться в майбутньому оновленні Questie.",
     -- Social.lua
-    ["Social"] = "Спілкування",
+    ["Social"] = G"ui.social",
     ["Social Options"] = "Налаштування спілкування",
     ["Announce quest updates to other players in your group"] = "Повідомляти групі про зміни в завданнях",
     ["Channels to announce in"] = "Канали для повідомлень",

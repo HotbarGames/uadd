@@ -1,0 +1,36 @@
+## Interface: 16001, 16000
+## Title: UADD - OneForAll
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: OneForAll українською: головне вікно, вкладки, налаштування, панель, підказки, повідомлення. Частина UADD.
+## Author: HotbarGames
+## Version: 1.2.4
+## Dependencies: UADD
+## OptionalDeps: UALLF, ClassicUA, OneForAll
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only, keyed by the hash of each English text, then the code.
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+data/text05.lua
+data/text06.lua
+data/text07.lua
+data/text08.lua
+data/text09.lua
+data/text10.lua
+data/text11.lua
+data/text12.lua
+data/text13.lua
+data/text14.lua
+data/text15.lua
+data/text16.lua
+data/text17.lua
+data/text18.lua
+data/text19.lua
+data/text20.lua
+Words.lua
+Screen.lua
+Chat.lua
+Module.lua

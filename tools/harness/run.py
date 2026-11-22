@@ -32,6 +32,8 @@ UADD_WowheadQuickLink's checks run next, on a stand-in for Wowhead Quick Link th
 UADD_BugSack's checks run next, on a stand-in for BugSack fed its English at run time (flow_bs.py).
 UADD_RoadToSixty's checks run next, on a stand-in for Road to Sixty (flow_rts.py), then its half-translation
 check (flow_rts_halves.py).
+UADD_OneForAll's checks run next, on a stand-in for OneForAll (flow_ofa.py), then its half-translation check
+(flow_ofa_halves.py).
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run next.
 ClassicUA as the first name source (flow_classicua.py, lesson 25: its zone hook is a harness stand-in that calls
@@ -101,6 +103,8 @@ def run_all():
     import flow_bs
     import flow_rts
     import flow_rts_halves
+    import flow_ofa
+    import flow_ofa_halves
     import flow_dialogueui
     import flow_dj_module
     import flow_classicua
@@ -124,7 +128,7 @@ def run_all():
         ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap),
         ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw),
         ("lt", flow_lt), ("dci", flow_dci), ("wql", flow_wql), ("bs", flow_bs), ("rts", flow_rts),
-        ("rtsh", flow_rts_halves), ("pops", flow_popups), ("missed", flow_missed), ("hash", flow_hash),
+        ("rtsh", flow_rts_halves), ("ofa", flow_ofa), ("ofah", flow_ofa_halves), ("pops", flow_popups), ("missed", flow_missed), ("hash", flow_hash),
         ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice), ("focus", flow_focus),
         ("safe", flow_safe), ("chaos", chaos)))
     skipped = ["UADD_OpenMap"] if missing else []      # its flow runs with the journal's

@@ -84,3 +84,11 @@ LiteMount is by Xodiv-Nagrand (its TOC; its code says Copyright 2011 Mike Batter
 General Public License, version 2 (its `LICENSE.txt` holds the terms). UADD_LiteMount keeps its locale keys, each
 with our Ukrainian. The test stand-in `tools/harness/litemount/` and `tools/harness/flow_litemount_steps.py` copy a
 few of its code lines, to build its texts the way it does.
+
+## OneForAll (GPL-3.0-or-later)
+
+https://www.curseforge.com/wow/addons/oneforall
+
+OneForAll is by Smoergi (its TOC). It is shared under the GNU General Public License, version 3 or later (its TOC says
+GPL-3.0-or-later; its `LICENSE.txt` holds the terms). UADD_OneForAll keeps its English texts only as hashes, each
+with our Ukrainian. UADD is GPL-3.0 too; the full licence text is in `LICENSE`.

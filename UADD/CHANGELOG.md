@@ -6,6 +6,8 @@
   BugSack: новий модуль; його вікна, налаштування, спливне вікно і рядки в чаті українською. Тексти самих помилок лишаються як є.
 - Road to Sixty: new module; its journey map, panel, settings, minimap button, What's New window and stats are in Ukrainian. Names of zones, quests, items and players stay as the game gives them.
   Road to Sixty: новий модуль; його карта подорожі, панель, налаштування, кнопка біля мінікарти, вікно «Що нового» і статистика українською. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра.
+- OneForAll: new module; its windows, tabs, settings, tooltips and chat lines are in Ukrainian while OneForAll's own language is English. Names of zones, quests, NPCs, items, spells and players stay as the game gives them.
+  OneForAll: новий модуль; його вікна, вкладки, налаштування, підказки і рядки в чаті українською, поки мова самого OneForAll англійська. Назви зон, завдань, НПС, предметів, заклинань і гравців лишаються такими, як їх дає гра.
 
 ## 1.2.4
 

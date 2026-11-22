@@ -48,6 +48,7 @@ COVERED = {
     "UADD_WowheadQuickLink": ("flow_wql.py", "wql"),
     "UADD_BugSack": ("flow_bs.py", "bs"),
     "UADD_RoadToSixty": ("flow_rts_halves.py", "rts"),
+    "UADD_OneForAll": ("flow_ofa_halves.py", "ofa"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "
@@ -83,6 +84,27 @@ UNFIT = {
         {k: "stays English on purpose: a slot holds a duration in the addon's English units (sort u in ns.SORT)"
          for k in ("Code.205f37f2", "Code.83a6ef2d", "Code.667eca79", "Code.16a2068b")},
         **{"Code.9ff8af0a": "no Ukrainian for it yet: no sort and no text shipped in ns.RTS"}),
+    "UADD_OneForAll": dict(
+        {"Code." + k: "a real gap: its t slot holds a capitalised text of ours (a profession, a filter), and Words.lua "
+                      "Ours takes only small letters there, so the whole line stays English"
+         for k in ("530a41e7 7d7ef18e 99bc95d2 62fba321 93f737ea abccb153 268cf87e 0c54d8fb 1617a860 944cf9dd "
+                   "f6f15ff7 699ab1d9 ecf3e226 efb22e55 9b269860 b5bd0e78 d8e9ae47 e39f3245 2e174645 dedd2926 "
+                   "cb43a0f6 be5ed555 d25947f0 3e777cab").split()},
+        **{"Code." + k: "a real gap: a free name with a value in one line; Words.lua fills a free name only in a "
+                        "template of one slot (NameSlot), so the whole line stays English"
+           for k in "805fca38 dba8f5a8 2a894688 dbee665a ca2a7b8b 71894578 31774ba8 9d8cd6f1 ef33a4f0 b40742bd "
+                    "3299f542 27c6530f".split()},
+        **{"Code." + k: "no Ukrainian for it on purpose: a hunter pet note full of game names (spells, places) "
+                        "we never write (lesson 9)"
+           for k in "0b96a301 a03a1ee0 a501b8fa c4438c7f 709d7f8f 704b50b2 75277a9f 11c1e2f2 0a4fc08e ed642bae "
+                    "13f3acda c8acb9e8 14b55eb6 45a6ad04 0c11e0cf e841de76 dfb4d1e9 ade693b8 979b6913 "
+                    "3d872f28".split()},
+        **{"Code." + k: "no Ukrainian for it yet: no text shipped in ns.OFA"
+           for k in "856f561b 5f4a5321 ce10d379 a174ec26".split()},
+        **{"Code.9856bfbc": "stays English: its literal 1 is read as a value slot, so the one-item line never "
+                            "matches its own template",
+           "Code.24423d3c": "stays English: two value slots glued with no gap between, which the sample values do not fit",
+           "Code.7cd10afd": "stays English: an ability text with five value slots that the sample values do not fit"}),
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")
 SKIP = "skipped: the addon is not installed"
