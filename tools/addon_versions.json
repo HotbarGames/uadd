@@ -2660,6 +2660,23 @@
     "X": 185
    },
    "ids": "1096593ecbe191e496470bb824656c84c773ab6d"
+  },
+  "UADD_WowheadQuickLink": {
+   "addon": "WowheadQuickLink",
+   "version": "2.16.10",
+   "interface": "110207, 120000, 120001",
+   "files": [
+    "Bindings.xml",
+    "WowheadQuickLink.lua",
+    "WowheadQuickLinkConfig.lua",
+    "WowheadQuickLinkConfig.xml",
+    "WowheadQuickLinkStrategies.lua"
+   ],
+   "count": 15,
+   "tags": {
+    "L": 15
+   },
+   "ids": "4e609336e263048f24d16efd79ffed72ae307462"
   }
  }
 }

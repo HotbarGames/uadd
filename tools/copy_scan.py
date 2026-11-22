@@ -27,7 +27,7 @@ RESTRICTED = {
     "Auctionator": "All Rights Reserved in its LICENSE",
     "Mastercraft": "all rights reserved in its LICENSE.txt", "Mastercraft_Inbox": "all rights reserved (Mastercraft's licence)", "DeleteCheapestItem": "All Rights Reserved in its TOC",
     "Pawn": "Creative Commons BY-NC-ND 3.0 (no derivatives)", "GatherMate2": "ARR in its TOC (its LICENSE.txt says GPL; until settled, ARR)","TomTom": "All Rights Reserved in its TOC", "RareScanner": "All Rights Reserved in its TOC", "Bagnon": "All Rights Reserved in its TOC", "BagBrother": "All Rights Reserved in its TOC (Bagnon's texts)", "Scrap": "All Rights Reserved in its TOC",
-    **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion", "SpeedyAutoLoot", "WaypointUI", "WhatTheWhisper", "LootTriage"),
+    **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion", "SpeedyAutoLoot", "WaypointUI", "WhatTheWhisper", "LootTriage", "WowheadQuickLink"),
                     "no licence, so all rights reserved"),
 }
 ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT", "WhatsTraining": "MIT", "ForeverQuestPins": "GPL-3.0", "LiteMount": "GPL-2.0"}

@@ -130,6 +130,14 @@ question; hover the minimap button, the info circle and the Sell / Delete button
 letters, not boxes, and it fits. Item names come from the game as they are; profile names stay as the player typed
 them. `/uadd missed` shows what stayed English. `/uadd dci off`: English; `on`: Ukrainian.
 
+### Wowhead Quick Link
+
+Type `/uadd missed on` first. Log in: `/uadd` lists "Wowhead Quick Link". Hover an item, a spell or a quest and press
+its key (Ctrl+C by default): the link window's header and its Close button are Ukrainian, with letters, not boxes, and
+they fit; the link stays as it is. Type `/wql`: its settings window's title and labels are Ukrainian. Open Esc > Key
+Bindings: its two key names are Ukrainian. Hold the show-original key with the link window open: English. `/uadd
+missed` shows what stayed English. `/uadd wql off`: English; `on`: Ukrainian.
+
 ### LootTriage
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
@@ -203,6 +211,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - DeleteCheapestItem Reloaded's real windows: its main window's top lines (money, links, counts), the fixed-width
   Remove and Delete buttons, its settings page on the game's Settings window, the profile question, the minimap
   tooltip, the fonts (letters or boxes), and whether the Ukrainian fits, are only seen in the real client.
+- Wowhead Quick Link's real windows: the game's link pop-up with our header and Close button (font and fit in its
+  fixed width), the `/wql` settings window's labels, the Key Bindings list (letters or boxes), and that a real
+  link stays as the addon builds it, are only seen in the real client.
 
 ## Without the game
 

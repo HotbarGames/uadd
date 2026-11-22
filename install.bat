@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 rem Copies UADD, UADD_Questie, UADD_DungeonJournal, UADD_OpenMap, UADD_DialogueUI, UADD_ForeverXPBar, UADD_Auctionator, UADD_Attune, UADD_LayerSwap, UADD_AutoPotion, UADD_Bagnon, UADD_Mastercraft, UADD_WhatsTraining, UADD_TomTom, UADD_RareScanner, UADD_Pawn, UADD_GatherMate2, UADD_Scrap, UADD_SpeedyAutoLoot, UADD_WaypointUI
-rem UADD_ForeverQuestPins, UADD_LiteMount, UADD_WhatTheWhisper, UADD_LootTriage and UADD_DeleteCheapestItem into the WoW Forever AddOns folder. See docs\TESTING.md.
+rem UADD_ForeverQuestPins, UADD_LiteMount, UADD_WhatTheWhisper, UADD_LootTriage, UADD_DeleteCheapestItem and UADD_WowheadQuickLink into the WoW Forever AddOns folder. See docs\TESTING.md.
 rem
 rem   install.bat            -> _forever_
 rem
@@ -24,7 +24,7 @@ if not exist "%CLIENT%\.flavor.info" (
 if not exist "%ADDONS%" mkdir "%ADDONS%"
 
 set "MODS=UADD UADD_Questie UADD_DungeonJournal UADD_OpenMap UADD_DialogueUI UADD_ForeverXPBar UADD_Auctionator UADD_Attune UADD_LayerSwap UADD_AutoPotion UADD_Bagnon UADD_Mastercraft UADD_WhatsTraining UADD_TomTom UADD_RareScanner UADD_Pawn UADD_GatherMate2 UADD_Scrap"
-set "MODS=%MODS% UADD_SpeedyAutoLoot UADD_WaypointUI UADD_ForeverQuestPins UADD_LiteMount UADD_WhatTheWhisper UADD_LootTriage UADD_DeleteCheapestItem"
+set "MODS=%MODS% UADD_SpeedyAutoLoot UADD_WaypointUI UADD_ForeverQuestPins UADD_LiteMount UADD_WhatTheWhisper UADD_LootTriage UADD_DeleteCheapestItem UADD_WowheadQuickLink"
 for %%A in (%MODS%) do (
     echo Installing %%A ...
     robocopy "%~dp0%%A" "%ADDONS%\%%A" /MIR /NFL /NDL /NJH /NJS /NP /R:1 /W:1
@@ -159,6 +159,11 @@ if exist "%ADDONS%\DeleteCheapestItem\" (
     echo   ok       DeleteCheapestItem ^(for UADD_DeleteCheapestItem^)
 ) else (
     echo   optional DeleteCheapestItem not installed: the DeleteCheapestItem Reloaded module stays off
+)
+if exist "%ADDONS%\WowheadQuickLink\" (
+    echo   ok       WowheadQuickLink ^(for UADD_WowheadQuickLink^)
+) else (
+    echo   optional WowheadQuickLink not installed: the Wowhead Quick Link module stays off
 )
 echo.
 echo Done: %ADDONS%

@@ -225,6 +225,14 @@ def _dci():
     return c
 
 
+def _wql():
+    import flow_wql as F
+    if not (F.installed() and F.module_there()):
+        return None
+    c, _ = F.game()           # the /wql window open and an item's link popup shown
+    return c
+
+
 def _att():
     import flow_att_game as G
     if not G.libraries_there():
@@ -275,6 +283,7 @@ RECIPES = [
     ("UADD_WhatTheWhisper", "WhatTheWhisper", _wtw),
     ("UADD_LootTriage", "LootTriage", _lt),
     ("UADD_DeleteCheapestItem", "DeleteCheapestItem", _dci),
+    ("UADD_WowheadQuickLink", "WowheadQuickLink", _wql),
 ]
 
 

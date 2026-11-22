@@ -1,0 +1,8 @@
+## Interface: 16001, 16000
+## Title: Wowhead Quick Link (harness stand-in)
+## Notes: Not Wowhead Quick Link. Only the game functions and the /wql window it needs that the harness lacks (Shim.lua): tools/harness/flow_wql.py then runs the installed addon's own Lua files (read only), since it has no licence.
+## Version: 0
+## LoadSavedVariablesFirst: 1
+## SavedVariables: WowheadQuickLinkCfg
+
+Shim.lua

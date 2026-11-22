@@ -76,6 +76,8 @@ ALLOW = {
     ("UADD_WhatsTraining/Screen.lua", "set font"): (2, FONT_FIX + "; " + TODO),
     ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP),
     ("UADD_WhatTheWhisper/Swap.lua", "global write"): (1, SWAP),
+    ("UADD_WowheadQuickLink/Module.lua", "global write"): (1, SWAP),
+    ("UADD_WowheadQuickLink/Module.lua", "set font"): (1, "CyrOn: after U.SaveFont, read back; U.FontBack"),
     ("UADD/Lines.lua", "chat replace"): (2, "core chat bus (U.ChatHook): one wrap for all modules, lesson 35"),
 }
 WALK_TODO = "a frame walk with no IsForbidden test; TODO: use U.Regions / U.Children (UADD/Guard.lua)"

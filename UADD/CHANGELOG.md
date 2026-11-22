@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New module UADD_WowheadQuickLink: Wowhead Quick Link's link window (its header and Close button), its `/wql` settings window and its two key binding names are in Ukrainian. The links stay as they are.
+  Новий модуль UADD_WowheadQuickLink: вікно посилання Wowhead Quick Link (заголовок і кнопка «Закрити»), його вікно налаштувань `/wql` і назви двох його клавіш українською. Самі посилання лишаються як є.
 - Waypoint UI: the quest title over a quest's pin and in the waypoint's footer is in Ukrainian when UALL Forever or ClassicUA has it.
   Waypoint UI: назва завдання над міткою завдання і внизу точки маршруту українською, коли її має UALL Forever або ClassicUA.
 
