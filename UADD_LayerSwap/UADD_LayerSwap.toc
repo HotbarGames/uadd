@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: LayerSwap's own words in Ukrainian: its panel, small bar, menus, options, tooltips and chat lines. Type /uadd layerswap.
 ## Author: HotbarGames
-## Version: 1.2.2
+## Version: 1.2.3
 ## Dependencies: UADD, LayerSwap
 ## X-Category: Localization
 ## X-License: GPL-3.0

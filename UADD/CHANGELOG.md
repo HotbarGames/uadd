@@ -1,7 +1,17 @@
 # Changelog
 
-## Unreleased
+## 1.2.3
 
+- Fixed: in battlegrounds and dungeons, UADD could make the game show many Lua errors, because chat lines there
+  are protected. UADD now leaves the chat alone there, and waits until a fight ends to change a window.
+  Виправлено: на полях бою та в підземеллях UADD міг спричиняти багато помилок Lua, бо рядки чату там захищені.
+  Тепер UADD там не чіпає чат, а вікна змінює, лише коли бій скінчився.
+- Fixed: with the TomTom module, the game menu could give a "SetFont is disallowed" error.
+  Виправлено: з модулем TomTom меню гри могло давати помилку «SetFont is disallowed».
+- Fixed: Questie's tracker showed a box instead of a letter in a dungeon quest's level ("[40?]").
+  Виправлено: трекер Questie показував квадратик замість літери в рівні завдання підземелля («[40?]»).
+- The addons' own pop-up windows have their Accept, Cancel, Yes, No and Okay buttons in Ukrainian.
+  Кнопки «Прийняти», «Скасувати», «Так», «Ні» та «Гаразд» у спливних вікнах аддонів українською.
 - New module UADD_DeleteCheapestItem: DeleteCheapestItem Reloaded's window, its ignored-items window, its settings page, profiles, tooltips and the minimap button's tooltip are in Ukrainian.
   Новий модуль UADD_DeleteCheapestItem: вікно DeleteCheapestItem Reloaded, вікно ігнорованих предметів, сторінка налаштувань, профілі, підказки й підказка кнопки біля мінімапи українською.
 - New module UADD_LootTriage: LootTriage's settings window, its row in the game's AddOns settings, tooltip lines, chat messages, the loot window's Delete button and its What's New window are in Ukrainian.

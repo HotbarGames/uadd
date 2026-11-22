@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Ukrainian translations for other addons. Modules: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy AutoLoot, Waypoint UI, Forever Quest Pins, LiteMount, WhatTheWhisper, LootTriage, DeleteCheapestItem Reloaded. Type /uadd for the list.
 ## Author: HotbarGames
-## Version: 1.2.2
+## Version: 1.2.3
 ## SavedVariables: UADD_DB
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

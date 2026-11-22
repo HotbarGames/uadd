@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: OpenMap's dungeon map on the World Map in Ukrainian: a font with Ukrainian letters, its words, and the dungeon and boss names other UADD modules saved. Type /uadd openmap.
 ## Author: HotbarGames
-## Version: 1.2.2
+## Version: 1.2.3
 ## Dependencies: UADD, OpenMap
 ## X-Category: Localization
 ## X-License: GPL-3.0

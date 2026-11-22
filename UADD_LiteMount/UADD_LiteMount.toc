@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: LiteMount's own words in Ukrainian: its settings, rules, menus and tooltips. Part of UADD. Type /uadd litemount.
 ## Author: HotbarGames
-## Version: 1.2.2
+## Version: 1.2.3
 ## Dependencies: UADD, LiteMount
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
