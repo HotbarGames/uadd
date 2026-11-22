@@ -29,7 +29,7 @@ They live outside this repo, in the workspace folder above it (`../.claude/skill
   (LICENSE.txt: all rights reserved), Attune, DialogueUI,
   ForeverXPbar, ForeverDungeonJournal, LayerSwap, AutoPotion (no licence file), TomTom and RareScanner (TOC:
   All Rights Reserved), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (TOC: ARR, while its
-  LICENSE.txt says GPL-2.0; treated as ARR until the owner settles it), Scrap and DeleteCheapestItem Reloaded (TOC: All Rights Reserved),
+  LICENSE.txt says GPL-2.0; treated as ARR until the owner settles it), Scrap, DeleteCheapestItem Reloaded and BugSack (TOC: All Rights Reserved),
   Speedy AutoLoot, Waypoint UI, WhatTheWhisper, LootTriage and Wowhead Quick Link (no licence file).
 - Allowed: Questie (GPL-3.0), Forever Quest Pins (GPL-3.0), LiteMount (GPL-2.0), OpenMap (MIT; its notice must go with copies), What's Training? (MIT; its
   notice must go with copies). See `THIRD-PARTY-NOTICES.md`.

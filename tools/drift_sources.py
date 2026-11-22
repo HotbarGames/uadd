@@ -192,6 +192,7 @@ MODULES = {
     "UADD_WaypointUI": ("WaypointUI", ex_wp, None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_WhatTheWhisper": ("WhatTheWhisper", lambda p: __import__("drift_wtw").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_WhatsTraining": ("WhatsTraining", ex_wt, None, ()),   # MIT, but our data holds hashes only, so no tracked English
+    "UADD_BugSack": ("BugSack", lambda p: __import__("drift_bs").extract(p), None, ()),   # TOC: All Rights Reserved; our data holds hashes only
     "UADD_WowheadQuickLink": ("WowheadQuickLink", lambda p: __import__("drift_wql").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only
 }
 

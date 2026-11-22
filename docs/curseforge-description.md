@@ -27,6 +27,7 @@
 - **LootTriage**
 - **DeleteCheapestItem Reloaded**
 - **Wowhead Quick Link**
+- **BugSack**
 - **Questie**: its menus and settings. The quest tracker and quest texts come from UALL Forever.
 
 Each module needs its addon installed. A module whose addon is missing stays off.
@@ -81,6 +82,7 @@ Write the English text, our Ukrainian, and what it should say.
 - LootTriage by Krelock: https://www.curseforge.com/wow/addons/loot-triage
 - DeleteCheapestItem Reloaded by Sander Vispoel and MDHippie: https://www.curseforge.com/wow/addons/delete-cheapest-item-reloaded
 - Wowhead Quick Link by Blur: https://www.curseforge.com/wow/addons/wowhead-quick-link
+- BugSack by Funkeh: https://www.curseforge.com/wow/addons/bugsack
 - Questie by the Questie team: https://www.curseforge.com/wow/addons/questie
 - UALL Forever by the UALL team: https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization
 - ClassicUA by Greenya, Jakanis and others: https://www.curseforge.com/wow/addons/classicua
@@ -120,6 +122,7 @@ Source code (GPL-3.0): https://github.com/HotbarGames/uadd
 - **LootTriage**
 - **DeleteCheapestItem Reloaded**
 - **Wowhead Quick Link**
+- **BugSack**
 - **Questie**: його меню й налаштування. Трекер і тексти завдань перекладає UALL Forever.
 
 Кожен модуль працює, коли встановлено його аддон. Якщо аддона немає, модуль вимкнений.

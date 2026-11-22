@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: BugSack (harness stand-in)
+## Notes: Not BugSack. It draws the shapes its sack window, options and send popup draw; its English comes at run time from the installed addon (tools/harness/flow_bs.py).
+## Version: 0
+
+Stand.lua

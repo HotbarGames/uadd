@@ -53,3 +53,15 @@ addon update, look in its diff for new `..` around L words. `Turn` (`UADD_Foreve
 " (BETA)" tail off as it cuts the level range, and swaps two joined sentences only when both are ours, so a line is
 never half translated. Check: `python3 tools/harness/flow_fqp.py`, "fqp: 3 hold canvas"; its mutants `beta` and
 `join` take each fix out and want that step to fail.
+
+**Lesson 32 again, in BugSack (2026-11-22).** What went wrong: the module saves a label's own font before it puts
+UADD's Cyrillic font on, and puts the saved one back on the hold key and off. Its re-apply step (`Refix`, on hover
+and on a font object change) cleared that saved font on every run. A hover that ran it twice saved our own Cyrillic
+font as the "original", so held and off then put our font back on the English (the Wipe button). The harness found
+it. Rule: forget a saved font only when ours is not on the label now (`Fresh` in `UADD_BugSack/Screen.lua`); never
+save a font while ours is on. Check: `python3 tools/harness/flow_bs.py --prove`; its mutant `fresh` puts the old
+line back and wants step 5 to fail.
+The review found one more: the sack's Options tab calls the Wipe button's `SetEnabled`, a native method that runs
+no Lua `Enable`, `Disable` or `SetFontObject`, so no hook saw the font change and our words would show as boxes.
+Rule: hook every state method a button has, `SetEnabled` too, and make the stand's version native (it uses the raw
+`SetFontObject`, with no hover after it). Check: the same `--prove`, mutant `enabled`.

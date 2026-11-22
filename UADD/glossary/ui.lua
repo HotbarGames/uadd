@@ -126,3 +126,17 @@ E{ id = "chat.channel", en = "Channel", uk = "Канал", note = "A chat channe
 E{ id = "chat.group_chat", en = "Group chat", uk = "Груповий чат", note = "A party, raid or guild conversation. WhatTheWhisper, 2026-11-22." }
 E{ id = "chat.seen", en = "Seen", uk = "Переглянуто", note = "Read receipt under a sent message. WhatTheWhisper, 2026-11-22." }
 E{ id = "chat.typing", en = "typing...", uk = "пише...", note = "The other player is typing. WhatTheWhisper, 2026-11-22." }
+
+-- Words first needed by BugSack (lead's choice, 2026-11-22; the owner may change them)
+E{ id = "ui.bug", en = "Bug", uk = "Помилка", note = "A Lua error an addon caught and keeps in a list. Same Ukrainian as ui.error, another meaning: see docs/GLOSSARY.md. BugSack, 2026-11-22." }
+E{ id = "ui.session", en = "Session", uk = "Сесія", note = "One run of the game, from login to logout. BugSack, 2026-11-22." }
+E{ id = "ui.send", en = "Send", uk = "Надіслати", note = "Button: send something to another player. BugSack, 2026-11-22." }
+E{ id = "ui.filter", en = "Filter", uk = "Фільтр", note = "Label of a search box that narrows a list. Not ui.filters (a page of filters). BugSack, 2026-11-22." }
+E{ id = "ui.today", en = "Today", uk = "Сьогодні", note = "Before a clock time of today. BugSack, 2026-11-22." }
+E{ id = "ui.next", en = "Next", uk = "Далі", note = "Button: the next item or page. Pairs with ui.back. BugSack, 2026-11-22." }
+E{ id = "ui.sound", en = "Sound", uk = "Звук", note = "One sound to play. Not ui.sounds (a settings group). BugSack, 2026-11-22." }
+E{ id = "ui.auto_popup", en = "Auto popup", uk = "Автовідкриття", note = "Option: open the window by itself when something happens. BugSack, 2026-11-22." }
+E{ id = "ui.chat_output", en = "Chat frame output", uk = "Повідомлення в чат", note = "Option: also write a line to the chat window. BugSack, 2026-11-22." }
+E{ id = "ui.master_channel", en = "Master", uk = "Загальний канал звуку", note = "The game's main sound channel (Master volume). BugSack, 2026-11-22." }
+E{ id = "ui.wipe", en = "Wipe", uk = "Стерти", note = "Button: delete all saved entries for good. Not ui.clear (empty a field or a list on screen). BugSack, 2026-11-22." }
+E{ id = "ui.addon_compartment_button", en = "Addon compartment button", uk = "Кнопка в меню аддонів", note = "Option: show the addon in the game's addon menu by the minimap (ui.addon_compartment). BugSack, 2026-11-22." }

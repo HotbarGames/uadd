@@ -901,6 +901,26 @@
    },
    "ids": "e2ee4b606c524ad9218895fc1f8f833192711bca"
   },
+  "UADD_BugSack": {
+   "addon": "BugSack",
+   "version": "v12.1.9",
+   "interface": "11508, 11509, 16001, 20505, 20506, 30405, 38002, 40402, 50503, 50504, 120100, 120105, 120107",
+   "files": [
+    "config.lua",
+    "core.lua",
+    "embeds.xml",
+    "forever.lua",
+    "ldb.lua",
+    "locales.lua",
+    "retail.lua",
+    "sack.lua"
+   ],
+   "count": 42,
+   "tags": {
+    "L": 42
+   },
+   "ids": "a6bdb98f6d971c010277a39cdd3a784b6adc1a06"
+  },
   "UADD_DeleteCheapestItem": {
    "addon": "DeleteCheapestItem",
    "version": "v1.9.1",

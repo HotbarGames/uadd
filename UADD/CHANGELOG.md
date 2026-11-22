@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- BugSack: new module; its windows, options, popup and chat lines are in Ukrainian. The error texts stay as they are.
+  BugSack: новий модуль; його вікна, налаштування, спливне вікно і рядки в чаті українською. Тексти самих помилок лишаються як є.
+
 ## 1.2.4
 
 - New module UADD_WowheadQuickLink: Wowhead Quick Link's link window (its header and Close button), its `/wql` settings window and its two key binding names are in Ukrainian. The links stay as they are.

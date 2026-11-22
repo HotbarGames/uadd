@@ -34,6 +34,7 @@ move-folders:
   UADD/UADD_LootTriage: UADD_LootTriage
   UADD/UADD_DeleteCheapestItem: UADD_DeleteCheapestItem
   UADD/UADD_WowheadQuickLink: UADD_WowheadQuickLink
+  UADD/UADD_BugSack: UADD_BugSack
 
 # names come from UALL Forever or ClassicUA when one is installed; without them the menus are still Ukrainian
 optional-dependencies:

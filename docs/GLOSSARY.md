@@ -105,6 +105,10 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Tabbed, Tabs | a window layout with tabs ("З вкладками") is not the Tabs page ("Вкладки") | `ui.layout_tabbed` |
 | Remove | take an entry off a list, the thing stays ("Прибрати"; DeleteCheapestItem Reloaded), not Delete ("Видалити", for good) | `ui.remove_from_list` |
 | Markers | small marks on list rows ("Мітки"; WhatTheWhisper), not Waypoint UI's pinpoint ("Мітка", one waypoint) | `ui.markers` |
+| Bug | a Lua error an addon caught and keeps, BugSack ("Помилка") | `ui.bug` |
+| Error | the tag of an error message ("Помилка"): same word, its own entry | `ui.error` |
+| Wipe | delete saved entries for good, BugSack ("Стерти") | `ui.wipe` |
+| Clear | empty a field or a list on screen ("Очистити") | `ui.clear` |
 | RFD, BRD, Scholo, ... Key | Attune's left list: short dungeon names, and "Key" after them, stay English (owner 2026-11-20) | not an entry: never translate |
 
 Long sentences stay in the module. The base is for short words and phrases that many places share.

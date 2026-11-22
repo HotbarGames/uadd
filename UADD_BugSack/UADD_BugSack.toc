@@ -1,0 +1,15 @@
+## Interface: 16001, 16000
+## Title: UADD - BugSack
+## IconTexture: Interface\AddOns\UADD\Logo
+## Author: HotbarGames
+## Version: 1.2.4
+## Dependencies: UADD, BugSack
+## OptionalDeps: UALLF, ClassicUA
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (made by tools/make_bs_text.py build), then the code.
+data/text01.lua
+Words.lua
+Screen.lua
+Module.lua

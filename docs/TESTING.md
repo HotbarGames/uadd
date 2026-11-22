@@ -138,6 +138,17 @@ they fit; the link stays as it is. Type `/wql`: its settings window's title and 
 Bindings: its two key names are Ukrainian. Hold the show-original key with the link window open: English. `/uadd
 missed` shows what stayed English. `/uadd wql off`: English; `on`: Ukrainian.
 
+### BugSack
+
+Type `/uadd missed on` first. Log in: `/uadd` lists "BugSack". Make a Lua error (for example `/run error("test")`)
+and open the sack window: its tabs, the Next, Previous, Send and Wipe buttons, the Filter label and the
+session line at the top are Ukrainian, with letters, not boxes, and they fit. Open its options page (Esc > Options >
+AddOns, or its minimap button) and hover each option: the tooltips are Ukrainian. Press Send: the send popup is
+Ukrainian. Hover the minimap or LDB button: the tooltip is Ukrainian. Its chat lines (a new error, a wiped sack) are
+Ukrainian. The Lua error text itself stays as the game gave it. The Font size menu rows stay English (a game menu).
+Hold the show-original key with the window open: English. `/uadd missed` shows what stayed English. `/uadd bugsack off`:
+English; `on`: Ukrainian.
+
 ### LootTriage
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
@@ -214,6 +225,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - Wowhead Quick Link's real windows: the game's link pop-up with our header and Close button (font and fit in its
   fixed width), the `/wql` settings window's labels, the Key Bindings list (letters or boxes), and that a real
   link stays as the addon builds it, are only seen in the real client.
+- BugSack's real windows: the sack window (tabs, buttons, Filter label, session line) with a real error in it, its
+  options page and tooltips, the send popup, the minimap tooltip, the fonts (letters or boxes), and whether the
+  Ukrainian fits, are only seen in the real client.
 
 ## Without the game
 

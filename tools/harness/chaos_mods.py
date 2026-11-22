@@ -233,6 +233,12 @@ def _wql():
     return c
 
 
+def _bs():                    # the sack window open (session label, tabs, options) and the send popup shown
+    import flow_bs as F
+    c, M = F.game() if F.installed() and F.module_there() else (None, None)
+    return (M.popup(), c)[1] if M else None
+
+
 def _att():
     import flow_att_game as G
     if not G.libraries_there():
@@ -284,6 +290,7 @@ RECIPES = [
     ("UADD_LootTriage", "LootTriage", _lt),
     ("UADD_DeleteCheapestItem", "DeleteCheapestItem", _dci),
     ("UADD_WowheadQuickLink", "WowheadQuickLink", _wql),
+    ("UADD_BugSack", "BugSack", _bs),
 ]
 
 
