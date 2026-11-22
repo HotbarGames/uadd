@@ -1,4 +1,4 @@
--- Made by tools/make_fxpb_data.py from ForeverXP Bar 0.9.5. Do not edit: change the review file
+-- Made by tools/make_fxpb_data.py from ForeverXP Bar 0.9.6. Do not edit: change the review file
 -- (local/foreverxpbar.txt) and run the tool again. No English here: only hashes of it (UADD/Hash.lua)
 -- and our Ukrainian. Words.lua builds its tables from it. Over the 300-line budget on purpose: data.
 local _, ns = ...
