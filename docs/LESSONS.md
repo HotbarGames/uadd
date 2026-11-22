@@ -30,6 +30,8 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
    (`python3 -m unittest discover -s tools -p 'test_*.py'`, with `tools/harness/run.py`) runs once, in the push: the
    pre-push hook runs it on the commit. Never run it by hand right before a push, nor `run.py` on top of it; run
    `run.py` alone only to look at one step (`UADD_JOBS=1`: its flows one after another, `docs/TESTING.md`).
+   Never run the same check again with nothing changed in between: to see why a step failed, run only its flow
+   (each FAIL prints a repro line) or read the output you already have.
 
 ## 1. Text made in code or taken from the game is easy to miss
 
