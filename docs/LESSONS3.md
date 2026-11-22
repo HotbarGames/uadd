@@ -247,3 +247,17 @@ once, and stayed on with the module off (harness, 2026-11-22).
 
 **Check.** `python3 tools/harness/flow_lt.py`, "lt: 8 off: its own choices back" (the addon's own function, by
 identity, after `/uadd lt off`).
+
+## 38. A game menu's row that forbids SetFont
+
+**What went wrong.** A right-click on TomTom's arrow opens the game's menu (`MenuUtil.CreateContextMenu`). The menu
+lends its rows out with a new metatable, and even reading `SetFont` on one throws. Our font hook did that 5 times,
+and UADD_TomTom turned itself off (the owner's error log, 2026-11-22). The harness had no game menu, so nothing failed.
+
+**Rule.** Never look up SetFont, CreateFontString and the like on a menu row (`U.Locked` in `UADD/Font.lua`). Give
+it our font only through SetFontObject with UADD's own font object (`U.CyrOnLocked`), and read it back; when that
+fails, the row gets its own font object back and stays English. Hooks and the guard skip such rows.
+
+**Check.** `python3 tools/harness/flow_tomtom_menu.py --prove`: "tt: menu A" (the menu opened 7 times) and
+"tt: menu B" (off with the menu open), on a stand-in menu (`tools/harness/menu_compositor.lua`); its mutant `set`
+wants both to fail. Manual, in the game: the arrow's menu shows no error and its rows read Ukrainian.

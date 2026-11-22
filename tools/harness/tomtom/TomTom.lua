@@ -106,6 +106,17 @@ arrow.tta = arrow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 arrow:Show()
 function S.Status(en, ...) arrow.status:SetText(format(L[en], ...)) end
 
+-- A right-click on the arrow opens TomTom's menu through the game's MenuUtil.CreateContextMenu (as
+-- crazy_arrow.lua does); its rows are the L texts in feed.menu (set by a flow), read at click time.
+local function ArrowMenu(_, root)
+    for _, en in ipairs(feed.menu or {}) do root:CreateButton(rawget(L, en) or en) end
+end
+arrow:SetScript("OnClick", function(self, button)
+    if button == "RightButton" and MenuUtil and MenuUtil.CreateContextMenu then
+        MenuUtil.CreateContextMenu(self, ArrowMenu)
+    end
+end)
+
 local tipName = "TomTomTooltip"
 local tip = CreateFrame("GameTooltip", tipName, UIParent)
 for i = 1, 8 do                                 -- the game makes these with the tooltip

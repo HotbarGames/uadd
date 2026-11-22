@@ -74,19 +74,72 @@ local LOOKS = { { "GetTextColor", "SetTextColor" }, { "GetJustifyH", "SetJustify
     { "GetJustifyV", "SetJustifyV" }, { "GetShadowColor", "SetShadowColor" },
     { "GetShadowOffset", "SetShadowOffset" }, { "GetSpacing", "SetSpacing" } }
 
+local function ObjectOn(fs, o)
+    local keep = {}
+    for i, m in ipairs(LOOKS) do
+        if fs[m[1]] and fs[m[2]] then keep[i] = { fs[m[1]](fs) } end
+    end
+    fs:SetFontObject(o)
+    for i, m in ipairs(LOOKS) do
+        if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
+    end
+end
+
+-- ── Menu regions (docs/LESSONS3.md lesson 38) ─────────────────────────────────────────────────────
+-- The game's menus (MenuUtil.CreateContextMenu, the new dropdowns: Blizzard_Menu) lend their
+-- FontStrings out with a new metatable. Even READING "SetFont" from one reports "Use of function
+-- 'SetFont' is disallowed", and so does calling what it gives back, inside pcall too. Such a region's
+-- metatable has a TABLE __newindex (writes go to a side table); a plain FontString's has none. Only
+-- SetFontObject may change its font, and the menu puts its own font back when the menu closes.
+function U.Locked(fs)
+    if type(fs) ~= "table" then return false end
+    local ok, mt = pcall(getmetatable, fs)
+    if not ok or type(mt) ~= "table" then return false end
+    local okN, ni = pcall(rawget, mt, "__newindex")
+    return okN and type(ni) == "table"
+end
+
+-- Our own font objects (UADD_CyrFontN): a copy of the region's object with the Cyrillic file, one
+-- per object, size and flags. Never a shared font object of the game's.
+local cyrObjects, cyrMade = {}, 0
+
+local function CyrObject(fs)
+    local path = U.CyrFontPath()
+    if not path or type(CreateFont) ~= "function" then return nil end
+    local _, size, flags = fs:GetFont()
+    size, flags = tonumber(size) or 12, flags or ""
+    local base = fs.GetFontObject and fs:GetFontObject() or nil
+    local key = ("%s|%.1f|%s|%s"):format(path, size, flags, tostring(base))
+    if cyrObjects[key] then return cyrObjects[key] end
+    if cyrMade >= 64 then return nil end                   -- never a heap of font objects
+    cyrMade = cyrMade + 1
+    local o = CreateFont("UADD_CyrFont" .. cyrMade)
+    if type(base) == "table" and o.CopyFontObject then pcall(o.CopyFontObject, o, base) end
+    o:SetFont(path, size, flags)
+    if not U.IsCyrFont((o:GetFont())) then return nil end  -- read back (lesson 2): no font, no change
+    cyrObjects[key] = o
+    return o
+end
+
+-- Our font on a menu region (U.Locked) through SetFontObject only; true when it really took.
+function U.CyrOnLocked(fs)
+    local o = CyrObject(fs)
+    if not o then return false end
+    ObjectOn(fs, o)
+    return U.IsCyrFont((fs:GetFont()))
+end
+
 -- The font `was` (U.SaveFont) back on fs: its font object again, so the family's Cyrillic member is
--- back too; SetFont only with no object, or when the font was set by hand before us (`own`).
+-- back too; SetFont only with no object, or when the font was set by hand before us (`own`). A menu
+-- region (U.Locked) gets its object only: SetFont is never even looked up on one.
 function U.FontBack(fs, was)
     if type(was) ~= "table" then return end
+    if U.Locked(fs) then
+        if was.object then ObjectOn(fs, was.object) end
+        return
+    end
     if was.object then
-        local keep = {}
-        for i, m in ipairs(LOOKS) do
-            if fs[m[1]] and fs[m[2]] then keep[i] = { fs[m[1]](fs) } end
-        end
-        fs:SetFontObject(was.object)
-        for i, m in ipairs(LOOKS) do
-            if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
-        end
+        ObjectOn(fs, was.object)
         if not was.own then return end
     end
     if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end

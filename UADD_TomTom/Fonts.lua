@@ -52,7 +52,7 @@ local mine = false                             -- walking one of TomTom's own fr
 
 local function HookFs(fs)
     if mine then own[fs] = true end
-    if hooked[fs] then return end
+    if hooked[fs] or U.Locked(fs) then return end   -- a game menu's row: lent out, left unhooked (lesson 38)
     hooked[fs] = true
     hooksecurefunc(fs, "SetText", Decide)
     hooksecurefunc(fs, "SetFormattedText", Decide)

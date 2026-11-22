@@ -38,11 +38,13 @@ STATUS_MS = 5
 SPEED_N = 2000
 
 
-def _game(p, locale="enUS", cut=False):
+def _game(p, locale="enUS", cut=False, pre=None):
     addons = [Addon("TomTom", os.path.join(HERE, "tomtom"), session.FLAVOR)]
     addons += [Addon(n, os.path.join(session.REPO, n), session.FLAVOR) for n in ("UADD", MODULE)]
     c = Client(addons, None, locale)
     c.lua.execute(read_text(os.path.join(HERE, "flow_tomtom.lua")))
+    for name in pre or ():                       # more stand-ins before the game starts (menu_compositor.lua)
+        c.lua.execute(read_text(os.path.join(HERE, name)))
     M = c.H.tt
     M.cut = cut
     for en in {p["L"], p["option"], *p["stay"],

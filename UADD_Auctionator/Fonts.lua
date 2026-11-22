@@ -14,6 +14,7 @@ ns.Fonts = F
 local changed = {}        -- FontString -> { path, size, flags, object, follows }: its font before ours
 local hookedFont = {}     -- FontString -> true once its SetFont and SetFontObject are hooked
 local guard = false       -- up while we set a font ourselves
+local MENU = "Auctionator menu"   -- the game's menu rows: through UADD.AceFont only (lesson 38)
 
 -- A font file with Ukrainian letters.
 local function HasCyr(p)
@@ -46,6 +47,7 @@ end
 Fix = function(fs, byAddon)
     local t = UADD.Plain(fs:GetText())
     if type(t) ~= "string" or not t:find("[\208-\210]") then return end   -- only texts in Ukrainian
+    if UADD.Locked(fs) then return UADD.AceFont.Set(fs, MENU) end      -- SetFont is forbidden there
     local path = UADD.CyrFontPath()
     if not path then return end
     local p, size, flags = fs:GetFont()
@@ -101,7 +103,7 @@ end
 -- One FontString's font back (the hold key, or a text that is English again).
 function F.Back(fs)
     local old = changed[fs]
-    if not old then return end
+    if not old then return UADD.AceFont.Back(fs) end       -- a menu row (or nothing of ours)
     if UADD.IsCyrFont((fs:GetFont())) then
         guard = true
         pcall(Put, fs, old)
@@ -113,11 +115,12 @@ end
 -- Every font we changed back as Auctionator left it.
 function F.Restore()
     for fs in pairs(changed) do F.Back(fs) end
+    UADD.AceFont.Stop(MENU)
 end
 
 -- For the status line and the checks: how many FontStrings carry our font file now.
 function F.Count()
-    local n = 0
+    local n = UADD.AceFont.Count(MENU)
     for fs in pairs(changed) do
         if UADD.IsCyrFont((fs:GetFont())) then n = n + 1 end
     end

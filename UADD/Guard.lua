@@ -72,7 +72,7 @@ local function OnSetFont(fs, path) pin[fs] = path end
 local function OnSetObject(fs) pin[fs] = nil end
 
 local function Line(fs, kind)
-    if type(fs) ~= "table" or not fs.SetFont then return end
+    if type(fs) ~= "table" or U.Locked(fs) or not fs.SetFont then return end   -- a menu region: lesson 38
     if not hookedLine[fs] then
         hookedLine[fs] = true
         hooksecurefunc(fs, "SetFont", OnSetFont)

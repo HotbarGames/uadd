@@ -75,10 +75,14 @@ end
 -- Our font file on one FontString, same size and flags; its own font is kept to put back.
 -- `app` names the owner (for Stop and Count); `widget`, when given, gets ours back after a reset:
 -- an AceGUI widget, or a function(fs) that decides again for that one FontString.
+-- A menu region of the game's (UADD.Locked, lesson 38) gets ours through a font object only: no hooks
+-- (hooking reads SetFont, which the menu forbids), and the menu resets its fonts when it closes.
 function A.Set(fs, app, widget)
     local path = UADD.CyrFontPath and UADD.CyrFontPath()
-    if not path or type(fs) ~= "table" or not fs.GetFont then return end
-    if not hookedFs[fs] then
+    if not path or type(fs) ~= "table" then return end
+    local locked = UADD.Locked(fs)
+    if not fs.GetFont then return end
+    if not hookedFs[fs] and not locked then
         hookedFs[fs] = true
         hooksecurefunc(fs, "SetFont", OnFont)
         hooksecurefunc(fs, "SetFontObject", OnFont)
@@ -88,19 +92,29 @@ function A.Set(fs, app, widget)
     if not p or UADD.IsCyrFont(p) then return end    -- ours already, or a font with our letters
     local was = UADD.SaveFont(fs)                    -- path, size, flags, object (and own): lesson 18
     was.app, was.widget = app, widget
+    if locked then was.own, was.locked = false, true end
     Keep(fs, was)
     busy = true
-    local ok = pcall(fs.SetFont, fs, path, size or 12, flags or "")
+    local ok, took
+    if locked then
+        ok, took = pcall(UADD.CyrOnLocked, fs)
+        ok = ok and took
+        if not ok then pcall(UADD.FontBack, fs, was) end   -- whole English, never half a font
+    else
+        ok = pcall(fs.SetFont, fs, path, size or 12, flags or "")
+    end
     busy = false
     if not ok then Forget(fs) end
 end
 
 -- One FontString's own font back (UADD.FontBack): its font object always, so the family's Cyrillic
 -- member comes back; the file only when it had none, or one set by hand before us. Colour kept.
+-- A menu region the menu has already reset (closed) is left alone.
 function A.Back(fs)
     local old = fs and rec[fs]
     if not old then return end
     Forget(fs)
+    if old.locked and not UADD.IsCyrFont((fs:GetFont())) then return end
     busy = true
     pcall(UADD.FontBack, fs, old)
     busy = false
