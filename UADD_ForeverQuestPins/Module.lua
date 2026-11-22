@@ -1,7 +1,7 @@
--- UADD_ForeverQuestPins: Forever Quest Pins' own words in Ukrainian (its settings page, the World Map menu,
+-- UADD_ForeverQuestPins: Forever Quest Pins' own words in Ukrainian (its settings page, the World Map filters,
 -- its first-run setup, the breadcrumb dialog, its chat lines, What's New).
 -- Locale.lua: our words in its L table, in place; Screen.lua: the frames it builds once, both ways;
--- Menu.lua: its World Map menu checkboxes; Breadcrumb.lua and Chat.lua: the lines with game names, built whole.
+-- Menu.lua: its World Map filter button and list; Breadcrumb.lua and Chat.lua: the lines with game names, built whole.
 -- Game names (quest titles, zones) come from the game, ClassicUA or UALL Forever (UADD.UALL); a line with a
 -- name none of them has stays whole English. Its debug texts, its chat prefix and its /fqp paths stay English.
 -- Any error turns the module off: English as it was.

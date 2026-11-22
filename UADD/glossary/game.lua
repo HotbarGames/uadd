@@ -105,6 +105,7 @@ E{ id = "ui.survey", en = "Survey", uk = "Опитування", note = "Asking 
 -- Mastercraft (lead's choices 2026-11-19)
 E{ id = "game.rested_xp", en = "Rested XP", uk = "Досвід відпочинку", note = "Bonus experience stored while resting; the same as UADD_ForeverXPBar ships. lead's choice 2026-11-19, Mastercraft." }
 E{ id = "game.camping", en = "Camping", uk = "Табір", note = "UALL Forever's camp system (its quests: «Табірна наука 101: ...»). Never «чатування»: that is waiting at a spawn. lead's choice 2026-11-19, Mastercraft." }
+E{ id = "game.crafting", en = "Crafting", uk = "Ремесло", note = "Forever's quest category for crafting quests (Questie's event list), and Bagnon's bag filter. ClassicUA's word; UALL Forever says «Виготовлення»." }
 E{ id = "game.camp_item", en = "camp item", uk = "похідний предмет", note = "The item of the camp system, as UALL Forever names it. lead's choice 2026-11-19, Mastercraft." }
 
 -- What's Training? (lead's choices 2026-11-19)

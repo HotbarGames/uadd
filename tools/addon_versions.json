@@ -33,12 +33,13 @@
   },
   "UADD_Auctionator": {
    "addon": "Auctionator",
-   "version": "349",
+   "version": "351",
    "interface": "120100, 120105, 16001, 50504, 38000, 20506, 11508, 11509",
    "files": [
     "Assets_LegacyAH.xml",
     "Assets_ModernAH.xml",
     "Data_Cata/Suffixes.lua",
+    "Data_Forever/Suffixes.lua",
     "Data_Vanilla/Suffixes.lua",
     "Imports_LegacyAH/Manifest.xml",
     "Imports_LegacyAH/MoneyFrame.lua",
@@ -1052,7 +1053,7 @@
   },
   "UADD_DungeonJournal": {
    "addon": "ForeverDungeonJournal",
-   "version": "2.1.2",
+   "version": "2.1.3",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1119,17 +1120,17 @@
     "UI/ItemComparisonData.lua",
     "UI/ThemeData.lua"
    ],
-   "count": 1640,
+   "count": 1649,
    "tags": {
     "L": 338,
-    "P": 1095,
-    "S": 207
+    "P": 1101,
+    "S": 210
    },
-   "ids": "0d7d9556c9c0880e1a81715e6a5d44ec25f0577c"
+   "ids": "158920d9af5612a1f9a28cf24fb5d6a85365094e"
   },
   "UADD_ForeverQuestPins": {
    "addon": "ForeverQuestPins",
-   "version": "v1.1.1",
+   "version": "v1.1.3",
    "interface": "16001",
    "files": [
     "AutoQuests.lua",
@@ -1157,11 +1158,11 @@
     "Waypoints.lua",
     "WhatsNew.lua"
    ],
-   "count": 220,
+   "count": 222,
    "tags": {
-    "L": 220
+    "L": 222
    },
-   "ids": "ba5e908e435e314e5c019a328e5d9358c84e897f"
+   "ids": "764871bc6ce40cdb0730ec020302cba12ed17efe"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
@@ -1226,21 +1227,21 @@
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
-   "version": "1.14.43",
+   "version": "1.14.45",
    "interface": "11509, 16001, 20506",
    "files": [
     "Bindings.xml",
     "LayerSwap.lua"
    ],
-   "count": 434,
+   "count": 437,
    "tags": {
-    "X": 434
+    "X": 437
    },
-   "ids": "af47bdf531c2f39c49f5dd5152ab353cde10cdca"
+   "ids": "9062781854942dcc81637893e41f3f40af6e4cb6"
   },
   "UADD_LiteMount": {
    "addon": "LiteMount",
-   "version": "12.1.5-2",
+   "version": "12.1.5-3",
    "interface": "120105, 120100, 50504, 16001",
    "files": [
     "ActionButton.lua",
@@ -1361,7 +1362,7 @@
   },
   "UADD_Mastercraft": {
    "addon": "Mastercraft",
-   "version": "2.0.9",
+   "version": "2.0.9-hotfix",
    "interface": "16001",
    "files": [
     "AHPanel.lua",
@@ -1467,7 +1468,7 @@
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
-   "version": "v0.8.11",
+   "version": "v0.8.12",
    "interface": "16001",
    "files": [
     "API.lua",
@@ -1485,8 +1486,10 @@
     "Data/Forever/DungeonDrawn.lua",
     "Data/Forever/DungeonMaps.lua",
     "Data/Forever/DungeonMinimap.lua",
+    "Data/Forever/Explore.lua",
     "Data/Forever/Fishing.lua",
     "Data/Forever/FlightData.lua",
+    "Data/Forever/Fog.lua",
     "Data/Forever/GapFills.lua",
     "Data/Forever/GapPlaces.lua",
     "Data/Forever/Gaps.lua",
@@ -1517,7 +1520,9 @@
     "Map/Combat.lua",
     "Map/Compat.lua",
     "Map/Debug.lua",
+    "Map/DungeonJournal.lua",
     "Map/Dungeons.lua",
+    "Map/Explore.lua",
     "Map/Extras.lua",
     "Map/Flights.lua",
     "Map/Friends.lua",
@@ -1525,6 +1530,7 @@
     "Map/Launcher.lua",
     "Map/Nav.lua",
     "Map/News.lua",
+    "Map/OwnView.lua",
     "Map/PadView.lua",
     "Map/Paint.lua",
     "Map/Panel.lua",
@@ -1539,15 +1545,15 @@
     "Map/Window.lua",
     "Map/WorldMap.lua"
    ],
-   "count": 562,
+   "count": 577,
    "tags": {
-    "L": 562
+    "L": 577
    },
-   "ids": "5b7fd9445e1aadcd7223b4f374b13e9aeb43693c"
+   "ids": "b5879fc0ba912bf0054e49b0c11b63ad6496d9ad"
   },
   "UADD_Pawn": {
    "addon": "Pawn",
-   "version": "2.14.7",
+   "version": "2.14.8",
    "interface": "16001",
    "files": [
     "AskMrRobot.lua",
@@ -1588,7 +1594,7 @@
   },
   "UADD_Questie": {
    "addon": "Questie",
-   "version": "12.11.1",
+   "version": "12.12.0",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1650,7 +1656,6 @@
     "Localization/Translations/Map.lua",
     "Localization/Translations/MinimapIcon/MinimapIcon.lua",
     "Localization/Translations/MinimapIcon/Townsfolk.lua",
-    "Localization/Translations/Moonwell.lua",
     "Localization/Translations/Options/Advanced.lua",
     "Localization/Translations/Options/Auto.lua",
     "Localization/Translations/Options/DBMHud.lua",
@@ -1664,6 +1669,7 @@
     "Localization/Translations/Options/Sounds.lua",
     "Localization/Translations/Options/Tooltips.lua",
     "Localization/Translations/Options/Tracker.lua",
+    "Localization/Translations/ProfessionStations.lua",
     "Localization/Translations/Professions.lua",
     "Localization/Translations/QuestStates.lua",
     "Localization/Translations/Races.lua",
@@ -1723,7 +1729,7 @@
     "Modules/Journey/tabs/Search/SearchTab.lua",
     "Modules/Map/GamepadMapHover.lua",
     "Modules/Map/HBDHooks.lua",
-    "Modules/Map/Moonwell.lua",
+    "Modules/Map/ProfessionStations.lua",
     "Modules/Map/QuestieMap.lua",
     "Modules/Map/QuestieMapUtils.lua",
     "Modules/Map/Waypoints/QuestieWaypoints.lua",
@@ -1743,13 +1749,6 @@
     "Modules/Network/QuestieComms.lua",
     "Modules/Network/QuestieCommsData.lua",
     "Modules/Network/QuestiePartyObjectives.lua",
-    "Modules/Options/AdvancedTab/QuestieOptionsAdvanced.lua",
-    "Modules/Options/AutoTab/QuestieOptionsAuto.lua",
-    "Modules/Options/DBMTab/QuestieOptionsDBM.lua",
-    "Modules/Options/GeneralTab/QuestieOptionsGeneral.lua",
-    "Modules/Options/IconsTab/QuestieOptionsIcons.lua",
-    "Modules/Options/MapTab/QuestieOptionsMap.lua",
-    "Modules/Options/NameplateTab/QuestieOptionsNameplate.lua",
     "Modules/Options/NativeOptions/NativeOptionsAdvanced.lua",
     "Modules/Options/NativeOptions/NativeOptionsAuto.lua",
     "Modules/Options/NativeOptions/NativeOptionsDBM.lua",
@@ -1759,14 +1758,12 @@
     "Modules/Options/NativeOptions/NativeOptionsNameplate.lua",
     "Modules/Options/NativeOptions/NativeOptionsProfiles.lua",
     "Modules/Options/NativeOptions/NativeOptionsTracker.lua",
-    "Modules/Options/QuestieOptions.lua",
     "Modules/Options/QuestieOptionsControls.lua",
     "Modules/Options/QuestieOptionsDefaults.lua",
     "Modules/Options/QuestieOptionsEngine.lua",
     "Modules/Options/QuestieOptionsLayout.lua",
     "Modules/Options/QuestieOptionsUtils.lua",
     "Modules/Options/QuestieOptionsWindow.lua",
-    "Modules/Options/TrackerTab/QuestieOptionsTracker.lua",
     "Modules/Phasing.lua",
     "Modules/Profiler/QuestieProfiler.lua",
     "Modules/Profiler/QuestieProfilerPreHook.lua",
@@ -1889,11 +1886,11 @@
     "Questie.lua",
     "embeds.xml"
    ],
-   "count": 3550,
+   "count": 3545,
    "tags": {
-    "L": 3550
+    "L": 3545
    },
-   "ids": "02ee76b1c579cc7ec436019da8cb7f9ddcb2b729"
+   "ids": "a963782fdcdbf9ae7d36fe6a50680333cf74799a"
   },
   "UADD_RareScanner": {
    "addon": "RareScanner",

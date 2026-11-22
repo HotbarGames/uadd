@@ -31,6 +31,9 @@ ROOT = HERE.parent
 ALLOW = {
     "TomTom/core/profiles.lua:name": "made by its ConfirmDialog(name, ...) for the TOMTOM_*_PROFILE dialogs; every "
         "one is in POPUPS (UADD_TomTom/Settings.lua), which it registers by name",
+    "DeleteCheapestItem:DCI_RELOADED_DELETE_ITEM": "its body is the game's DELETE_ITEM global and an item, none of "
+        "our words, as in the game's own delete question; YES and NO then follow the game's language with it, so "
+        "our buttons under an English body would mix two languages in one question",
 }
 
 ENTRY = re.compile(r"StaticPopupDialogs\s*\[([^\]]+)\]\s*(?:=\s*(?:StaticPopupDialogs\s*\[[^\]]+\]\s*or\s*)?\{"

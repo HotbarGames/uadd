@@ -38,19 +38,25 @@
   при першому запуску і сповіщення про вступне завдання українською.
 - New module UADD_LiteMount: LiteMount's settings, rules, mount lists, menus and dialogs are in Ukrainian.
   Новий модуль UADD_LiteMount: налаштування LiteMount, його правила, списки маунтів, меню й діалоги українською.
-- LayerSwap: updated for 1.14.43; its new texts are in Ukrainian.
-  LayerSwap: оновлено для 1.14.43; його нові тексти українською.
+- LayerSwap: updated for 1.14.45; its new texts are in Ukrainian.
+  LayerSwap: оновлено для 1.14.45; його нові тексти українською.
+- Questie: updated for 12.12.0; its new texts are in Ukrainian.
+  Questie: оновлено для 12.12.0; його нові тексти українською.
+- Forever Quest Pins: updated for v1.1.3; its new texts are in Ukrainian (the World Map filter button's list and
+  its tooltip).
+  Forever Quest Pins: оновлено для v1.1.3; його нові тексти українською (список кнопки фільтра на карті світу та
+  її підказка).
 - ForeverXP Bar: updated for 0.9.5; its new texts are in Ukrainian.
   ForeverXP Bar: оновлено для 0.9.5; його нові тексти українською.
 - Auto Potion: updated for 4.1.1; its new texts are in Ukrainian.
   Auto Potion: оновлено для 4.1.1; його нові тексти українською.
-- Dungeon Journal: updated for 2.1.2; its new texts are in Ukrainian.
-  Dungeon Journal: оновлено для 2.1.2; його нові тексти українською.
+- Dungeon Journal: updated for 2.1.3; its new texts are in Ukrainian (also the «Маунт» loot type).
+  Dungeon Journal: оновлено для 2.1.3; його нові тексти українською (і тип здобичі «Маунт»).
 - Mastercraft: updated for 2.0.9; its new texts are in Ukrainian.
   Mastercraft: оновлено для 2.0.9; його нові тексти українською.
-- OpenMap: updated for v0.8.11; its new texts are in Ukrainian. With ClassicUA, the zone name on the World Map
+- OpenMap: updated for v0.8.12; its new texts are in Ukrainian. With ClassicUA, the zone name on the World Map
   now shows in English while you hold the show-original key.
-  OpenMap: оновлено для v0.8.11; його нові тексти українською. З ClassicUA назва зони на карті світу тепер
+  OpenMap: оновлено для v0.8.12; його нові тексти українською. З ClassicUA назва зони на карті світу тепер
   показується англійською, поки ви тримаєте клавішу оригіналу.
 - Mastercraft: «Українська» is in its own language menu (the globe button). Pick it to read Mastercraft in
   Ukrainian; pick another language and that language shows whole.

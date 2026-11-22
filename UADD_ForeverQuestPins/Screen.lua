@@ -17,7 +17,7 @@ ns.Screen = S
 
 local KEY = "foreverquestpins"
 local NAME = "Forever Quest Pins"                -- its settings category and its canvas' .name
-local ROOTS = { "ForeverQuestPinsSetup", "ForeverQuestPinsBreadcrumb" }
+local ROOTS = { "ForeverQuestPinsSetup", "ForeverQuestPinsBreadcrumb", "ForeverQuestPinsMapFilterList" }
 local DEPTH = 5
 
 local canvas = nil
@@ -81,6 +81,14 @@ local function TipHook(self)
     pcall(OnTip, self)
 end
 
+-- A frame whose OnEnter tooltip holds its words: its settings checkboxes (Walk), the World Map filter button
+-- (Menu.lua).
+function S.TipOn(f)
+    if tipped[f] or type(f) ~= "table" or type(f.HookScript) ~= "function" then return end
+    tipped[f] = true
+    f:HookScript("OnEnter", TipHook)
+end
+
 local function Walk(f, depth, want, tips)
     if type(f) ~= "table" or depth < 0 then return end
     for _, r in ipairs(U.Regions(f)) do
@@ -91,11 +99,7 @@ local function Walk(f, depth, want, tips)
         local new = Turn(f.disabledReason, want)
         if new then f.disabledReason = new end
     end
-    if tips and not tipped[f] and type(f.GetScript) == "function" and type(f.HookScript) == "function"
-        and f:GetScript("OnEnter") then
-        tipped[f] = true
-        f:HookScript("OnEnter", TipHook)
-    end
+    if tips and not tipped[f] and type(f.GetScript) == "function" and f:GetScript("OnEnter") then S.TipOn(f) end
     for _, c in ipairs(U.Children(f)) do Walk(c, depth - 1, want, tips) end
 end
 
@@ -140,6 +144,8 @@ local function Run(want)
 end
 
 function S.Apply() Run(ns.WordsWanted()) end
+-- One of its frames alone, in the words wanted (the filter list after a click, Menu.lua).
+function S.ApplyTo(f) if type(f) == "table" then Walk(f, DEPTH, ns.WordsWanted(), false) end end
 function S.Restore() Run(false) end           -- off: End runs before db.enabled is false
 function S.Count() return seen, ours end
 

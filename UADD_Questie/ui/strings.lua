@@ -874,6 +874,12 @@ ns.uiStrings = {
     ["Titan-Reforged Realm"] = "Світ, перекований титанами",
     ["Pirates' Day"] = G"event.pirates_day",
     ["Camping"] = G"game.camping",
+    ["Crafting"] = G"game.crafting",
+    -- ProfessionStations.lua
+    ["Moonwell"] = G"obj.moonwell",
+    ["Anvil"] = G"obj.anvil",
+    ["Forge"] = G"obj.forge",
+    ["Alchemy Lab"] = G"obj.alchemy_lab",
     -- Comms.lua
     ["A Major patch for Questie exists!"] = "Вийшло велике оновлення Questie!",
     ["Please update as soon as possible!"] = "Оновіться якнайшвидше!",

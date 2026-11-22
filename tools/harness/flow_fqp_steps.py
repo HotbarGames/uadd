@@ -21,17 +21,17 @@ TAG = "Forever Quest Pins:|r "
 KNOWN = {"Quix Hunt": "Полювання Квікса", "Zorp Trail": "Стежка Зорпа", "Blatter Vale": "Долина Блаттер"}
 STRANGER = "Wobble Moor"                             # a name UADD.UALL does not know
 STEPS = {
-    "login": "1 at login: World Map menu, setup window, settings page, tips and What's New ours",
+    "login": "1 at login: World Map filter list, setup window, settings page, tips and What's New ours",
     "spoiled": "1 spoiled words not used (a % spec or an escape the English lacks)",
-    "menu": "2 World Map menu ours, off gives its English, on gives ours back",
-    "hold": "3 hold key: menu, setup window, breadcrumb dialog, tips, What's New and L English, back on release",
+    "menu": "2 World Map filter list and its button's tooltip ours, off gives its English, on gives ours back",
+    "hold": "3 hold key: filter list, setup window, breadcrumb dialog, tips, What's New and L English, back on release",
     "hold canvas": "3 hold canvas (level range label): English while held, ours on release",
     "names": "4 names: breadcrumb and abandoned lines ours only when every name is known (UADD.UALL), "
              "else whole English; root stubs change nothing; no Lc.NAMES key in L; a What's New line that "
              "quotes quest names stays English, the others ours",
     "untitled": "4 untitled quest (its L[\"Quest \"] is our word): a breadcrumb or abandoned line that is not ours "
                 "is whole English (\"Quest 5\"), off too; ours when every name is known (lesson 27)",
-    "off": "5 off: menu, setup window, breadcrumb dialog, tips, What's New and L English again",
+    "off": "5 off: filter list, setup window, breadcrumb dialog, tips, What's New and L English again",
     "off canvas": "5 off canvas (level range label): English again",
     "on": "5 on again: all ours, status line says so",
     "tree": "6 settings tree: the names of its 5 pages under the main one ours, English while held and off, "
@@ -99,13 +99,19 @@ def spoiled(check, M):
 
 def menu(check, M):
     _, n, on1 = M.menu()
+    tip1 = M.buttonTip()
     M.uadd(lua_str("foreverquestpins off"))
     _, _, off = M.menu()
+    tip_off = M.buttonTip()
     left = M.left()
     M.uadd(lua_str("foreverquestpins on"))
     _, _, on2 = M.menu()
-    ok = n > 0 and on1 == n and off == 0 and left == 0 and on2 == n
-    check(STEPS["menu"], ok, f"{n} items: on {on1}, off {off} (L left {left}), on again {on2}")
+    tip2 = M.buttonTip()
+    tip1, tip_off, tip2 = txt(tip1), txt(tip_off), txt(tip2)
+    ok = (n > 0 and on1 == n and off == 0 and left == 0 and on2 == n
+          and cyr(tip1) and latin(tip_off) and not cyr(tip_off) and cyr(tip2))
+    check(STEPS["menu"], ok, f"{n} items: on {on1}, off {off} (L left {left}), on again {on2}; "
+          f"tips {tip1} / {tip_off} / {tip2}")
     return ok
 
 

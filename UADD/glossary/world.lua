@@ -20,6 +20,12 @@ E{ id = "npc.barber", en = "Barber", uk = "Перукар", note = "NPC role: ba
 E{ id = "obj.mailbox", en = "Mailbox", uk = "Поштова скринька", note = "World object: the mailbox." }
 E{ id = "obj.meeting_stone", en = "Meeting Stone", uk = "Камінь зустрічей", note = "World object at a dungeon entrance." }
 E{ id = "obj.meeting_stones", en = "Meeting Stones", uk = "Камені зустрічей", note = "Many meeting stones; a map filter." }
+-- Profession stations (Questie 12.12 map filters): ClassicUA's object and zone words, first letter capital;
+-- UALL Forever says the same, except Moonwell («Місячна криниця» in its UI, «Місячний Колодязь» in its World).
+E{ id = "obj.anvil", en = "Anvil", uk = "Ковадло", note = "World object: a smith's anvil. ClassicUA and UALL Forever." }
+E{ id = "obj.forge", en = "Forge", uk = "Кузня", note = "World object: a smith's forge. ClassicUA and UALL Forever." }
+E{ id = "obj.alchemy_lab", en = "Alchemy Lab", uk = "Алхімічна лабораторія", note = "World object for some alchemy recipes. ClassicUA and UALL Forever." }
+E{ id = "obj.moonwell", en = "Moonwell", uk = "Місячний колодязь", note = "Night elf moonwell, a station for some recipes. ClassicUA's word." }
 
 -- What a vendor sells (vendor type). Nouns, not actions: "Drink" is drinks for sale, not "to drink".
 E{ id = "vendor.ammo", en = "Ammo", uk = "Набої", note = "Vendor type: arrows and bullets." }

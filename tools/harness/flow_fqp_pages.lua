@@ -1,5 +1,5 @@
 -- Lua helpers for flow_fqp.py: Forever Quest Pins' settings pages under its main one (since 1.1) and its quest
--- tracker's sort and filter names and right-click menu. Run after flow_fqp.lua, before the game starts.
+-- tracker's sort and filter names and right-click menu, its World Map filter list. Run after flow_fqp.lua, before the game starts.
 local H = HARNESS
 local M = H.fqp
 local CYR = "[\208-\211]"
@@ -82,4 +82,54 @@ function M.trackerMenu()
         end
     end
     return table.concat(out, " | "), #out, n
+end
+
+-- Its World Map filter list (since 1.1.3): the map opened (its poll makes the button), the button clicked as the
+-- player clicks it (its OnClick and every hook on it), the rows' labels read: "|"-joined, how many, how many
+-- have Cyrillic. The list is hidden again after.
+function M.menu()
+    if not WorldMapFrame:IsShown() then WorldMapFrame:Show() M.wait(0.3) end
+    local b = rawget(_G, "ForeverQuestPinsMapFilterButton")
+    if not b then return "", 0, 0 end
+    local list = rawget(_G, "ForeverQuestPinsMapFilterList")
+    if list and list:IsShown() then list:Hide() end
+    b:GetScript("OnClick")(b)
+    list = rawget(_G, "ForeverQuestPinsMapFilterList")
+    local out, n = {}, 0
+    for _, row in ipairs(list and UADD.Children(list) or {}) do
+        local fs = rawget(row, "label")
+        local t = fs and fs:GetText()
+        if t and t ~= "" then
+            out[#out + 1] = t
+            if t:find(CYR) then n = n + 1 end
+        end
+    end
+    if list then list:Hide() end
+    return table.concat(out, " | "), #out, n
+end
+-- Our walk after a click throws (only our hook calls it there; its own OnClick runs as before).
+local apply
+function M.menuThrow(on)
+    local S = H.ns["UADD_ForeverQuestPins"].Screen
+    if on then
+        apply = apply or S.ApplyTo
+        S.ApplyTo = function() error("harness: walk after a click fails") end
+    elseif apply then
+        S.ApplyTo, apply = apply, nil
+    end
+end
+-- The filter button's tooltip: its lines "|"-joined.
+function M.buttonTip()
+    local b = rawget(_G, "ForeverQuestPinsMapFilterButton")
+    local enter = b and b:GetScript("OnEnter")
+    if not enter then return "" end
+    GameTooltip:Hide()
+    enter(b)
+    local out = {}
+    for i = 1, GameTooltip:NumLines() or 0 do
+        local fs = rawget(_G, "GameTooltipTextLeft" .. i)
+        out[#out + 1] = fs and fs:GetText() or ""
+    end
+    GameTooltip:Hide()
+    return table.concat(out, " | ")
 end

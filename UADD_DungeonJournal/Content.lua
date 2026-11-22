@@ -55,12 +55,14 @@ local function Proxy(get)
 end
 
 -- The type line under a loot item, word by word ("Two-Hand, Axe"): the glossary's gear.* and item.*
--- entries, and prof.* for the recipes' professions. "Ring" -> "Каблучка".
+-- entries, and prof.* for the recipes' professions. "Ring" -> "Каблучка". Plus game.mount (journal 2.1.3
+-- types a mount's loot "Mount"; the owner's word «Маунт»).
+local SLOT_IDS = { ["game.mount"] = true }
 local function SlotParts()
     local t = {}
     local G = UADD.Glossary
     for id, e in pairs(G and G.entries or {}) do
-        if id:find("^gear%.") or id:find("^item%.") or id:find("^prof%.") then
+        if id:find("^gear%.") or id:find("^item%.") or id:find("^prof%.") or SLOT_IDS[id] then
             for _, en in ipairs(e.en or {}) do t[en] = e.uk end
         end
     end

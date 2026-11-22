@@ -2,9 +2,9 @@
 is not installed every check is skipped. Lua helpers: flow_fqp.lua (HARNESS.fqp) and flow_fqp_pages.lua (its pages
 under the main one, its tracker). Steps: flow_fqp_steps.py.
 
-  * Game A (English client): 1 at login: menu, setup window, settings pages (its main one and the 5 under it,
-    found through the category links flow_fqp.lua gives the stand-in), tips and What's New ours.
-    2 World Map menu, off and on. 3 hold key (lessons 15, 23), its canvas label with the level range apart.
+  * Game A (English client): 1 at login: World Map filter list, setup window, settings pages (its main one and
+    the 5 under it, found through the category links flow_fqp.lua gives the stand-in), tips and What's New ours.
+    2 World Map filter list and its button's tooltip, off and on. 3 hold key (lessons 15, 23), its canvas label with the level range apart.
     4 names in the breadcrumb and abandoned lines (lessons 9, 20), What's New lines with quest names English;
     an untitled quest ("Quest 5", our word) in a line that stays English (lesson 27). 5 off and on (its canvas label apart),
     then 5 errors turn it off and the English comes back, tooltips too (lesson 19). 6 its pages' names in the
@@ -83,7 +83,7 @@ def game_b(check):
 MUTANTS = {
     "usable": ("spoiled", dict(bad=True), lambda q, c, M, K: S.spoiled(q, M)),
     "menu": ("menu", {}, lambda q, c, M, K: S.menu(q, M)),
-    "draw": ("menu", {}, lambda q, c, M, K: S.menu(q, M)),
+    "roots": ("menu", {}, lambda q, c, M, K: S.menu(q, M)),
     "hold": ("hold", {}, lambda q, c, M, K: S.hold(q, M)),
     "range": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
     "names": ("names", {}, lambda q, c, M, K: S.names(q, c, M, K)),

@@ -135,13 +135,46 @@ local function App(Check)
     on = false
 end
 
--- Returns { name, "1" or "0", detail, ... }.
-function F.dropdown()
+-- The Ukrainian buttons of Questie's own window ("Моя подорож"), and how many are in our font.
+local function Buttons()
+    local buttons, inOurs = {}, 0
+    for _, control in ipairs(rawget(_G, "QuestieOptionsTab_Popup_general").controls) do
+        local fs = control.widget and control.widget.GetFontString and control.widget:GetFontString()
+        if fs and HasCyr({ text = fs }) then buttons[#buttons + 1] = fs end
+    end
+    for _, fs in ipairs(buttons) do if IsCyr(fs) then inOurs = inOurs + 1 end end
+    return buttons, inOurs
+end
+
+-- Questie 12.12 has no older window (no AceConfigDialog, no QuestieOptions module): only the
+-- buttons of its own window and our own options window are left to check.
+local function NoOldWindow(Check)
+    local shared = { GameFontNormalSmall:GetFont() }
+    QuestieLoader:ImportModule("QuestieOptionsEngine"):ShowFrame()
+    local buttons, inOurs = Buttons()
+    Check("buttons: in our font", #buttons > 0 and inOurs == #buttons, inOurs .. "/" .. #buttons)
+    HF().Stop()
+    local back = 0
+    for _, fs in ipairs(buttons) do if not IsCyr(fs) then back = back + 1 end end
+    Check("off: buttons have their own font back", back == #buttons, back .. "/" .. #buttons)
+    HF().Start()
+    Check("on again: buttons in our font", select(2, Buttons()) == #buttons, select(2, Buttons()) .. "/" .. #buttons)
+    Check("GameFontNormalSmall unchanged", Same({ GameFontNormalSmall:GetFont() }, shared),
+        Show({ GameFontNormalSmall:GetFont() }))
+end
+
+-- Returns { name, "1" or "0", detail, ... }. old: Questie still has its older options window.
+function F.dropdown(old)
     local out = {}
     local function Check(name, ok, detail)
         out[#out + 1] = name
         out[#out + 1] = ok and "1" or "0"
         out[#out + 1] = tostring(detail or "")
+    end
+    if not old then
+        NoOldWindow(Check)
+        App(Check)
+        return out
     end
     local ACD = LibStub("AceConfigDialog-3.0")
     local shared = { GameFontNormalSmall:GetFont() }
@@ -216,13 +249,7 @@ function F.dropdown()
     orig = {}
     for _, item in ipairs(d.pullout.items) do orig[item.text] = Font(item.text) end
     -- The Ukrainian buttons of Questie's own window ("Моя подорож"): our font, own font on "off".
-    local buttons = {}
-    for _, control in ipairs(rawget(_G, "QuestieOptionsTab_Popup_general").controls) do
-        local fs = control.widget and control.widget.GetFontString and control.widget:GetFontString()
-        if fs and HasCyr({ text = fs }) then buttons[#buttons + 1] = fs end
-    end
-    local inOurs = 0
-    for _, fs in ipairs(buttons) do if IsCyr(fs) then inOurs = inOurs + 1 end end
+    local buttons, inOurs = Buttons()
     Check("buttons: in our font", #buttons > 0 and inOurs == #buttons, inOurs .. "/" .. #buttons)
 
     local v = FindOf("Questie", true)

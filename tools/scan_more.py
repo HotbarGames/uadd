@@ -100,6 +100,16 @@ def find_menus(lf, rel, ctx):
                 p = parts[1][0]
                 what = ident(toks[p].val) if toks[p].kind == STR else lf.src(*parts[1])
             ctx.add("menu", rel, lf.line(o), "WorldMapFrame hook %s" % what)
+        elif callee in ("CreateFrame", "pcall"):
+            # A frame of its own on the World Map (Forever Quest Pins 1.1.3: a filter button and list).
+            if callee == "pcall":
+                if not parts or lf.src(*parts[0]) != "CreateFrame":
+                    continue
+                parts = parts[1:]
+            if len(parts) > 2 and lf.src(*parts[2]).startswith("WorldMapFrame"):
+                n = parts[1][0]
+                name = ident(toks[n].val) if toks[n].kind == STR else lf.src(*parts[1])
+                ctx.add("menu", rel, lf.line(o), "WorldMapFrame child %s" % name)
 
 
 def find_settings(lf, rel, ctx):

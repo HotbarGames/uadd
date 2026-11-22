@@ -1,10 +1,11 @@
--- UADD_ForeverQuestPins: its checkboxes in the World Map's tracking menu.
--- Forever Quest Pins makes its list of menu labels once, when it loads (before us), so the labels are frozen
--- English, or frozen ours when it made them later. Each time the menu opens, its own callback adds a title
--- (its name, kept English) and its checkboxes. Ours runs after it and changes only the texts of the elements
--- after that title that are our word or its English: Ukrainian while wanted, English when off or held.
--- Ours is added right after its own (its TryRegisterWorldMapDropdown is safe to call again: it does nothing
--- once done), so ours always comes later. Any error turns the module off (U.Fault): English as it was.
+-- UADD_ForeverQuestPins: its World Map filter list.
+-- Since 1.1.3 Forever Quest Pins no longer adds its checkboxes to the World Map's tracking menu. It puts its own
+-- button on the map (made the first time the map opens) and its own list under it (made on the button's first
+-- click). The list's labels are copied from L when its Config.lua loads, before our words come in (lesson 1), so
+-- they are drawn English. The list is one of Screen.lua's ROOTS: on, off and the hold key switch its labels both
+-- ways. Here, each click that shows the list walks it again, after Forever Quest Pins built and refreshed it, and
+-- the button's tooltip goes through Screen.lua's tooltip hook (English back also once the module is off).
+-- Any error in the click counts (U.Safe): 5 turn the module off, English as it was.
 local _, ns = ...
 local U = UADD
 local Lc = ns.Locale
@@ -12,72 +13,32 @@ local M = {}
 ns.Menu = M
 
 local KEY = "foreverquestpins"
-local TITLE = "Forever Quest Pins"
-local done = false
+local BUTTON = "ForeverQuestPinsMapFilterButton"
+local LIST = "ForeverQuestPinsMapFilterList"
+local done, watching = false, false
 
-local function GetText(d)
-    if MenuUtil and type(MenuUtil.GetElementText) == "function" then
-        local ok, t = pcall(MenuUtil.GetElementText, d)
-        if ok then return t end
-    end
-    return type(d) == "table" and rawget(d, "text") or nil
+-- After its own OnClick: only while the module is on (off, Screen.Restore already gave the English back) and
+-- only when that click showed the list (a click that hid it needs nothing). Walks the list alone.
+local function OnClick()
+    if not ns.On() then return end
+    local list = rawget(_G, LIST)
+    if type(list) == "table" and type(list.IsShown) == "function" and list:IsShown() then ns.Screen.ApplyTo(list) end
 end
 
-local function SetText(d, t)
-    if MenuUtil and type(MenuUtil.SetElementText) == "function" then
-        MenuUtil.SetElementText(d, t)
-    elseif type(d) == "table" and type(rawget(d, "text")) == "string" then
-        d.text = t
-    end
-end
-
--- The client's checkbox draws the text it was made with (MenuTemplates.CreateCheckbox keeps it in its own
--- initializer), not the description's text, so SetText alone changes nothing on screen. Our initializer runs
--- after its own, on the drawn line (button.fontString), before the menu measures its width. An error here
--- counts (U.Fault) and leaves the line as it drew it: English.
-local function Drawer(new)
-    return function(button)
-        local ok, err = pcall(function()
-            local fs = type(button) == "table" and button.fontString or nil
-            if type(fs) ~= "table" then return end
-            if type(fs.SetTextToFit) == "function" then fs:SetTextToFit(new) else fs:SetText(new) end
-        end)
-        if not ok then U.Fault(KEY, err) end
-    end
-end
-
-local function Retext(_, root)
-    if type(root) ~= "table" or type(root.EnumerateElementDescriptions) ~= "function" then return end
-    local want = ns.WordsWanted()
-    local after, left = false, 0
-    for _, d in root:EnumerateElementDescriptions() do
-        local t = GetText(d)
-        if t == TITLE then
-            after, left = true, 16                  -- its 13 checkboxes; elements of others come after
-        elseif after and left > 0 and type(t) == "string" and t ~= "" then
-            left = left - 1
-            local new
-            if want then new = Lc.Uk(t) else new = Lc.En(t) end
-            if new and new ~= t and type(d.AddInitializer) == "function" then
-                SetText(d, new)
-                d:AddInitializer(Drawer(new))
-            end
-        end
-    end
-end
-
-local function Callback(owner, root)
-    local ok, err = pcall(Retext, owner, root)
-    if not ok then U.Fault(KEY, err) end
+local function Hook()
+    if done then return end
+    local b = rawget(_G, BUTTON)
+    if type(b) ~= "table" or type(b.HookScript) ~= "function" then return end
+    done = true
+    b:HookScript("OnClick", U.Safe(KEY, OnClick))
+    ns.Screen.TipOn(b)
 end
 
 function M.Install()
-    if done then return end
-    if not (Menu and type(Menu.ModifyMenu) == "function") then return end
+    Hook()
+    if done or watching then return end
     local fqp = Lc.Target()
-    if not fqp or type(fqp.TryRegisterWorldMapDropdown) ~= "function" then return end
-    local ok, yes = pcall(fqp.TryRegisterWorldMapDropdown)
-    if not ok or not yes then return end
-    done = true
-    Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", Callback)
+    if not fqp or type(fqp.EnsureWorldMapFilterButton) ~= "function" then return end
+    watching = true
+    hooksecurefunc(fqp, "EnsureWorldMapFilterButton", U.Safe(KEY, Hook))
 end

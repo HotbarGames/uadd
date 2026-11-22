@@ -215,7 +215,10 @@ class RealAddons(unittest.TestCase):
         self.assertTrue(has(real("Scrap"), "popup", "button1=G:OKAY"))
 
     def test_5_fqp_world_map_menu(self):
-        self.assertTrue(has(real("ForeverQuestPins"), "menu", "Menu.ModifyMenu MENU_WORLD_MAP_TRACKING"))
+        # Since 1.1.3 its own button and list on the World Map, no longer the tracking menu.
+        c = real("ForeverQuestPins")
+        self.assertTrue(has(c, "menu", "WorldMapFrame child ForeverQuestPinsMapFilterButton"))
+        self.assertTrue(has(c, "menu", "WorldMapFrame child ForeverQuestPinsMapFilterList"))
 
     def test_6_waypointui_zone_names(self):
         self.assertTrue(has(real("WaypointUI"), "gamename", "C_Map.GetMapInfo <map>"))

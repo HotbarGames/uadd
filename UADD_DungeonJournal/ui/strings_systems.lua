@@ -67,6 +67,7 @@ local S = {
     ARROW_BOAT = "Сядьте на корабель: %s",
     ARROW_ZEPPELIN = "Сядьте на цепелін: %s",
     ARROW_FLY = "Летіть: %s",
+    ARROW_FLY_FROM = "Летіть з %s до %s",
     ARROW_TALK_TO = "Поговоріть: %s",
     ARROW_DIVE_DOWN = "Пірніть прямо вниз",
     ARROW_PICK_UP_BOTTOM = "Підберіть це на дні",

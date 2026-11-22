@@ -166,6 +166,13 @@ too (`HARNESS.menuApi` in `tools/harness/wow_frames2.lua`), so a test reads what
 **Check.** `python3 tools/harness/run.py`, "fqp: 2 World Map menu" (`tools/harness/flow_fqp.lua`, `M.menu()` reads
 the drawn text); its mutant `draw` takes our initializer out and wants that step to fail.
 
+**Since Forever Quest Pins 1.1.3 (2026-11-22)** it has no menu entries: its own button on the World Map opens its
+own list, whose labels are copied from L at load (lesson 1). `Drawer` is gone: the list is one of Screen.lua's ROOTS,
+walked again after each click that shows it, and the button's tooltip goes through the tooltip hook. Check:
+"fqp: 2 World Map filter list" (`M.menu()` clicks the real button and reads each row's label; also the tooltip); its
+mutants `menu` and `roots` take each fix out. `python3 -m unittest tools.test_scan_addon` (test 5: the scanner lists
+frames an addon makes on `WorldMapFrame`).
+
 ## 34. A game name the addon builds from the map API
 
 **What went wrong.** Waypoint UI showed zone names in English (the owner's shots, 2026-11-21). The name comes from

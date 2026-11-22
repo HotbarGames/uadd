@@ -14,7 +14,7 @@
 -- Place names inside a sentence ("Searing Gorge", "Mount Hyjal", "Dire Maul - East") stay English
 -- here: names come from UALL. "Dire Maul - East" is typed in a slash command, so it must stay.
 -- UADD_OpenMap/Locale.lua puts these in OpenMap's L; Words.lua uses them for texts read earlier.
--- Over the 300-line budget on purpose: it is one flat table of 552 texts.
+-- Over the 300-line budget on purpose: it is one flat table of 567 texts.
 local _, ns = ...
 -- G"id" takes a word from the shared base, UADD/glossary/*.lua (see docs/GLOSSARY.md).
 local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil end
@@ -478,6 +478,9 @@ local MAP = {
 
     -- Pins.lua
     ["%d drawn"] = "намальовано: %d",
+    ["Right-click on the map steps out to the zone or continent around it. Off, right-click is left to the map and other addons (Questie's objectives); the menu's way out still works."] =
+        "Правий клік по карті переходить до зони чи континенту довкола. Вимкнено: правий клік лишається карті й іншим аддонам (цілі Questie); вихід через меню однаково працює.",
+    ["Right-click zooms out"] = "Правий клік віддаляє",
     ["A pin you drop becomes the waypoint, which other addons route to (Shortest Path Forever). Off, the waypoint is left as it is: the pin's Follow sets it."] =
         "Позначка, яку ви ставите, стає точкою маршруту, до якої інші аддони прокладають шлях (Shortest Path Forever). Вимкнено: точка маршруту лишається як є, її задає «Стежити» на картці позначки.",
     ["A pin you drop goes to your party or raid once its card is closed (those with OpenMap are asked whether to add it)."] =
@@ -650,8 +653,8 @@ local MAP = {
     ["Filled gaps"] = "Заповнені прогалини",
     ["Highlight the zone under the cursor"] = "Підсвічувати зону під курсором",
     ["How dark unexplored areas are when they're darkened."] = "Наскільки темні недосліджені місця, коли їх затемнено.",
-    ["How far each zone's borders move toward a shared palette, so mountains and borders hand over smoothly between zones. Zone interiors keep their own colours."] =
-        "Наскільки межі кожної зони наближаються до спільної палітри, щоб гори й межі плавно переходили між зонами. Усередині зони зберігають свої кольори.",
+    ["How far each zone's borders move toward a shared palette, so mountains and borders hand over smoothly between zones. Zone interiors keep their own colours. Below 100%, the ready-made zone tiles aren't used and every zone is drawn from its own art, which costs more while zooming."] =
+        "Наскільки межі кожної зони наближаються до спільної палітри, щоб гори й межі плавно переходили між зонами. Усередині зони зберігають свої кольори. Нижче 100% готові фрагменти зон не використовуються, і кожна зона малюється з власного зображення, а це важче під час наближення.",
     ["Icons"] = G"ui.icons",
     ["Icons from zoom"] = "Значки з наближення",
     ["In dungeons, raids and battlegrounds, temporarily hide OpenMap's friends, guild, transport and world quest markers. Party and raid members and other addons' maps and markers stay visible. Your marker settings are kept."] =
@@ -689,6 +692,14 @@ local MAP = {
         "Вежі цепелінів (клік — інший кінець) і маршрути цепелінів, коли маршрути показано.",
     ["Zoomed right out, the world map lies on an ocean that fills the window, in a border: the sea, compass roses, sea creatures, ships and the frame round it painted by Santiago Reyes (used with his permission), laid out for the window's shape, wide or tall. The game's own map stays in the middle. Off: no border."] =
         "Коли карту віддалено повністю, карта світу лежить на океані, що заповнює вікно, у рамці: море, рози вітрів, морські створіння, кораблі й рамку довкола намалював Santiago Reyes (з його дозволу), і все розміщено під форму вікна, широку чи високу. Карта самої гри лишається посередині. Вимкнено: без рамки.",
+    ["Arrow size"] = "Розмір стрілки",
+    ["Draw your own arrow above every other addon's icons and pins on the map."] =
+        "Малювати вашу стрілку поверх значків і позначок усіх інших аддонів на карті.",
+    ["Outlines and pins where you still need to go to explore each zone, for its Explore achievement; further out, how many places each zone has left."] =
+        "Обриси й позначки там, куди ще треба дійти, щоб дослідити кожну зону (для її досягнення за дослідження); здалеку — скільки місць лишилося в кожній зоні.",
+    ["Show places to explore"] = "Показувати місця для дослідження",
+    ["Your arrow over everything"] = "Ваша стрілка поверх усього",
+    ["Your own arrow on the world map at this size."] = "Ваша стрілка на карті світу цього розміру.",
     ["Hide"] = G"ui.hide",
     ["Show"] = G"ui.show",
     ["The Gamepad UI is on: /reload so OpenMap leaves the world map to Blizzard (until then the game may block closing the map with the controller)."] =
@@ -799,6 +810,17 @@ local LOADTIME = {
         "перемикач карт підземель і окремі перемикачі для друзів і гільдії",
     ["the yellow ping hidden with your arrow"] = "жовтий сигнал, схований разом із вашою стрілкою",
     ["zooming about four times smoother, found and measured"] = "наближення приблизно вчетверо плавніше, знайдене й виміряне",
+    ["Forever City Labels' pins on the stitched map"] = "позначки Forever City Labels на суцільній карті",
+    ["baked zone tiles for the Russian client"] = "готові фрагменти зон для російського клієнта",
+    ["quests from every zone read a few at a time"] = "завдання з усіх зон, які читаються по кілька за раз",
+    ["sharper middle zooms, and unexplored land darkened as one shade"] =
+        "чіткіші середні наближення і недосліджені землі, затемнені одним відтінком",
+    ["the map in combat, ClassicUI Forever's window, and Esc on a dungeon's map"] =
+        "карта в бою, вікно ClassicUI Forever і Esc на карті підземелля",
+    ["the zones' tiles baked in Brazilian Portuguese, less work while the map is closed or moving, and its art ready before it opens"] =
+        "готові фрагменти зон бразильською португальською, менше роботи, поки карта закрита чи рухається, і її зображення, готові ще до відкриття",
+    ["your position read safely, the maximized dungeon map, the Stockade's map, and German"] =
+        "безпечне читання вашої позиції, розгорнута карта підземелля, карта The Stockade і німецька мова",
 }
 
 -- Not L keys: OpenMap's own month list (News.lua), for dates. Genitive: "13 листопада 2026".

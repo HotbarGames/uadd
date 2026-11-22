@@ -1,5 +1,5 @@
 -- Ukrainian for Forever Quest Pins: the L keys used in its Config.lua (settings panel, /fqp help, map filter menu).
--- stays English (debug only, not written): the /fqp help lines for nameplatedebug, stats, settings, wipe, apis, why,
+-- stays English (debug only, not written): the /fqp help lines for nameplatedebug, taint, stats, settings, wipe, apis, why,
 -- available; the stats/settings/wipe/why/available output lines ("QuestieDB %s | ...", "Usage: /fqp why <questID>",
 -- "would pin", "would paint on map", "hidden", "Would pin on map ", "  count ", "  auto-accept %s | ...",
 -- "  hidden quest pins on this character: %d", ...), and the /fqp wipe how-to (its "Close the game..." lines).
@@ -74,7 +74,8 @@ T["Select nearest quest is unavailable in combat."] = "Вибір найближ
 T["Selected the nearest quest."] = "Вибрано найближче завдання."
 T["No tracked quest with a location was found."] = "Не знайдено відстежуваного завдання з відомим місцем."
 
--- World map filter menu
+-- World map filter list (since 1.1.3 under its own map button), and that button's tooltip
+T["Pin filters"] = "Фільтри значків"
 T["Quest start"] = "Початок завдання"
 T["World and continent quest pins"] = "Значки на картах світу й континентів"
 T["Quests in unexplored areas"] = "Завдання в недосліджених місцях"

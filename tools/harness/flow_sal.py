@@ -102,9 +102,10 @@ def game_a(check, facts, en, E):
     ours = [k for k in A if A[k] != E.get(k)]
     head = chat[:1]
     stay = [k for k in tests if not cyr(A[k])]
+    # 17 on Forever (WOW_PROJECT_CAMELOT, wow_api.lua): no bop help line or bop command lines there.
     check(f"1 ours: chat lines of every command and the help ({len(chat) - 1}), the anchor's label, the test entries; "
           "the help's header (no words) and the coin entry stay",
-          shown and set(A) == set(E) and len(chat) >= 18 and all(cyr(A[k]) for k in chat[1:] + ["A:label"])
+          shown and set(A) == set(E) and len(chat) >= 17 and all(cyr(A[k]) for k in chat[1:] + ["A:label"])
           and all(A[k] == E[k] for k in head) and len(tests) == 3 and len(stay) == 1 and A[stay[0]] == E[stay[0]],
           (sorted(set(A) ^ set(E))[:4], [A[k] for k in chat if not cyr(A[k])][:3], [A[k] for k in tests]))
     facts["chat_lines"], facts["changed"] = len(chat), len(ours)

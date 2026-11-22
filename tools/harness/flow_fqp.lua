@@ -16,16 +16,15 @@ M.subs = {}                                      -- its pages under the main one
 local CUTS = {
     usable = { "Locale.lua", '    if type(en) ~= "string" or type(uk) ~= "string" or en == "" or uk == "" then return false end\n',
                '    do return type(uk) == "string" end\n' },
-    menu = { "Menu.lua", '    Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", Callback)\n', "" },
-    draw = { "Menu.lua", "                d:AddInitializer(Drawer(new))\n", "" },
+    menu = { "Menu.lua", '    b:HookScript("OnClick", U.Safe(KEY, OnClick))\n', "" },
+    roots = { "Screen.lua", ', "ForeverQuestPinsMapFilterList" }', " }" },
     hold = { "Module.lua", "        U.SafeCall(ns.Locale.Sync)\n        U.SafeCall(ns.Screen.Apply)\n    end, ",
              "        U.SafeCall(ns.Locale.Sync)\n    end, " },
     names = { "Breadcrumb.lua", "        if not (u2 and uz) then return nil end\n", "        u2, uz = u2 or t2, uz or z\n" },
     restore = { "Screen.lua", "function S.Restore() Run(false) end", "function S.Restore() end" },
-    fault = { "Menu.lua", "    local ok, err = pcall(Retext, owner, root)\n    if not ok then U.Fault(KEY, err) end\n",
-              "    pcall(Retext, owner, root)\n" },
+    fault = { "Menu.lua", "U.Safe(KEY, OnClick)", "function() pcall(OnClick) end" },
     range = { "Screen.lua", '    local head, tail = t:match("^(.-)( %(%d+%-%d+%))$")\n', "    local head, tail = nil, nil\n" },
-    tiphook = { "Screen.lua", '        f:HookScript("OnEnter", TipHook)\n', '        f:HookScript("OnEnter", SafeTip)\n' },
+    tiphook = { "Screen.lua", '    f:HookScript("OnEnter", TipHook)\n', '    f:HookScript("OnEnter", SafeTip)\n' },
     pages = { "Screen.lua", "    Subs(main)\n", "" },
     rename = { "Screen.lua", "    for _, cat in ipairs(subs) do U.SafeCall(Rename, cat, want) end\n", "" },
     labels = { "Locale.lua", "                    t[k] = uk\n", "" },
@@ -83,20 +82,7 @@ function M.left()
     return n
 end
 
--- The World Map tracking menu, opened: the texts drawn after its title (what the player sees, not the
--- descriptions' .text), "|"-joined, and how many have Cyrillic.
-function M.menu()
-    local out, after, n = {}, false, 0
-    for _, d in ipairs(H.menuOpen("MENU_WORLD_MAP_TRACKING")) do
-        if d.shown == CAT then after = true
-        elseif after and d.shown then
-            out[#out + 1] = d.shown
-            if d.shown:find(CYR) then n = n + 1 end
-        end
-    end
-    return table.concat(out, " | "), #out, n
-end
-function M.menuThrow(on) H.menuThrow = on and true or nil end
+-- Its World Map filter list and button: flow_fqp_pages.lua.
 
 local function Collect(f, out, depth)
     if type(f) ~= "table" or depth > 6 then return out end

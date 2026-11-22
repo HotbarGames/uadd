@@ -13,8 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import halves_cover  # noqa: E402
 import hashtext  # noqa: E402
 
-NAME = "Quix"
-SKIP = halves_cover.SKIP
+NAME, SKIP = "Quix", halves_cover.SKIP
 def dci(check, M, tps, note=""): run(check, "UADD_DeleteCheapestItem", tps, M and (lambda tp, t: _t(M.translate(lua_str(t)))), note)  # noqa: E704,E501  DeleteCheapestItem Reloaded: Words.Translate on each whole text (M.translate); tps: flow_dci.templates(); What's Training? next: M.uk on whole lines (glue=True), tps: flow_whatstraining_texts.py
 def wt(check, M, tps, note=""): run(check, "UADD_WhatsTraining", tps, lambda tp, t: _t(M.uk(lua_str(t))), note, glue=True)  # noqa: E704,E501
 def _s_slots(en): return [k for k, kind in enumerate(halves_cover.kinds(en), 1) if kind == "s"]  # noqa: E704
