@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Pawn in Ukrainian: its window, settings, stat names and tooltip lines. Part of UADD.
 ## Author: HotbarGames
-## Version: 1.2.3
+## Version: 1.2.4
 ## Dependencies: UADD, Pawn
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

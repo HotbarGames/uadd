@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Speedy AutoLoot's own words in Ukrainian: its /sal chat lines and help, the loot display's anchor and test entries. Part of UADD. Type /uadd sal.
 ## Author: HotbarGames
-## Version: 1.2.3
+## Version: 1.2.4
 ## Dependencies: UADD, SpeedyAutoLoot
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

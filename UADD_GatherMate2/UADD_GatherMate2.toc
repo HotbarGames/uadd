@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: GatherMate2 in Ukrainian: its settings, chat lines, launcher tooltip and map pin menu. Part of UADD.
 ## Author: HotbarGames
-## Version: 1.2.3
+## Version: 1.2.4
 ## Dependencies: UADD
 ## OptionalDeps: GatherMate2, UALLF, ClassicUA
 ## X-Category: Localization

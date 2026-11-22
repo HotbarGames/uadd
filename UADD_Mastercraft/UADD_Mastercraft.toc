@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Mastercraft's own words in Ukrainian: its windows, tabs, buttons, tooltips, pop-ups and chat lines. Mastercraft stays on English; item, zone and NPC names come from UALL Forever or ClassicUA. Type /uadd mastercraft.
 ## Author: HotbarGames
-## Version: 1.2.3
+## Version: 1.2.4
 ## Dependencies: UADD, Mastercraft
 ## X-Category: Localization
 ## X-License: GPL-3.0

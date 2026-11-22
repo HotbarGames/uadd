@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: DeleteCheapestItem Reloaded українською: вікно найдешевших предметів, ігноровані предмети, налаштування й профілі, підказки та чат. Назви предметів - з UALL Forever або ClassicUA. Частина UADD.
 ## Author: HotbarGames
-## Version: 1.2.3
+## Version: 1.2.4
 ## Dependencies: UADD, DeleteCheapestItem
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

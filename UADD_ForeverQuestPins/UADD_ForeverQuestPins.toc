@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Forever Quest Pins' own words in Ukrainian: its settings, World Map menu, setup and breadcrumb notice. Part of UADD. Type /uadd foreverquestpins.
 ## Author: HotbarGames
-## Version: 1.2.3
+## Version: 1.2.4
 ## Dependencies: UADD, ForeverQuestPins
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
