@@ -12,7 +12,7 @@
 --   * Never in combat (lesson 36): a switch then waits for the fight's end and happens whole, so its windows
 --     are all ours or all English, never a mix. One part goes at once: when the player picks another language
 --     in combat, ours leaves its English table (that language falls back to it), and the rest waits.
---   * Its "save to a file" stays English (lesson 14; Swap.lua).
+--   * Its "save to a file" stays English (lesson 14; Swap.lua), and so does a group thread's name (Groups.lua).
 -- On a client that is not English the module does nothing. No English of it is stored here.
 
 local ADDON, ns = ...
@@ -93,6 +93,7 @@ local function Apply(on)
         U.SafeCall(ns.Days.Remove)
         U.SafeCall(ns.Swap.Remove)
         U.SafeCall(ns.Gaps.Remove)
+        U.SafeCall(ns.Groups.Remove)
     end
     Redraw()
     U.SafeCall(on and ns.Screen.Apply or ns.Screen.Restore)
@@ -141,7 +142,9 @@ local function Begin()
     U.SafeCall(ns.Days.Install)
     U.SafeCall(ns.Swap.Install)
     U.SafeCall(ns.Gaps.Install)
+    U.SafeCall(ns.Groups.Install)
     Sync(true)
+    U.SafeCall(ns.Groups.Repair)
 end
 
 -- Off (db.enabled is false by now): everything of ours out in one go, now or when the fight ends (Apply).
@@ -150,6 +153,7 @@ local function End()
     U.SafeCall(ns.Days.Remove)
     U.SafeCall(ns.Swap.Remove)
     U.SafeCall(ns.Gaps.Remove)
+    U.SafeCall(ns.Groups.Remove)
     Apply(false)
 end
 ns.Begin, ns.End = Begin, End

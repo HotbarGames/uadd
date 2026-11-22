@@ -142,7 +142,7 @@ class Checks(unittest.TestCase):
 
     def test_batches_and_weekdays(self):
         self.assertEqual(R.batch_of("L.x", "nothing known"), 3)
-        self.assertEqual(sorted(set(R.SECTIONS.values())), [1, 2, 3])
+        self.assertEqual(sorted(set(R.SECTIONS.values())), [1, 2, 3, 4])
         self.assertEqual((len(R.WEEKDAYS), len(set(R.WEEKDAYS))), (7, 7))
 
 

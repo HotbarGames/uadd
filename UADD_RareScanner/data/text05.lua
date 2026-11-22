@@ -1,4 +1,4 @@
--- Made by tools/make_rs_text.py build from RareScanner 1.60.1.9. Do not edit: change the review files
+-- Made by tools/make_rs_text.py build from RareScanner 1.60.1.11. Do not edit: change the review files
 -- (local/rs/review_NN.txt) and build again. Only AceLocale keys of RareScanner and our Ukrainian.
 -- T: AL[key] = Ukrainian. S: what each slot of a template holds, in order: v value, f free (kept as
 -- typed), n game name (UALL Forever's, else the whole line stays English), t our text (another key).
@@ -80,6 +80,7 @@ T["DEADMINES_ENTRANCE"] = "{area:1581} - Вхід"
 T["WAILING_CAVERNS_ENTRANCE"] = "{area:718} - Вхід"
 T["SUNKEN_TEMPLE_ENTRANCE"] = "{area:1417} - Вхід"
 T["BLACKROCK_DEPTHS_ENTRANCE"] = "{area:1584} - Вхід"
+T["GNOMEREGAN_ENTRANCE"] = "{area:721} - Вхід"
 T["NOTE_10263"] = "Чорнокнижник Шрамощита час від часу відкриває портал, з якого можна викликати рідкісного НІП."
 T["NOTE_247032"] = "Щоб викликати його, використайте {item:275989} у каналізації (у бічній кімнаті з фіолетовим колом на підлозі). Щоб отримати {item:275989}, виконайте такі кроки:\n1. Ідіть до {area:209} і візьміть {item:276561} зі столу за {npc:4275}.\n2. Ідіть до {area:233} у {map:1421} і зайдіть до ратуші. На столі в" ..
 	" глибині ви знайдете синій кристал; використайте {item:276561} просто біля нього, щоб перетворити його на {item:275989}."

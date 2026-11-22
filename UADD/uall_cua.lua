@@ -239,10 +239,7 @@ end
 -- A kind is off only when UALL Forever's setting for it is off and ClassicUA is not active.
 local routeOff = U.RouteOff
 if type(routeOff) == "function" then
-    function U.RouteOff(kind)
-        if Active() then return false end
-        return routeOff(kind)
-    end
+    function U.RouteOff(kind) if Active() then return false end return routeOff(kind) end
 end
 
 -- ── Public ────────────────────────────────────────────────────────────────────────────────────
@@ -256,9 +253,7 @@ function U.Providers()
 end
 
 function U.HasProvider(name)
-    for _, p in ipairs(U.Providers()) do
-        if p == name then return true end
-    end
+    for _, p in ipairs(U.Providers()) do if p == name then return true end end
     return false
 end
 
@@ -292,6 +287,14 @@ local function TestAsk(en)
     return nil, (not broken and tries > 0) and "not ready yet" or nil
 end
 
-U.cua = { Active = Active, Ask = TestAsk,
+-- For the Collector (docs/LESSONS4.md lesson 40): false while ClassicUA's hook is still looked for, when a
+-- name it knows falls to UALL Forever and a saved cache would keep that word for good.
+local function Settled()
+    if not Active() or chosen or broken then return true end
+    if not ready or probing or (InCombatLockdown and InCombatLockdown()) then return false end
+    pcall(Route) return chosen ~= nil or broken
+end
+
+U.cua = { Active = Active, Ask = TestAsk, Settled = function() local ok, s = pcall(Settled) return not ok or s end,
           State = function() return ready, broken, chosen ~= nil end, Fit = Fit, Cap = Cap,
           CacheSize = function() return cacheN end }

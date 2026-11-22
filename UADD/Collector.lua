@@ -5,6 +5,8 @@
 -- (a window open, Shift held, UALL not ready) we ask the same name again a second later, for up to
 -- GIVE_UP seconds; then the task is cut short (task.partial) and used, but not saved.
 -- A kind whose route is off in UALL Forever (Routes.lua) is not asked at all: it stays English.
+-- While ClassicUA is active but not settled (its hook not found yet) every name is "not now" too, and a
+-- task that ends after the name sources changed is not saved (docs/LESSONS4.md lesson 40).
 --
 -- A module makes its own runner with UADD.Collector.New() and starts it with a job:
 --   job = { tasks = { task, ... }, finishTask = fn(task, job), finish = fn(job), ... }
@@ -39,6 +41,22 @@ function C.IsAvailable()
     return ok and yes and true or false
 end
 
+-- The name sources part of the saved-cache signatures ("" without ClassicUA, or on an error).
+function C.ProviderSig()
+    local ok, p = pcall(function() return UADD.UALL.ProviderSig() end)
+    return ok and type(p) == "string" and p or ""
+end
+
+-- false while ClassicUA is active but its hook is still being looked for (uall_cua.lua). Collector.lua
+-- loads before uall_cua.lua, so this is looked up at each call; no ClassicUA code: settled.
+function C.Settled()
+    local ok, s = pcall(function()
+        local cua = UADD.UALL.cua
+        return not (cua and cua.Settled) or cua.Settled()
+    end)
+    return not ok or s ~= false
+end
+
 function C.New()
     local R = {}
     local job
@@ -71,10 +89,18 @@ function C.New()
             if not task then return Finish() end
             local item = task.items[task.pos]
             if item == nil then
+                -- The name sources changed while this task ran (ClassicUA came or went): its words are
+                -- used now, but not saved under the signature of the sources it started with.
+                if C.ProviderSig() ~= job.psig then task.unsaved = true end
                 if job.finishTask then job.finishTask(task, job) end
                 job.i = job.i + 1
             else
-                local ok, key, uk, wait = pcall(task.lookup, item)
+                local ok, key, uk, wait
+                if C.Settled() then
+                    ok, key, uk, wait = pcall(task.lookup, item)
+                else
+                    ok, wait = true, true          -- ClassicUA still being looked for: "not now"
+                end
                 if ok and wait and C.RouteOff(task.kind) then
                     -- Switched off in UALLF while we collect: English from now on, as in UALLF.
                     job.waitSince, task.off, task.unsaved = nil, true, true
@@ -101,7 +127,7 @@ function C.New()
     -- Starts the job. Returns false when this runner is busy.
     function R.Start(j)
         if job then return false end
-        j.i, j.asked, j.total = 1, 0, 0
+        j.i, j.asked, j.total, j.psig = 1, 0, 0, C.ProviderSig()
         for _, task in ipairs(j.tasks) do
             task.pos, task.found = 1, {}
             -- Route off in UALLF: nothing to ask, the kind stays English.

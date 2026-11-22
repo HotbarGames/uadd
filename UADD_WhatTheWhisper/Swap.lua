@@ -6,7 +6,8 @@
 --     added (that would lower the other languages' share in its language list), and its L (a proxy that
 --     refuses writes) is never written.
 --   * STAY: texts it saves into its data or sends to other players (the four quick-reply starters, the
---     saved fallback for a friend's name): kept English, never ours (lesson 14). A template whose slot holds a
+--     saved fallback for a friend's name, a group thread's name): kept English, never ours (lesson 14); a group
+--     thread named with a word drawn elsewhere too gets its English from Groups.lua. A template whose slot holds a
 --     game name or English units (sort n or u in ns.SORT) stays English as a whole (no half lines).
 --   * Its "save to a file" runs with its English in (W.WithEnglish below): what it saves stays English.
 --   * Copies it made at load get ours too, and their English back: three key binding names, the export
@@ -18,7 +19,7 @@ local W = {}
 ns.Swap = W
 
 local STAY = { ["L.0ef7ef99"] = true, ["L.11637a9d"] = true, ["L.704a7759"] = true, ["L.d116cdfc"] = true,
-    ["L.e0beab2e"] = true }
+    ["L.e0beab2e"] = true, ["L.0dddcd95"] = true, ["L.7c8bb125"] = true, ["L.02aa85ba"] = true, ["L.ba5796e3"] = true }
 local BINDINGS = {
     BINDING_NAME_WHATTHEWHISPER_TOGGLE = "L.675ca07c", BINDING_NAME_WHATTHEWHISPER_EXPOSE = "L.ee627ce9",
     BINDING_NAME_WHATTHEWHISPER_REPLY = "L.270fcac7",

@@ -21,6 +21,7 @@ SOUNDS = Path("Modules") / "Sounds.lua"
 PROFILE = Path("UI") / "ProfilePanel.lua"
 FRIEND = Path("Modules") / "ConversationManager.lua"
 QUICK = Path("Modules") / "QuickReplies.lua"
+GROUP = Path("Modules") / "GroupChat.lua"
 S, N, Y = luatok.STR, luatok.NAME, luatok.SYM
 
 
@@ -145,7 +146,33 @@ def stay_texts(addon):
                 break
             elif on and t[i][:2] == (N, "L") and t[i + 1][:2] == (Y, "[") and t[i + 2][0] == S:
                 out[t[i + 2][1]] = R.STAY_STARTER
+    out.update({en: R.STAY_GROUP for en in group_labels(addon) if not elsewhere(addon, en)})
     return out
+
+
+def group_labels(addon):
+    """The texts of GroupChat.lua's LABELS: a group thread's name, saved into its history (and its export file)."""
+    p = Path(addon) / GROUP
+    if not p.is_file():
+        return []
+    t, out, depth = _toks(p), [], 0
+    start = next((i for i in range(len(t) - 2) if t[i][:2] == (N, "LABELS") and t[i + 1][:2] == (Y, "=")), None)
+    for i in range(start + 2 if start is not None else len(t), len(t) - 1):
+        if t[i][:2] == (Y, "{"):
+            depth += 1
+        elif t[i][:2] == (Y, "}"):
+            depth -= 1
+            if depth <= 0:
+                break
+        elif t[i][:2] == (Y, "=") and t[i + 1][0] == S:
+            out.append(t[i + 1][1])
+    return out
+
+
+def elsewhere(addon, en):
+    """True when another code file has the text as a string too (it is drawn there: Swap.lua's ours, and the
+    module's Groups.lua gives the thread its English)."""
+    return any(p.name != GROUP.name and any(k == S and v == en for k, v, *_ in _toks(p)) for p in code_files(addon))
 
 
 def source(addon):

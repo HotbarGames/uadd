@@ -26,16 +26,36 @@ local seen, ours = 0, 0
 local tipped = {}                                -- frames whose OnEnter we already follow
 local shown = {}                                 -- pages whose OnShow we already follow
 
--- A text in the words wanted, or nil. Its Config.lua glues the player's level range (" (50-61)") onto the
--- auto-accept label: the head is swapped and the range kept, so off and the hold key bring it back too.
+-- The bits its Config.lua glues onto a label: the player's level range (" (50-61)") onto the auto-accept label,
+-- and since 1.1.4 " (BETA)" onto the quest tracker page's heading and checkbox.
+local TAILS = { " %(%d+%-%d+%)", " %(BETA%)" }
+local JOINS = 8                                  -- at most this many sentence ends tried in one text
+
+local function One(t, want)
+    if want then return Lc.Uk(t) end
+    return Lc.En(t)
+end
+
+-- A text in the words wanted, or nil. A label with a glued bit: the head is swapped and the bit kept. Two of its
+-- sentences joined by a space (since 1.1.4 the quest tracker page's help line): each is swapped, only when both
+-- are ours or their English, never one alone. So off and the hold key bring these back too (lesson 6).
 local function Turn(t, want)
-    local new
-    if want then new = Lc.Uk(t) else new = Lc.En(t) end
+    local new = One(t, want)
     if new then return new end
-    local head, tail = t:match("^(.-)( %(%d+%-%d+%))$")
-    if head and head ~= "" then
-        if want then new = Lc.Uk(head) else new = Lc.En(head) end
-        if new then return new .. tail end
+    for _, tail in ipairs(TAILS) do
+        local head, bit = t:match("^(.-)(" .. tail .. ")$")
+        if head and head ~= "" then
+            new = One(head, want)
+            if new then return new .. bit end
+        end
+    end
+    local from = 1
+    for _ = 1, JOINS do
+        local i = t:find("[%.!?] ", from)
+        if not i then break end
+        local a, b = One(t:sub(1, i), want), One(t:sub(i + 2), want)
+        if a and b then return a .. " " .. b end
+        from = i + 2
     end
     return nil
 end

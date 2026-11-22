@@ -119,3 +119,10 @@ E{ id = "chat.online", en = "Online", uk = "У мережі", note = "A friend's
 E{ id = "chat.muted", en = "Muted", uk = "Без звуку", note = "A conversation that plays no sound. WhatTheWhisper, 2026-11-22." }
 E{ id = "ui.markers", en = "Markers", uk = "Мітки", note = "Small marks on list rows (unread, pinned). WhatTheWhisper, 2026-11-22." }
 E{ id = "chat.messenger", en = "Messenger", uk = "Месенджер", note = "A chat window for private talks. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.reaction", en = "Reaction", uk = "Реакція", note = "A small emoji put on a message. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.request", en = "Request", uk = "Запит", note = "A message request from someone not in the list. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.block", en = "Block", uk = "Заблокувати", note = "Button: stop a player's messages. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.channel", en = "Channel", uk = "Канал", note = "A chat channel (Trade, General, a custom one). WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.group_chat", en = "Group chat", uk = "Груповий чат", note = "A party, raid or guild conversation. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.seen", en = "Seen", uk = "Переглянуто", note = "Read receipt under a sent message. WhatTheWhisper, 2026-11-22." }
+E{ id = "chat.typing", en = "typing...", uk = "пише...", note = "The other player is typing. WhatTheWhisper, 2026-11-22." }

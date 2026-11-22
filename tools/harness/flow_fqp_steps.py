@@ -25,7 +25,8 @@ STEPS = {
     "spoiled": "1 spoiled words not used (a % spec or an escape the English lacks)",
     "menu": "2 World Map filter list and its button's tooltip ours, off gives its English, on gives ours back",
     "hold": "3 hold key: filter list, setup window, breadcrumb dialog, tips, What's New and L English, back on release",
-    "hold canvas": "3 hold canvas (level range label): English while held, ours on release",
+    "hold canvas": "3 hold canvas (texts with a bit glued on: the level range, \" (BETA)\", two joined sentences): "
+                   "English while held, ours on release",
     "names": "4 names: breadcrumb and abandoned lines ours only when every name is known (UADD.UALL), "
              "else whole English; root stubs change nothing; no Lc.NAMES key in L; a What's New line that "
              "quotes quest names stays English, the others ours",

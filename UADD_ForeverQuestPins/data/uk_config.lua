@@ -177,6 +177,7 @@ T["Show quest item sparkles"] = "Показувати блиск предмет�
 T["Keeps the game's quest item sparkle on. The same setting also makes quest givers sparkle. Turning it off requires a full game restart; /reload is not enough."] = "Тримає ввімкненим ігровий блиск предметів завдань. Це саме налаштування додає блиск і тим, хто видає завдання. Щоб вимкнути блиск, потрібен повний перезапуск гри; /reload не досить."
 
 -- Other
+T["Beta feature, off by default."] = "Бета-функція, типово вимкнена."
 T["Hide quest tracker in combat"] = "Ховати трекер завдань у бою"
 T["Makes the default objective tracker transparent while you are in combat and restores its opacity afterward. Keeps your manual collapse setting."] = "Робить стандартний трекер цілей прозорим у бою й повертає непрозорість після нього. Ваше ручне згортання зберігається."
 T["Debug tooltips"] = "Підказки налагодження"

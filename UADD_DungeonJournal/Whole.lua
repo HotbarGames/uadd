@@ -52,13 +52,82 @@ local function LocalizeFreeText(value, ...)
 end
 W.LocalizeFreeText = LocalizeFreeText
 
+-- ── Objective lines ──────────────────────────────────────────────────────────────────────────
+-- The game's objective lines ("Name: 0/6", or "0/6 Name") under a quest in the list and in FDJ's
+-- tracker. FDJ.LocalizeObjectives translates them only through its own name table, which has no
+-- Ukrainian, so they stayed English. Before FDJ reads them we put the item or object name into
+-- Ukrainian (UADD.UALL.Item: ClassicUA first, UALL Forever on a miss) and keep the game's numbers and
+-- layout. A line whose name has no Ukrainian, a kill line, or any other line is passed on as it was:
+-- the line is whole Ukrainian or whole English. An error of ours: FDJ gets the game's own lines.
+local origObjectives
+
+local function NameUk(en)
+    local item = UADD.UALL and UADD.UALL.Item
+    if type(item) ~= "function" or en:find("[\128-\255|]") then return nil end
+    local uk = item(en)
+    -- Whole Ukrainian only: Cyrillic, no Latin letters, no markup.
+    if type(uk) ~= "string" or uk == "" or uk == en or uk:find("[%a|{}]") or not uk:find("[\208-\210]") then return nil end
+    return uk
+end
+
+-- One objective's text in Ukrainian, or nil to leave it as it is.
+local function ObjectiveUk(o)
+    if type(o) ~= "table" or type(o.text) ~= "string" or o.type == "monster" then return nil end
+    local text = o.text
+    local done, needed, name = text:match("^(%d+%s*/%s*)(%d+)%s+(.-)%s*$")
+    if name then
+        local uk = NameUk(name)
+        return uk and (done .. needed .. " " .. uk) or nil
+    end
+    name, done = text:match("^(.-)%s*:%s*(%d+%s*/%s*%d+)%s*$")
+    if name and name ~= "" then
+        local uk = NameUk(name)
+        return uk and (uk .. ": " .. done) or nil
+    end
+    return nil
+end
+W.ObjectiveUk = ObjectiveUk
+
+-- A copy of the game's list with our names in, or nil when no line changed (the list is left alone).
+local Prepare = UADD.Safe("dj", function(objectives)
+    local copy, changed = {}, false
+    for i, o in ipairs(objectives) do
+        local uk = ObjectiveUk(o)
+        if uk then
+            local c = {}
+            for k, v in pairs(o) do c[k] = v end
+            c.text, changed = uk, true
+            copy[i] = c
+        else
+            copy[i] = o
+        end
+    end
+    return changed and copy or nil
+end)
+
+local function LocalizeObjectives(questID, objectives, ...)
+    if type(objectives) == "table" and ns.Lang.Active() then
+        local mine = Prepare(objectives)
+        if type(mine) == "table" then
+            local ok, out = pcall(origObjectives, questID, mine, ...)
+            if ok then return out end
+        end
+    end
+    return origObjectives(questID, objectives, ...)
+end
+W.LocalizeObjectives = LocalizeObjectives
+
 function W.Install(fdj)
     if type(fdj.LocalizeFreeText) == "function" and fdj.LocalizeFreeText ~= LocalizeFreeText then
         orig, fdj.LocalizeFreeText = fdj.LocalizeFreeText, LocalizeFreeText
     end
+    if type(fdj.LocalizeObjectives) == "function" and fdj.LocalizeObjectives ~= LocalizeObjectives then
+        origObjectives, fdj.LocalizeObjectives = fdj.LocalizeObjectives, LocalizeObjectives
+    end
 end
 
--- Puts FDJ's function back where nobody wrapped ours since.
+-- Puts FDJ's functions back where nobody wrapped ours since.
 function W.Uninstall(fdj)
     if orig and fdj.LocalizeFreeText == LocalizeFreeText then fdj.LocalizeFreeText = orig end
+    if origObjectives and fdj.LocalizeObjectives == LocalizeObjectives then fdj.LocalizeObjectives = origObjectives end
 end

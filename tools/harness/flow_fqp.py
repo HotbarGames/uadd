@@ -86,6 +86,8 @@ MUTANTS = {
     "roots": ("menu", {}, lambda q, c, M, K: S.menu(q, M)),
     "hold": ("hold", {}, lambda q, c, M, K: S.hold(q, M)),
     "range": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
+    "beta": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
+    "join": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
     "names": ("names", {}, lambda q, c, M, K: S.names(q, c, M, K)),
     "plain": ("untitled", {}, lambda q, c, M, K: S.untitled(q, c, M, K)),
     "restore": ("off", {}, lambda q, c, M, K: S.off(q, c, M, K)),

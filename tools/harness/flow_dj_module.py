@@ -13,7 +13,9 @@ every page change, no look while no window shows, dungeon names past the zone ro
 errors; short words from our tables (flow_dj_words.py); the header's level line and quest giver
 lines (flow_dj_head.py); Shift on search results and on a shut
 journal (flow_dj_shift.py); the summon line and the joined-item row (flow_dj_summon.py). Two more games: UALLF's storage route off (the collection still ends
-and is saved) and a Russian client on "auto" (we step aside). The Lua helpers are in flow_dj_module.lua.
+and is saved) and a Russian client on "auto" (we step aside). Three with ClassicUA (flow_dj_cua.py): a
+cache saved without it is built again with its titles, a late hook is waited for, objective lines get its
+item names. The Lua helpers are in flow_dj_module.lua.
 UADD_OpenMap runs in the same games, on a stand-in for OpenMap (flow_openmap.py): its checks at
 the end of the main game ("openmap: ..."), then a game with UADD and UADD_OpenMap alone.
 `run()` returns (checks, facts).
@@ -29,6 +31,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import loader  # noqa: E402
+import flow_dj_cua  # noqa: E402
 import flow_dj_head  # noqa: E402
 import flow_dj_prose  # noqa: E402
 import flow_dj_shift  # noqa: E402
@@ -90,6 +93,8 @@ def run():
     run_storage_off(ModuleSession, check, facts)
     gc.collect()
     run_client_locale(ModuleSession, check, facts)
+    gc.collect()
+    flow_dj_cua.run(check, facts)          # with ClassicUA: no frozen cache, objective lines
     gc.collect()
     return checks, facts
 

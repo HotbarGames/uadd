@@ -6,6 +6,14 @@
   Новий модуль UADD_WowheadQuickLink: вікно посилання Wowhead Quick Link (заголовок і кнопка «Закрити»), його вікно налаштувань `/wql` і назви двох його клавіш українською. Самі посилання лишаються як є.
 - Waypoint UI: the quest title over a quest's pin and in the waypoint's footer is in Ukrainian when UALL Forever or ClassicUA has it.
   Waypoint UI: назва завдання над міткою завдання і внизу точки маршруту українською, коли її має UALL Forever або ClassicUA.
+- Fixed: in the Dungeon Journal's quest list, some quest titles stayed English or used UALL Forever's word where ClassicUA has one, and objective lines ("0/6 <item>") stayed English.
+  Виправлено: у списку завдань Dungeon Journal деякі назви лишались англійськими або брали слово UALL Forever там, де є слово ClassicUA, а рядки цілей («0/6 <предмет>») лишались англійськими.
+- WhatTheWhisper: updated; its new texts (reactions, message requests, blocked players, group chats, typing and read notes) are in Ukrainian. Group chat names it saves stay English.
+  WhatTheWhisper: оновлено; його нові тексти (реакції, запити на повідомлення, заблоковані гравці, групові чати, «пише...» і «Переглянуто») українською. Назви групових чатів, які він зберігає, лишаються англійськими.
+- Forever Quest Pins: updated for 1.1.5; its new quest tracker page and What's New line are in Ukrainian, and go back to English on the hold key and when off.
+  Forever Quest Pins: оновлено для 1.1.5; його нова сторінка трекера завдань і рядок «Що нового» українською, а з клавішею оригіналу й вимкненим модулем повертаються англійською.
+- RareScanner: updated for 1.60.1.11; its new text is in Ukrainian. ForeverXP Bar: checked with 0.9.6, no new texts.
+  RareScanner: оновлено для 1.60.1.11; його новий текст українською. ForeverXP Bar: перевірено з 0.9.6, нових текстів немає.
 
 ## 1.2.3
 

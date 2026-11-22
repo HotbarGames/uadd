@@ -20,6 +20,7 @@ import key_text as K
 # Keys its code saves or sends, found in the installed code at build time (wtw_source.stay_texts), never written.
 STAY_FRIEND = "the name it gives a friend with no BattleTag: saved into its history (lesson 14)"
 STAY_STARTER = "a quick-reply starter: saved once the player edits the list, and sent to other players"
+STAY_GROUP = "a group thread's name (party, raid ...): saved into its history; drawn nowhere else"
 STAY_NOW = set()      # filled by wtw_source.source() from the installed code
 
 # Names kept as they are (the addon's own name, export format names): left out of the review.
@@ -30,7 +31,7 @@ NAMES = {"L.675ca07c": "the addon's name", "L.c8066a48": "a format's name", "L.a
 # conversation's display name (CM.DisplayName: the nickname or the name; one name) or a wire name.
 SORTS = {
     "L.33d98e6c": "f", "L.04af38c1": "ff", "L.7007900f": "f", "L.7dcb6c6e": "f", "L.c93f1e2f": "f",
-    "L.2e7cadcc": "f", "L.8930958f": "fv", "L.3d8f8002": "f", "L.a67a9685": "f",
+    "L.2e7cadcc": "f", "L.8930958f": "fv", "L.3d8f8002": "f", "L.a67a9685": "f", "L.ce6ee520": "f",
     "L.c455616e": "v",    # the export file's path
     "L.cc8e48a1": "v",    # a chat player link
     "L.17d2f1f2": "u",    # Format.Bytes: a size in its own English units (lesson 15): the line stays English
@@ -57,6 +58,7 @@ NOTES = {
     "L.8930958f": "the delete dialog; " + _NAME + "; then a count",
     "L.3d8f8002": "a toast; " + _NAME,
     "L.a67a9685": "the delete-message dialog; " + _NAME,
+    "L.ce6ee520": "a chat line (the online alert); " + _NAME,
     "L.c455616e": "a note in the export dialog; the slot holds a file path",
     "L.cc8e48a1": "a chat line; the slot holds a clickable player link",
     "L.675b0b9c": "the stub page in the game's AddOns settings, built once (the module redraws it)",
@@ -84,15 +86,17 @@ SECTIONS = {
     "3e6f103b": 1, "b7da324d": 1, "44aada94": 1, "3ec78c28": 1, "dcd0ce9f": 1, "723dd268": 1,
     "aa1ee99c": 2, "a29c1fce": 2, "99b199e0": 2, "6d6c576e": 2, "f94da8c2": 2, "7ebb92ec": 2, "cde5e0ea": 2,
     "a2e66583": 3, "59647266": 3, "17f15b75": 3, "31f99906": 3,
-    "e1fdadf7": 3, "51b294f9": 1, "11f711a8": 1,    # the emoji picker went to 3 when batch 1 passed 150 (1.0.0 update)
-    "534c8789": 3,
+    "e1fdadf7": 3, "51b294f9": 1, "11f711a8": 4,    # the emoji picker went to 3 when batch 1 passed 150 (1.0.0 update);
+    "534c8789": 3,                                  # slash help went to 4 when it passed 150 again (group chats)
 }
 
 BATCHES = [
-    (1, "window, composer, conversation states, empty states, menu, dialogs, toasts, slash help",
+    (1, "window, composer, conversation states, empty states, menu, dialogs, toasts",
      lambda k, sec: SECTIONS.get(sec) == 1),
     (2, "settings: pages, general, appearance, layout, history, sounds, notifications",
      lambda k, sec: SECTIONS.get(sec) == 2),
+    (4, "slash help, group chats, channels, reactions, message requests, blocking, notes, minimap button",
+     lambda k, sec: SECTIONS.get(sec) == 4),
     (3, "settings: animations, combat, links, advanced, schema labels; emoji picker; sound names, missing labels, weekdays",
      lambda k, sec: True),
 ]

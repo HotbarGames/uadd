@@ -37,6 +37,8 @@ T["No quest location is available yet."] = "Місце завдання ще н�
 T["Blizzard Map Pins are unavailable on this client. TomTom can be selected in options."] = "Позначки карти Blizzard недоступні в цьому клієнті. TomTom можна обрати в налаштуваннях."
 T["Blizzard does not allow a map pin in this zone."] = "Blizzard не дозволяє ставити позначку на карті в цій зоні."
 
+T["Quest tracking is unavailable in combat."] = "Відстеження завдань недоступне в бою."
+
 -- HiddenQuests.lua
 T["Restored %d hidden quest pin(s)."] = "Відновлено схованих значків завдань: %d."
 T["No hidden quest pins on this character."] = "У цього персонажа немає схованих значків завдань."
@@ -76,3 +78,5 @@ T["Let Shift-click hide quest pins on world and continent maps, where pins ignor
 T["Recover hidden quest pins saved before 1.1.0. Those lists were keyed by realm name, so they looked empty after 1.1.0 changed the character key."] = "Сховані значки завдань, збережені до 1.1.0, тепер відновлюються. Ці списки були прив'язані до назви сервера, тож після 1.1.0, де змінився ключ персонажа, вони здавалися порожніми."
 T["Keep the enhanced quest tracker out of Blizzard's combat layout. The addon restores Blizzard's tracker methods while in combat, so the scenario tracker can read secret aura data, then re-applies the zone groups, sort, and filters after combat."] =
     "Покращений трекер завдань більше не заважає бойовому розміщенню Blizzard. У бою аддон повертає трекеру Blizzard його власні методи, щоб трекер сценаріїв міг читати приховані дані аур, а після бою знову застосовує групи за зонами, сортування й фільтри."
+T["Stop quest tracking from writing Blizzard's waypoint or super-track during combat or another restricted action. The write could taint the map's pin refresh and block SetPassThroughButtons. Existing tracking resumes after combat."] =
+    "Відстеження завдань більше не змінює точку маршруту Blizzard і пріоритетне завдання в бою чи під час іншої обмеженої дії. Така зміна могла зіпсувати оновлення значків на карті й заблокувати SetPassThroughButtons. Наявне відстеження відновлюється після бою."

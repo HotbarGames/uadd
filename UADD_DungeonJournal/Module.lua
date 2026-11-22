@@ -19,11 +19,21 @@ function ns.OnNames()
     if L.Active() then L.Light() end
 end
 
-local function Collect(all)
-    local started, why = N.Start(db, all, function(partial)
-        if partial then Say("назви збиралися надто довго, решту доберу при наступному вході.") end
-    end)
-    return started, why
+-- The name sources changed while we collected (ClassicUA came or went, docs/LESSONS4.md lesson 40):
+-- what was found is shown but not saved, so the names are collected once more under the new signature.
+local rerunSig
+local Collect
+local function Done(partial)
+    if partial then Say("назви збиралися надто довго, решту доберу при наступному вході.") end
+    local sig = N.Signature()
+    if db and db.enabled and type(db.cache) == "table" and db.cache.sig ~= sig and rerunSig ~= sig then
+        rerunSig = sig
+        C_Timer.After(1, function() if db and db.enabled then U.SafeCall(Collect, false) end end)
+    end
+end
+
+Collect = function(all)
+    return N.Start(db, all, Done)
 end
 
 local function AfterLogin()
