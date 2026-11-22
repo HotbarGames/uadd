@@ -10,7 +10,9 @@ at run time (feed(), from tools/lt_source.py).
     in game E, on: ours. 7 a text it renamed itself is left as it is on off (lesson 23). 8 its dropdown's choices:
     ours with the same values, its own function back when off. 9 the Settings panel row both ways. 10 What's New
     both ways, also from the panel's New button. 11 its chat and help lines. 12 five errors in its hooks: off, the
-    English back (lesson 19); on: ours again. 13 status. No half line (halves_mods.lt).
+    English back (lesson 19); on: ours again. 13 status. 16 the game's word on its two New buttons: ours in our
+    font (also through its hover), English on the hold key and off, the global never written, one already
+    Cyrillic left. No half line (halves_mods.lt).
   * Game B (no LootTriage): "/uadd lt" says it waits.
 """
 import os
@@ -77,10 +79,10 @@ def feed():
     # its help: the header through its Print (with its prefix, Settings.lua ShowHelp), the lines bare
     chat = [(PREFIX if k == HELP[0] else "") + en[k].replace("%d", "5") for k in HELP if k in en]
     return ("LootTriageStandInFeed = { en = { %s }, win = { %s }, choices = { %s }, news = { %s }, chat = { %s },"
-            " panel = { %s }, newsLabel = %s }" % (
+            " panel = { %s } }" % (
                 ", ".join("[%s] = %s" % (_q(k), _q(v)) for k, v in en.items()), ", ".join(map(_q, win)),
                 ", ".join(map(_q, CHOICES)), ", ".join(map(_q, news_text)), ", ".join(map(_q, chat)),
-                ", ".join(map(_q, PANEL)), _q(NEWS_LABEL)))
+                ", ".join(map(_q, PANEL))))
 
 
 def game(module=True, target=True):
@@ -157,6 +159,7 @@ def menu_steps(check, M):
 
 
 def steps(check, c, M, E, A, en):
+    import flow_lt_news
     on = {k: v for k, v in A.items() if v != E.get(k)}
     check("1 its window ours", sum(1 for k in on if k.startswith("W:")) >= 5 and all(cyr(on[k]) for k in on),
           f"{len(on)} changed; " + diff(E, A)[:300])
@@ -192,6 +195,7 @@ def steps(check, c, M, E, A, en):
     check("10 What's New ours", cyr(A["X"]) and E["X"] != A["X"], A["X"][:200])
     M.click(S.newButton)
     check("10 its panel New button: ours", txt(S.dialog.text.GetText(S.dialog.text)) == A["X"])
+    flow_lt_news.steps(check, M, E)
     S.Rename(1, lua_str("Quix label"))
     M.uadd("lt off")
     check("7 a text it renamed itself stays (lesson 23)", txt(S.win.labels[1].fs.GetText(S.win.labels[1].fs)) ==

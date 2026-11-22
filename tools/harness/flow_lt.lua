@@ -38,7 +38,7 @@ tip.SetText = function(self, t) Clear(self) Add(self, t) end
 tip.AddLine = function(self, t) Add(self, t) end
 tip.AddDoubleLine = function(self, l, r) Add(self, l, r) end
 
-GAMEMENU_NEW_BUTTON = GAMEMENU_NEW_BUTTON or "New"
+GAMEMENU_NEW_BUTTON = "What's New"                        -- the game's word (GlobalStrings), English
 if not UIParent:GetHeight() then UIParent:SetHeight(768) end
 
 local box = { __onRow = {} }
@@ -128,15 +128,16 @@ function M.drawRow()
     return f
 end
 
--- Every text the module may change: W window labels, D the dropdown's text, C its choices, N the news button,
--- V the version, P the panel data, R the drawn row, X the What's New dialog.
+-- Every text the module may change: W window labels, D the dropdown's text, C its choices, N the news button's
+-- label, B the panel's New button, V the version, P the panel data, R the drawn row, X the What's New dialog.
 function M.snap()
     local s, out = S(), {}
     M.lt("")
     for i, l in ipairs(s.win.labels) do out["W:" .. i] = l.fs:GetText() end
     out["D"] = s.win.drop.text:GetText()
     for i, c in ipairs(s.win.drop.row.choices()) do out["C:" .. i] = tostring(c[1]) .. "=" .. tostring(c[2]) end
-    out["N"], out["V"] = s.win.news:GetText(), s.win.version:GetText()
+    out["N"], out["V"] = s.win.news.label:GetText(), s.win.version:GetText()
+    out["B"] = s.newButton:GetFontString():GetText()
     for _, k in ipairs({ "name", "buttonText", "tooltip" }) do out["P:" .. k] = s.init.data[k] end
     local r = M.drawRow()
     out["R:text"], out["R:button"] = r.Text:GetText(), r.Button:GetFontString():GetText()
@@ -150,6 +151,8 @@ function M.fonts()
     local s, list, bad, n = S(), {}, {}, 0
     for _, l in ipairs(s.win.labels) do list[#list + 1] = l.fs end
     list[#list + 1] = s.win.drop.text
+    list[#list + 1] = s.win.news.label
+    list[#list + 1] = s.newButton:GetFontString()
     if s.dialog then list[#list + 1] = s.dialog.text end
     if M.row then list[#list + 1] = M.row.Text list[#list + 1] = M.row.Button:GetFontString() end
     for _, fs in ipairs(list) do
@@ -219,6 +222,25 @@ function M.forbiddenTip(line)
     local ok, out = pcall(S().Tip, f, { line })
     f.GetParent, UADD.ReportError, UADD.Fault = gp, rep, fault
     return ok and out or { "error: " .. tostring(out) }, reported, faults
+end
+
+-- Its two "New" buttons: each label as "text<TAB>1 if in our Cyrillic font", the window button's width less its
+-- label's and the addon's 23, and the game's word.
+local function NewLabels() local s = S() return s.win.news.label, s.newButton:GetFontString(), s.win.news end
+function M.newsLabels()
+    local a, b, btn = NewLabels()
+    local function one(fs) return tostring(fs:GetText()) .. "\t" .. (UADD.IsCyrFont((fs:GetFont())) and "1" or "0") end
+    return one(a), one(b), btn:GetWidth() - 23 - a:GetStringWidth(), GAMEMENU_NEW_BUTTON
+end
+-- The pointer on (true) or off its window's button: its own hover sets the label's font object again.
+function M.hoverNews(enter) local b = S().win.news b:GetScript(enter and "OnEnter" or "OnLeave")(b) end
+-- The game's word set to `word` (another addon's translation), both labels drawn with it, as at a load.
+function M.newsGlobal(word)
+    GAMEMENU_NEW_BUTTON = word
+    local a, b, btn = NewLabels()
+    a:SetText(word)
+    b:SetText(word)
+    btn:SetWidth(23 + a:GetStringWidth())
 end
 
 function M.on() return NS().On() and true or false end

@@ -61,9 +61,16 @@ end
 drop.row = { choices = Choices }
 drop.text = drop:CreateFontString()
 win.drop, win.sel, S.choices = drop, 2, Choices
-win.news = CreateFrame("Button", nil, win)
-win.news:SetText(E(F.newsLabel))
-win.news:SetScript("OnClick", function() S.News() end)
+-- Its "New" button: the game's word on its own label, the button sized to it, the label's font object set
+-- again on hover (as its window file builds it).
+local news = CreateFrame("Button", nil, win)
+news.label = news:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+news.label:SetText(GAMEMENU_NEW_BUTTON)
+news:SetWidth(18 + 5 + news.label:GetStringWidth())
+news:SetScript("OnEnter", function(self) self.label:SetFontObject(GameFontHighlight) end)
+news:SetScript("OnLeave", function(self) self.label:SetFontObject(GameFontNormal) end)
+news:SetScript("OnClick", function() S.News() end)
+win.news = news
 win.version = win:CreateFontString()
 win.version:SetText("v0")
 function win.Refresh()
@@ -137,7 +144,9 @@ local list = SettingsPanel.Container and SettingsPanel.Container.SettingsList
 local defaults = list and list.Header and list.Header.DefaultsButton
 if defaults then
     local nb = CreateFrame("Button", nil, defaults)
+    nb:SetWidth(96)
     nb:SetText(GAMEMENU_NEW_BUTTON)
+    if nb.GetFontString and nb:GetFontString() then nb:GetFontString():SetFontObject(GameFontNormal) end
     nb:SetScript("OnClick", function() S.News() end)
     S.newButton = nb
 end

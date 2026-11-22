@@ -6,9 +6,17 @@
 -- dialog, lesson 26) measures ours. A line we cannot do stays English; a line with no small letters (its
 -- version line, a blank) stays as it is. Our font is read back; when it cannot draw Cyrillic, the English goes
 -- back. Off and the hold key give the English back while the text is still ours (lesson 23).
+--
+-- The two buttons that open it (its window's, and the one on the game's Settings panel) show the game's
+-- GAMEMENU_NEW_BUTTON, which ClassicUA alone leaves English. On these two buttons only, our word shows while
+-- that global is English (LiteMount's globals, LESSONS3); the global itself is never written, and one that is
+-- already Cyrillic is left as it is. The hold key and off give its text back. Our font stays on through the
+-- window button's hover, which sets the label's font object again (lesson 32), and that button is sized to its
+-- word as the addon sizes it (lesson 5).
 
 local _, ns = ...
 local U = UADD
+local A = UADD.AceFont
 local N = {}
 ns.News = N
 
@@ -16,8 +24,55 @@ local W = ns.Words
 local find, sub, match, concat = string.find, string.sub, string.match, table.concat
 local fs, rec, busy = nil, nil, false
 local watched = {}
+local CYR = "[\208-\210]"
+local APP = "LootTriage"
+local NEW_UK = "Що нового"
+local labels = {}          -- a button's label -> { button, fit = size the button to it, en = the English we swapped }
 
 local function Wanted() return ns.WordsWanted() end
+
+-- ── The game's word on the two buttons ────────────────────────────────────────────────────────
+
+-- The global's text while it is English, else nil.
+local function GlobalEnglish()
+    local g = rawget(_G, "GAMEMENU_NEW_BUTTON")
+    if type(g) ~= "string" or g == "" or find(g, CYR) then return nil end
+    return g
+end
+
+local Label
+local function Relabel(lab) Label(lab) end           -- the addon set its font object again (its hover)
+
+local function Size(l, lab)
+    if l.fit and l.button.SetWidth then l.button:SetWidth(18 + 5 + (lab:GetStringWidth() or 0)) end
+end
+
+-- One label: ours (our font read back) or its English, as wanted now; only while it shows one of the two.
+Label = function(lab)
+    local l = labels[lab]
+    if not l or (lab.IsForbidden and lab:IsForbidden()) then return end
+    local t, en = lab:GetText(), GlobalEnglish()
+    if Wanted() and en and (t == en or t == NEW_UK) then
+        if t == en then l.en = en lab:SetText(NEW_UK) end
+        if A and A.Set then pcall(A.Set, lab, APP, Relabel) end
+        local ok, path = pcall(lab.GetFont, lab)
+        if not (ok and U.IsCyrFont(path)) then          -- no Cyrillic in its font: its English
+            lab:SetText(l.en or en)
+            if A and A.Back then pcall(A.Back, lab) end
+        end
+        Size(l, lab)
+    elseif t == NEW_UK then
+        lab:SetText(l.en or en or rawget(_G, "GAMEMENU_NEW_BUTTON"))   -- the English first, then its font
+        if A and A.Back then pcall(A.Back, lab) end
+        Size(l, lab)
+    end
+end
+
+local function AddLabel(button, lab, fit)
+    if type(lab) ~= "table" or labels[lab] or not lab.GetText or not lab.SetText then return end
+    labels[lab] = { button = button, fit = fit }
+    Label(lab)
+end
 
 local function One(line)
     if line == "" then return line end
@@ -112,10 +167,12 @@ local function Find()
 end
 
 -- A button that opens it: after its click, the dialog is there.
+-- Its window's button has its own label (`label`), sized to it.
 function N.Watch(button)
     if type(button) ~= "table" or watched[button] or not button.HookScript then return end
     watched[button] = true
     button:HookScript("OnClick", ns.Guard(Find))
+    if type(button.label) == "table" then AddLabel(button, button.label, true) end
 end
 
 -- The panel's own button for it sits on the panel's Defaults button.
@@ -127,13 +184,18 @@ function N.Install()
             local ok, yes = pcall(function()
                 return not (c.IsForbidden and c:IsForbidden()) and c.GetText and c:GetText() == GAMEMENU_NEW_BUTTON
             end)
-            if ok and yes then N.Watch(c) end
+            if ok and yes then
+                N.Watch(c)
+                local ok2, lab = pcall(c.GetFontString, c)      -- its template's label (a fixed width)
+                if ok2 then AddLabel(c, lab, false) end
+            end
         end
     end
     Find()
 end
 
 function N.Sync()
+    for lab in pairs(labels) do pcall(Label, lab) end
     if not fs then return end
     local t = fs:GetText()
     local was = t

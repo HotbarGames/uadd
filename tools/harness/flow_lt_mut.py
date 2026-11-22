@@ -220,6 +220,12 @@ MUTANTS = {
              "14 its dropdown's menu: our names in our Cyrillic font"),
     "canfont": ("Screen.lua", "if not ns.Menu.CanFont() then return list end", "", "m4"),
     "owner": ("Screen.lua", "if Forbidden(o) then break end", "", "15 a tooltip with a forbidden owner: no error, no fault"),
+    "newslabel": ("News.lua", "if t == en then l.en = en lab:SetText(NEW_UK) end", "",
+                  "16 its New buttons: ours in our font, the button sized to it, the global not written"),
+    "newsrefont": ("News.lua", "pcall(A.Set, lab, APP, Relabel)", "pcall(A.Set, lab, APP)",
+                   "16 New button hover sets its font object: ours stays"),
+    "newsglobal": ("News.lua", 'if type(g) ~= "string" or g == "" or find(g, CYR) then', 'if type(g) ~= "string" or g == "" then',
+                   "16 the game's word already Cyrillic: left as it is, the global too"),
 }
 
 
