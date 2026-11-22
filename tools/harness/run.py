@@ -31,7 +31,8 @@ UADD_LootTriage's checks run next, on a stand-in for LootTriage fed its English 
 UADD/Missed.lua's checks (texts noted in English, flow_missed.py) run next, on the LayerSwap stand-in.
 UADD/Hash.lua's checks (texts by hash, flow_hash.py) run next.
 ClassicUA as the first name source (flow_classicua.py, lesson 25: its zone hook is a harness stand-in that calls
-ClassicUA's real options and glossary) runs next, then the key notice (flow_keynotice.py).
+ClassicUA's real options and glossary) runs next, then Questie's level letter (flow_qtag.py, lesson 39: also with
+another addon's Ukrainian for Questie first), then the key notice (flow_keynotice.py).
 The keyboard check (flow_focus.py: every stand-in and the modules that load with them; after login no text
 box has the keyboard, docs/LESSONS2.md lesson 16) runs next.
 The safeguards (flow_safe.py: a failing module falls back to English, the guard puts game-wide breakage
@@ -95,6 +96,7 @@ def run_all():
     import flow_dialogueui
     import flow_dj_module
     import flow_classicua
+    import flow_qtag
     import flow_keynotice
     import flow_focus
     import chaos
@@ -126,7 +128,7 @@ def run_all():
                      ("ttm", flow_tomtom_menu), ("wp", flow_wp),
                      ("fqp", flow_fqp), ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap), ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw), ("lt", flow_lt), ("dci", flow_dci),
                      ("pops", flow_popups), ("missed", flow_missed),
-                     ("hash", flow_hash), ("cua", flow_classicua), ("keynotice", flow_keynotice),
+                     ("hash", flow_hash), ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice),
                      ("focus", flow_focus), ("safe", flow_safe),
                      ("chaos", chaos)):
         seg_checks, seg_facts = mod.run_checks()

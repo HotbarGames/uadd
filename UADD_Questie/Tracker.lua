@@ -61,9 +61,14 @@ end
 -- tag names come from Questie's own list (Database/Corrections/questTagInfoCorrections.lua, e.g.
 -- [1102] = {81, l10n("Dungeon")}), and that is "Підземелля" in Ukrainian: its first byte is half
 -- of a letter, which the font draws as a box. Then we give Questie's own Latin letter instead.
--- This stays on after "/uadd questie off": those tag names stay Ukrainian until /reload.
+-- Another addon can give Questie a Ukrainian locale before us (Quillshade 1.4.0 does): then we
+-- leave Questie's language alone, but this guard still goes in, whatever our state (on, off or
+-- a conflict, docs/LESSONS3.md lesson 39). It stays on after "/uadd questie off": those tag
+-- names stay Ukrainian until /reload. The level string ("[40D] ") is cleaned too, for a suffix
+-- that another addon builds after us. Our part never breaks Questie: an error in it gives
+-- Questie's own output.
 local LETTER = { RAID = "R", RAID_10 = "R", RAID_25 = "R", DUNGEON = "D", HEROIC = "H",
-    SCENARIO = "S", ACCOUNT = "A", CELESTIAL = "C", WORLD_EVENT = "W" }
+    SCENARIO = "S", ACCOUNT = "A", CELESTIAL = "C", WORLD_EVENT = "W", ELITE = "+", LEGENDARY = "++" }
 
 function T.TagLetter(questId)
     local DB = Module("QuestieDB")
@@ -74,17 +79,49 @@ function T.TagLetter(questId)
     return ""
 end
 
-local suffixDone
-local function InstallSuffix()
+-- A suffix with any byte of a non-Latin letter: Questie's Latin letter for its tag, or "" (a
+-- letter dropped, never a box). Else the suffix as it is.
+function T.CleanSuffix(s, questId)
+    if not UADD.Plain(s) or not s:find("[\128-\255]") then return s end
+    return Try(T.TagLetter, questId) or ""
+end
+
+-- "[40Ð] " (and any text after it): the part between the level and "]" cleaned the same way.
+function T.CleanLevel(s, questId)
+    if not UADD.Plain(s) or s:sub(1, 1) ~= "[" then return s end
+    local close = s:find("]", 2, true)
+    if not close then return s end
+    local level, tag = s:sub(2, close - 1):match("^(%-?%d*)(.*)$")
+    if not tag or not tag:find("[\128-\255]") then return s end
+    return "[" .. level .. (Try(T.TagLetter, questId) or "") .. s:sub(close)
+end
+
+-- Questie's output when our part throws.
+local function Cleaned(clean, s, questId)
+    local ok, out = pcall(clean, s, questId)
+    if ok and out ~= nil then return out end
+    return s
+end
+
+local suffixDone, levelDone
+-- Puts both guards in, once each. Returns how many are in.
+function T.InstallSuffix()
     local lib = Module("QuestieLib")
-    local original = lib and lib.GetQuestTypeSuffix
-    if suffixDone or type(original) ~= "function" then return end
-    suffixDone = true
-    lib.GetQuestTypeSuffix = function(self, questId, ...)
-        local s = original(self, questId, ...)
-        if not UADD.Plain(s) or not s:find("[\128-\255]") then return s end
-        return Try(T.TagLetter, questId) or ""
+    if not lib then return 0 end
+    local suffix, level = lib.GetQuestTypeSuffix, lib.GetLevelString
+    if not suffixDone and type(suffix) == "function" then
+        suffixDone = true
+        lib.GetQuestTypeSuffix = function(self, questId, ...)
+            return Cleaned(T.CleanSuffix, suffix(self, questId, ...), questId)
+        end
     end
+    if not levelDone and type(level) == "function" then
+        levelDone = true
+        lib.GetLevelString = function(self, questId, ...)
+            return Cleaned(T.CleanLevel, level(self, questId, ...), questId)
+        end
+    end
+    return (suffixDone and 1 or 0) + (levelDone and 1 or 0)
 end
 
 -- ── Fonts an older UADD switched ──────────────────────────────────────────────────────────────
@@ -118,7 +155,7 @@ end
 local drawDone
 -- At our ADDON_LOADED, before the tracker is first drawn. Returns how many draw functions are wrapped.
 function T.Install()
-    InstallSuffix()
+    T.InstallSuffix()
     if drawDone then return drawDone end
     local tracker = Module("QuestieTracker")
     local n = 0

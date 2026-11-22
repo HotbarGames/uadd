@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: Questie override (harness stand-in)
+## Notes: Another addon that gives Questie its own Ukrainian first, as Quillshade 1.4.0 does (tools/harness/flow_qtag.py).
+## Version: 0
+
+Stand.lua

@@ -189,6 +189,9 @@ local function Init()
     db = U.DB("questie")
     if db.enabled == nil then db.enabled = true end
     U.SafeCall(U.RegisterFont)
+    -- The level letter's guard goes in whatever comes next: off, or another addon's Ukrainian
+    -- for Questie (a conflict) can give Questie a Cyrillic tag name too (lesson 39).
+    U.SafeCall(T.InstallSuffix)
     if not db.enabled then
         L.state = "off"
         return

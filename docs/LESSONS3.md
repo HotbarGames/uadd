@@ -261,3 +261,24 @@ fails, the row gets its own font object back and stays English. Hooks and the gu
 **Check.** `python3 tools/harness/flow_tomtom_menu.py --prove`: "tt: menu A" (the menu opened 7 times) and
 "tt: menu B" (off with the menu open), on a stand-in menu (`tools/harness/menu_compositor.lua`); its mutant `set`
 wants both to fail. Manual, in the game: the arrow's menu shows no error and its rows read Ukrainian.
+
+## 39. A guard that goes in only when we win
+
+**What went wrong.** The Questie tracker showed «[40□] Сила в Ульдамані»: a box where the "D" of a dungeon quest
+goes (the owner's shot, 2026-11-22). Questie takes the first byte of the quest's tag name for that letter
+(`QuestieLib.lua:285`), and in Ukrainian the name «Підземелля» starts with a letter of two bytes, so half a letter
+was drawn. UADD_Questie had a guard for this, but put it in only when it gave Questie its language. Quillshade 1.4.0,
+installed that day, gives Questie its own Ukrainian first (the first addon to set `QUESTIE_LOCALES_OVERRIDE` wins),
+so UADD saw a conflict, left Questie alone, and the guard never went in. The harness only ever ran UADD alone.
+
+**Rule.** A guard against breakage (a box, a dead key) goes in whatever the module's state: on, off, or another
+addon in charge. Leave the other addon's language alone, but not the bug. Clean the text where it is built and where
+it is used (`GetQuestTypeSuffix` and `GetLevelString` in `UADD_Questie/Tracker.lua`): any byte of a non-Latin letter
+in the level bracket becomes Questie's own Latin letter for the tag, or nothing when the tag is unknown. An error in
+our part gives Questie's own output.
+
+**Check.** `python3 tools/harness/flow_qtag.py` (also in `run.py`): "qtag: 1-3" draw quest 1956 with UADD on, with a
+stand-in that gives Questie Ukrainian first (`tools/harness/qoverride/`), and with UADD_Questie off; every tracker
+line must be whole UTF-8, its level bracket Latin, and the quest "[40D] ". "qtag: 4-6": an unknown tag, a suffix
+another addon builds after us, our own part throwing. The mutants `always`, `level` and `pcall` each take one fix out
+and want their step to fail.
