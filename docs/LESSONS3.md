@@ -235,3 +235,15 @@ Start wait the same way.
 
 **Check.** `python3 -m unittest tools.test_combat_defer`: its mutants take each gate out and want it to fail.
 `python3 tools/harness/run.py`, the show-original "combat_key" step (`tools/harness/flow_original.py`).
+
+## 37. An off path whose own redraw puts our hook back
+
+**What went wrong.** LootTriage's off gave its dropdown's `row.choices` function back, then redrew its window and
+walked its texts to put the English back. That same walk wraps every `row.choices` it meets, so the wrap was back at
+once, and stayed on with the module off (harness, 2026-11-22).
+
+**Rule.** Code that both installs and undoes (a walk, a redraw hook) installs only while the module is on
+(`ns.On()` in `Walk`, `UADD_LootTriage/Screen.lua`); off may run it, but only to give things back.
+
+**Check.** `python3 tools/harness/flow_lt.py`, "lt: 8 off: its own choices back" (the addon's own function, by
+identity, after `/uadd lt off`).

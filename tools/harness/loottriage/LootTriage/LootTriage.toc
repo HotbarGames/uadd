@@ -1,0 +1,6 @@
+## Interface: 16001, 16000
+## Title: LootTriage (harness stand-in)
+## Notes: Not LootTriage. It draws the shapes LootTriage draws; its English comes at run time from the installed addon (tools/harness/flow_lt.py).
+## Version: 0
+
+Stand.lua

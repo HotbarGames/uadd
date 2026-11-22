@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New module UADD_LootTriage: LootTriage's settings window, its row in the game's AddOns settings, tooltip lines, chat messages, the loot window's Delete button and its What's New window are in Ukrainian.
+  Новий модуль UADD_LootTriage: вікно налаштувань LootTriage, його рядок у налаштуваннях аддонів гри, рядки підказок, повідомлення в чаті, кнопка видалення у вікні здобичі та вікно «Що нового» українською.
 - New module UADD_WhatTheWhisper: WhatTheWhisper's messenger window, settings, dialogs, emoji tabs, key bindings and weekday stamps are in Ukrainian.
   Новий модуль UADD_WhatTheWhisper: вікно месенджера WhatTheWhisper, його налаштування, діалоги, вкладки емодзі, назви клавіш і дні тижня українською.
 - Game names (zones, NPCs, items, quests) now come from ClassicUA too. With both installed, UADD takes

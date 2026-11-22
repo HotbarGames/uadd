@@ -209,6 +209,14 @@ def _wtw():
     return c
 
 
+def _lt():
+    import flow_lt as F
+    if not (F.installed() and F.module_there()):
+        return None
+    c, _ = F.game()
+    return c
+
+
 def _att():
     import flow_att_game as G
     if not G.libraries_there():
@@ -257,6 +265,7 @@ RECIPES = [
     ("UADD_Attune", "Attune", _att),
     ("UADD_OpenMap", "OpenMap", _om),
     ("UADD_WhatTheWhisper", "WhatTheWhisper", _wtw),
+    ("UADD_LootTriage", "LootTriage", _lt),
 ]
 
 

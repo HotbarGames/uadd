@@ -101,7 +101,6 @@ def ex_wp(path):
     import make_wp_text as W   # the locale texts the generator would translate (tools/wp_rules.py), by hash
     return [("L", key, en, file) for en, _, _, key, file in W.source(path)[0]]
 
-
 def ex_fqp(path):
     import drift_fqp   # Forever Quest Pins (GPL-3.0): its L keys, tracked English allowed
     return drift_fqp.extract(path)
@@ -191,7 +190,8 @@ MODULES = {
     "UADD_Questie": ("Questie", ex_questie, old_questie, ()),
     "UADD_RareScanner": ("RareScanner", ex_rs, None, ()),   # All Rights Reserved; our data holds its keys only
     "UADD_Scrap": ("Scrap", ex_scrap, None, ()),   # All Rights Reserved; our data holds its keys only
-    "UADD_SpeedyAutoLoot": ("SpeedyAutoLoot", ex_sal, None, ()),   # no licence file: all rights reserved; our data holds hashes only
+    "UADD_LootTriage": ("LootTriage", lambda p: __import__("drift_lt").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only
+    "UADD_SpeedyAutoLoot":("SpeedyAutoLoot", ex_sal, None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_TomTom": ("TomTom", ex_tt, None, ()),   # All Rights Reserved; our data holds hashes only
     "UADD_WaypointUI": ("WaypointUI", ex_wp, None, ()),   # no licence file: all rights reserved; our data holds hashes only
     "UADD_WhatTheWhisper": ("WhatTheWhisper", lambda p: __import__("drift_wtw").extract(p), None, ()),   # no licence file: all rights reserved; our data holds hashes only

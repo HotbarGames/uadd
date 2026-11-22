@@ -46,6 +46,7 @@ SHOWS = {
     "UADD_Mastercraft": {"Text", "Zone", "Npc", "Item"},   # n slots, its own Words.lua Name
     "UADD_ForeverQuestPins": {"Quest", "Zone"},        # breadcrumb dialog and abandoned line (Breadcrumb.lua)
     "UADD_WaypointUI": {"Zone"},                       # a pin named after its map (Words.lua Place)
+    "UADD_LootTriage": {"Item", "Quest"},              # item and quest links, quest titles (Slots.lua, Words.lua)
 }
 # Still broken the same way (other work): file -> why. Remove the entry once the file is fixed.
 KNOWN = {}

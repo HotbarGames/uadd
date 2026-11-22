@@ -1,0 +1,22 @@
+## Interface: 16001, 16000
+## Title: UADD - LootTriage
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: LootTriage in Ukrainian: its tooltip lines, chat, settings window and What's New. Part of UADD.
+## Author: HotbarGames
+## Version: 1.2.2
+## Dependencies: UADD, LootTriage
+## OptionalDeps: UALLF, ClassicUA
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only, keyed by the hash of each English text, then the code.
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+Slots.lua
+Words.lua
+Screen.lua
+News.lua
+Menu.lua
+Module.lua

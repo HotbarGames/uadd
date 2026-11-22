@@ -43,6 +43,7 @@ COVERED = {
     "UADD_ForeverQuestPins": ("flow_fqp.py", "fqp"),
     "UADD_LiteMount": ("flow_litemount.py", "litemount"),
     "UADD_WhatTheWhisper": ("flow_wtw.py", "wtw"),
+    "UADD_LootTriage": ("flow_lt.py", "lt"),
 }
 NO_SLOTS = {
     "UADD_Questie": "gives Questie whole Ukrainian strings and names; no UADD code fills a template slot "

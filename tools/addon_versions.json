@@ -1320,6 +1320,28 @@
    },
    "ids": "db8903e4ecf1fdc7c0787551bd471ece771b1c9e"
   },
+  "UADD_LootTriage": {
+   "addon": "LootTriage",
+   "version": "1.2.1",
+   "interface": "16001, 120100, 120105",
+   "files": [
+    "Bags.lua",
+    "Loot.lua",
+    "LootTriage.lua",
+    "QuestItems.lua",
+    "Quests.lua",
+    "Settings.lua",
+    "SettingsWindow.lua",
+    "Sorting.lua",
+    "Tooltip.lua",
+    "WhatsNew.lua"
+   ],
+   "count": 230,
+   "tags": {
+    "L": 230
+   },
+   "ids": "2b91fa4c3a280de87ac0b13afa46936579648323"
+  },
   "UADD_Mastercraft": {
    "addon": "Mastercraft",
    "version": "2.0.9",

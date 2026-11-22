@@ -31,6 +31,7 @@ move-folders:
   UADD/UADD_ForeverQuestPins: UADD_ForeverQuestPins
   UADD/UADD_LiteMount: UADD_LiteMount
   UADD/UADD_WhatTheWhisper: UADD_WhatTheWhisper
+  UADD/UADD_LootTriage: UADD_LootTriage
 
 # names come from UALL Forever or ClassicUA when one is installed; without them the menus are still Ukrainian
 optional-dependencies:

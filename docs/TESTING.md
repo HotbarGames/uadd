@@ -122,6 +122,14 @@ Auctionator, Attune, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom,
 AutoLoot (steps 42-148): `docs/TESTING-ADDONS.md`. Waypoint UI, Forever Quest Pins, LiteMount and the popups of
 all modules (steps 149 and on): `docs/TESTING-ADDONS2.md`.
 
+### LootTriage
+
+Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
+AddOns settings panel; open its What's New window; loot something: the loot window's Delete button, the tooltip
+lines and the chat messages are Ukrainian, with letters, not boxes, and they fit. Item and quest names come from
+UALL Forever or ClassicUA; one with no name stays English. `/uadd missed` shows what stayed English.
+`/uadd lt off`: English; `on`: Ukrainian.
+
 ### WhatTheWhisper
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "WhatTheWhisper". Open its window and its settings, each tab
@@ -181,6 +189,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - WhatTheWhisper's real windows: the messenger window, settings and dialogs, the emoji picker tabs, the key
   binding list font (letters or boxes), whether the Ukrainian fits, and the weekday stamps in the list are only
   seen in the real client.
+- LootTriage's real windows: its settings window and its row in the AddOns settings panel, the loot window's Delete
+  button, the tooltip lines, the chat messages and the What's New window, the fonts (letters or boxes), and whether
+  the Ukrainian fits, are only seen in the real client.
 
 ## Without the game
 

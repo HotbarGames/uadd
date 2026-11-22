@@ -39,6 +39,7 @@ def fxpb(check, M): run(check, "UADD_ForeverXPBar", *_words(M, "fxpb"), glue=Tru
 def lsw(check, M): run(check, "UADD_LayerSwap", *_words(M, "lsw"), glue=True)  # noqa: E704
 def sal(check, M, tps, note=""): run(check, "UADD_SpeedyAutoLoot", tps, M and (lambda tp, t: _t(M.tr(lua_str(t)))), note)  # noqa: E704,E501  Speedy AutoLoot: each text through its real chat hook after the addon's name (M.tr); tps: flow_sal.templates()
 def wtw(check, M, tps, note=""): run(check, "UADD_WhatTheWhisper", tps, M and (lambda tp, t: (lambda a: t if a is None else _t(M.line(lua_str(tp["key"]), *map(lua_str, a))))(tp["args"](t))), note)  # noqa: E704,E501  WhatTheWhisper: its own L[key]:format (M.line); tps: flow_wtw.templates()
+def lt(check, M, tps, note=""): run(check, "UADD_LootTriage", tps, M and (lambda tp, t: _t(M.tr(lua_str(t)))), note)  # noqa: E704,E501  LootTriage: each line on its tooltip from its own file (M.tr); tps: flow_lt.templates()
 
 
 def ap(check, M):
