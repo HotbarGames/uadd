@@ -197,6 +197,14 @@ player's map chain, through `UADD.UALL.Zone`. A hook that runs every frame keeps
 `python3 tools/harness/run.py`, "tt: place 1-6" (`tools/harness/flow_tomtom_place.py`); its mutants `hook`, `map`,
 `cache`, `wait`, `back` and `tip` each take one fix out and want their step to fail. Also "wp: 13".
 
+**Lesson 34 again, in Waypoint UI's quest title (2026-11-22).** The pin over a quest NPC showed the quest's title in
+English, with our «Готово до здачі» under it: a half text. Waypoint UI takes the title from the quest API (the tracked
+quest's `C_QuestLog.GetTitleForQuestID`), English on Forever; we had fixed only map names. Rule: a title from the
+quest API is a game name too. Tell it by its source: only a text equal to the tracked quest's title is asked, through
+`UADD.UALL.Quest` (`ns.Quest`, `UADD_WaypointUI/Words.lua`). No answer: the whole pin stays English. Not known yet:
+English, asked again later, never kept. Check: `python3 tools/harness/flow_wp.py`, "wp: 14 quest" (made-up quests);
+its mutant `quest` takes the fix out and wants step 14 to fail; `tools.test_uall_routes` (WaypointUI asks Quest).
+
 ## 35. Game-wide hooks that throw in a battleground
 
 **What went wrong.** A streamer saw many Lua errors in a battleground (2026-11-21). There every chat line and every

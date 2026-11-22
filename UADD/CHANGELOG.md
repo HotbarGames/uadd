@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Waypoint UI: the quest title over a quest's pin and in the waypoint's footer is in Ukrainian when UALL Forever or ClassicUA has it.
+  Waypoint UI: назва завдання над міткою завдання і внизу точки маршруту українською, коли її має UALL Forever або ClassicUA.
+
 ## 1.2.3
 
 - Fixed: in battlegrounds and dungeons, UADD could make the game show many Lua errors, because chat lines there

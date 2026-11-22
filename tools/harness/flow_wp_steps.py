@@ -145,6 +145,53 @@ def place(check, M):
     return ok_info and ok_pin and ok_unknown and ok_back and ok_wait
 
 
+QUESTS = {"Zibble's Last Crumb": "Остання крихта Зіббла", "Flonk Errand": "Доручення Флонка",
+          "Glimmer Pact": "Мерехтлива угода"}
+
+
+def quest(check, M, p):
+    """A quest's pin: the destination line and the pinpoint name are the super-tracked quest's title from the quest
+    API (English on Forever), asked through UADD.UALL.Quest (lesson 34 again). Made-up quests: 93001 Zibble's Last
+    Crumb, known; 93002 Wumbo Recall, which no source knows; Flonk Errand is known but not the tracked quest."""
+    for en, uk in QUESTS.items():
+        M.quest(lua_str(en), lua_str(uk))
+    z, g = "Zibble's Last Crumb", "\n" + p["grey"]
+    M.track(93001, lua_str(z))
+    a = (put(M, "pin", z + g), put(M, "info", z), put(M, "pin", z))
+    ok = a == (QUESTS[z] + "\n" + w(M, p["grey"]), QUESTS[z], QUESTS[z])
+    check("14 quest: the tracked quest's title ours in the pinpoint (its grey line too) and the destination", ok, a)
+    b = (put(M, "pin", "Flonk Errand" + g), put(M, "info", "Flonk Errand"))
+    ok_by = b == ("Flonk Errand\n" + w(M, p["grey"]), "Flonk Errand")
+    check("14 quest: a name equal to a known title that is not the tracked quest stays as typed (lesson 13)", ok_by, b)
+    M.track(93002, lua_str("Wumbo Recall"))
+    c = (put(M, "pin", "Wumbo Recall" + g), put(M, "info", "Wumbo Recall"))
+    ok_unknown = c == ("Wumbo Recall" + g, "Wumbo Recall")
+    check("14 quest: a title no source knows keeps the whole pinpoint English", ok_unknown, c)
+    M.track(93001, lua_str(z))
+    put(M, "pin", z + g)
+    M.key(True)
+    held = t(M, "pin")
+    M.key(False)
+    after = t(M, "pin")
+    M.uadd(lua_str("waypointui off"))
+    off = t(M, "pin")
+    M.uadd(lua_str("waypointui on"))
+    on = t(M, "pin")
+    ours = QUESTS[z] + "\n" + w(M, p["grey"])
+    ok_back = (held, after, off, on) == (z + g, ours, z + g, ours)
+    check("14 quest: English while held and off, ours after", ok_back, (held, after, off, on))
+    M.track(93003, lua_str("Glimmer Pact"))
+    M.wait4(True)
+    w0 = put(M, "pin", "Glimmer Pact" + g)
+    M.wait4(False)
+    M.wait(3.5)
+    w1 = t(M, "pin")
+    ok_wait = w0 == "Glimmer Pact" + g and w1 == QUESTS["Glimmer Pact"] + "\n" + w(M, p["grey"])
+    check("14 quest: a title not known yet: whole English, then ours a few seconds later", ok_wait, (w0, w1))
+    M.track(None)
+    return ok and ok_by and ok_unknown and ok_back and ok_wait
+
+
 def offon(check, M, p):
     put(M, "button", p["button"])
     put(M, "input", p["input"])

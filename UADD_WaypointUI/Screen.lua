@@ -52,8 +52,9 @@ local function Changed(f, text)
     st.en, st.uk, st.wait = text, nil, nil
     if not ns.WordsWanted() or not ns.Fonts.CanDraw(f) then return end
     local uk, wait          -- each frame keeps its last answer: the footer sets two lines on every tick (lesson
-    -- 12). A map name's answer also hangs on the waypoint's and the player's map, so those are in the key.
-    local maps = (st.look == ns.Place or st.look == ns.Pinpoint) and ns.PlaceMaps() or nil
+    -- 12). A map name's or a quest title's answer also hangs on the waypoint's and the player's map and the
+    -- tracked quest, so those are in the key.
+    local maps = (st.look == ns.Info or st.look == ns.Pinpoint) and ns.PlaceMaps() or nil
     if st.ken == text and st.klook == st.look and st.kmaps == maps then uk = st.kuk
     else
         uk, wait = st.look(text)
@@ -62,7 +63,7 @@ local function Changed(f, text)
     if wait then st.wait = true Later() end
     if uk and uk ~= text and Put(f, uk) then
         st.uk = uk
-    elseif not uk and not wait and st.look ~= ns.Units and st.look ~= ns.Pinpoint and st.look ~= ns.Place
+    elseif not uk and not wait and st.look ~= ns.Units and st.look ~= ns.Pinpoint and st.look ~= ns.Info
         and U.MissedOn() and text:find("%a%a%a") then
         U.Missed("waypointui", text, f.__Text)
     end
@@ -101,7 +102,8 @@ S.Walk = Walk
 
 -- What each root shows (local/new-addon/WaypointUI.md, stage 1 map 3). The player's names stay as typed
 -- (lesson 13): the waypoint's destination line and the pinpoint's name change only when they are the pin's
--- map name (Words.lua Place); the Navigator (step and destination names) is never looked up.
+-- map name or the tracked quest's title (Words.lua Place, Quest); the Navigator (step and destination names)
+-- is never looked up.
 local function TextOrUnits(t) return ns.Text(t) or ns.Units(t) end
 local function Field(f, ...)
     for i = 1, select("#", ...) do
@@ -116,8 +118,8 @@ function S.Scan()
         local f = Field(_G.WUIWaypointFrame, "Footer", name)
         if IsText(f) then Hook(f, ns.Units) end
     end
-    local info = Field(_G.WUIWaypointFrame, "Footer", "InfoText")   -- the destination: a map's name only
-    if IsText(info) then Hook(info, ns.Place) end
+    local info = Field(_G.WUIWaypointFrame, "Footer", "InfoText")   -- the destination: a map or a quest
+    if IsText(info) then Hook(info, ns.Info) end
     Walk(_G.WUIPinpointFrame, ns.Pinpoint)
     Walk(_G.WUISharedPrompt, ns.Text)
     Walk(_G.WUISharedInputPrompt, ns.Text)

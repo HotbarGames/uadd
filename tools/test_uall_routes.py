@@ -46,7 +46,7 @@ SHOWS = {
     "UADD_WhatsTraining": {"Text", "Zone", "Npc", "Item", "Spell"},   # n slots with spells, spell rows
     "UADD_Mastercraft": {"Text", "Zone", "Npc", "Item"},   # n slots, its own Words.lua Name
     "UADD_ForeverQuestPins": {"Quest", "Zone"},        # breadcrumb dialog and abandoned line (Breadcrumb.lua)
-    "UADD_WaypointUI": {"Zone"},                       # a pin named after its map (Words.lua Place)
+    "UADD_WaypointUI": {"Zone", "Quest"},              # a pin named after its map or its quest (Words.lua)
     "UADD_LootTriage": {"Item", "Quest"},              # item and quest links, quest titles (Slots.lua, Words.lua)
     "UADD_DeleteCheapestItem": {"Item"},               # item names and links in its chat lines (CodeText, Words.lua)
 }

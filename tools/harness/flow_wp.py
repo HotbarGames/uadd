@@ -6,11 +6,12 @@ module's own data (ns.WP, read by M.want and M.fill in flow_wp.lua). Steps: flow
   * Game A (English client): 1 at login: prompts, footer and pinpoint ours; destination and Navigator kept.
     2 busy flag. 3 footer ticks (lesson 12). 4 distance and time, odd ones too. 5 replace prompts (free slot).
     6 pin names (lesson 13). 13 a pin named after its map: the map's name from UADD.UALL.Zone (made-up maps).
+    14 a quest's pin: the tracked quest's title from UADD.UALL.Quest (made-up quests).
     7 off/on and the hold key (lessons 15, 23). 8 fonts (lessons 2, 18).
     9 settings built late, the 1 s walk stops. 10 keyboard free (lesson 16). 11 10 KB speed (lesson 22).
     No half-translated line (halves_mods.wp).
   * Game B: roots missing. Game E: errors in its SetText (lesson 26). Game C: ruRU client.
-  * Mutants (one fix cut from the module, in memory only): steps 2, 3, 12 and 13 must fail, so they have teeth.
+  * Mutants (one fix cut from the module, in memory only): steps 2, 3, 12, 13 and 14 must fail, so they have teeth.
 """
 import collections
 import gc
@@ -62,6 +63,7 @@ def game_a(check, p, src, temps):
     S.prompts(check, M, p)
     S.pins(check, M, p)
     S.place(check, M)
+    S.quest(check, M, p)
     S.offon(check, M, p)
     S.fonts(check, M, p)
     S.settings(check, M, p)
@@ -94,7 +96,8 @@ def mutants(check, p):
     def quiet(name, ok, detail=""): out.append(ok)  # noqa: E704
     for cut, step, run in (("busy", "2", lambda M: S.busy(quiet, M, p)), ("cache", "3", lambda M: S.ticks(quiet, M)),
                            ("fault", "12", lambda M: S.faults(quiet, M, p)), ("place", "13", lambda M: S.place(quiet, M)),
-                           ("pinplace", "13", lambda M: S.place(quiet, M)), ("wait", "13", lambda M: S.place(quiet, M))):
+                           ("pinplace", "13", lambda M: S.place(quiet, M)), ("wait", "13", lambda M: S.place(quiet, M)),
+                           ("quest", "14", lambda M: S.quest(quiet, M, p))):
         out = []
         c, M = _game(p, cut=cut)
         ok = run(M)

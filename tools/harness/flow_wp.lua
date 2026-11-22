@@ -11,16 +11,18 @@ H.fontFiles[M.CUSTOM:lower()] = true
 -- only; the module's file is never changed). fault: lesson 26 (its SetText failing after it drew ours);
 -- cache: lesson 12 (each frame's last answer); busy: our own SetText runs our handler again. place: the
 -- destination line's hook; pinplace: the pinpoint name's map look-up (Words.lua); wait: a "not known yet"
--- answer kept as if final, so the later ask never comes.
+-- answer kept as if final, so the later ask never comes. quest: the tracked quest's title look-up (Words.lua).
 local CUTS = {
     busy = { { "    busy = true\n    local ok, err", "local ok, err", "    local ok, err" } },
     fault = { { "    if not ok then U.Fault(", "return ok or TextOf(f) == text\n", "    return ok\n" },
               { "            if TextOf(f) ~= en then pcall(", "its SetText failed first\n", "" } },
     cache = { { "    local uk, wait          ", "st.kmaps = text, uk, st.look, maps end\n    end\n",
                 "    local uk, wait = st.look(text)\n" } },
-    place = { { "    if IsText(info) then Hook(info, ns.Place)", "\n", "" } },
-    pinplace = { { "    local place, wait = ns.Place(name)", "\n", "    local place, wait = nil, nil\n",
+    place = { { "    if IsText(info) then Hook(info, ns.Info)", "\n", "" } },
+    pinplace = { { "    local place, w = ns.Place(en)", "\n", "    local place, w = nil, nil\n",
                    file = "Words.lua" } },
+    quest = { { "    local isQuest, uk, wait = ns.Quest(en)", "\n", "    local isQuest, uk, wait = false, nil, nil\n",
+                file = "Words.lua" } },
     wait = { { "        if not wait then st.ken", "\n", "        st.ken, st.kuk, st.klook, st.kmaps = text, uk, st.look, maps\n" } },
 }
 M.cut, M.wasCut = nil, false
@@ -66,6 +68,20 @@ function M.place(mapID)
 end
 function M.zone(en, uk) M.zones[en] = uk end
 function M.wait4(on) M.waiting = on and true or false end
+
+-- The tracked quest (Words.lua Quest): a made-up super-tracked quest whose title the quest API gives, and a
+-- made-up UADD.UALL.Quest (lesson 20). quests: English title -> Ukrainian; M.waiting: "not known yet" too.
+-- track(nil): nothing tracked.
+M.quests = {}
+function M.quest(en, uk) M.quests[en] = uk end
+function M.track(id, title)
+    if id then H.questTitles[id] = title end
+    C_SuperTrack.GetSuperTrackedQuestID = function() return id or 0 end
+    UADD.UALL.Quest = function(_, en)
+        if M.waiting then return nil, true end
+        return M.quests[en]
+    end
+end
 
 WaypointUIStandInFeed = { settings = {}, missing = {} }
 function M.feed(k, v) WaypointUIStandInFeed[k] = v end
