@@ -63,6 +63,21 @@ function F.Roots(spec)
     return list
 end
 
+-- A text box's hint FontStrings (a "Search..." the addon draws in it, lesson 44): each one already `hooked`, or
+-- with a text that is not what the box holds. The typed text is the box's own, never one of these.
+function F.Hints(box, hooked)
+    local out = {}
+    local okT, typed = pcall(box.GetText, box)
+    for _, r in ipairs(U.Regions(box)) do
+        if not F.Forbidden(r) and F.Kind(r) == "FontString" then
+            local ok, t = pcall(r.GetText, r)
+            t = ok and U.Plain(t) or nil
+            if hooked[r] or (t and t ~= "" and not (okT and t == U.Plain(typed))) then out[#out + 1] = r end
+        end
+    end
+    return out
+end
+
 -- spec.prefix: a frame name prefix, or a list of them.
 function F.Starts(spec, name)
     local p = spec.prefix

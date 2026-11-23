@@ -5,6 +5,8 @@
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.05494310"] = "%d {предмет|предмети|предметів}"
+S["Code.05494310"] = "v"
 T["Code.1b4398ee"] = "Прокрутіть, щоб побачити більше"
 T["Code.0dbbdd25"] = "Ніколи"
 T["Code.e283fe55"] = "10 секунд"

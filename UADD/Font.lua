@@ -109,7 +109,10 @@ local function CyrObject(fs)
     local _, size, flags = fs:GetFont()
     size, flags = tonumber(size) or 12, flags or ""
     local base = fs.GetFontObject and fs:GetFontObject() or nil
-    local key = ("%s|%.1f|%s|%s"):format(path, size, flags, tostring(base))
+    -- One object per file, size and flags (lesson 44): ObjectOn keeps the FontString's own colour, justify,
+    -- shadow and spacing, so the base object adds nothing. Keyed by the base too, one module's many sizes and
+    -- templates used up the 64 and every later label stayed English.
+    local key = ("%s|%.1f|%s"):format(path, size, flags)
     if cyrObjects[key] then return cyrObjects[key] end
     if cyrMade >= 64 then return nil end                   -- never a heap of font objects
     cyrMade = cyrMade + 1
@@ -129,6 +132,18 @@ function U.CyrOnLocked(fs)
     return U.IsCyrFont((fs:GetFont()))
 end
 
+-- A label whose font was set by hand (SetFont, as OneForAll's buttons and nav do) can keep that file over any font
+-- object (lesson 44); GetFont cannot tell it when the hand-set size is the object's own. Called only when our font
+-- object did not take: the Cyrillic file goes on by hand, at the label's own size and flags, and U.FontBack puts the
+-- addon's file back when its object does not. Never on a menu region (lesson 38). True when it took (read back).
+function U.CyrOnOwn(fs, was)
+    if type(was) ~= "table" or U.Locked(fs) then return false end
+    local path = U.CyrFontPath()
+    if not path then return false end
+    fs:SetFont(path, tonumber(was.size) or 12, was.flags or "")
+    return U.IsCyrFont((fs:GetFont()))
+end
+
 -- The font `was` (U.SaveFont) back on fs: its font object again, so the family's Cyrillic member is
 -- back too; SetFont only with no object, or when the font was set by hand before us (`own`). A menu
 -- region (U.Locked) gets its object only: SetFont is never even looked up on one.
@@ -140,7 +155,9 @@ function U.FontBack(fs, was)
     end
     if was.object then
         ObjectOn(fs, was.object)
-        if not was.own then return end
+        -- the object took (or our file is not on): done. A label that keeps a hand-set file over its object
+        -- (U.CyrOnOwn, lesson 44) gets its own file back below.
+        if not was.own and not (U.IsCyrFont((fs:GetFont())) and not U.IsCyrFont(was.path)) then return end
     end
     if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end
 end

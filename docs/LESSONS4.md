@@ -113,6 +113,34 @@ Per module: `tools/test_openmap_strings.py` (`test_news_stays_english`, `test_up
 `tools/test_lt_text.py`, and the flows of Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty and
 ForeverXP Bar (the news window stays English on, held and off).
 
+## 44. Labels whose font the addon set by hand
+
+**What went wrong.** In OneForAll (the owner's shots, 2026-11-23), the setup wizard's last page had our heading
+but English buttons, body and title. In Armory > Gear Planner, the top tabs, the left nav, the buttons, the search
+box's "Search all items..." and the level line were English, though our data had every one. Three causes:
+
+- OneForAll sets its buttons' and nav's fonts by hand (SetFont at its own size). Our Cyrillic font object did not
+  take over such a label, or none was left: we made one per base object, size and flags, and the shared 64 ran out.
+  The walker could not put a Cyrillic font on, so it put the English back, with no error.
+- The walker left every text box alone, also the hint text the addon draws in it.
+- The page's body ends with the author's signature line ("- Name", in colour). It has Latin letters, so the
+  several-lines rule kept the whole body English.
+
+**Rule.**
+
+- A font object of ours is made once per file, size and flags (`CyrObject`, `UADD/Font.lua`).
+- When it does not take, the Cyrillic file goes on by hand at the label's own size (`U.CyrOnOwn`); `U.FontBack`
+  puts the addon's file back when its object does not. Never on a menu row (lesson 38). Read back (lesson 2).
+- A walker with `hints` reaches a text box's hint FontStrings, never the typed text (`U.Walk`, `UADD/Walk.lua`).
+- A signature line ("- Name", maybe in one colour) is kept as it is, like a line with no words.
+- OneForAll's small-caps titles (one FontString per letter group) and the see-through page are its own; not fixed.
+
+**Check.** `python3 tools/harness/flow_ofa.py --prove`, step 11 (a made-up Gear Planner and end page: labels set by
+hand at sizes 11 and 12 that keep their file over any font object, a search hint with typed text, a signed body;
+ours on, English and the hand-set font back off); its mutants `hints`, `signed` and `own` (the last cuts
+`U.CyrOnOwn` in core `UADD/Font.lua`) each want step 11 to fail. Manual, in the game: the real labels take our font,
+the buttons fit the Ukrainian, the typed search text is never changed.
+
 ## More cases of older lessons
 
 **Lesson 14 again, in WhatTheWhisper's group chats (2026-11-22).** It names a group thread (each kind of group) with its

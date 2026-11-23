@@ -21,6 +21,7 @@
 --   skip      a set of frame names not walked (the player's own names: lesson 13), or a function(frame, name)
 --   prefix    a frame name prefix (or a list): a new frame so named, or under a known frame, starts a walk
 --   font      true: put UADD's Cyrillic font on each text of ours (false: the addon's font draws Cyrillic)
+--   hints     true: in a text box, its hint FontStrings only (a placeholder the addon sets), never the typed text
 --   depth, maxFrames, title   walk depth (12), frames one walk visits at most (4000), the name for /uadd perf
 
 local U = UADD
@@ -72,8 +73,10 @@ function U.Walk(spec)
         local okOn, on = pcall(U.CyrOnLocked, fs)
         fixing = false
         if okOn and on and Cyr(fs) then fonted[fs] = true return true end
-        if saved[fs] then
+        if saved[fs] then                              -- a file set by hand keeps over the object: ours by hand (44)
             fixing = true
+            local okOwn, own = pcall(U.CyrOnOwn, fs, saved[fs])
+            if okOwn and own and Cyr(fs) then fixing = false fonted[fs] = true return true end
             pcall(U.FontBack, fs, saved[fs])
             fixing = false
         end
@@ -206,6 +209,7 @@ function U.Walk(spec)
         seen.n = seen.n + 1
         if F.Skip(spec, f, Name(f)) or F.Protected(f) then return end
         local kind = Kind(f)
+        if kind == "EditBox" and spec.hints then for _, r in ipairs(F.Hints(f, hooked)) do Hook(r) end return end
         if kind == "EditBox" or type(f.AddLine) == "function" then return end   -- a text box; a tooltip (U.TipLines)
         known[f] = true
         if kind == "Button" or kind == "CheckButton" then

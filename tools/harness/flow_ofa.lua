@@ -155,6 +155,62 @@ R[8] = function()
         news:GetText() == T.button, news:GetText())
 end
 
+-- Step 11 (lesson 44): its Gear Planner and setup end page, made up. A button label and a nav label whose font it
+-- set by hand (SetFont, its own size) and that keeps that file over any font object (as the client may); the
+-- search box's hint; the end page's body: lines of ours, a gap and the author's signature in colour.
+local G = { btn = "Sprocket picks", nav = "Wobble plan", hint = "Seek all gizmos...", typed = "Sprocket picks",
+    body = "Plonk the gizmos.\n\nWobble with care!\n|cffd9a63a- Zorpi|r" }
+local GUK = { btn = "Вибір зубчиків", nav = "План хитання", hint = "Шукати всі гаджети...",
+    l1 = "Плонкніть гаджети.", l2 = "Хитайте обережно!" }
+
+R.gear = function()
+    local out = {}
+    M.inject()
+    ns.OFA[Key(G.btn)], ns.OFA[Key(G.nav)], ns.OFA[Key(G.hint)] = GUK.btn, GUK.nav, GUK.hint
+    ns.OFA[Key("Plonk the gizmos.")], ns.OFA[Key("Wobble with care!")] = GUK.l1, GUK.l2
+    ns.Words.Forget()
+    local f = CreateFrame("Frame", "OneForAllGearPlannerTest", OneForAllFrame)
+    local function Hand(size, text)
+        local fs = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        fs:SetFont("Fonts\\FRIZQT__.TTF", size, "")
+        fs.SetFontObject = function() end                  -- the hand-set file stays over any font object
+        fs:SetText(text)
+        return fs
+    end
+    local btn, nav = Hand(11, G.btn), Hand(12, G.nav)
+    local body = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    body:SetText(G.body)
+    local eb = CreateFrame("EditBox", nil, f)
+    eb:SetAutoFocus(false)
+    local hint = eb:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    hint:SetText(G.hint)
+    eb:SetText(G.typed)
+    M.wait(0.3)
+    ns.Screen.Sync() M.wait(0.1)
+    local wantBody = GUK.l1 .. "\n\n" .. GUK.l2 .. "\n|cffd9a63a- Zorpi|r"
+    Res(out, "a button label set by hand at size 11: ours, in a Cyrillic font", btn:GetText() == GUK.btn and CyrFont(btn),
+        tostring(btn:GetText()) .. " " .. tostring(btn:GetFont()))
+    Res(out, "a nav label set by hand at size 12: ours, in a Cyrillic font", nav:GetText() == GUK.nav and CyrFont(nav),
+        tostring(nav:GetText()) .. " " .. tostring(nav:GetFont()))
+    local _, size = btn:GetFont()
+    Res(out, "the hand-set label keeps its own size", math.abs((size or 0) - 11) < 0.5, size)
+    Res(out, "the search box's hint: ours", hint:GetText() == GUK.hint and CyrFont(hint), hint:GetText())
+    Res(out, "the typed text stays as typed, also a word of ours", eb:GetText() == G.typed, eb:GetText())
+    Res(out, "the end page's body with the signature: whole Ukrainian, the signature kept", body:GetText() == wantBody,
+        body:GetText())
+    Res(out, "a level line is ours (data)", Cyr(ns.Words.Translate("Level 44") or ""), ns.Words.Translate("Level 44"))
+    Uadd("off")
+    local p, s = btn:GetFont()
+    Res(out, "off: English back on every label", btn:GetText() == G.btn and nav:GetText() == G.nav
+        and hint:GetText() == G.hint and body:GetText() == G.body, Show({ btn:GetText(), nav:GetText(), hint:GetText() }))
+    Res(out, "off: the hand-set font back (file and size)", p == "Fonts\\FRIZQT__.TTF" and math.abs((s or 0) - 11) < 0.5,
+        tostring(p) .. " " .. tostring(s))
+    Uadd("on")
+    ns.Screen.Sync() M.wait(0.1)
+    Res(out, "on again: ours", btn:GetText() == GUK.btn and hint:GetText() == GUK.hint, btn:GetText())
+    return out
+end
+
 -- Step 10, in a game whose OneForAll is set to another language: the module is off and says so.
 R.lang = function()
     local out = {}

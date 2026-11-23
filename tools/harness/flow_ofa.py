@@ -5,7 +5,8 @@ Steps: 1 the walk is ours, in a Cyrillic font  2 the hold key gives the English,
 to the chat window, not print)  6 a tooltip line from its files, the same line from other code stays English
 7 a profile named like a word of ours stays as typed (lesson 13)  8 a map pin stays as it is  9 up to 5 real texts
 of the installed addon (read at run time, never written down) show the module's own Ukrainian  10 OneForAll set to
-another language: the module is off and says so.
+another language: the module is off and says so  11 its Gear Planner and setup end page, made up (lesson 44):
+labels set by hand at its own size, the search box's hint, a body signed "- Name".
 mutants(check) cuts one fix out of the module in memory (CUT_LUA, as flow_rts_mod.py) and wants its step to fail;
 they run with --prove (run.py runs the steps only).
 """
@@ -30,7 +31,7 @@ local H, cut = HARNESS, { wasCut = false }
 H.ofacut = cut
 local runFile = H.runFile
 function H.runFile(addon, path, code)
-    if addon == "UADD_OneForAll" and cut.file and path:sub(-#cut.file) == cut.file then
+    if (addon == "UADD_OneForAll" or addon == "UADD") and cut.file and path:sub(-#cut.file) == cut.file then
         local a, b = code:find(cut.old, 1, true)
         if a then code, cut.wasCut = code:sub(1, a - 1) .. cut.new .. code:sub(b + 1), true end
     end
@@ -50,7 +51,12 @@ MUTANTS = {
              '"OneForAllNewsShot" }',
              "local SKIP_PREFIX = {}", 8),
     "lang": ("Module.lua", 'ofaEnglish = OfaLanguage() == "enUS"', "ofaEnglish = true", 10),
+    "hints": ("Screen.lua", "    hints = true,", "    hints = false,", 11),
+    "signed": ("Words.lua", " or Signed(one) then", " then", 11),
+    # core UADD/Font.lua (lesson 44): a label set by hand gets the Cyrillic file by hand
+    "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) then return false end', "do return false end", 11),
 }
+CORE_CUTS = {"Font.lua"}                     # files cut in the core UADD folder, not the module's
 
 
 def module_there():
@@ -75,7 +81,7 @@ def game(saved=None, cut=None):
 
 
 def results(M, n):
-    f = M.R.lang if n == 10 else M.R[n]
+    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R[n]
     return [(txt(r[1]), r[2], txt(r[3]) if r[3] is not None else "") for r in f().values()]
 
 
@@ -116,6 +122,8 @@ def steps(check):
         for name, ok, detail in res:
             check(f"{n} {name}", ok, detail)
     real_keys(check, M)
+    for name, ok, detail in results(M, 11):
+        check(f"11 {name}", ok, detail)
     del c
     c, M, _ = game(OTHER)
     for name, ok, detail in results(M, 10):
@@ -127,7 +135,7 @@ def reach(step, cut=None):
     c, M, box = game(OTHER if step == 10 else None, cut)
     bad = []
     try:
-        for n in ((10,) if step == 10 else range(1, step + 1)):
+        for n in ((step,) if step >= 10 else range(1, step + 1)):
             bad += [f"{n} {name}" for name, ok, _ in results(M, n) if ok is False]
     except Exception as e:  # noqa: BLE001
         bad.append(str(e)[:120])
@@ -141,7 +149,7 @@ def mutants(check):
     src, base = {}, {}
     for name, (f, old, new, step) in MUTANTS.items():
         if f not in src:
-            src[f] = read_text(os.path.join(session.REPO, MODULE, f))
+            src[f] = read_text(os.path.join(session.REPO, "UADD" if f in CORE_CUTS else MODULE, f))
         if src[f].count(old) != 1:
             check(f"mutant {name}: its fix is in {f} once", False, f"found {src[f].count(old)} times")
             continue

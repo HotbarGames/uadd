@@ -79,6 +79,7 @@ local W = U.Walk({
     end,
     prefix = "OneForAll",
     font = true,
+    hints = true,                                  -- the item search box's "Search all items..." (lesson 44)
 })
 S.W = W
 

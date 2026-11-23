@@ -162,7 +162,13 @@ end
 
 local function Line(s) return Whole(s) or NameSlot(s) or Glued(s) end
 
--- 6. Several lines: each one ours, or one with no words at all.
+-- An author's signature line ("- Name", maybe in one colour): a name, kept as it is (lesson 44).
+local function Signed(one)
+    local core = one:gsub("^|c%x%x%x%x%x%x%x%x", ""):gsub("|r$", "")
+    return find(core, "^%- %u%l+$") ~= nil
+end
+
+-- 6. Several lines: each one ours, one with no words at all, or a signature.
 local function Lines(s)
     local out, n, any, pos = {}, 0, false, 1
     while pos <= #s + 1 do
@@ -170,7 +176,7 @@ local function Lines(s)
         local one = sub(s, pos, e - 1)
         n = n + 1
         if n > MAXLINES then return nil end
-        if not find(one, "%a%a") then
+        if not find(one, "%a%a") or Signed(one) then
             out[n] = one
         else
             local uk = Line(one)
