@@ -72,6 +72,8 @@ BANNED_IN = {
     "UADD_OneForAll": {
         r"улюблен": ("вихованець (glossary game.pet)", "ClassicUA's word; lead's choice 2026-11-23, OneForAll"),
         r"бафф": ("баф (glossary game.buff)", "lead's choice 2026-11-23, OneForAll"),
+        r"\bBiS\b": ("БіС (glossary gear.bis)", "the owner's word for BiS, 2026-11-23"),
+        r"\bPvP\b": ("ПвП (glossary game.pvp)", "the owner's word for PvP, 2026-11-23"),
     },
 }
 RULES = [(re.compile(p, re.IGNORECASE), p, use) for p, (use, _) in BANNED.items()]

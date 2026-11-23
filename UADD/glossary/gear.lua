@@ -42,3 +42,15 @@ E{ id = "gear.hunt", en = { "Hunt", "hunt" }, uk = "Полювання", note = 
 E{ id = "gear.log", en = "Log", uk = "Журнал", note = "GearQuest's main window (its log of gear). lead's choice 2026-11-23, GearQuest Forever." }
 E{ id = "gear.simulator", en = "Simulator", uk = "Симулятор", note = "GearQuest's tab that tries gear on. lead's choice 2026-11-23, GearQuest Forever." }
 E{ id = "gear.score", en = "Score", uk = "Оцінка", note = "An item's number for your spec in GearQuest. lead's choice 2026-11-23, GearQuest Forever." }
+E{ id = "gear.bis", en = "BiS", uk = "БіС", note = "Best in slot: the best item for a slot (Список БіС). Owner's choice 2026-11-23, OneForAll; Latin BiS is banned there." }
+
+-- Item quality and binding (game words; first needed by Simple Item Level, 2026-11-23)
+E{ id = "gear.quality_poor", en = "Poor", uk = "Жалюгідний", note = "Item quality 0, grey (UALL Forever's word)." }
+E{ id = "gear.quality_common", en = "Common", uk = "Звичайний", note = "Item quality 1, white (UALL Forever's word)." }
+E{ id = "gear.quality_uncommon", en = "Uncommon", uk = "Незвичайний", note = "Item quality 2, green (UALL Forever's word)." }
+E{ id = "gear.quality_rare", en = "Rare", uk = "Рідкісний", note = "Item quality 3, blue (UALL Forever's word). Not a rare mob (rare.*)." }
+E{ id = "gear.quality_epic", en = "Epic", uk = "Епічний", note = "Item quality 4, purple (UALL Forever's word)." }
+E{ id = "gear.quality_legendary", en = "Legendary", uk = "Легендарний", note = "Item quality 5, orange. Not the quest tag (quest.tag_legendary «Легендарне»)." }
+E{ id = "gear.quality_artifact", en = "Artifact", uk = "Артефакт", note = "Item quality 6 (UALL Forever's word)." }
+E{ id = "gear.quality_heirloom", en = "Heirloom", uk = "Реліквія роду", note = "Item quality 7 (UALL Forever's word)." }
+E{ id = "gear.soulbound", en = "Soulbound", uk = "Персональний", note = "An item bound to you (ClassicUA's ITEM_SOULBOUND; UALL Forever says «Прив'язаний до душі»: ClassicUA's word first, owner 2026-11-20)." }

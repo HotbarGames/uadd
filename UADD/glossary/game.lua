@@ -35,6 +35,7 @@ E{ id = "game.instance", en = "Instance", uk = "Підземелля", note = "A
 E{ id = "game.scenario", en = "Scenario", uk = "Сценарій", note = "Scenario: a short instanced story for a few players." }
 E{ id = "game.scenarios", en = "Scenarios", uk = "Сценарії", note = "Many scenarios; a category." }
 E{ id = "game.battlegrounds", en = "Battlegrounds", uk = "Поля бою", note = "PvP battlegrounds; a category." }
+E{ id = "game.pvp", en = "PvP", uk = "ПвП", note = "Player against player (Комплекти ПвП). Owner's choice 2026-11-23, OneForAll; Latin PvP is banned there." }
 E{ id = "game.achievements", en = "Achievements", uk = "Досягнення", note = "Achievements; also a tab or heading." }
 E{ id = "game.professions", en = "Professions", uk = "Професії", note = "Trade skills; a category or heading." }
 E{ id = "game.recipes", en = "Recipes", uk = "Рецепти", note = "Profession recipes (patterns, plans, formulas)." }

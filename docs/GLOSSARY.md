@@ -95,6 +95,9 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Nameplates | the name bars over units' heads ("Таблички імен", never «індикатор імені») | `game.nameplates` |
 | Enchanting | the profession ("Накладання чарів": UALL Forever's word; owner 2026-11-20) | `prof.enchanting` |
 | Enchant | an enchantment put on an item ("Зачарування") | `gear.enchant` |
+| Legendary | an item's quality ("Легендарний"), not the quest tag ("Легендарне") | `gear.quality_legendary`, `quest.tag_legendary` |
+| Rare | an item's quality ("Рідкісний"), not a rare mob | `gear.quality_rare` |
+| Soulbound | an item bound to you ("Персональний": ClassicUA's word, before UALL Forever's «Прив'язаний до душі») | `gear.soulbound` |
 | Trainer | any trainer, in an addon's own sentence ("наставник") | not an entry |
 | Skinning Trainer, ... | the title over a named trainer, as UALL Forever shows it ("Тренер Білування"; owner 2026-11-20) | `npc.trainer_*` |
 | Guide | Mastercraft's levelling guide ("Посібник"; UALL Forever's «Наставник» is a person who guides) | `prof.guide` |
