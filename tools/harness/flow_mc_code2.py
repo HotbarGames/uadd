@@ -140,3 +140,5 @@ def run(check, F, src):
     # The craft orders board and its cards (Mastercraft 2.0.8), in a game of their own.
     import flow_mc_orders
     flow_mc_orders.run(check, F, src)
+    import flow_mc_shots                         # the shots of 2026-11-23: lines glued in code
+    flow_mc_shots.run(check, F, src)

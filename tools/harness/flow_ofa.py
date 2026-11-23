@@ -6,7 +6,8 @@ to the chat window, not print)  6 a tooltip line from its files, the same line f
 7 a profile named like a word of ours stays as typed (lesson 13)  8 a map pin stays as it is  9 up to 5 real texts
 of the installed addon (read at run time, never written down) show the module's own Ukrainian  10 OneForAll set to
 another language: the module is off and says so  11 its Gear Planner and setup end page, made up (lesson 44):
-labels set by hand at its own size, the search box's hint, a body signed "- Name".
+labels set by hand at its own size, the search box's hint, a body signed "- Name"  12 texts it joins in code
+(dots, money in a paragraph, a zone and coordinates): whole Ukrainian or whole English.
 mutants(check) cuts one fix out of the module in memory (CUT_LUA, as flow_rts_mod.py) and wants its step to fail;
 they run with --prove (run.py runs the steps only).
 """
@@ -53,6 +54,7 @@ MUTANTS = {
     "lang": ("Module.lua", 'ofaEnglish = OfaLanguage() == "enUS"', "ofaEnglish = true", 10),
     "hints": ("Screen.lua", "    hints = true,", "    hints = false,", 11),
     "signed": ("Words.lua", " or Signed(one) then", " then", 11),
+    "joined": ("Words.lua", "return Atom(s) or (W.Joined and W.Joined(s)) end", "return Atom(s) end", 12),
     # core UADD/Font.lua (lesson 44): a label set by hand gets the Cyrillic file by hand
     "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) then return false end', "do return false end", 11),
 }
@@ -81,7 +83,7 @@ def game(saved=None, cut=None):
 
 
 def results(M, n):
-    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R[n]
+    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R.joined if n == 12 else M.R[n]
     return [(txt(r[1]), r[2], txt(r[3]) if r[3] is not None else "") for r in f().values()]
 
 
@@ -124,6 +126,8 @@ def steps(check):
     real_keys(check, M)
     for name, ok, detail in results(M, 11):
         check(f"11 {name}", ok, detail)
+    for name, ok, detail in results(M, 12):
+        check(f"12 {name}", ok, detail)
     del c
     c, M, _ = game(OTHER)
     for name, ok, detail in results(M, 10):

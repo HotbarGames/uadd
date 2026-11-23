@@ -3,32 +3,26 @@
 -- data/*.lua (made by tools/make_mc_text.py) hold hashes of Mastercraft's English and our Ukrainian:
 -- whole texts (exact) and templates with slots. W.Translate(s) tries, in this order:
 --   1. the whole text;
---   2. a text of several lines: each line alone; when a line with English words has no Ukrainian, the
---      whole text stays English (a name glued on with a line break must not leave a half text, lesson 7);
+--   2. several lines: each alone; a line with English words and no Ukrainian keeps the whole text English;
 --   3. outer spaces taken off, put back after;
---   4. one outer colour (|c........ ... |r) taken off, put back after;
---   5. an icon at the start (|T...|t) kept, the rest translated (or else on to the templates);
+--   4. one outer colour (|c........ ... |r) taken off, put back after; an icon (|T...|t) at the start kept;
 --   6. a template. Each slot is filled by what it holds (rec.sort, tools/mc_rules.py):
 --        v  a value (a number, a time, money, a link): kept when it has no English word, else our text
 --        f  a free name (a player, a version): kept as it is; one name only, so not a wide gap, a line
 --           break, " - ", ": " or a word in small letters (a glued text or a phrase: the line stays English)
 --        n  a game name (item, zone, NPC), or a list of them with counts: UALL Forever's Ukrainian for
 --           every name, or the whole line stays English
---        t  our text: translated again (empty stays empty)
---        b  blank (an English plural ending): dropped
+--        t  our text: translated again (empty stays empty);  b  blank (an English plural ending): dropped
 --      Any slot that holds English we have no Ukrainian for keeps the whole line English (no half lines).
 --   7. a text with a percent after it ("<word> 75%"): the text translated, the percent kept;
---   8. parts joined with " · ", a grey "  ·  " or "  -  ": each part alone; a part with English we have
---      no Ukrainian for keeps the whole text English;
+--   8. parts joined with " · ", a grey "  ·  " or "  -  ": each part alone, else the whole text English;
 --   9. a text with a coloured number or a skill ("286 / 300") after it: the text translated; a step with
---      its zones in grey after it: both; a coloured label and what it says ("Now:  <step>"): both; a
---      recipe and its grey count ("<recipe>   x51", a step row): UALL Forever's item or spell name;
+--      its zones in grey after it, a coloured label and what it says, a recipe and its grey count: both;
 --  10. our words, ": ", then the player's own text in quotes: our words translated, the quotes never;
 --  11. {one|few|many} in our Ukrainian picks its form by the last number before it (U.Plural);
---  12. a line that is only one game name, maybe after a guild tag: UALL Forever's (a list there may be
---      players' names, lesson 13).
--- Answers are remembered by input; a name UALL Forever cannot give yet ("wait") is not remembered, and
--- W.Try says so (the screen tries that line again later).
+--  12. shapes glued in code (Glue.lua), then a line that is only one game name, maybe after a guild tag:
+--      UALL Forever's (a list there may be players' names, lesson 13).
+-- Answers are remembered by input, but not a "wait" from UALL Forever: W.Try says so (tried again later).
 
 local _, ns = ...
 local U = UADD
@@ -176,6 +170,10 @@ local function Joined(s, sep, back)
     return any and table.concat(out, back) or nil
 end
 
+-- Glue.lua: Code runs before a bare name, Late after it.
+local Code, Late = ns.Glue({ One = One, Name = Name, Joined = Joined, HasLatin = HasLatin,
+    Translate = function(t) return Translate(t) end, Upper = function(t) return W.Upper(t) end })
+
 local function Raw(s)
     local uk = ix:Exact(s)
     if uk then return U.Plural(uk, true) end
@@ -246,6 +244,8 @@ local function Raw(s)
         local t = Translate(words)
         if t then return t .. ": " .. quoted end
     end
+    local codeUk = Code(s)                        -- shapes glued in code (Glue.lua)
+    if codeUk then return codeUk end
     -- 12. a line that is only a game name (a fish, the zone under the character), maybe after the player's
     -- guild in <> (kept as it is): UALL Forever's name, never its UI-word route. One name only, never a list
     -- ("Thrall, Jaina" may be players named as NPCs; lists of names live in template slots). One word alone
@@ -254,7 +254,7 @@ local function Raw(s)
     local bare = rest or s
     local ua = Name(bare, bare:find(" ", 1, true) and BARE or { "Zone" }, true)
     if ua and ua ~= bare then return tag and (tag .. gap .. ua) or ua end
-    return nil
+    return Late(s)
 end
 
 Translate = function(s)

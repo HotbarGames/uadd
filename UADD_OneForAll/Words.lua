@@ -42,11 +42,13 @@ end
 
 -- A `t` slot: a whole text of ours, or one the addon put in small letters, given in small letters too.
 local function Ours(x)
-    if type(x) ~= "string" or x == "" or #x > 60 or find(x, "%u") or not find(x, "^%l") then return nil end
+    if type(x) ~= "string" or x == "" or #x > 60 then return nil end
+    if find(x, "^%u") then return P.Exact(x) end      -- a capitalised text of ours ("Neutral"), never other English
+    if find(x, "%u") or not find(x, "^%l") then return nil end
     return P.Exact(x) or LowFirst(P.Exact(string.upper(sub(x, 1, 1)) .. sub(x, 2)))
 end
 
-P = U.Shapes(ns.OFA, ns.SORT, { key = "oneforall", Line = Ours })
+P = U.Shapes(ns.OFA, ns.SORT, { key = "oneforall", Line = Ours, maxlen = 400 })
 W.P = P
 
 local cache, ncache = {}, 0
@@ -160,7 +162,49 @@ local function Glued(s)
     return nil
 end
 
-local function Line(s) return Whole(s) or NameSlot(s) or Glued(s) end
+-- 5b. Money (a number and its coin icon, "12|T..|t 30|T..|t") inside a longer text: the run is one `v` slot.
+local COIN = "[%d,%.]+|T[^|]*|t"
+local function Moneyed(s)
+    local a, b = find(s, COIN)
+    if not a then return nil end
+    while true do
+        local _, e = find(s, "^ " .. COIN, b + 1)
+        if not e then break end
+        b = e
+    end
+    local k = Key(sub(s, 1, a - 1) .. "%s" .. sub(s, b + 1))
+    local uk = ns.OFA[k]
+    if type(uk) ~= "string" or ns.SORT[k] ~= "v" then return nil end
+    local ok, out = pcall(string.format, uk, sub(s, a, b))
+    if ok then return U.Plural(out, true) end
+    return nil
+end
+
+-- 5b'. A template whose first slot is our text before a dot ("Neutral  ·  18 rewards"): the head is one slot, the
+-- numbers after it the others (Shapes alone does not make that pair).
+local function HeadNum(s)
+    local e = find(s, "%s%s|?c?%x*·")
+    if not e or e < 2 or e > 61 then return nil end
+    local slots = { { a = 1, b = e - 1, en = sub(s, 1, e - 1) } }
+    local i = e
+    while #slots < 5 do
+        local a, b = find(s, "%d+", i)
+        if not a then break end
+        slots[#slots + 1] = { a = a, b = b, kind = "num", d = true, en = sub(s, a, b) }
+        i = b + 1
+    end
+    if #slots < 2 then return nil end
+    local ok, uk = pcall(P.Fill, s, slots)
+    if ok and type(uk) == "string" and uk ~= "" then return U.Plural(uk, true) end
+    return nil
+end
+
+local function Atom(s) return Whole(s) or Moneyed(s) or HeadNum(s) or NameSlot(s) or Glued(s) end
+
+-- 5c. Pieces joined in code with a dot or a wide gap: Joined.lua (W.Joined), loaded after this file.
+W.Atom, W.Value = Atom, Value
+
+local function Line(s) return Atom(s) or (W.Joined and W.Joined(s)) end
 
 -- An author's signature line ("- Name", maybe in one colour): a name, kept as it is (lesson 44).
 local function Signed(one)
@@ -189,7 +233,7 @@ local function Lines(s)
 end
 
 local function Look(s)
-    if find(s, "\n", 1, true) then return Whole(s) or NameSlot(s) or Lines(s) end
+    if find(s, "\n", 1, true) then return Whole(s) or Moneyed(s) or NameSlot(s) or Lines(s) end
     return Line(s)
 end
 

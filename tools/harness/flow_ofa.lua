@@ -211,6 +211,50 @@ R.gear = function()
     return out
 end
 
+-- Step 12: texts the addon builds in code (pieces joined with a dot, money in a paragraph, a zone and its
+-- coordinates): whole Ukrainian or whole English, the dot drawn as "  -  ", off gives the English back.
+R.joined = function()
+    local out = {}
+    M.inject()
+    local route = UADD.UALL.Zone
+    UADD.UALL.Zone = function(n) if n == "Sprocket Vale" then return "Долина зубчиків" end return nil end
+    ns.Words.Forget()
+    local function Tr(s) return ns.Words.Translate(s) end
+    local function Dot(s) return s and s:find("·", 1, true) ~= nil end
+    local lv = Tr("Level 14  ·  Done")
+    Res(out, "a level and a state joined by a dot: ours, the dot as a dash", Cyr(lv or "") and not Dot(lv)
+        and (lv or ""):find("  -  ", 1, true) ~= nil, lv)
+    local cl = Tr("Level 18  ·  Paladin  ·  0 / 12")
+    Res(out, "a class from the glossary and a count between dots", Cyr(cl or "") and not Dot(cl) and cl:find("0 / 12", 1, true) ~= nil, cl)
+    local cls = Tr("Tailoring  ·  Cloth  ·  Requires level 39  ·  Mage, Priest, Warlock")
+    Res(out, "a profession, a class list and a level need", Cyr(cls or "") and not Dot(cls) and not Plain(cls):find("%a%a%a%a%a%a%a"), cls)
+    local st = Tr("Neutral  ·  18 rewards")
+    Res(out, "a standing word of ours and a count", Cyr(st or "") and not Dot(st), st)
+    local zc = Tr("Sprocket Vale  |cff9d94806.5, 70.1|r")
+    Res(out, "a zone UALL knows and its coordinates", zc == "Долина зубчиків  |cff9d94806.5, 70.1|r", zc)
+    Res(out, "a zone UALL does not know: the whole line stays English", Tr("Wobbly Gizmo  |cff9d94806.5, 70.1|r") == nil
+        and Tr("Level 18  ·  Wobbly  ·  0 / 12") == nil and Tr("Level 18  ·  Paladin, Gizmo") == nil,
+        tostring(Tr("Level 18  ·  Wobbly  ·  0 / 12")))
+    local gold = "12|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 30|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t"
+    local para = Tr("No cheap upgrade up to " .. gold .. " for this in your level range.\nClick \"Cheap Upgrade Scan\" in the "
+        .. "auction house for fresh prices, or raise the highest price.")
+    Res(out, "the paragraph with money in it: whole Ukrainian, the money kept", Cyr(para or "") and para:find(gold, 1, true) ~= nil
+        and not Plain(para):find("auction house", 1, true), para)
+    local f = CreateFrame("Frame", "OneForAllJoinedTest", OneForAllFrame)
+    local fs = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    fs:SetText("Level 14  ·  Done")
+    M.wait(0.3)
+    ns.Screen.Sync() M.wait(0.1)
+    Res(out, "on the screen: ours", fs:GetText() == lv and CyrFont(fs), fs:GetText())
+    Uadd("off")
+    Res(out, "off: the English back", fs:GetText() == "Level 14  ·  Done", fs:GetText())
+    Uadd("on")
+    ns.Screen.Sync() M.wait(0.1)
+    Res(out, "on again: ours", fs:GetText() == lv, fs:GetText())
+    UADD.UALL.Zone = route
+    return out
+end
+
 -- Step 10, in a game whose OneForAll is set to another language: the module is off and says so.
 R.lang = function()
     local out = {}
