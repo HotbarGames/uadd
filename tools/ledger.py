@@ -12,12 +12,10 @@ itself from the lead plus all its subagents; a value given by hand wins. --dry-r
 Logs: $UADD_LOGS, else the newest-matching ~/.claude/projects/*hotbar-public* (also under /mnt/c/Users/*).
 Without --session, every session of the project touched in the window counts.
 
-tokens (one line): input + output + cache-creation tokens + 1/10 of cache-read tokens (cache reads cost about
-a tenth and would swamp the sum); the old rows were rough hand estimates of the same kind. raw_tokens (a
-later column, blank on old rows) is the plain sum of all four. agents: subagents with a call in the window.
+tokens: input + output + cache-creation + 1/10 of cache-read tokens (cache reads cost about a tenth); old rows
+are hand estimates. raw_tokens (blank on old rows): the plain sum. agents: subagents with a call in the window.
 wall: minutes from the first to the last log line in the window (idle gaps included).
-tokens: the sum of the agents' tokens the lead saw. wall: minutes from start to commit. owner: the owner's
-minutes (asked or estimated; in-game testing counts most). caught: problems the checks caught before the game.
+owner: the owner's minutes (asked or estimated). caught: problems the checks caught before the game.
 game_bugs: bugs found in the game (by the owner or players) in what this run made, added later with `bug`.
 The file is ../.claude/ledger.tsv, next to the skills (a private repo), when that folder exists; else
 .claude/ledger.tsv (git-ignored). --file or $UADD_LEDGER uses another one.
