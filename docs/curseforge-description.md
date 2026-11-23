@@ -88,7 +88,7 @@ Write the English text, our Ukrainian, and what it should say.
 - BugSack by Funkeh: https://www.curseforge.com/wow/addons/bugsack
 - Road to Sixty by Jordan: https://www.curseforge.com/wow/addons/road-to-sixty
 - OneForAll by Smoergi: https://www.curseforge.com/wow/addons/oneforall
-- GearQuest Forever by Henrik8210: https://www.curseforge.com/projects/1698950
+- GearQuest Forever by Henrik8210: https://www.curseforge.com/wow/addons/gearquest-forever
 - Questie by the Questie team: https://www.curseforge.com/wow/addons/questie
 - UALL Forever by the UALL team: https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization
 - ClassicUA by Greenya, Jakanis and others: https://www.curseforge.com/wow/addons/classicua
