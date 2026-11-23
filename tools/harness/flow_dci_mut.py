@@ -234,6 +234,7 @@ def game(cut=None):
         t = box["t"] = c.H.dcicut
         if cut:
             t.file, t.old, t.new = (lua_str(x) for x in cut)
+            c.H.boxQuiet = True          # a mutant's boxes are wanted (its step fails), not in the segment's check
         return c
     F.Client = client
     try:

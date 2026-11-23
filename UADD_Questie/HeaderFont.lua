@@ -1,8 +1,8 @@
--- The header line of each Questie options tab ("Questie • Загальні налаштування") gets our
--- Cyrillic font, so "і", "ї", "є" and "ґ" are not boxes.
+-- The header line of each Questie options tab («Загальні налаштування») gets our Cyrillic font, so
+-- "і", "ї", "є" and "ґ" are not boxes.
 --
--- Questie draws the tab name with Blizzard's shared font object Game13Font
--- (Modules/Options/QuestieOptionsEngine.lua:183-191). In the client that is a font family whose
+-- Questie draws the tab name with Blizzard's shared font object Game13Font (12.13: one subtitle on
+-- canvas.content, QuestieOptionsEngine.lua:211-226; before: "Questie • <name>"). In the client that is a font family whose
 -- Cyrillic part has Russian letters only: "Загальн□ налаштування". Copying the family and setting
 -- a font on the copy changes only its Latin part, so the boxes stay. What works (UALLF found this
 -- in game, UALLF/Fonts.lua) is a brand-new font object with only our font file in it.
@@ -19,7 +19,7 @@ ns.HeaderFont = H
 
 local FONT_OBJECT = "UADD_QuestieHeaderFont"
 local MODES = { "Popup", "Blizz" }          -- QuestieOptionsEngine.lua:154
-local BULLET = "\226\128\162"               -- "•", the FontString just before the tab name
+local BULLET = "\226\128\162"               -- "•", the FontString just before the tab name (before 12.13)
 local TRIES, STEP = 50, 0.1                 -- look for a new header for up to 5 seconds
 
 local active = false
@@ -75,6 +75,22 @@ local function HeaderRegions(canvas)
     return out
 end
 
+local CYR = "[\208-\210]"   -- the first byte of a Cyrillic letter in UTF-8 (А-я, і, ї, є, ґ)
+
+-- With us off: Game13Font and the old colour back on a header we changed, unless it still shows
+-- Cyrillic (the font follows the text). An error reading the text counts as English.
+local function GiveBack(fs)
+    local old = changed[fs]
+    if active or not old then return end
+    local ok, t = pcall(function() return UADD.Plain(fs:GetText()) end)
+    if ok and type(t) == "string" and t:find(CYR) then return end
+    changed[fs] = nil
+    pcall(fs.SetFontObject, fs, old[1])
+    pcall(fs.SetTextColor, fs, old[2], old[3], old[4], old[5])
+end
+
+local hookedHeader = {}     -- header FontString -> true once its SetText is hooked
+
 -- Puts our font on the header FontStrings of one canvas. Returns true once its header exists.
 local function Apply(canvas)
     local base, font = Shared(), Ours()
@@ -86,6 +102,10 @@ local function Apply(canvas)
         elseif IsHeaderText(r, base) then
             local red, green, blue, alpha = r:GetTextColor()
             changed[r] = { r:GetFontObject() or base, red, green, blue, alpha }
+            if not hookedHeader[r] then
+                hookedHeader[r] = true
+                hooksecurefunc(r, "SetText", function(self) pcall(GiveBack, self) end)
+            end
             r:SetFontObject(font)
             r:SetTextColor(red, green, blue, alpha)   -- SetFontObject may reset the colour
             found = true
@@ -95,7 +115,7 @@ local function Apply(canvas)
 end
 
 -- Questie 12.8 builds a tab over several frames: the header first, the buttons later. The build is
--- done once Questie sets canvas.UpdateScrollLayout (QuestieOptionsEngine.lua:323), so until then we
+-- done once Questie sets canvas.UpdateScrollLayout (12.13: QuestieOptionsEngine.lua:400), so until then we
 -- keep looking for new buttons. Questie before 12.8 has no canvas.content: nothing to wait for.
 local function Building(canvas)
     return rawget(canvas, "content") ~= nil and rawget(canvas, "UpdateScrollLayout") == nil
@@ -118,6 +138,30 @@ local function Look(canvas, left)
     end
 end
 
+-- Questie 12.13's search (SetSearchText) builds each shown popup tab again while the old content stays
+-- shown, then swaps the new content and controls in (QuestieOptionsEngine.lua:532-574): no OnShow, and
+-- canvas.UpdateScrollLayout stays set. So we look at such a tab every step until its new content is in,
+-- and a few steps more for the controls it gets later (a failed build: TRIES steps at most).
+local function Rebuilt(canvas, old, left, after)
+    if not active or not canvas:IsShown() then return end
+    local swapped = rawget(canvas, "content") ~= old
+    pcall(Apply, canvas)
+    pcall(Buttons, canvas)
+    if ns.ControlFont then UADD.SafeCall(ns.ControlFont.Canvas, canvas) end
+    if swapped then after = after - 1 else left = left - 1 end
+    if left > 0 and after > 0 then C_Timer.After(STEP, function() Rebuilt(canvas, old, left, after) end) end
+end
+
+local function Searched()
+    if not active then return end
+    for key in pairs((Engine() or {}).tabs or {}) do
+        local canvas = rawget(_G, "QuestieOptionsTab_Popup_" .. tostring(key))
+        if type(canvas) == "table" and canvas.IsShown and canvas:IsShown() then
+            Rebuilt(canvas, rawget(canvas, "content"), TRIES, 5)
+        end
+    end
+end
+
 -- ── The rest of Questie's older options window: dropdowns, check boxes, headings ──────────────
 -- That window is built by AceConfigDialog (Modules/Options/QuestieOptions.lua:59-67). Its widgets
 -- draw with GameFontNormalSmall / GameFontHighlightSmall (a dropdown's list items, its closed
@@ -127,7 +171,6 @@ end
 -- widget to its shared pool, when its text has no Cyrillic, and on "/uadd questie off".
 
 local AF = UADD.AceFont
-local CYR = "[\208-\210]"   -- the first byte of a Cyrillic letter in UTF-8 (А-я, і, ї, є, ґ)
 
 local function InCombat() return InCombatLockdown and InCombatLockdown() end
 
@@ -143,7 +186,9 @@ local function ApplyButton(button)
     local fs = button:GetFontString()
     local text = fs and UADD.Plain(fs:GetText())
     if not fs or InCombat() then return end
-    if active and type(text) == "string" and text:find(CYR) then AF.Set(fs, "Questie") else AF.Back(fs) end
+    local C = ns.ControlFont                 -- its C.Set / C.Back: right whether or not the client keeps a hand-set file
+    -- The font follows the text, off too: Ukrainian left until /reload keeps ours (ControlFont's Decide).
+    if type(text) == "string" and text:find(CYR) then C.Set(fs) else C.Back(fs) end
 end
 
 Buttons = function(canvas)
@@ -172,6 +217,9 @@ function H.Scan(onlyNew)
     HookPanel()
     local E = Engine()
     if not (E and type(E.tabs) == "table") then return end
+    -- 12.13's own window has a search label («Пошук», GameFontNormalSmall: QuestieOptionsWindow.lua:28-31).
+    local popup = rawget(E, "popup")
+    if type(popup) == "table" and ns.ControlFont then ns.ControlFont.Label(rawget(popup, "searchLabel")) end
     for key in pairs(E.tabs) do
         for _, mode in ipairs(MODES) do
             local canvas = rawget(_G, "QuestieOptionsTab_" .. mode .. "_" .. tostring(key))
@@ -211,22 +259,26 @@ function H.Start()
     if E and not engineHooked and type(E.ShowFrame) == "function" then
         engineHooked = true
         -- Questie's own window makes its canvases on first open and shows the first one at once.
+        -- 12.13's window has a search label («Пошук», GameFontNormalSmall: QuestieOptionsWindow.lua:28-31).
         hooksecurefunc(E, "ShowFrame", function() if active then H.Scan() end end)
+        if type(E.SetSearchText) == "function" then
+            hooksecurefunc(E, "SetSearchText", function() UADD.SafeCall(Searched) end)
+        end
     end
     H.Scan()
 end
 
--- "/uadd questie off": Game13Font and the old colour go back on every header we changed, and
--- the old font on every dropdown item.
+-- "/uadd questie off": Game13Font and the old colour go back on every header we changed that shows
+-- English, and the old font on every dropdown item. The font follows the text: a header that still
+-- shows our Ukrainian (Questie sets it once, at build; it stays until /reload) keeps ours, and gets
+-- Game13Font back from its SetText hook (Apply) once its text turns English. An error: Game13Font back.
 function H.Stop()
     active = false
-    if ns.ControlFont then ns.ControlFont.Stop() end
-    AF.Stop("Questie")                  -- also the labels, values and menu entries of ControlFont.lua
-    for fs, old in pairs(changed) do
-        fs:SetFontObject(old[1])
-        fs:SetTextColor(old[2], old[3], old[4], old[5])
-    end
-    changed = {}
+    if ns.ControlFont then ns.ControlFont.Stop() end   -- the labels, values, buttons and menu entries
+    AF.Stop("Questie")                  -- the older AceConfigDialog window (before 12.12)
+    local list = {}
+    for fs in pairs(changed) do list[#list + 1] = fs end
+    for _, fs in ipairs(list) do GiveBack(fs) end
 end
 
 -- For the checks: how many header FontStrings have our font now.

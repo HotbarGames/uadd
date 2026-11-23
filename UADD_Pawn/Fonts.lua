@@ -5,7 +5,8 @@
 --   * Pawn's windows (its main window, its settings page, its two text dialogs): each FontString is hooked
 --     once (SetText, SetFormattedText) when its window shows, and decides again on each new text.
 --   * Tooltips: only lines Pawn itself adds (PawnAddTooltipLine; the help of its window, PawnUIFrame_TooltipOn)
---     and only when they hold Cyrillic. Their font goes back when that tooltip is cleared. Nothing else in a
+--     and only when they hold Cyrillic. They get UADD's Cyrillic font object (never a file by hand), and their
+--     own font object goes back when that tooltip is cleared. Nothing else in a
 --     tooltip is touched, and a tooltip Pawn never wrote to costs one table lookup (lesson 12).
 --   * Read back: F.Count counts only FontStrings whose font file really is ours now.
 
@@ -14,10 +15,10 @@ local U = UADD
 local F = {}
 ns.Fonts = F
 
-local APP, TIP = "Pawn", "PawnTip"
+local APP = "Pawn"
 local CYR = "[\208-\210]"                      -- the first byte of a Cyrillic letter in UTF-8
 local hooked, hookedRoot, seen = {}, {}, {}
-local tipSet, tipHooked = {}, {}               -- tooltip -> { FontString we set }; tooltips hooked once
+local tipSet, tipHooked = {}, {}               -- tooltip -> { FontString -> its own font }; hooked once
 local installed = false
 
 local Decide
@@ -80,11 +81,37 @@ end
 
 -- ── Tooltip lines Pawn adds ───────────────────────────────────────────────────────────────────
 
+-- A game tooltip line is never given a file by hand (lesson 18 again, lesson 44): UADD's Cyrillic font
+-- object goes on with SetFontObject (read back), and the line's own object comes back with U.FontBack.
+-- Our font object still on the line (U.FontBack keeps it while the line still shows Cyrillic).
+local function Kept(fs)
+    local o = fs.GetFontObject and fs:GetFontObject()
+    local ok, n = pcall(function() return o:GetName() end)
+    return ok and type(n) == "string" and n:find("^UADD_CyrFont") ~= nil
+end
+
+-- The font follows the text: a line that still shows our Cyrillic keeps ours and its record, so its own font
+-- goes back once its English is back (the next fill, a clear).
 local function TipBack(tip)
     local set = tipSet[tip]
     if not set then return end
-    tipSet[tip] = nil
-    for _, fs in ipairs(set) do UADD.AceFont.Back(fs) end
+    for fs, was in pairs(set) do
+        pcall(U.FontBack, fs, was)
+        if not Kept(fs) then set[fs] = nil end
+    end
+    if next(set) == nil then tipSet[tip] = nil end
+end
+
+local function TipFont(tip, fs)
+    local set = tipSet[tip] or {}
+    if not set[fs] then
+        if U.IsCyrFont((fs:GetFont())) then return end    -- a font with our letters already
+        set[fs] = U.SaveFont(fs)                          -- saved before ours goes on (lesson 32)
+        tipSet[tip] = set
+    end
+    if U.CyrOnLocked(fs) then return end                  -- object only: never a file by hand on a game line
+    U.FontBack(fs, set[fs])                               -- ours did not take: its own font, as it was
+    set[fs] = nil
 end
 
 local function TipLine(tip, i)
@@ -96,22 +123,27 @@ local function TipLine(tip, i)
     for _, side in ipairs({ "Left", "Right" }) do
         local fs = rawget(_G, tip:GetName() .. "Text" .. side .. i)
         local t = fs and fs.GetText and U.Plain(fs:GetText())
-        if t and t:find(CYR) then
-            UADD.AceFont.Set(fs, TIP)
-            tipSet[tip] = tipSet[tip] or {}
-            table.insert(tipSet[tip], fs)
-        end
+        if t and t:find(CYR) then TipFont(tip, fs) end
     end
 end
 
+-- Held or off: Pawn's English is on the lines now, so a font we kept while they showed Cyrillic goes back.
 local function OnAddLine(tip)
-    if not ns.WordsWanted() or type(tip) ~= "table" or not tip.NumLines then return end
+    if type(tip) ~= "table" or not tip.NumLines then return end
+    if not ns.WordsWanted() then
+        if tipSet[tip] then TipBack(tip) end
+        return
+    end
     TipLine(tip, tip:NumLines())
 end
 
 local function OnHelp()
     local tip = rawget(_G, "GameTooltip")
-    if not ns.WordsWanted() or not tip or not tip.NumLines then return end
+    if not tip or not tip.NumLines then return end
+    if not ns.WordsWanted() then
+        if tipSet[tip] then TipBack(tip) end
+        return
+    end
     for i = 1, tip:NumLines() do TipLine(tip, i) end
 end
 
@@ -149,8 +181,13 @@ end
 function F.Restore()
     for tip in pairs(tipSet) do U.SafeCall(TipBack, tip) end
     UADD.AceFont.Stop(APP)
-    UADD.AceFont.Stop(TIP)
 end
 
 -- FontStrings in our font now, read back from the game.
-function F.Count() return UADD.AceFont.Count(APP) + UADD.AceFont.Count(TIP) end
+function F.Count()
+    local n = UADD.AceFont.Count(APP)
+    for _, set in pairs(tipSet) do
+        for fs in pairs(set) do if U.IsCyrFont((fs:GetFont())) then n = n + 1 end end
+    end
+    return n
+end

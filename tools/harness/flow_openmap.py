@@ -13,7 +13,6 @@ Run by flow_dj_module.py, so run.py runs it too:
 The Lua helpers are in flow_openmap.lua.
 """
 import os
-
 import flow_openmap_built
 import flow_openmap_popup
 import halves_mods
@@ -126,18 +125,19 @@ def in_game(s, check, facts):
 
     s.uadd("openmap off")
     en = [t("tab1"), t("where"), t("back"), t("sub")]
-    check("/uadd openmap off: English back exactly",
-          en == ["Bosses", "Razorfen Kraul", "|cffffd100<|r  Back to The Barrens", f"Level {RANGE}   |cffbbbbbbRaid|r"],
-          en)
-    fonts = txt(M.fonts()).split("|")
-    exact = all(f.startswith(FONT_EN + " ") for f in fonts) and _font(M, "pin") == (FONT_EN, 11, "OUTLINE")
-    check("/uadd openmap off: OpenMap's fonts back exactly (file, size, flags)", exact, fonts[:4])
+    check("/uadd openmap off: English back exactly", en == ["Bosses", "Razorfen Kraul", "|cffffd100<|r  Back to The Barrens",
+                                                           f"Level {RANGE}   |cffbbbbbbRaid|r"], en)
+    fonts, pin = [f.split(" ", 2) for f in txt(M.fontsFollow()).split("|")], _font(M, "pin")   # font follows text
+    wrong = [f for f in fonts if (f[0] == "uk") != (f[1] == "cyr") or f[0] == "en" and f[2][:len(FONT_EN)] != FONT_EN]
+    uk_pin = any("Ѐ" <= ch <= "ӿ" for ch in t("pin"))
+    check("/uadd openmap off: each English text has OpenMap's font back exactly, each Ukrainian one a Cyrillic font",
+          not wrong and fonts and pin[1:] == (11, "OUTLINE") and (pin[0] == FONT_EN) != uk_pin, (wrong or fonts)[:4] + [pin])
     M.refont()
     M.open(lua_str(q_uk), lua_str("Second Quest"))
     s.pump(30)
-    check("/uadd openmap off: hooks idle on a redraw", t("tab1") == "Bosses" and M.cyrCount()[0] == 0,
-          f"{t('tab1')} {M.cyrCount()[0]}")
-    facts["openmap_guard_off"] = session.cyr_boxes(s.client)[:3]   # the squares, as without UADD
+    fonts = [f.split(" ", 2) for f in txt(M.fontsFollow()).split("|")]   # only a Cyrillic quest title gets ours
+    check("/uadd openmap off: on a redraw no words of ours, and the font follows the text", t("tab1") == "Bosses"
+          and not [f for f in fonts if (f[0] == "uk") != (f[1] == "cyr")] and not session.cyr_boxes(s.client), fonts[:6])
     s.uadd("openmap on")
     s.pump(30)
     _view_checks(M, t, check, "/uadd openmap on", rfk_uk, boss_uk, q_uk)

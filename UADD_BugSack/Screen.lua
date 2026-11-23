@@ -12,28 +12,51 @@ local DEPTH = 8
 
 -- ── Fonts: ours on a text that shows our words, its own back after ──────────────────────────
 
+-- Lessons 18, 32, 44: its own font saved first, never while ours is on; a Cyrillic font OBJECT of ours put on (no
+-- file pinned); only where that does not take, the file by hand (U.CyrOnOwn). U.FontBack with that same record
+-- gives its object, and a hand-set file, back.
 local saved = {}
+local function IsCyr(fs) local ok, p = pcall(fs.GetFont, fs) return ok and U.IsCyrFont(p) end
 local function CyrOn(fs)
-    local path = U.CyrFontPath()
-    local _, s, f = fs:GetFont()
-    if not path or not s then return false end
-    if not saved[fs] then saved[fs] = U.SaveFont(fs) end
-    fs:SetFont(path, s, f or "")
-    return U.IsCyrFont((fs:GetFont()))
+    if IsCyr(fs) then return true end            -- ours on already (saved), or a font with our letters
+    local okS, was = pcall(U.SaveFont, fs)
+    if not okS or type(was) ~= "table" then return false end
+    saved[fs] = nil
+    local ok, took = pcall(U.CyrOnLocked, fs)
+    if not (ok and took) and not U.Locked(fs) then ok, took = pcall(U.CyrOnOwn, fs, was) end
+    if ok and took and IsCyr(fs) then saved[fs] = was return true end
+    pcall(U.FontBack, fs, was)                   -- whole English, never half a font
+    return false
 end
 local function FontBack(fs)
     local o = saved[fs]
-    if o then saved[fs] = nil U.FontBack(fs, o) end
+    saved[fs] = nil
+    if o and IsCyr(fs) then pcall(U.FontBack, fs, o) end   -- a font it set since is its own: left as it is
+    -- U.FontBack keeps ours while the line still shows Cyrillic: keep the record, so its own goes back later
+    if o and IsCyr(fs) and not U.IsCyrFont(o.path) then saved[fs] = o end
 end
 ns.saved, ns.CyrOn, ns.FontBack = saved, CyrOn, FontBack
 
 -- A button sets its label's font object again on a state change: ours again then (lesson 32).
 local fhooked = setmetatable({}, { __mode = "k" })
 local fixing = false
--- Its own font is saved again only when it set one (ours gone): a hover that left ours on would save ours.
+-- It set a font object while ours may be on. Ours gone: its own font is saved again (a hover that left ours on
+-- would save ours). Ours kept (a hand-set file stays over any object): the object it set now is what goes back,
+-- and our file follows its size.
 local function Fresh(fs)
-    local ok, path = pcall(fs.GetFont, fs)
-    if not (ok and U.IsCyrFont(path)) then saved[fs] = nil end
+    local was = saved[fs]
+    if not was then return end
+    if not IsCyr(fs) then saved[fs] = nil return end
+    local o = fs.GetFontObject and fs:GetFontObject()
+    if o == nil or o == was.object then return end
+    local okc, op = pcall(function() return o:GetFont() end)
+    if okc and U.IsCyrFont(op) then return end   -- our own Cyrillic object: never saved as its own
+    was.object = o
+    if not was.own and type(o) == "table" and o.GetFont then
+        local p, s, f = o:GetFont()
+        if p and s then was.path, was.size, was.flags = p, s, f end
+    end
+    if was.byhand then pcall(U.CyrOnOwn, fs, was) end
 end
 local function Refix(fs)
     if fixing then return end
@@ -133,7 +156,7 @@ local function TextArea()
         hooksecurefunc(ta, "SetText", Guard(function(self, text) ns.TAFix(self, U.Plain(text)) end))
         hooksecurefunc(ta, "SetFontObject", Guard(function(self)
             if taBusy then return end
-            saved[self] = nil      -- its own font object now (its font size): ours on top of that one
+            Fresh(self)            -- its own font object now (its font size): ours on top of that one
             ns.TAFix(self)
         end))
     end

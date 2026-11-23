@@ -138,3 +138,43 @@ function H.cyrBoxes(limit)
     end
     return out
 end
+
+-- As in the client: a font object's new font (SetFont) reaches every line drawn in it now, except a line with
+-- a file set by hand (__hand, wow_widgets.lua). Natively: no Lua hook on the line runs; the box check, which
+-- wraps Widget's own methods, still looks.
+do
+    local setFont, setObject = Widget.SetFont, Widget.SetFontObject
+    function Widget:SetFontObject(o)
+        local r = setObject(self, o)
+        if type(o) == "string" then o = rawget(_G, o) end
+        local fs = rawget(self, "__fs") or self
+        if type(o) == "table" and rawget(o, "__type") == "Font" and rawget(fs, "__type") ~= "Font" then
+            local users = rawget(o, "__users") or setmetatable({}, { __mode = "k" })   -- lines only, no objects
+            rawset(o, "__users", users)
+            users[fs] = true
+        end
+        return r
+    end
+    function Widget:SetFont(...)
+        local r = setFont(self, ...)
+        local users = rawget(self, "__type") == "Font" and r and rawget(self, "__users")
+        for u in pairs(users or {}) do
+            if rawget(u, "__fontObject") == self and not rawget(u, "__hand") then Widget.SetFontObject(u, self) end
+        end
+        return r
+    end
+end
+
+-- In the client every frame of a kind shares one method table (getmetatable(f).__index), where the core
+-- helper U.WidgetMethods (UADD/Widgets.lua) hooks CreateFontString for U.OnNewFontString. The harness looks
+-- methods up through a function, so that one file is shown the table the function reads.
+do
+    local realMeta, SHARED = getmetatable, { __index = Widget }
+    getmetatable = function(x)
+        if type(x) == "table" and rawget(x, "__type") ~= nil and rawget(x, 0) == x then
+            local info = debug.getinfo(2, "S")
+            if info and (info.source or ""):find("AddOns/UADD/Widgets.lua", 1, true) then return SHARED end
+        end
+        return realMeta(x)
+    end
+end

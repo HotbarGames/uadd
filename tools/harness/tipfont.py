@@ -1,7 +1,7 @@
 """The tooltip font check (wow_fontfam.lua, docs/LESSONS2.md lesson 18), counted per run.py segment.
 
 Each Client sends its reports here (loader.Client sets HARNESS.tipReport): "put" (UADD pinned its Cyrillic
-font on a line of a game tooltip), "back" (UADD gave such a line its font object back), "checked" (a cleared
+font on a line of a game tooltip, by file or as its Cyrillic font object), "back" (UADD gave such a line its font object back), "checked" (a cleared
 tooltip had such a line) and "bad" (UADD put the old font back by pinning its file, or the line was still
 pinned by UADD after the tooltip was cleared: it lost its font family, so UALL Forever's Ukrainian on it would
 show boxes). segment() turns what came in since the last call into one check.

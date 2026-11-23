@@ -1,17 +1,18 @@
--- Fonts for our words on Attune's frames (the same way as UADD_ForeverXPBar/Fonts.lua).
+-- Fonts for our words on Attune's frames.
 --   * Attune's texts use the game's font objects (GameFontNormal, GameFontHighlight ...): on an
 --     English client those have no "і", "ї", "є", "ґ". A FontString that shows our words gets UADD's
---     Cyrillic font file at the size and with the flags it has now: fs:SetFont on that one
---     FontString. Shared font objects are never changed, so colour, justify and shadow stay its own.
+--     Cyrillic font through the core helper (U.CyrFix: our font object first, the file by hand only
+--     with proof, read back). Shared font objects are never changed.
 --   * A font that already has Ukrainian letters is left alone.
---   * If something sets a font on such a FontString while it shows our words, the hooks below put
---     ours on again at the new size and flags.
---   * "/uadd attune off" puts back exactly what was there: font object, file, size, flags.
+--   * If Attune sets a font on such a FontString while it shows our words, the hooks below save its
+--     new choice and put ours on again.
+--   * The font follows the text: while a line shows Cyrillic, no font without it goes on (U.FontBack);
+--     once its English is back, Attune's exact old font goes back.
 local _, ns = ...
 local F = {}
 ns.Fonts = F
 
-local changed = {}        -- FontString -> { path, size, flags, object, follows }: its font before ours
+local changed = {}        -- FontString -> U.SaveFont record: its font before ours (U.CyrFix's `kept`)
 local hookedFont = {}     -- FontString -> true once its SetFont and SetFontObject are hooked
 local guard = false       -- up while we set a font ourselves
 
@@ -20,6 +21,11 @@ local function HasCyr(p)
     if UADD.IsCyrFont(p) then return true end
     p = type(p) == "string" and p:lower() or ""
     return p:find("_cyr", 1, true) or p:find("arialn", 1, true) or false
+end
+
+local function ShowsCyr(fs)
+    local t = UADD.Plain(fs:GetText())
+    return type(t) == "string" and t:find("[\208-\210][\128-\191]") ~= nil
 end
 
 local Fix
@@ -31,85 +37,39 @@ local function OnFont(fs)
     UADD.SafeCall(Fix, fs, true)
 end
 
--- The size and flags of the FontString's font object now, or nil.
-local function ObjectFont(fs)
-    local o = fs.GetFontObject and fs:GetFontObject()
-    if type(o) ~= "table" or not o.GetFont then return nil end
-    local p, size, flags = o:GetFont()
-    return p, size, flags or ""
-end
-
-local function SamePath(a, b)
-    if type(a) ~= "string" or type(b) ~= "string" then return false end
-    return (a:gsub("/", "\\"):lower()) == (b:gsub("/", "\\"):lower())
+local function Hook(fs)
+    if hookedFont[fs] then return end
+    hookedFont[fs] = true
+    hooksecurefunc(fs, "SetFont", OnFont)
+    if fs.SetFontObject then hooksecurefunc(fs, "SetFontObject", OnFont) end
 end
 
 -- `byAddon`: called from a hook, so the font now set is the latest choice of its owner.
 Fix = function(fs, byAddon)
-    local t = UADD.Plain(fs:GetText())
-    if type(t) ~= "string" or not t:find("[\208-\210]") then return end   -- only texts in Ukrainian
-    local path = UADD.CyrFontPath()
-    if not path then return end
-    local p, size, flags = fs:GetFont()
-    if not p or p == path and not byAddon then return end   -- ours already (the per-tick case)
-    if HasCyr(p) then
-        if byAddon then changed[fs] = nil return end    -- Attune chose a Cyrillic font itself
-        if not (changed[fs] and changed[fs].follows) or not UADD.IsCyrFont(p) then return end
-        local op, osize, oflags = ObjectFont(fs)
-        if not op or (osize == size and oflags == (flags or "")) then return end
-        size, flags = osize, oflags
-    else
-        local op, osize, oflags = ObjectFont(fs)
-        changed[fs] = { path = p, size = size, flags = flags, object = fs.GetFontObject and fs:GetFontObject(),
-            follows = SamePath(op, p) and osize == size and oflags == (flags or "") }
-    end
+    if not ShowsCyr(fs) then return end                  -- only texts in Ukrainian
+    local p = fs:GetFont()
+    if not p then return end
+    if HasCyr(p) then return end      -- ours already (the per-tick case), or Attune chose a Cyrillic font itself
+    -- Latin now. Attune set a font over ours: that is its latest choice, saved anew below.
+    changed[fs] = nil
     guard = true
-    local ok, err = pcall(fs.SetFont, fs, path, size or 12, flags or "")
+    local ok, took = pcall(UADD.CyrFix, fs, changed)
     guard = false
-    if not ok then error(err, 0) end
-    if not hookedFont[fs] then
-        hookedFont[fs] = true
-        hooksecurefunc(fs, "SetFont", OnFont)
-        if fs.SetFontObject then hooksecurefunc(fs, "SetFontObject", OnFont) end
-    end
+    if ok and took then Hook(fs) end
 end
 F.Fix = Fix
 
--- One FontString as Attune left it. When it followed its font object: that object again.
--- Otherwise a font had been set on it: that file, size and flags. SetFontObject also sets
--- the object's colour, justify, shadow and line spacing, so the FontString's own are kept.
-local LOOKS = { { "GetTextColor", "SetTextColor" }, { "GetJustifyH", "SetJustifyH" },
-    { "GetJustifyV", "SetJustifyV" }, { "GetShadowColor", "SetShadowColor" },
-    { "GetShadowOffset", "SetShadowOffset" }, { "GetSpacing", "SetSpacing" } }
-
-local function Put(fs, old)
-    if old.object and old.follows then
-        local keep = {}
-        for i, m in ipairs(LOOKS) do
-            if fs[m[1]] and fs[m[2]] then keep[i] = { fs[m[1]](fs) } end
-        end
-        fs:SetFontObject(old.object)
-        for i, m in ipairs(LOOKS) do
-            if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
-        end
-        local p, size, flags = fs:GetFont()
-        local op, osize, oflags = ObjectFont(fs)
-        if op and (p ~= op or size ~= osize or (flags or "") ~= oflags) then fs:SetFont(op, osize, oflags) end
+-- One FontString's font back (the hold key, or a text that is English again). While it still shows
+-- Cyrillic (Attune drew one of our L words itself) and our words are wanted, the font follows the text.
+function F.Back(fs)
+    if not changed[fs] then
+        if ns.WordsWanted() then Fix(fs) end
         return
     end
-    fs:SetFont(old.path, old.size or 12, old.flags or "")
-end
-
--- One FontString's font back (the hold key, or a text that is English again).
-function F.Back(fs)
-    local old = changed[fs]
-    if not old then return end
-    if UADD.IsCyrFont((fs:GetFont())) then
-        guard = true
-        pcall(Put, fs, old)
-        guard = false
-    end
-    changed[fs] = nil
+    if ShowsCyr(fs) and ns.WordsWanted() then return end
+    guard = true
+    pcall(UADD.CyrUnfix, fs, changed)
+    guard = false
 end
 
 -- Forget one FontString without touching it (its text is someone else's now).
@@ -117,10 +77,14 @@ function F.Drop(fs) changed[fs] = nil end
 
 -- Every font we changed back as Attune left it.
 function F.Restore()
-    for fs in pairs(changed) do F.Back(fs) end
+    for fs in pairs(changed) do
+        guard = true
+        pcall(UADD.CyrUnfix, fs, changed)
+        guard = false
+    end
 end
 
--- For the status line and the checks: how many FontStrings carry our font file now.
+-- For the status line and the checks: how many FontStrings carry our font now.
 function F.Count()
     local n = 0
     for fs in pairs(changed) do

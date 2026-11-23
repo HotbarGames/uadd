@@ -12,8 +12,8 @@ pinned to a file with Cyrillic letters (UADD.IsCyrFont).
   * arrow B: with the module off, UADD code pins the title to its object's Latin file (as the old code did).
     The guard (UADD/Guard.lua) gives it its object back within 2 s and says so once in chat.
 
-`python3 tools/harness/flow_tomtom_arrow.py --prove`: A fails with the HEAD AceFont.lua (by-path restore) if
-HEAD still has it, B fails with Guard.lua emptied.
+`python3 tools/harness/flow_tomtom_arrow.py --prove`: A fails with AceFont's restore cut, in memory, back to the
+old by-path SetFont; B fails with Guard.lua emptied.
 """
 import collections
 import os
@@ -50,8 +50,11 @@ function ARROW.said(needle)
 end
 '''
 SET = 'TomTomCrazyArrow.title:SetText("%s")' % TITLE
+# Off keeps our font while the title still shows Cyrillic (the font follows the text, U.FontBack), so the old
+# code's pin is made on the title's own object (GameFontHighlightSmall, the template's): object, then its file.
 PIN = '''local t = TomTomCrazyArrow.title
-local o = t:GetFontObject()
+local o = GameFontHighlightSmall
+t:SetFontObject(o)
 t:SetFont(o:GetFont())'''
 
 
@@ -79,6 +82,8 @@ def _run(check, p):
     check("arrow A: the arrow title keeps a font with Cyrillic letters through tooltips clearing and off/on",
           not bad, "; ".join(bad))
     before = int(A.said(SAID))
+    quiet = c.H.boxQuiet
+    c.H.boxQuiet = True                   # the pin's boxes until the guard repairs them are wanted (checked here)
     c.H.runFile("UADD_Probe", "Pin.lua", PIN.encode("utf-8"))
     pinned = A.pin
     M.wait(2.5)
@@ -86,6 +91,7 @@ def _run(check, p):
     c.H.runFile("UADD_Probe", "Pin.lua", PIN.encode("utf-8"))
     M.wait(2.5)
     ok2, _ = A.capable()
+    c.H.boxQuiet = quiet
     said = int(A.said(SAID)) - before
     check("arrow B: a title pinned to its object's Latin file gets its object back (guard), said once",
           pinned and ok and ok2 and said == 1, f"pinned {txt(pinned)}, then {txt(got)}, said {said}")
@@ -121,7 +127,8 @@ def run_checks(cuts=None):
 
 
 def proofs():
-    return [("tt: arrow A", {"AceFont.lua": flow_safe._head("AceFont.lua")}),
+    return [("tt: arrow A", {"AceFont.lua": flow_safe._replace(      # the old A.Back: the font back by its path
+        "AceFont.lua", "pcall(UADD.FontBack, fs, old)", 'pcall(fs.SetFont, fs, old.path, old.size, old.flags or "")')}),
             ("tt: arrow B", {"Guard.lua": ""})]
 
 

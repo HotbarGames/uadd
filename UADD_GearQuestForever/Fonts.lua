@@ -5,7 +5,9 @@
 -- words would draw as boxes. Its table of faces per language is private and has no Ukrainian.
 --   * Each of those three calls is wrapped: after it, while ours is in force, the text's font is saved
 --     (U.SaveFont, only while ours is not on it: lesson 32) and UADD's Cyrillic face goes on through our own font
---     object (U.CyrOnLocked, at the size and flags GearQuest just gave it, read back: lesson 2).
+--     object (U.CyrOnLocked, at the size and flags GearQuest just gave it, read back: lesson 2). Its file was set
+--     by hand, and the client keeps such a file over any font object, so when ours does not take the Cyrillic
+--     file goes on by hand (U.CyrOnOwn, lesson 44), and U.FontBack gives GearQuest's file back by path.
 --   * Held and off: each such text gets its saved font back (U.FontBack: its object, and the file GearQuest
 --     pinned, as GearQuest set it; lesson 18), only while ours is still on it (lesson 23). On again: ours again.
 --   * GQ:LocaleFontFace (asked by its own font helpers and a few windows) gives our face while ours is in force.
@@ -53,6 +55,11 @@ local function Put(w)
     if not okS or type(was) ~= "table" or not Cyr() then return end
     saved[w] = was
     local okC, yes = pcall(U.CyrOnLocked, w)
+    if not (okC and yes and U.IsCyrFont((Face(w)))) then
+        -- its file was set by hand and keeps over any font object (lesson 44): ours by hand, at its size (sets
+        -- was.byhand, so Back gives its own file back by path); never on a menu row (U.CyrOnOwn says no there)
+        okC, yes = pcall(U.CyrOnOwn, w, was)
+    end
     if okC and yes and U.IsCyrFont((Face(w))) then
         count = count + 1
         return

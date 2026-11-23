@@ -141,6 +141,42 @@ ours on, English and the hand-set font back off); its mutants `hints`, `signed` 
 `U.CyrOnOwn` in core `UADD/Font.lua`) each want step 11 to fail. Manual, in the game: the real labels take our font,
 the buttons fit the Ukrainian, the typed search text is never changed.
 
+## 45. Boxes that no check looked for
+
+**What went wrong.** The tooltip boxes (lesson 18 again, below) reached the owner (2026-11-23). No check looked at
+what was on screen: each check read one font in one step. Four guardrails were built after it, and on their first
+run they found more boxes, in core and in 16 modules:
+
+- A font put back while the line still showed our Cyrillic text (core `U.FontBack`, Popups, AceFont, TipLines).
+- Off took our font away while built windows kept Ukrainian until /reload (Questie's headers and controls).
+- A saved font record dropped while our font was still on, so held and off had nothing to put back (lesson 32 again,
+  in many modules).
+- A module that never put a Cyrillic font on a line drawn in a game font object (GameFontNormal), also when off.
+- OpenMap's first build of a named window set texts before any look of ours (`UADD_OpenMap/Born.lua`).
+- The harness itself: a hand-set file dropped on SetFontObject (the client keeps it), and Widgets.lua's hooks given a
+  method table no frame used, so a core hook never fired there.
+
+**Rule.** The font follows the text.
+
+- Cyrillic on screen is always in a font with Cyrillic. Once the text is English, its exact old font goes back.
+- Never a Latin file pinned by path on a line whose object is a family (game tooltip lines).
+- Forget a saved font only once our font is off the line (`U.CyrFix`, `U.CyrUnfix`, `U.SaveFont`, `U.FontBack`).
+- A check sets English through the same setter the addon uses.
+- A harness client loaded with a cut (a mutant, the probe) sets `H.boxQuiet`, so its wanted boxes stay its own.
+- The guard (`UADD/Guard.lua`) repairs a box that still slips through and reports it.
+
+**Check.**
+
+- `python3 tools/harness/run.py`: after every segment of every flow, the box check (`tools/harness/boxes.lua`,
+  `boxes.py`) wants no visible Cyrillic text in a font without Cyrillic. Each hit names the line, its font and a
+  sample. Mutant `fontback` (`flow_mastercraft.py --prove`) wants it to see a hit.
+- `python3 -m unittest tools.test_health_report`: the guard's reports show in `tools/missed.py` and
+  `tools/health_report.py`.
+- `python3 -m unittest tools.test_client_facts`: the harness facts about fonts
+  (`tools/harness/client_facts.py`) match what `UADD/Probe.lua` saw in the real client. Manual, in the game: log in
+  once and log out, so the probe can write its facts.
+- `python3 -m unittest tools.test_shared_state`: frame walks only through `U.Regions` and `U.Children`.
+
 ## More cases of older lessons
 
 **Lesson 14 again, in WhatTheWhisper's group chats (2026-11-22).** It names a group thread (each kind of group) with its
@@ -174,10 +210,11 @@ Rule: hook every state method a button has, `SetEnabled` too, and make the stand
 shots). Lesson 44's `U.FontBack` put a file back by path on any line whose Cyrillic file stayed over its object, also
 on the game's tooltip lines after Mastercraft's block; that pinned them to the Latin file. The harness passed: its
 tooltip lines dropped a hand-set file on SetFontObject, so that branch never ran there. Rule: only a label that
-`U.CyrOnOwn` set by hand (`was.byhand`) gets its file back by path. Check: the harness tooltip lines keep a hand-set
-file over SetFontObject, as the client does (`H.tipKeepsFile`, `tools/harness/wow_fontfam.lua`); Mastercraft's "item
-tooltip filled again" uses it. `python3 tools/harness/flow_mastercraft.py --prove`: mutant `byhand` takes the fix out
-and wants that step to fail.
+`U.CyrOnOwn` set by hand (`was.byhand`) gets its file back by path. Check: every harness FontString keeps a hand-set
+file over SetFontObject, as the client does (`__hand`, `tools/harness/wow_widgets.lua`, `wow_fontfam.lua`); after
+every segment the box check (`tools/harness/boxes.lua`, lesson 45) looks at what is on screen.
+`python3 tools/harness/flow_mastercraft.py --prove`: mutant `fontback` cuts `U.FontBack` to a plain SetFont by path
+and wants the box check to see a hit on Mastercraft's "item tooltip filled again".
 
 **Lesson 7 again, in Mastercraft 2.1.1 (2026-11-23).** What went wrong: two new texts made free slots swallow
 English. A locale key of two slots and glue alone (a gap and a grey colour, 18:9436262a) was sorted free, then

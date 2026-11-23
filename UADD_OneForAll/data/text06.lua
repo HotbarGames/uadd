@@ -1,14 +1,10 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.13. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
-T["Code.05acf9ec"] = "%d з %d"
-S["Code.05acf9ec"] = "vv"
-T["Code.4919da4d"] = "(загалом %s%%)"
-S["Code.4919da4d"] = "v"
 T["Code.f610e09c"] = "Аукціонний дім"
 T["Code.2c8ce38d"] = "Розпорядник битв"
 T["Code.9b41e155"] = "Цінність спорядження показує"
@@ -277,3 +273,6 @@ T["Code.24a80e5b"] = "Скинути шаблон"
 T["Code.68f9c3c8"] = "Скинути %sШаблон %d|r для %s?\nУсі очки талантів цього шаблону буде видалено."
 S["Code.68f9c3c8"] = "vvn"
 T["Code.dfc3f8ac"] = "Завантажте білд за посиланням talentsforever.com або wowforevertalents.com, або з рядка білда OneForAll."
+T["Code.8bbc10e5"] = "Таланти, показані тут, як короткий текст для копіювання й обміну. Імпорт читає його знову."
+T["Code.409320c8"] = "Талант цього білда не знайдено в деревах талантів гри."
+T["Code.94525c07"] = "Білд пропускає потрібні очки або таланти (створений для іншої версії гри?)."

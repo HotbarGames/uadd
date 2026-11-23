@@ -9,7 +9,8 @@ STEPS = {
     "loop": "1 on ours, hold key English, release ours, off English with the enUS table exact, on ours (x2)",
     "locale": "2 another language in its settings: nothing of ours, enUS exact; English again: ours",
     "once": "3 built-once texts (stub, dialog buttons, also built after login, emoji tabs) both ways",
-    "font": "3 the stub's game fonts: Cyrillic while ours shows, their own font object and file back when off",
+    "font": "3 the stub's game fonts: Cyrillic while ours shows, their own font object and file back when off "
+            "(also after its Russian)",
     "copies": "4 binding names, sound and export labels, date line and list stamp both ways; WEEKDAY_* untouched",
     "stay": "5 STAY texts stay English while on",
     "combat": "6 a switch in combat waits for PLAYER_REGEN_ENABLED, off in combat is never a mix (lesson 36)",
@@ -72,6 +73,8 @@ def once(check, c, M, E, A):
 
 
 def font(check, c, M, E, A, facts=None):
+    M.locale(lua_str("ruRU"))           # its Russian is Cyrillic too: our font stays, its record must too
+    M.locale(lua_str("auto"))
     body, body_cyr, _, btn, btn_cyr = M.stubFont()
     M.uadd("wtw off")
     obody, _, obj, obtn, _ = M.stubFont()
@@ -232,7 +235,9 @@ CUTS = {
                "    return ns.On() and not U.originalShown\n", locale),
     "once": ("Module.lua", "    U.SafeCall(on and ns.Screen.Apply or ns.Screen.Restore)\n", "    U.SafeCall(ns.Screen.Restore)\n",
              once),
-    "font": ("Screen.lua", "        UADD.AceFont.Set(fs, APP, Decide)\n", "", font),
+    "font": ("Screen.lua", "then FontOn(fs) else FontOff(fs) end\n", "then FontOff(fs) else FontOff(fs) end\n", font),
+    # the record dropped while its Russian kept our font: ours stays on its English after off
+    "fontkeep": ("Screen.lua", "not U.IsCyrFont(was.path) then fonts[fs] = was end\n", "false then end\n", font),
     "bindings": ("Swap.lua", "            PutGlobal(name, ua)\n", "", copies),
     "days": ("Module.lua", "    U.SafeCall(ns.Days.Install)\n", "", copies),
     # its data has no Ukrainian for a STAY key, so the cut also gives each one a word, as a bad build would
@@ -240,8 +245,8 @@ CUTS = {
     "combat": ("Module.lua", "        if U.AfterCombat(Try) then return end\n", "", combat),
     "langcombat": ("Module.lua", "    if not on then U.SafeCall(ns.Swap.SwapOut) end\n", "", langcombat),
     "export": ("Swap.lua", "    E.ToFile = fn\n", "", export),
-    "faults": ("Module.lua", "    U.SafeCall(ns.Swap.Remove)\n    U.SafeCall(ns.Gaps.Remove)\n    Apply(false)\n",
-               "    U.SafeCall(ns.Swap.Remove)\n    U.SafeCall(ns.Gaps.Remove)\n", faults),
+    "faults": ("Module.lua", "    U.SafeCall(ns.Groups.Remove)\n    Apply(false)\nend\n",
+               "    U.SafeCall(ns.Groups.Remove)\nend\n", faults),
     # the language-list hook under U.Safe again: dead after the off for errors, so ours stays in its enUS table
     "guard": ("Module.lua", 'hooksecurefunc(O, "Apply", Guard(AfterApply))',
               'hooksecurefunc(O, "Apply", U.Safe("wtw", AfterApply))', refaults),

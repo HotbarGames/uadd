@@ -67,7 +67,19 @@ local ApplyWidget
 local function OnFont(fs)
     if busy then return end
     local r = rec[fs]
-    Forget(fs)                                       -- their font now: nothing of ours to put back
+    if r and UADD.IsCyrFont((fs:GetFont())) then
+        -- Our hand-set file stays over their new object (the client keeps it): the record stays, and their
+        -- object is what goes back. A label that followed its object gets that object's file, never ours.
+        local o = fs.GetFontObject and fs:GetFontObject() or nil
+        local n = type(o) == "table" and o.GetName and o:GetName()
+        if type(o) == "table" and not (type(n) == "string" and n:find("^UADD_")) then
+            r.object = o
+            local p, s, f = o.GetFont and o:GetFont()
+            if not r.own and p and not UADD.IsCyrFont(p) then r.path, r.size, r.flags = p, s, f end
+        end
+    else
+        Forget(fs)                                   -- their font now: nothing of ours to put back
+    end
     if not r or not r.widget or InCombat() then return end
     if type(r.widget) == "function" then UADD.SafeCall(r.widget, fs) else UADD.SafeCall(ApplyWidget, r.widget) end
 end
@@ -88,21 +100,21 @@ function A.Set(fs, app, widget)
         hooksecurefunc(fs, "SetFontObject", OnFont)
         if UADD.GuardWatch then UADD.GuardWatch(fs) end   -- the guard sees a Latin pin left on it later
     end
-    local p, size, flags = fs:GetFont()
+    local p = fs:GetFont()
     if not p or UADD.IsCyrFont(p) then return end    -- ours already, or a font with our letters
     local was = UADD.SaveFont(fs)                    -- path, size, flags, object (and own): lesson 18
     was.app, was.widget = app, widget
     if locked then was.own, was.locked = false, true end
     Keep(fs, was)
+    -- Our font object first (never SetFont on a line that follows its object: lesson 18). A label that keeps a
+    -- hand-set file over any object (the client does, lesson 44) gets the Cyrillic file by hand (U.CyrOnOwn
+    -- marks `byhand`, so U.FontBack puts its file back). Read back; on a miss, the whole English font again.
     busy = true
-    local ok, took
-    if locked then
-        ok, took = pcall(UADD.CyrOnLocked, fs)
-        ok = ok and took
-        if not ok then pcall(UADD.FontBack, fs, was) end   -- whole English, never half a font
-    else
-        ok = pcall(fs.SetFont, fs, path, size or 12, flags or "")
-    end
+    local ok, took = true, false
+    if not was.own then ok, took = pcall(UADD.CyrOnLocked, fs) end
+    if ok and not took and not locked then ok, took = pcall(UADD.CyrOnOwn, fs, was) end
+    ok = ok and took and UADD.IsCyrFont((fs:GetFont()))
+    if not ok then pcall(UADD.FontBack, fs, was) end   -- whole English, never half a font
     busy = false
     if not ok then Forget(fs) end
 end
@@ -110,6 +122,8 @@ end
 -- One FontString's own font back (UADD.FontBack): its font object always, so the family's Cyrillic
 -- member comes back; the file only when it had none, or one set by hand before us. Colour kept.
 -- A menu region the menu has already reset (closed) is left alone.
+-- The font follows the text (lesson 45): FontBack keeps ours while the line still shows Cyrillic, and then the
+-- record stays, so a later Back (once English is on, or the line is hidden) still has the line's own font.
 function A.Back(fs)
     local old = fs and rec[fs]
     if not old then return end
@@ -118,13 +132,20 @@ function A.Back(fs)
     busy = true
     pcall(UADD.FontBack, fs, old)
     busy = false
+    local ok, p = pcall(fs.GetFont, fs)
+    if ok and UADD.IsCyrFont(p) and not UADD.IsCyrFont(old.path) then Keep(fs, old) end
 end
 
--- Every font of `app` back: only its own records are looked at.
-function A.Stop(app)
+-- Every font of `app` back: only its own records are looked at. `cleared`: their tooltip was cleared, so the
+-- client draws none of its lines; a line that still holds Cyrillic is emptied first (as U.TipLines does), so its
+-- own font object goes back now (lesson 18: no line of a cleared tooltip left on our font).
+function A.Stop(app, cleared)
     local list = {}
     for fs in pairs(mine[app] or {}) do list[#list + 1] = fs end
-    for _, fs in ipairs(list) do A.Back(fs) end
+    for _, fs in ipairs(list) do
+        if cleared and HasCyr(fs) then pcall(fs.SetText, fs, "") end
+        A.Back(fs)
+    end
 end
 
 -- For the checks: the font one FontString had before ours (path, size, flags, font object), or nil.

@@ -86,6 +86,9 @@ SORTS = {
     "Code.f5fc475f": "v", "Code.f63ac0a5": "v", "Code.f6883947": "n", "Code.f6c877e7": "n",
     "Code.f6f15ff7": "tv", "Code.fc405369": "v", "Code.fd3a6448": "n", "Code.fd812865": "v",
     "Code.fe038c61": "n", "Code.a174ec26": "v",
+    "Code.e6a0c449": "vn",    # a count, then the dungeon's name (FLT.DungeonName)
+    "Code.54e50a58": "v", "Code.d03d79eb": "v", "Code.e70eba84": "v", "Code.ab9a6ab8": "v",    # RT.Clock times
+    "Code.f31989ba": "n",     # the wishlist item's name (GetItemInfo)
 }
 # Fixed-width boxes (OneForAll-design.md): English -> letters. Filled as the review finds them.
 BOX = {}

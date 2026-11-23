@@ -2,9 +2,10 @@
 -- our words. GameTooltip draws them with the client's standard fonts, which have no "і", "ї",
 -- "є", "ґ" on an English client, and UALLF changes only the quest fonts, not the tooltip's.
 -- So while GameTooltip is owned by one of OpenMap's frames (or the World Map), each of its lines
--- that shows Cyrillic gets our font file on that one FontString (UADD/AceFont.lua), and the old
--- font goes back exactly when the tooltip is cleared or hidden. The shared font objects are never
--- changed. Nothing is changed in combat; nothing runs per frame (only on the tooltip's Show).
+-- that shows Cyrillic gets UADD's font object on that one FontString (Fonts.Shared: a game tooltip
+-- line never gets a font file by hand, lesson 18), and the saved object goes back exactly when the
+-- tooltip is cleared or hidden. When the object does not take, the line stays English (never boxes;
+-- a player's note keeps its text). The shared font objects are never changed. Nothing is changed in combat; nothing runs per frame (only on the tooltip's Show).
 -- A line OpenMap built from its own English and our words gets the rest in Ukrainian when it is
 -- only that and values ("Level 25  (від 20)": Words.Line), or our words and a zone name UALL saved
 -- ("Куди: Orgrimmar": Parts.lua), so it is never half English.
@@ -15,9 +16,11 @@ local _, ns = ...
 local T = {}
 ns.Tooltip = T
 
-local APP = "OpenMapTip"
+if type(UADD) == "table" then UADD.OpenMapTooltip = T end   -- for the checks (tools/harness)
+
 local CYR = "[\208-\210]"   -- the first byte of a Cyrillic letter in UTF-8
 local hooked = false
+local lines = {}            -- tooltip lines that carry UADD's font object now
 
 -- The owner, or one of its parents, is one of OpenMap's windows.
 local function Ours(owner)
@@ -51,14 +54,26 @@ local function OnShow(tip)
                 local uk = not mine and (ns.Words.Line(t)   -- "Level 25  (від 20)": English around L
                     or not ns.Words.Whole(t) and ns.Words.English(t))   -- "Куди: Nowhere": all English
                 if uk and uk ~= t then fs:SetText(uk) end
-                UADD.AceFont.Set(fs, APP)
+                local now = UADD.Plain(fs:GetText())
+                if ns.Fonts.Shared(fs) then
+                    lines[fs] = true
+                elseif not mine and type(now) == "string" then
+                    -- no font for ours: the line its English whole, never boxes
+                    local en = ns.Locale.English(now) or ns.Words.English(now)
+                    if en and en ~= now then fs:SetText(en) end
+                end
             end
         end
     end
 end
 
--- Every tooltip line back to its own font.
-function T.Stop() UADD.AceFont.Stop(APP) end
+-- Every tooltip line back to its own font object (only while ours is still on it).
+function T.Stop()
+    for fs in pairs(lines) do
+        pcall(ns.Fonts.Back, fs)
+        lines[fs] = nil
+    end
+end
 
 function T.Install()
     local tip = rawget(_G, "GameTooltip")
@@ -70,4 +85,10 @@ function T.Install()
 end
 
 -- For the checks: tooltip lines in our font now.
-function T.Count() return UADD.AceFont.Count(APP) end
+function T.Count()
+    local n = 0
+    for fs in pairs(lines) do
+        if UADD.IsCyrFont((fs:GetFont())) then n = n + 1 end
+    end
+    return n
+end

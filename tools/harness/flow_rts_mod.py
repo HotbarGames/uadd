@@ -104,6 +104,7 @@ def game(cut=None):
         t = box["t"] = cl.H.rtscut
         if cut:
             t.file, t.old, t.new = (lua_str(x) for x in cut[:3])
+            cl.H.boxQuiet = True         # a mutant's boxes are wanted (step 5's "font"), not in the segment's check
         return cl
     F.Client = client
     try:

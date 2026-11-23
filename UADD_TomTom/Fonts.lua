@@ -8,7 +8,8 @@
 --     when it is made), its settings pages (Settings.lua adds them), the category list of the game's
 --     settings window (our page names), its pop-ups, the menus it opens, and the lines of its tooltips
 --     that already hold Ukrainian (from TomTom.L): TomTomTooltip, GameTooltip when TomTom's code shows
---     it or its owner is ours, SettingsTooltip over our pages.
+--     it or its owner is ours, SettingsTooltip over our pages. A tooltip line gets UADD's Cyrillic font
+--     object (SetFontObject), never a file by hand, and its own object back when the tooltip clears.
 --   * Read back: F.Count counts only the FontStrings whose font file really is ours now (lesson 2).
 --   * "/uadd tomtom off" and the hold key put back exactly what TomTom had.
 
@@ -17,7 +18,8 @@ local U = UADD
 local F = {}
 ns.Fonts = F
 
-local APP, TIP = "TomTom", "TomTom tooltip"
+local APP = "TomTom"
+local tipFonts = {}                            -- tooltip line FontString -> its own font (U.SaveFont)
 local CYR = "[\208-\210]"                      -- the first byte of a Cyrillic letter in UTF-8
 local ROOTS = { "TomTomCrazyArrow", "TomTomBlock", "TomTomPaste" }
 local LATE = { TomTomPaste = true }             -- made when first opened
@@ -151,7 +153,7 @@ local function Needs(tip)
         for _, side in ipairs(SIDES) do
             local fs = _G[name .. "Text" .. side .. i]
             if fs and fs:IsShown() and Cyr(fs:GetText()) and not U.IsCyrFont((fs:GetFont()))
-                and not UADD.AceFont.Original(fs) then
+                and not tipFonts[fs] then
                 list = list or {}
                 list[#list + 1] = fs
             end
@@ -160,8 +162,25 @@ local function Needs(tip)
     return list
 end
 
+-- A game tooltip line is never given a file by hand (lesson 18 again, lesson 44): UADD's Cyrillic font
+-- object goes on with SetFontObject (read back); its own object comes back with U.FontBack (TipBack).
+-- A line that keeps a file set by hand before us (our object is on, its file stayed: lesson 44) has no
+-- family left to lose: our file goes on by hand (U.CyrOnOwn), and U.FontBack puts that same file back.
+local function Kept(fs)
+    local o = fs.GetFontObject and fs:GetFontObject()
+    local ok, n = pcall(function() return o:GetName() end)
+    return ok and type(n) == "string" and n:find("^UADD_CyrFont") ~= nil
+end
+
 local function FixTip(tip, list)
-    for _, fs in ipairs(list) do UADD.AceFont.Set(fs, TIP) end
+    for _, fs in ipairs(list) do
+        local was = U.SaveFont(fs)                        -- saved before ours goes on (lesson 32)
+        tipFonts[fs] = was
+        if not (U.CyrOnLocked(fs) or Kept(fs) and U.CyrOnOwn(fs, was)) then   -- ours did not take: its own font
+            U.FontBack(fs, was)
+            tipFonts[fs] = nil
+        end
+    end
     tipBusy = true
     pcall(tip.Show, tip)                                  -- laid out again in the new font
     tipBusy = false
@@ -179,7 +198,11 @@ local function OnTip(tip, always)
 end
 F.OnTip = OnTip
 
-local function TipBack() UADD.AceFont.Stop(TIP) end
+local function TipBack()
+    if next(tipFonts) == nil then return end
+    for fs, was in pairs(tipFonts) do pcall(U.FontBack, fs, was) end
+    wipe(tipFonts)
+end
 
 local function HookTip(tip, always)
     if type(tip) ~= "table" or hooked[tip] then return end
@@ -265,8 +288,12 @@ end
 -- Every font back as TomTom had it.
 function F.Restore()
     UADD.AceFont.Stop(APP)
-    UADD.AceFont.Stop(TIP)
+    TipBack()
 end
 
 -- FontStrings in our font now, read back from the game.
-function F.Count() return UADD.AceFont.Count(APP) + UADD.AceFont.Count(TIP) end
+function F.Count()
+    local n = UADD.AceFont.Count(APP)
+    for fs in pairs(tipFonts) do if U.IsCyrFont((fs:GetFont())) then n = n + 1 end end
+    return n
+end

@@ -16,6 +16,7 @@ data/text03.lua
 data/text04.lua
 Slots.lua
 Words.lua
+Font.lua
 Screen.lua
 NewButton.lua
 Menu.lua

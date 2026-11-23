@@ -99,21 +99,24 @@ local function Anchor()
     return type(a) == "table" and a or nil
 end
 
--- Our font on fs (its own kept); true when the font has Ukrainian letters.
+-- Our font on fs (its own saved first, never while ours is on); true when the font has Ukrainian letters.
+-- A Cyrillic font object of ours first; only where that does not take, the file by hand (U.CyrOnOwn, lesson 44).
+local function IsCyr(fs) local ok, p = pcall(fs.GetFont, fs) return ok and U.IsCyrFont(p) end
 local function CyrOn(fs)
-    local path = U.CyrFontPath()
-    local _, s, f = fs:GetFont()
-    if not path or not s then return false end
-    if not D.saved[fs] then D.saved[fs] = U.SaveFont(fs) end
-    fs:SetFont(path, s, f or "")
-    return U.IsCyrFont((fs:GetFont()))
+    if IsCyr(fs) then return true end
+    local okS, was = pcall(U.SaveFont, fs)
+    if not okS or type(was) ~= "table" then return false end
+    local ok, took = pcall(U.CyrOnLocked, fs)
+    if not (ok and took) and not U.Locked(fs) then ok, took = pcall(U.CyrOnOwn, fs, was) end
+    if ok and took and IsCyr(fs) then D.saved[fs] = was return true end
+    pcall(U.FontBack, fs, was)                   -- whole English, never half a font
+    return false
 end
 
-local function FontBack(fs)
+local function FontBack(fs)        -- its object back, a hand-set file too (lessons 18, 44)
     local o = D.saved[fs]
-    if not o then return end
     D.saved[fs] = nil
-    U.FontBack(fs, o)          -- its font object, not a pinned file (lesson 18)
+    if o and IsCyr(fs) then U.FontBack(fs, o) end
 end
 
 local function Put(fs, text)
@@ -252,10 +255,7 @@ end)
 
 -- The hold key: its English while it is held, ours again after.
 if U.OnOriginal then
-    U.OnOriginal(function()
-        if not ns.On() then return end
-        D.Apply()
-    end, NAME)
+    U.OnOriginal(function() if ns.On() then D.Apply() end end, NAME)
 end
 
 -- ── Status ────────────────────────────────────────────────────────────────────────────────────

@@ -5,7 +5,7 @@ local H = HARNESS
 local F = H.flow
 
 local CYR = "[\208-\210]"
-local function AF() return UADD.AceFont end
+local function AF() return H.ns.UADD_Questie.ControlFont end   -- its Original: the font from before ours
 local function Engine() return QuestieLoader:ImportModule("QuestieOptionsEngine") end
 local function l10n(s) return QuestieLoader:ImportModule("l10n")(s) end
 local function IsCyr(fs) return UADD.IsCyrFont((fs:GetFont())) end
@@ -191,6 +191,34 @@ function F.controlShift()
         tostring(english), tostring(back), tostring(held), tostring(after))
 end
 
+-- Questie 12.13's own window: its search label, and a search that builds the shown tab again with no
+-- OnShow (QuestieOptionsEngine.lua:532-574). Returns the label's font ok, then ok/n of the rebuilt tab's
+-- Ukrainian texts in our font (and whether its content was swapped), the search cleared after.
+function F.controlSearch()
+    local E = Engine()
+    E:ShowFrame()
+    H.pump(20, nil, 0.05)
+    local label = E.popup and E.popup.searchLabel
+    local labelOk = label ~= nil and HasCyr(label) and Right(label)
+    local canvas = rawget(_G, "QuestieOptionsTab_Popup_general")
+    if not canvas then return labelOk, 0, 0, false end
+    Built(canvas)
+    local old = canvas.content
+    E:SetSearchText(l10n("General"))
+    H.pump(400, function() return canvas.content ~= old end, 0.05)
+    H.pump(20, nil, 0.05)
+    local n, ok = 0, 0
+    for _, t in ipairs(Texts(canvas)) do
+        n = n + 1
+        if Right(t[1]) then ok = ok + 1 end
+    end
+    local swapped = canvas.content ~= old
+    E:SetSearchText("")
+    H.pump(20, nil, 0.05)
+    E:HideFrame()
+    return labelOk, ok, n, swapped
+end
+
 -- Before "/uadd questie off": every control text in our font now, with the font it had before.
 function F.controlSnapshot()
     local canvas = Blizz("general")
@@ -202,12 +230,18 @@ function F.controlSnapshot()
     return #H.controlSnap
 end
 
--- After it: how many have exactly their old font object, file, size and flags again.
+-- After it. The font follows the text: a shown text that still shows Ukrainian keeps a Cyrillic font (a Latin one
+-- there is a box). Then English set on each (as Questie draws it after a reload): exactly its old font object,
+-- file, size and flags again. Returns (Ukrainian ok, English ok, n, the first wrong one).
 function F.controlAfterOff()
-    local ok, bad = 0, nil
+    local cyr, ok, bad = 0, 0, nil
     for _, s in ipairs(H.controlSnap or {}) do
-        if Exact(s[1], s[2]) then ok = ok + 1
-        elseif not bad then bad = Font(s[1]) .. " want " .. tostring(s[2][1]) .. " " .. tostring(s[2][2]) end
+        local fs = s[1]
+        if not (HasCyr(fs) and fs:IsVisible()) or IsCyr(fs) then cyr = cyr + 1
+        elseif not bad then bad = "Ukrainian in " .. Font(fs) end
+        fs:SetText("General")
+        if Exact(fs, s[2]) then ok = ok + 1
+        elseif not bad then bad = "English in " .. Font(fs) .. " want " .. tostring(s[2][1]) .. " " .. tostring(s[2][2]) end
     end
-    return ok, #(H.controlSnap or {}), bad or ""
+    return cyr, ok, #(H.controlSnap or {}), bad or ""
 end

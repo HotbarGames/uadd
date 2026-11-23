@@ -126,11 +126,10 @@ function M.refill(mc)
         for _ = 1, ours do S().TipAdd(mc) end
         tip:Show()
     end
-    HARNESS.tipKeepsFile = true         -- the client keeps a hand-set file over SetFontObject (lesson 18 again)
+    -- the harness keeps a hand-set file over SetFontObject, as the client does (lesson 18 again, lesson 44)
     Fill(2, 3)                          -- a short item: Mastercraft's lines are 3 to 5
     Fill(5, 1)                          -- the refill of a longer one: lines 3 to 5 are the game's now
     tip:SetOwner(UIParent, "ANCHOR_NONE")
-    HARNESS.tipKeepsFile = nil
     local bad = {}
     for i = 1, 6 do
         tip:AddLine("")

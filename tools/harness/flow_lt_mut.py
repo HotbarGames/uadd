@@ -45,6 +45,7 @@ def game(cut=None):
         t = c.H.ltcut
         if cut:
             t.file, t.old, t.new = (lua_str(x) for x in cut)
+            c.H.boxQuiet = True          # a mutant's boxes are wanted (its step fails), not in the segment's check
         box["t"] = t
         return c
     F.Client = client
@@ -117,7 +118,7 @@ def m_quest(q, c, M, E, en):
 
 
 def m_font(q, c, M, E, en):
-    c.lua.execute("UADD.AceFont.Set = function() end")
+    c.lua.execute("UADD.CyrOnLocked = function() return nil end UADD.CyrOnOwn = function() return nil end")
     M.uadd("lt off")
     M.uadd("lt on")
     S = F.snap(M)
@@ -221,7 +222,7 @@ MUTANTS = {
     "owner": ("Screen.lua", "if Forbidden(o) then break end", "", "15 a tooltip with a forbidden owner: no error, no fault"),
     "newslabel": ("NewButton.lua","if t == en then l.en = en lab:SetText(NEW_UK) end", "",
                   "16 its New buttons: ours in our font, the button sized to it, the global not written"),
-    "newsrefont": ("NewButton.lua","pcall(A.Set, lab, APP, Relabel)", "pcall(A.Set, lab, APP)",
+    "newsrefont": ("NewButton.lua", '        hooksecurefunc(lab, "SetFontObject", Relabel)\n', "",
                    "16 New button hover sets its font object: ours stays"),
     "newsglobal": ("NewButton.lua",'if type(g) ~= "string" or g == "" or find(g, CYR) then', 'if type(g) ~= "string" or g == "" then',
                    "16 the game's word already Cyrillic: left as it is, the global too"),

@@ -73,6 +73,9 @@ local function FontBack(fs)
     saved[fs] = nil
     local ok, face = pcall(fs.GetFont, fs)
     if ok and U.IsCyrFont(face) then pcall(U.FontBack, fs, was) end
+    -- U.FontBack keeps ours while the line still shows Cyrillic: keep the record, so its own goes back later
+    ok, face = pcall(fs.GetFont, fs)
+    if ok and U.IsCyrFont(face) and not U.IsCyrFont(was.path) then saved[fs] = was end
 end
 
 -- UADD's Cyrillic face on a row (through its own font object, lesson 18), read back; false: its own face kept.
@@ -84,6 +87,8 @@ local function CyrOn(fs)
     if not okS or type(was) ~= "table" then return false end
     saved[fs] = was
     local okC, yes = pcall(U.CyrOnLocked, fs)
+    if okC and yes then return true end
+    okC, yes = pcall(U.CyrOnOwn, fs, was)               -- a file set by hand keeps over our object (lesson 44)
     if okC and yes then return true end
     FontBack(fs)
     return false

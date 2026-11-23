@@ -60,6 +60,19 @@ local function Turn(t, want)
     return nil
 end
 
+-- The font follows the text (lesson 32): its lines use GameFontNormal and GameFontHighlight, which have no
+-- Cyrillic on Forever. A line that shows Cyrillic (ours, or L's word it drew itself) gets UADD's font; once it is
+-- English again it gets its own font back (U.CyrFix / U.CyrUnfix).
+local kept = setmetatable({}, { __mode = "k" })
+function S.Font(fs)
+    local t = U.Plain(fs:GetText())
+    if type(t) ~= "string" then return end
+    if t:find("[\208\209][\128-\191]") then
+        if kept[fs] and not U.IsCyrFont((fs:GetFont())) then kept[fs] = nil end   -- a font set since ours: its own now
+        U.CyrFix(fs, kept)
+    elseif kept[fs] then U.CyrUnfix(fs, kept) end
+end
+
 local function Swap(fs, want)
     if type(fs) ~= "table" or type(fs.GetText) ~= "function" then return end
     local t = U.Plain(fs:GetText())
@@ -72,6 +85,7 @@ local function Swap(fs, want)
     elseif want and Turn(t, false) then
         ours = ours + 1
     end
+    U.SafeCall(S.Font, fs)
 end
 
 -- The tooltip of one of its settings checkboxes, in the words now wanted.

@@ -79,6 +79,8 @@ UNFIT = {
     "UADD_WhatTheWhisper": {
         "L.17d2f1f2": "stays English on purpose: its slot holds a size with English units (sort u in "
                       "tools/wtw_rules.py); the module never writes this key into its table (Swap.lua W.Skip)",
+        "L.26a34d4a": "a real gap: its second slot holds the zone's game name from the game's own API, English on "
+                      "Forever; the module has no Zone route for it (lesson 34), so the line stays English",
     },
     "UADD_ForeverQuestPins": dict(
         {k: "debug line, kept English on purpose (Lc.NAMES): never written into its L"

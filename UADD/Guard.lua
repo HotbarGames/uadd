@@ -3,11 +3,13 @@
 --   * A tooltip line pinned to the Latin file of its own font object. The game's tooltip lines use
 --     font FAMILIES (one file per alphabet). fs:SetFont(<that same file>) pins the line to the Latin
 --     file, and UALL Forever's Ukrainian on it shows boxes (docs/LESSONS2.md lesson 18). Nobody pins
---     a line to the file it already had on purpose, so such a pin gets its font object back. A line
---     set to another file (ours while it shows our words, or another addon's font) is left alone.
+--     a line to the file it already had on purpose, so such a pin gets its font object back, then a
+--     Cyrillic font object, and the Cyrillic file by hand only when that object does not take (the
+--     client keeps a hand-set file over SetFontObject, lesson 44). Read back; "tipfail" / "linefail"
+--     when neither took. A line set to another file (ours, or another addon's font) is left alone.
 --   * The same pin on any FontString that UADD ever gave its font (AceFont.Set calls U.GuardWatch):
 --     once it shows Cyrillic while pinned to its own object's Latin file (an old "put back" by path,
---     the boxes seen in TomTom's arrow title), it gets its font object back.
+--     the boxes seen in TomTom's arrow title), it gets the same repair.
 --   * A shared font object (GameFontNormal, GameTooltipText, ...) changed by UADD's code: it gets its
 --     own font back from a copy made when UADD loaded. Changes made by other addons are theirs.
 --   * The keyboard held by a text box nobody can see (hidden, or with no parent and no size): Enter
@@ -23,13 +25,16 @@ local OBJECTS = { "GameFontNormal", "GameFontHighlight", "GameFontNormalSmall", 
     "ChatFontNormal", "NumberFontNormal", "SystemFont_Shadow_Med1", "QuestFont" }
 local MAX_LINES = 40
 local SAY = {
-    tip = "підказка показувала б квадрати замість літер: шрифт рядка повернуто.",
-    line = "напис показував квадрати замість літер: його шрифт повернуто.",
+    tip = "підказка показувала б квадрати замість літер: шрифт рядка виправлено.",
+    line = "напис показував квадрати замість літер: його шрифт виправлено.",
+    tipfail = "підказка може показувати квадрати замість літер: шрифт з українськими літерами не вдалося поставити.",
+    linefail = "напис може показувати квадрати замість літер: шрифт з українськими літерами не вдалося поставити.",
     font = "код UADD змінив спільний шрифт гри: його повернуто.",
     focus = "клавіатуру тримало невидиме поле вводу: її звільнено, Enter знову відкриває чат.",
 }
 local pin = setmetatable({}, { __mode = "k" })     -- tooltip line -> file set by SetFont since its last object
 local hookedLine = setmetatable({}, { __mode = "k" })
+local failed = setmetatable({}, { __mode = "k" })     -- lines whose Cyrillic file did not take: not tried again
 local watched = setmetatable({}, { __mode = "k" })    -- FontStrings UADD gave its font (AceFont.Set)
 local keep, fixedObj = {}, {}                    -- font object name -> its copy at load / true once put back
 local fixed, said = {}, {}                       -- kind -> times put right / reported this session
@@ -80,12 +85,27 @@ local function Line(fs, kind)
         return
     end
     local p = pin[fs]
-    if not p or (U.IsCyrFont and U.IsCyrFont(p)) then return end
+    if not p or failed[fs] or (U.IsCyrFont and U.IsCyrFont(p)) then return end
     local o = fs.GetFontObject and fs:GetFontObject()
     if type(o) ~= "table" or not o.GetFont or not SamePath((o:GetFont()), p) then return end
+    local _, size, flags = fs:GetFont()
     U.FontBack(fs, { object = o })             -- its object again, colour and the rest kept
+    -- A game line gets a Cyrillic font OBJECT first (SetFontObject, like menu rows: right whether or not
+    -- the client drops a hand-set file then). Only when that does not take (the client keeps a file set
+    -- by hand over SetFontObject, lesson 44) the Cyrillic file goes on by hand at the line's own size (it
+    -- draws Latin too). Read back: a repair that did not take is its own kind, never counted as fixed,
+    -- and that line is not tried again.
+    local took = U.CyrOnLocked(fs)
+    if not took then
+        -- Its own object again, even while the line shows Cyrillic (U.FontBack would keep ours then): the
+        -- Cyrillic file goes on by hand at once. `own`: the pin proves the line keeps a hand-set file, so
+        -- U.CyrOnOwn puts no object of ours on first; the line stays on its own object (a family) for good.
+        U.ObjectOn(fs, o)
+        took = U.CyrOnOwn(fs, { size = size, flags = flags, own = true })
+    end
     pin[fs] = nil
-    Note(kind or "tip")
+    if not took then failed[fs] = true end
+    Note((kind or "tip") .. (took and "" or "fail"))
 end
 
 -- A FontString UADD gave its font: its pins are seen from now on (hooked before ours is set).

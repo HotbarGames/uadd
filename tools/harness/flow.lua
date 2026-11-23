@@ -175,17 +175,25 @@ end
 
 -- ── Questie options tab header ("Questie • <tab name>") ──────────────────────────────────────
 
--- The tab name FontString: the one anchored to the "•" (QuestieOptionsEngine.lua:183-191). Since
--- Questie 12.8 it is on canvas.content, the frame the build puts everything on; before, on the canvas.
+-- The tab name FontString. Questie 12.13: the one subtitle on canvas.content, made in Game13Font
+-- (QuestieOptionsEngine.lua:211-226; ours once our font is on). 12.8-12.12: the one anchored to the "•".
+-- Before 12.8 it was on the canvas itself.
 local function Subtitle(canvas)
     local regions = { canvas:GetRegions() }
     if canvas.content then
         for _, r in ipairs({ canvas.content:GetRegions() }) do regions[#regions + 1] = r end
     end
+    local bullet = "\226\128\162"
     for _, r in ipairs(regions) do
         if r:GetObjectType() == "FontString" then
             local _, rel = r:GetPoint(1)
-            if type(rel) == "table" and rel.GetText and rel:GetText() == "\226\128\162" then return r end
+            if type(rel) == "table" and rel.GetText and rel:GetText() == bullet then return r end
+        end
+    end
+    for _, r in ipairs(regions) do
+        if r:GetObjectType() == "FontString" and r:GetText() ~= bullet then
+            local o = r:GetFontObject()
+            if o == Game13Font or (o and o:GetName() == "UADD_QuestieHeaderFont") then return r end
         end
     end
 end
@@ -210,8 +218,8 @@ function F.header(name, popup)
 end
 
 -- A settings canvas Questie makes after its OnReady (when we scanned), with its header built the way
--- Questie 12.8 builds one (QuestieOptionsEngine.lua:172-193): on canvas.content, the tab name after
--- the "•" in Game13Font. how = "panel": the game's settings window opens, then the canvas shows;
+-- Questie 12.13 builds one (QuestieOptionsEngine.lua:211-226): on canvas.content, one subtitle in
+-- Game13Font at the canvas's top left. how = "panel": the game's settings window opens, then the canvas shows;
 -- "select": the window is already open and the canvas's category is picked. Returns the tab name's
 -- font object name and font file.
 function F.lateCanvas(key, how)
@@ -221,13 +229,8 @@ function F.lateCanvas(key, how)
     local canvas = CreateFrame("Frame", "QuestieOptionsTab_Blizz_" .. key, UIParent)
     canvas:Hide()
     canvas.content = CreateFrame("Frame", nil, canvas)
-    local title = canvas.content:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
-    title:SetText("Questie")
-    local bullet = canvas.content:CreateFontString(nil, "OVERLAY", "Game13Font")
-    bullet:SetPoint("LEFT", title, "RIGHT", 4, -1)
-    bullet:SetText("\226\128\162")
     local sub = canvas.content:CreateFontString(nil, "OVERLAY", "Game13Font")
-    sub:SetPoint("LEFT", bullet, "RIGHT", 8, 0)
+    sub:SetPoint("TOPLEFT", canvas, "TOPLEFT", 8, -10)
     sub:SetTextColor(0.9, 0.9, 0.9, 1)
     sub:SetText(QuestieLoader:ImportModule("l10n")("General Options"))
     canvas.UpdateScrollLayout = function() end      -- the build is done

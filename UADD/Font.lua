@@ -84,6 +84,7 @@ local function ObjectOn(fs, o)
         if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
     end
 end
+U.ObjectOn = ObjectOn                            -- the guard's repair (Guard.lua): an object as is, no checks
 
 -- ── Menu regions (docs/LESSONS3.md lesson 38) ─────────────────────────────────────────────────────
 -- The game's menus (MenuUtil.CreateContextMenu, the new dropdowns: Blizzard_Menu) lend their
@@ -140,6 +141,15 @@ function U.CyrOnOwn(fs, was)
     if type(was) ~= "table" or U.Locked(fs) then return false end
     local path = U.CyrFontPath()
     if not path then return false end
+    -- A hand-set file only with proof the label keeps one: the addon set it (`own`), or our object was put on
+    -- and did not take. No object at all (the 64 cap, CreateFont failed) proves nothing: a line that follows its
+    -- font family stays English, never gets a file by hand that U.FontBack would later pin back.
+    if not was.own then
+        local o = CyrObject(fs)
+        if not o then return false end
+        ObjectOn(fs, o)
+        if U.IsCyrFont((fs:GetFont())) then return true end
+    end
     was.byhand = true                             -- only such a label gets its file back by path (FontBack)
     fs:SetFont(path, tonumber(was.size) or 12, was.flags or "")
     return U.IsCyrFont((fs:GetFont()))
@@ -148,8 +158,24 @@ end
 -- The font `was` (U.SaveFont) back on fs: its font object again, so the family's Cyrillic member is
 -- back too; SetFont only with no object, or when the font was set by hand before us (`own`). A menu
 -- region (U.Locked) gets its object only: SetFont is never even looked up on one.
+-- The font follows the text: while the line still shows Cyrillic in our font, no font without Cyrillic goes on
+-- (English in our font is safe; Ukrainian in a Latin file is boxes). The caller puts the English back first.
+local function ShowsCyr(fs)
+    local okV, vis = pcall(fs.IsVisible, fs)
+    if not okV or not vis then return false end   -- hidden: nothing drawn; the game sets its text again on show
+    local ok, t = pcall(fs.GetText, fs)
+    t = ok and U.Plain(t) or nil
+    return t ~= nil and t:find("[\208\209\210][\128-\191]") ~= nil
+end
+local function OursOn(fs)
+    local o = fs.GetFontObject and fs:GetFontObject() or nil
+    local n = type(o) == "table" and o.GetName and o:GetName()
+    return type(n) == "string" and n:find("^UADD_CyrFont") ~= nil or U.IsCyrFont((fs:GetFont()))
+end
+
 function U.FontBack(fs, was)
     if type(was) ~= "table" then return end
+    if not U.IsCyrFont(was.path) and ShowsCyr(fs) and OursOn(fs) then return end
     if U.Locked(fs) then
         if was.object then ObjectOn(fs, was.object) end
         return
@@ -164,6 +190,38 @@ function U.FontBack(fs, was)
         end
     end
     if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end
+end
+
+-- Our font on a line that is to show Ukrainian, its own saved first in `kept` (weak: fs -> U.SaveFont): our object,
+-- by hand only with proof (U.CyrOnOwn), read back (lesson 2). No take: its own font back, false (the English stays).
+function U.CyrFix(fs, kept)
+    if kept[fs] then return U.IsCyrFont((fs:GetFont())) end
+    local was = U.SaveFont(fs)
+    local ok, took = pcall(U.CyrOnLocked, fs)
+    if ok and not took then ok, took = pcall(U.CyrOnOwn, fs, was) end
+    if ok and took and U.IsCyrFont((fs:GetFont())) then kept[fs] = was return true end
+    pcall(U.FontBack, fs, was)
+    return false
+end
+
+-- Its own font back on a line U.CyrFix fixed; the caller puts the English back first.
+-- FontBack keeps ours while the line still shows Cyrillic (no box); then the record stays, so the next Unfix (once
+-- English is on) still has the line's own font. Forget it only once ours is off the line.
+function U.CyrUnfix(fs, kept)
+    local was = kept[fs]
+    if not was then return end
+    pcall(U.FontBack, fs, was)
+    local ok, still = pcall(OursOn, fs)
+    if not (ok and still and not U.IsCyrFont(was.path)) then kept[fs] = nil end
+end
+
+-- The font follows the text on a line whose text we leave as it is (lesson 45): shown Cyrillic gets a font with it,
+-- anything else (English, hidden) its own font back. fix(fs) / back(fs): a module's own font calls, when given.
+function U.CyrFollow(fs, kept, fix, back)
+    if type(fs) ~= "table" then return end
+    if ShowsCyr(fs) then
+        if fix then pcall(fix, fs) else U.CyrFix(fs, kept) end
+    elseif back then pcall(back, fs) else U.CyrUnfix(fs, kept) end
 end
 
 local function LSM()

@@ -28,6 +28,7 @@ local IDLE_MAX = 4   -- seconds: the longest wait between looks while a look fin
 
 local NAMED = { "OpenMapMenu", "OpenMapPins", "OpenMapPinEditor", "OpenMapPinsCode",
     "OpenMapNoteEditor", "OpenMapNotesExport", "OpenMapReport" }
+S.NAMED = NAMED
 
 local roots, seen, hookedRoot = {}, {}, {}
 local pending, last, ticker, finder = false, 0, nil, nil
@@ -283,6 +284,7 @@ function S.CatchPanel()
 end
 
 function S.Install()
+    if ns.Born then ns.Born.Install() end      -- texts set while a named window is built (Born.lua)
     local map = rawget(_G, "WorldMapFrame")
     if type(map) == "table" and map.HookScript and not hookedRoot[map] then
         hookedRoot[map] = true

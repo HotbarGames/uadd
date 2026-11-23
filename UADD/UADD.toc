@@ -28,6 +28,7 @@ glossary/map.lua
 glossary/rares.lua
 glossary/gear.lua
 Font.lua
+Probe.lua
 Guard.lua
 Popups.lua
 SushiPopups.lua

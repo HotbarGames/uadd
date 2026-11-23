@@ -47,6 +47,8 @@ def _game(p, locale="enUS", cut=False, pre=None):
         c.lua.execute(read_text(os.path.join(HERE, name)))
     M = c.H.tt
     M.cut = cut
+    if cut:
+        c.H.boxQuiet = True                      # the mutant's boxes are wanted (its late window), not reported
     for en in {p["L"], p["option"], *p["stay"],
                *(p[k] for k in ("dist", "dist_s", "coords", "removed", "local", "added", "unknown") if p[k]),
                *(p[k] for k in ("late_page", "late_row", "paste_title", "paste_button")),

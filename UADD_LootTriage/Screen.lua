@@ -19,7 +19,6 @@
 
 local _, ns = ...
 local U = UADD
-local A = UADD.AceFont
 local S = {}
 ns.Screen = S
 
@@ -29,7 +28,7 @@ local APP = "LootTriage"
 local MAXFRAMES = 4000                        -- frames one walk visits at most (its pages hold a few hundred)
 local win, delete, searched, capped
 local tipOwner, tipAns                        -- the last tooltip owner asked, and its answer
-local rec, fonted, rows = {}, {}, {}
+local rec, fonted, rows = {}, ns.Fonts.fonted, {}
 local panel = { init = nil, en = nil, click = nil, hooked = false, frames = {} }
 local count = 0
 
@@ -37,15 +36,7 @@ local function Wanted() return ns.WordsWanted() end
 local function Fighting() local ok, yes = pcall(InCombatLockdown) return ok and yes == true end
 local function Forbidden(f) return type(f) ~= "table" or (f.IsForbidden and f:IsForbidden()) end
 
--- Our font on a text, read back; true when it can draw Cyrillic now.
-local function Font(fs)
-    if A and A.Set then pcall(A.Set, fs, APP) end
-    local ok, path = pcall(fs.GetFont, fs)
-    if ok and U.IsCyrFont(path) then fonted[fs] = true return true end
-    return false
-end
-local function Unfont(fs) if fonted[fs] then fonted[fs] = nil if A and A.Back then pcall(A.Back, fs) end end end
-
+local Font, Unfont = ns.Fonts.On, ns.Fonts.Off      -- Font.lua: ours on, read back; its own back
 S.Font, S.Unfont = Font, Unfont
 
 -- ── Its window ────────────────────────────────────────────────────────────────────────────────
@@ -291,8 +282,9 @@ function S.Remove()
         if win:IsShown() then pcall(win.Refresh) end
         WalkAll()
     end
-    for fs in pairs(fonted) do Unfont(fs) end
-    if A and A.Stop then pcall(A.Stop, APP) end
+    local list = {}
+    for fs in pairs(fonted) do list[#list + 1] = fs end
+    for _, fs in ipairs(list) do Unfont(fs) end
     count = 0
 end
 

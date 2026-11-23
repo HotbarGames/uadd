@@ -34,9 +34,7 @@ local function EnglishClient()
     return l == "enUS" or l == "enGB"
 end
 local function Loaded(name)
-    local fn = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
-    local ok, yes = pcall(fn, name)
-    return ok and yes and true or false
+    local ok, yes = pcall((C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded, name) return ok and yes and true or false
 end
 
 function ns.On() return ready and db ~= nil and db.enabled == true and EnglishClient() end
@@ -96,18 +94,25 @@ local function Translate(now) return Code(now, BUTTON) or Popup(now) end
 
 -- ── Fonts: ours on a text that shows our words, its own back after ──────────────────────────
 
+-- Lessons 18, 38, 44: its own font saved first (never while ours is on), then our Cyrillic font OBJECT; only on its
+-- window's labels, where that does not take, the file by hand (U.CyrOnOwn). The popup gets an object only.
 local saved = {}
-local function CyrOn(fs)
-    local path = U.CyrFontPath()
-    local _, s, f = fs:GetFont()
-    if not path or not s then return false end
-    if not saved[fs] then saved[fs] = U.SaveFont(fs) end
-    fs:SetFont(path, s, f or "")
-    return U.IsCyrFont((fs:GetFont()))
+local function IsCyr(fs) local ok, p = pcall(fs.GetFont, fs) return ok and U.IsCyrFont(p) end
+local function On(fs, byhand)
+    if IsCyr(fs) then return true end           -- ours on already (saved), or a font with our letters
+    local okS, was = pcall(U.SaveFont, fs)
+    if not okS or type(was) ~= "table" then return false end
+    local ok, took = pcall(U.CyrOnLocked, fs)
+    if byhand and not (ok and took) and not U.Locked(fs) then ok, took = pcall(U.CyrOnOwn, fs, was) end
+    if ok and took and IsCyr(fs) then saved[fs] = was return true end
+    pcall(U.FontBack, fs, was)                  -- whole English, never half a font
+    return false
 end
+local function CyrOn(fs) return On(fs, true) end local function PopFont(fs) return On(fs, false) end
 local function FontBack(fs)
     local o = saved[fs]
-    if o then saved[fs] = nil U.FontBack(fs, o) end
+    if o and IsCyr(fs) then pcall(U.FontBack, fs, o) end   -- U.FontBack keeps ours while it still shows Cyrillic:
+    if not (o and IsCyr(fs) and not U.IsCyrFont(o.path)) then saved[fs] = nil end   -- then the record stays too
 end
 ns.saved = saved
 
@@ -135,7 +140,7 @@ local function PopEnglish(uk) return back[uk] end
 local popupsOk = type(U.Popups) == "table" and type(U.Popups.Register) == "function"
 if popupsOk then
     U.Popups.Register(KEY, {
-        names = { [POPUP] = true }, text = PopText, english = PopEnglish, wanted = ns.WordsWanted, fix = CyrOn, back = FontBack,
+        names = { [POPUP] = true }, text = PopText, english = PopEnglish, wanted = ns.WordsWanted, fix = PopFont, back = FontBack,
     })
 end
 
@@ -225,11 +230,7 @@ local function Sync()
     U.SafeCall(Apply)
     if popupsOk then U.SafeCall(U.Popups.Sync, KEY) end
 end
-local function Begin()
-    if not ns.On() then return end
-    U.SafeCall(Hook)
-    Sync()
-end
+local function Begin() if ns.On() then U.SafeCall(Hook) Sync() end end
 local function End()              -- off (db.enabled is false by now): everything of ours out
     U.SafeCall(Bind, false)
     if popupsOk then U.SafeCall(U.Popups.Off, KEY) end

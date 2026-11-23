@@ -160,10 +160,30 @@ function Widget:SetTextColor(r, g, b, a) textTarget(self).__color = { r, g, b, a
 function Widget:GetTextColor() return unpack(textTarget(self).__color or { 1, 1, 1, 1 }) end
 function Widget:SetVertexColor(r, g, b, a) self.__vcolor = { r, g, b, a or 1 } end
 function Widget:GetVertexColor() return unpack(self.__vcolor or { 1, 1, 1, 1 }) end
+-- As in the client (docs/LESSONS4.md lesson 44; tools/harness/client_facts.py): a file set by hand on a
+-- FontString or EditBox (also a button's font string) stays over every later SetFontObject, to another
+-- object and back too; the object is set (GetFontObject gives it), GetFont still gives the hand-set font.
+-- A font object (CreateFont) has no such mark: its SetFontObject / CopyFontObject copies.
+-- A file an installed addon ships ("Interface\AddOns\<addon>\...", WhatTheWhisper's Manrope) takes, as in the
+-- client, and GetFont gives its path (boxes.lua judges it by its real letters); a missing one fails.
+local addonFile = {}
+local function AddonFile(path)
+    local p = path:lower():gsub("/", "\\")
+    if not p:find("^interface\\addons\\[^\\]+\\.") or p:find("%.%.") then return false end
+    if addonFile[p] == nil then
+        local py = rawget(_G, "python")
+        local rel = path:gsub("\\", "/"):gsub("^[^/]*/[^/]*/", "")
+        local ok, v = pcall(function() return py.eval("lambda r: __import__('os').path.isfile("
+            .. "__import__('os').path.join(__import__('session').addons_dir(), r))")(rel) end)
+        addonFile[p] = ok and v == true
+    end
+    return addonFile[p]
+end
 function Widget:SetFont(path, size, flags)
     local fs = textTarget(self)
-    if type(path) ~= "string" or not H.fontFiles[path:lower()] then return false end
+    if type(path) ~= "string" or not (H.fontFiles[path:lower()] or AddonFile(path)) then return false end
     fs.__font = { path, size, flags or "" }
+    if fs.__type ~= "Font" then fs.__hand = true end
     return true
 end
 function Widget:GetFont() local f = textTarget(self).__font if f then return f[1], f[2], f[3] end end
@@ -171,6 +191,7 @@ function Widget:SetFontObject(o)
     local fs = textTarget(self)
     if type(o) == "string" then o = rawget(_G, o) end   -- the client takes a font object's name too
     fs.__fontObject = o
+    if fs.__hand then return end                        -- the hand-set file stays (lesson 44)
     if type(o) == "table" and rawget(o, "__font") then fs.__font = { unpack(o.__font) } end
 end
 function Widget:GetFontObject() return textTarget(self).__fontObject end

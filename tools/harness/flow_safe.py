@@ -13,13 +13,14 @@ alone and two made-up modules (UADD_Probe, UADD_Probe2, run as their own files):
   * safe 6  a tooltip line pinned to its own Latin font file: the guard gives it its font object back and says
             so once.
   * safe 7  the keyboard held by a text box nobody can see: the guard frees it and says so once.
+  * safe 8  as in the client, the line of safe 6 keeps a hand-set file over SetFontObject (wow_widgets.lua): the
+            guard's Cyrillic file by hand leaves no boxes; a repair that did not take counts as "tipfail".
 
 python3 tools/harness/flow_safe.py           the checks
 python3 tools/harness/flow_safe.py --prove   each step again with its fix taken out: each must FAIL
 """
 import collections
 import os
-import subprocess
 import sys
 
 import loader
@@ -191,27 +192,42 @@ def _run(check, facts):
         PROBE.ace = calls''')
     check("safe 5: AceGUI SetFocus and Release of another addon's widget: no work", P.ace == 0, P.ace)
 
-    # safe 6
-    L.execute('GameTooltip:ClearLines() GameTooltip:AddLine("one") GameTooltip:AddLine("two") GameTooltip:ClearLines()')
+    # safe 6 and 8, in the client's model: a line keeps a hand-set file over SetFontObject (lesson 44)
+    L.execute('GameTooltip:ClearLines() for i = 1, 3 do GameTooltip:AddLine("x") end '
+              'GameTooltip:ClearLines()')
     pump(3)
-    pin = L.eval('''function()
-        GameTooltip:AddLine("one") GameTooltip:AddLine("two")
-        local fs = GameTooltipTextLeft2
+    pin = L.eval('''function(n)
+        for i = 1, 3 do GameTooltip:AddLine("x") end
+        local fs = _G["GameTooltipTextLeft" .. n]
         local o = fs:GetFontObject()
         fs:SetFont(o:GetFont())
         GameTooltip:ClearLines()
         PROBE.pinned, PROBE.fs, PROBE.obj = rawget(fs, "__pinned"), fs, o
     end''')
-    back = L.eval('function() return PROBE.fs:GetFontObject() == PROBE.obj and rawget(PROBE.fs, "__pinned") == nil end')
-    pin()
+    back = L.eval('''function() local fs = PROBE.fs  fs:SetText("\\208\\162\\208\\181\\209\\129\\209\\130")
+        return fs:GetFontObject() == PROBE.obj, not (rawget(fs, "__pinned") and not UADD.IsCyrFont((fs:GetFont()))),
+            tostring((fs:GetFont())) end''')
+    guard = L.eval('function(k) local h = UADD_DB.health h = h and h.guard return h and h[k] or 0 end')
+    pin(2)
     planted = P.pinned
     pump(3)
-    fixed = back()
-    pin()
+    obj1, cyr1, f1 = back()
+    pin(2)
     pump(3)
+    obj2, cyr2, f2 = back()
+    L.execute("GameTooltip:ClearLines() HARNESS.pump(3, function() return false end, 0.05)")   # no new pin
     check("safe 6: a tooltip line pinned to its own Latin file: its font object back (twice), said once",
-          planted is not None and fixed and back() and said("підказка показувала") == 1,
-          f"planted={planted} fixed={fixed}")
+          planted is not None and obj1 and obj2 and said("підказка показувала") == 1, f"planted={planted}")
+    check("safe 8: ... and a Cyrillic file by hand: no boxes (twice), 2 repairs, none again with no new pin",
+          cyr1 and cyr2 and guard("tip") == 2 and guard("tipfail") == 0, f"{f1} {f2} tip={guard('tip')}")
+    L.execute('PROBE.own, PROBE.lk = UADD.CyrOnOwn, UADD.CyrOnLocked UADD.CyrOnOwn = function() return false end '
+              'UADD.CyrOnLocked = UADD.CyrOnOwn')
+    for _ in range(2):
+        pin(3)
+        pump(3)
+    L.execute('UADD.CyrOnOwn, UADD.CyrOnLocked = PROBE.own, PROBE.lk')
+    check("safe 8: a repair that did not take: counted as tipfail once, not as fixed, said once",
+          guard("tipfail") == 1 and guard("tip") == 2 and said("не вдалося поставити") == 1, guard("tipfail"))
 
     # safe 7
     L.execute('local e = CreateFrame("EditBox") e:SetAutoFocus(false) e:SetFocus() PROBE.box = e')
@@ -236,26 +252,30 @@ def run_checks(cuts=None):
     return checks, facts
 
 
-def _head(name):
-    return subprocess.run(["git", "show", "HEAD:UADD/" + name], cwd=session.REPO, capture_output=True,
-                          text=True, encoding="utf-8").stdout
-
-
-def _replace(name, old, new):
+def _replace(name, *pairs):
+    """UADD/<name> with each fix cut in memory: pairs are old, new, ...; each old must be there exactly once."""
     with open(os.path.join(session.REPO, "UADD", name), encoding="utf-8") as f:
         text = f.read()
-    assert old in text, (name, old)
-    return text.replace(old, new)
+    for o, n in zip(pairs[::2], pairs[1::2]):
+        assert text.count(o) == 1, (name, o, text.count(o))
+        text = text.replace(o, n)
+    return text
 
 
 def proofs():
     """(step, cuts): each step with its fix taken out."""
     return [("safe 1", {"Safe.lua": _replace("Safe.lua", "local LIMIT = 5 ", "local LIMIT = 1e9 ")}),
             ("safe 2", {"Safe.lua": _replace("Safe.lua", "if not settled or U.installing == key then", "if false then")}),
-            ("safe 3", {"Lines.lua": _head("Lines.lua")}),
-            ("safe 4", {"Lines.lua": _head("Lines.lua")}),
-            ("safe 5", {"AceFont.lua": _head("AceFont.lua")}),
-            ("safe 6", {"Guard.lua": ""}),
+            ("safe 3", {"Lines.lua": _replace("Lines.lua", "U.SafeCall(h.line, msg)", "true, h.line(msg)",  # unguarded
+                                              "pcall(Pick, msg)", "true, Pick(msg)")}),
+            ("safe 4", {"Lines.lua": _replace("Lines.lua", "tryL = left and (mine or Maybe(left))", "tryL = left",
+                                              "tryR = right and (mine or Maybe(right))", "tryR = right")}),
+            ("safe 5", {"AceFont.lua": _replace("AceFont.lua",       # Release walks any widget's strings
+                                                "if byWidget[widget] then UADD.SafeCall(Release, widget) end",
+                                                "if type(widget) == 'table' then for _, f in ipairs(Strings(widget)) "
+                                                "do A.Back(f) end end")}), ("safe 6", {"Guard.lua": ""}),
+            ("safe 8", {"Guard.lua": _replace("Guard.lua", "took = U.CyrOnOwn(fs, { size = size, flags = flags, own = true })",
+                                              "took = true")}),   # the old guard: its object only
             ("safe 7", {"Guard.lua": ""})]
 
 

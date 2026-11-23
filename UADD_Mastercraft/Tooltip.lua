@@ -18,6 +18,7 @@ local CYR = "[\208-\210]"
 -- LibDBIconTooltip: the minimap button's tooltip (LibDBIcon makes it when it loads, before us).
 local TIPS = { "GameTooltip", "ItemRefTooltip", "ShoppingTooltip1", "ShoppingTooltip2", "LibDBIconTooltip" }
 local changed = {}            -- tooltip -> { [fontString] = its font before ours (U.SaveFont) }
+local said = setmetatable({}, { __mode = "k" })   -- line -> the Ukrainian we put on it
 local hookedTip = {}
 local count = 0
 
@@ -35,14 +36,18 @@ end
 local function Put(tip, fs, uk)
     if not fs or not U.Plain(uk) then return end
     if not uk:find(CYR) then fs:SetText(uk) return end
-    -- No Cyrillic font: the line stays English (no boxes).
-    local path = U.CyrFontPath()
-    local _, s, f = fs:GetFont()
-    if not path or not s then return end
-    fs:SetText(uk)
+    -- A game line: UADD's Cyrillic font OBJECT, never a file by hand (it pins the line, lesson 18). Saved before
+    -- ours goes on, read back (lesson 2); no Cyrillic font or no take: the line stays English (no boxes).
+    -- A line that keeps a file set by hand over any object gets ours by hand (U.CyrOnOwn, lesson 44).
     changed[tip] = changed[tip] or {}
-    if not changed[tip][fs] then changed[tip][fs] = U.SaveFont(fs) end
-    fs:SetFont(path, s, f or "")
+    local was = changed[tip][fs] or U.SaveFont(fs)
+    if not U.IsCyrFont((fs:GetFont())) and not U.CyrOnLocked(fs) and not U.CyrOnOwn(fs, was) then
+        if not changed[tip][fs] then pcall(U.FontBack, fs, was) end
+        return
+    end
+    changed[tip][fs] = was
+    fs:SetText(uk)
+    said[fs] = uk
     count = count + 1
 end
 
@@ -98,20 +103,38 @@ local function Redo(tip, left, right)
     if r then Put(tip, Line(tip, "Right", i), r) end
 end
 
-local function Cleared(tip)
+-- Its font object back (U.CyrUnfix: never a pinned file, lesson 18). The font follows the text: FontBack keeps
+-- ours on a shown line that still shows Cyrillic, and then the record stays until ours is off. how:
+-- "clear": the tooltip was cleared, so no line of it is drawn (the client hides them): a line that still holds
+-- our words is emptied first, and its object goes back whether the line is hidden yet or not.
+-- "add": a line added to the tooltip (filled again): a kept line that shows no Cyrillic now gets its own back.
+-- "off": every line; one that still shows our Ukrainian keeps ours until it is cleared or shows English.
+local function Settle(tip, how)
     local list = changed[tip]
     if not list then return end
-    changed[tip] = nil
-    for fs, was in pairs(list) do pcall(U.FontBack, fs, was) end   -- its font object, not a pinned file
+    for fs in pairs(list) do
+        local ok, t = pcall(fs.GetText, fs)
+        t = ok and U.Plain(t) or nil
+        if how == "clear" and t ~= nil and t == said[fs] then pcall(fs.SetText, fs, "") t = "" end
+        if how ~= "add" or not (t and t:find(CYR)) then U.CyrUnfix(fs, list) end
+        if not list[fs] then said[fs] = nil end
+    end
+    if next(list) == nil then changed[tip] = nil end
+end
+
+-- A kept line (above) first, also with our words off: one table look for the game's other lines.
+local function Add(self, a, b)
+    if changed[self] then U.SafeCall(Settle, self, "add") end
+    U.SafeCall(Redo, self, a, b)
 end
 
 local function HookTip(tip)
     if type(tip) ~= "table" or hookedTip[tip] or not tip.AddLine then return end
     hookedTip[tip] = true
-    hooksecurefunc(tip, "AddLine", function(self, text) U.SafeCall(Redo, self, text) end)
-    hooksecurefunc(tip, "AddDoubleLine", function(self, a, b) U.SafeCall(Redo, self, a, b) end)
-    hooksecurefunc(tip, "SetText", function(self, text) U.SafeCall(Redo, self, text) end)
-    if tip.HookScript then tip:HookScript("OnTooltipCleared", function(self) U.SafeCall(Cleared, self) end) end
+    hooksecurefunc(tip, "AddLine", function(self, text) Add(self, text) end)
+    hooksecurefunc(tip, "AddDoubleLine", function(self, a, b) Add(self, a, b) end)
+    hooksecurefunc(tip, "SetText", function(self, text) Add(self, text) end)
+    if tip.HookScript then tip:HookScript("OnTooltipCleared", function(self) U.SafeCall(Settle, self, "clear") end) end
 end
 
 function T.Install()
@@ -119,7 +142,7 @@ function T.Install()
 end
 
 function T.Restore()
-    for tip in pairs(changed) do Cleared(tip) end
+    for tip in pairs(changed) do Settle(tip, "off") end
 end
 
 function T.Count() return count end

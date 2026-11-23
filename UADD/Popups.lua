@@ -26,16 +26,11 @@ local open = {}          -- dialog frame -> { spec, which, text, parts = { { fs,
 local hookedHide = {}    -- dialog frame -> true once its OnHide is hooked
 local installed = false
 
-local function GL(id)
-    local v = U.Glossary and U.Glossary.Text and U.Glossary.Text(id)
-    return type(v) == "string" and v ~= "" and v or nil
-end
-
--- { en, uk } while en is a whole English string and uk a different word; else nil.
+-- { en, uk } while en is a whole English string and uk (its glossary word) a different word; else nil.
 local function Pair(en, id)
     if type(en) ~= "string" or en == "" or en:find(CYR) then return nil end
-    local uk = GL(id)
-    if not uk or uk == en then return nil end
+    local uk = U.Glossary and U.Glossary.Text and U.Glossary.Text(id)
+    if type(uk) ~= "string" or uk == "" or uk == en then return nil end
     return { en, uk }
 end
 
@@ -46,12 +41,10 @@ local function PairsOf(s)
         local p = Pair(rawget(_G, name), s.globals[name])
         if p then out[#out + 1] = p end
     end
-    if s.L then
-        for _, k in ipairs(s.oorder) do
-            local ok, en = pcall(s.L, k)
-            local p = ok and Pair(en, s.own[k]) or nil
-            if p then out[#out + 1] = p end
-        end
+    for _, k in ipairs(s.L and s.oorder or {}) do
+        local ok, en = pcall(s.L, k)
+        local p = ok and Pair(en, s.own[k]) or nil
+        if p then out[#out + 1] = p end
     end
     return out
 end
@@ -100,22 +93,19 @@ end
 
 local function Dialogs()
     local out, n = {}, tonumber(rawget(_G, "STATICPOPUP_NUMDIALOGS")) or 4
-    for i = 1, n do
-        local d = rawget(_G, "StaticPopup" .. i)
-        if type(d) == "table" then out[#out + 1] = d end
-    end
+    for i = 1, n do local d = rawget(_G, "StaticPopup" .. i) if type(d) == "table" then out[#out + 1] = d end end
     return out
 end
 
 local function Button(d, i)
-    local name = d.GetName and d:GetName() or ""
-    local b = rawget(d, "button" .. i) or rawget(_G, name .. "Button" .. i)
+    local b = rawget(d, "button" .. i) or rawget(_G, (d.GetName and d:GetName() or "") .. "Button" .. i)
     if not b and type(rawget(d, "ButtonContainer")) == "table" and type(d.ButtonContainer.Buttons) == "table" then
         b = d.ButtonContainer.Buttons[i]
     end
     return type(b) == "table" and b.GetFontString and b:GetFontString() or nil
 end
 
+local fonts = setmetatable({}, { __mode = "k" })   -- no fix/back of the module's: U.CyrFix (popup fonts lack Cyrillic)
 -- Its text and buttons as the game set them: English, or ours (uk) where we know the words.
 local function Show(d, rec, uk)
     local s = rec.spec
@@ -124,10 +114,10 @@ local function Show(d, rec, uk)
         local want, other = uk and p.uk or p.en, uk and p.en or p.uk
         if U.Plain(p.fs:GetText()) == other then p.fs:SetText(want) end
         local font = uk and s.fix or s.back
-        if font then pcall(font, p.fs) end
+        if font then pcall(font, p.fs) elseif not uk then U.CyrUnfix(p.fs, fonts)   -- the English first, then its font
+        elseif U.Plain(p.fs:GetText()) == p.uk and not U.CyrFix(p.fs, fonts) then p.fs:SetText(p.en) end   -- no boxes
     end
-    local h1 = rec.text and rec.text:GetHeight()
-    local h = d.GetHeight and d:GetHeight()
+    local h1, h = rec.text and rec.text:GetHeight(), d.GetHeight and d:GetHeight()
     if h and h0 and h1 and h1 ~= h0 then d:SetHeight(h + h1 - h0) end
 end
 local function Locked() local ok, yes = pcall(InCombatLockdown) return ok and yes and true or false end
@@ -143,16 +133,32 @@ local function Forget(d)
     waiter:RegisterEvent("PLAYER_REGEN_ENABLED")
 end
 P.Later = function() local n = 0 for _ in pairs(later) do n = n + 1 end return n end   -- for the checks
-
 local function Wanted(s)
     local ok, yes = pcall(s.wanted)
     return ok and yes and true or false
 end
 
+-- A dialog of ours shown in combat gets no record (lesson 36), yet the font follows the text (LESSONS4.md lesson 45):
+-- each of its lines shown in Cyrillic (the fields' words, an addon's own) gets a font with it, the rest their own font.
+local bare, HookHide = setmetatable({}, { __mode = "k" }), nil   -- dialog -> spec, while shown that way
+local function Follow(d, s)
+    bare[d] = d:IsShown() and s or nil
+    HookHide(d)
+    for _, fs in pairs({ rawget(d, "text") or rawget(_G, (d.GetName and d:GetName() or "") .. "Text"), Button(d, 1),
+        Button(d, 2), Button(d, 3), Button(d, 4) }) do U.CyrFollow(fs, fonts, s.fix, s.back) end
+end
+HookHide = function(d)
+    if hookedHide[d] or not d.HookScript then return end
+    hookedHide[d] = true
+    d:HookScript("OnHide", function(self) pcall(Forget, self) if bare[self] then pcall(Follow, self, bare[self]) end end)
+end
+
 local function ShowOne(s, which)
-    if not Wanted(s) or Locked() then return end
+    if not Wanted(s) then return end
     for _, d in ipairs(Dialogs()) do
-        if d:IsShown() and rawget(d, "which") == which then
+        if d:IsShown() and rawget(d, "which") == which and Locked() then Follow(d, s)
+        elseif d:IsShown() and rawget(d, "which") == which then
+            HookHide(d)
             if open[d] then Forget(d) end      -- shown again: the game set its English again
             local name = d.GetName and d:GetName() or ""
             local text = rawget(d, "text") or rawget(_G, name .. "Text")
@@ -171,14 +177,7 @@ local function ShowOne(s, which)
                 end
                 if uk then rec.parts[#rec.parts + 1] = { fs = fs, en = en, uk = uk } end
             end
-            if rec.parts[1] then
-                open[d] = rec
-                if not hookedHide[d] and d.HookScript then
-                    hookedHide[d] = true
-                    d:HookScript("OnHide", function(self) pcall(Forget, self) end)
-                end
-                Show(d, rec, true)
-            end
+            if rec.parts[1] then open[d], bare[d] = rec, nil Show(d, rec, true) end
         end
     end
 end
@@ -224,6 +223,7 @@ local function Unrecorded(s)
                 local en, uk = Of(s, t)
                 if en and t == uk then fs:SetText(en) end
             end
+            Follow(d, s)                       -- English now: its own font back; a Cyrillic text keeps ours
         end
     end
 end

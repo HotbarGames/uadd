@@ -1,4 +1,4 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.13. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
@@ -50,7 +50,6 @@ T["Code.7b0732d7"] = "Ранг 12-13 (епічний)"
 T["Code.962d3ad6"] = "Ранг 14"
 T["Code.480e2c53"] = "Зброя рангу 14"
 T["Code.c9e059f8"] = "Ще немає у Forever"
-T["Code.95068600"] = "Цей комплект є у файлах гри, але його джерело (рейд, ранги поля бою, подія, ...) ще не є частиною WoW Forever."
 T["Code.177fa5c7"] = "Комплект, створений для WoW Forever. Звідки випадають його частини, ще невідомо."
 T["Code.6c1de880"] = "Нейтральний"
 T["Code.5971ebe2"] = "Дружній"
@@ -96,9 +95,7 @@ T["Code.0dd5f3c7"] = "Інше"
 T["Code.59475c0e"] = "Ще немає"
 T["Code.9d14e6a2"] = "Комплекти предметів і нагороди за репутацію у WoW Forever та які частини у вас уже є."
 T["Code.f0f2418c"] = "Усі класи"
-T["Code.44924c11"] = "Сховати комплекти, яких ще немає у Forever"
 T["Code.a32ab8c6"] = "Інші комплекти"
-T["Code.79933d09"] = "(ще немає у Forever)"
 T["Code.722ec374"] = "Немає комплектів для цього фільтра."
 T["Code.87e1f263"] = "є %d / %d"
 S["Code.87e1f263"] = "vv"
@@ -276,3 +273,7 @@ T["Code.be1ee9f8"] = "Влучання (на 1 %)"
 T["Code.e8b27888"] = "Поспіх (на 1 %)"
 T["Code.b7e6b89e"] = "Вправність"
 T["Code.eaec46ee"] = "Проникнення чарів"
+T["Code.05acf9ec"] = "%d з %d"
+S["Code.05acf9ec"] = "vv"
+T["Code.4919da4d"] = "(загалом %s%%)"
+S["Code.4919da4d"] = "v"

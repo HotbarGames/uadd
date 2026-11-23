@@ -1,13 +1,10 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.13. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
-T["Code.abb9adab"] = "Змінити"
-T["Code.59070c69"] = "Відхиляє це запрошення та всі інші на 30 хвилин. Повторне відкриття вікна ігор гільдії скасовує це."
-T["Code.ca86ac4c"] = "Тестове запрошення: прийнято (нічого не станеться)."
 T["Code.0ddf1a54"] = "Тестове запрошення: відхилено."
 T["Code.7bff3268"] = "Тестове запрошення: відкладено (нічого не призупинено)."
 T["Code.77dd54bd"] = "Ігри гільдії: запрошень немає 30 хвилин."
@@ -276,3 +273,7 @@ S["Code.07fbebc2"] = "v"
 T["Code.17baf7fe"] = "Рецепти, які треба вивчити дорогою (тренер, торговець або аукціон)."
 T["Code.8d87ffa2"] = "Ранги, які треба вивчити дорогою."
 T["Code.0b87db35"] = "Купити"
+T["Code.36c23ae2"] = "Купує в цього торговця те, чого бракує: %s"
+S["Code.36c23ae2"] = "v"
+T["Code.8da56d58"] = "Не під час польоту"
+T["Code.a943fe43"] = "Без спливного вікна книги, поки ви на шляху польоту або на літаючому маунті."

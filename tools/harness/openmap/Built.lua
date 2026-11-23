@@ -54,8 +54,7 @@ function S.DockTip(zone)
     GameTooltip:SetOwner(S.view.side.rows[1], "ANCHOR_RIGHT")
     local t = L["To"] .. " " .. zone
     GameTooltip:AddLine(t)
-    local fs = _G.GameTooltipTextLeft1
-    fs:SetFont(STANDARD_TEXT_FONT, 12, "")
+    local fs = _G.GameTooltipTextLeft1   -- OpenMap never sets a tooltip line's font: the game's object
     fs:SetText(t)
     fs:Show()
     GameTooltip:Show()
@@ -80,7 +79,6 @@ function S.PinTip(note, zone, from, how)
     for i, t in ipairs(lines) do
         GameTooltip:AddLine(t)
         local fs = _G["GameTooltipTextLeft" .. i]
-        fs:SetFont(STANDARD_TEXT_FONT, 12, "")
         fs:SetText(t)
         fs:Show()
     end

@@ -78,7 +78,7 @@ end
 local function NewFont(name, size, global)
     local o = CreateFont(name)
     for k, v in pairs(FontObjectMixin) do o[k] = v end
-    o:SetFont((GameFontNormal:GetFont()), size, "")
+    o:SetFont((GameFontNormal:GetFont()), size, "")   -- reaches its lines later too (wow_widgets.lua)
     if not global then _G[name] = nil end
     return o
 end

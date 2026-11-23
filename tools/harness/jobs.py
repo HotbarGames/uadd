@@ -11,6 +11,7 @@ import os
 
 import loader
 import pool
+import boxes
 import tipfont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -62,12 +63,13 @@ def _segment(p, key, mod, jids):
     """One segment's (checks with its tooltip font check, facts) from its jobs' results."""
     import flow
     tip = tipfont.merge([p.tip(j) for j in jids])
+    tail = tipfont.segment(key, flow.Check, tip) + boxes.segment(key, flow.Check, boxes.merge([p.boxes(j) for j in jids]))
     if not hasattr(mod, "pieces"):
         r = p.results.get(jids[0])
-        return p.expand(jids[0]) + tipfont.segment(key, flow.Check, tip), (r.facts if r else {})
+        return p.expand(jids[0]) + tail, (r.facts if r else {})
     got = [(p.expand(j), p.results[j].facts if j in p.results and not p.results[j].error else {}) for j in jids]
     checks, facts = mod.assemble(got)
-    return [flow.Check(*c) for c in checks] + tipfont.segment(key, flow.Check, tip), facts
+    return [flow.Check(*c) for c in checks] + tail, facts
 
 
 def run_all(segments):
@@ -91,7 +93,8 @@ def run_all(segments):
     p.run(before_rest=warm)
 
     notes = []
-    checks = p.expand(main) + tipfont.segment("main", flow.Check, p.tip(main))
+    checks = (p.expand(main) + tipfont.segment("main", flow.Check, p.tip(main))
+              + boxes.segment("main", flow.Check, p.boxes(main)))
     facts = {}
     for jid in p.family(main):
         r = p.results.get(jid)

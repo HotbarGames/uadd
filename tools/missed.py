@@ -6,8 +6,9 @@ once (UADD/Missed.lua) in its SavedVariables. After you log out (the game writes
 It reads WTF/Account/*/SavedVariables/UADD.lua under the WoW _forever_ folder ($UADD_WTF_DIR: another WTF
 folder; or give the UADD.lua path as an argument), prints per module the missed texts (most shown first)
 and writes all of them to local/missed/<module>.txt (git-ignored: it holds the addons' English).
-Exit code: 1 when it lists missed texts, 0 with "nothing missed." when there are none, 2 when no file
-could be read.
+First it prints, loudly, what UADD's guard had to repair in the game (tools/health_report.py).
+Exit code: 1 when it lists missed texts or guard repairs, 0 with "nothing missed." when there are none, 2
+when no file could be read.
   * Kept quiet here: a module's STAY texts (English on purpose), for every module in STAY_LISTS. A STAY
     template ("%s ...") also hides its filled lines; the English of a STAY hash is read from the installed
     addon at run time (never written to a tracked file). Without the addon only exact texts are dropped.
@@ -31,6 +32,7 @@ SHOW = 15            # texts per module on screen; the file has all
 NAME = re.compile(r"^[A-Z][\w'-]*( (of|the|de|[A-Z][\w'-]*)){0,2}$")
 sys.path.insert(0, HERE)
 import hashtext  # noqa: E402
+import health_report  # noqa: E402
 from svread import parse  # noqa: E402,F401  (tests and callers use missed.parse)
 
 
@@ -271,10 +273,21 @@ def main(argv):
         print(p)
     if len(problems) == len(files):
         return 2
+    repairs = health_report.report(*health_report.collect(_parsed(files)))
     if report(mods, stay_sets(), OUT) == 0:
         print("nothing missed.")
-        return 0
+        return 1 if repairs else 0
     return 1
+
+
+def _parsed(files):
+    """Each readable file parsed again, for the game-health report (tools/health_report.py)."""
+    for _, path in files:
+        try:
+            with open(path, "rb") as f:
+                yield parse(f.read())
+        except Exception:           # noqa: BLE001 - already reported by collect()
+            continue
 
 
 if __name__ == "__main__":

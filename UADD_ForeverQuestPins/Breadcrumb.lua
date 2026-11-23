@@ -93,6 +93,7 @@ local function Set(text)
     local ok, err = pcall(body.SetText, body, text)
     busy = false
     if not ok then U.Fault(KEY, err) end
+    if ns.Screen then U.SafeCall(ns.Screen.Font, body) end     -- the font follows the text (Screen.lua)
     return ok and body:GetText() == text
 end
 

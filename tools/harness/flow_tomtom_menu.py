@@ -155,7 +155,10 @@ def _replace(path, old, new):
 def proofs():
     """(step, cuts): mutant `set` makes AceFont.Set treat a menu row as any FontString again (hook and
     fs:SetFont, the code before lesson 38). A and B each want their own part to fail with it."""
-    cut = {"UADD/AceFont.lua": _replace("UADD/AceFont.lua", "local locked = UADD.Locked(fs)", "local locked = false")}
+    text = _replace("UADD/AceFont.lua", "local locked = UADD.Locked(fs)", "local locked = false")
+    old = "if not was.own then ok, took = pcall(UADD.CyrOnLocked, fs) end"
+    assert text.count(old) == 1, old
+    cut = {"UADD/AceFont.lua": text.replace(old, 'ok, took = pcall(fs.SetFont, fs, path, 12, "")')}
     return [("tt: menu A", cut), ("tt: menu B", cut)]
 
 

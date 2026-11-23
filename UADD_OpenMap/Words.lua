@@ -196,6 +196,7 @@ local function Put(fs, text)
     local ok, err = pcall(fs.SetText, fs, text)
     guard = false
     if not ok then error(err, 0) end
+    if type(text) == "string" and text:find(CYR) then U.SafeCall(ns.Fonts.Fix, fs) end   -- font follows text
 end
 
 -- The English this FontString had, when our words for it are exactly what it shows now: kept per
@@ -244,11 +245,12 @@ end
 local function OnText(fs)
     if guard or type(fs) ~= "table" then return end
     mine[fs] = nil
-    if not ns.On() or ns.Screen.WaitCombat() then return end   -- after combat, a look puts our words in
-    U.SafeCall(W.Apply, fs, true)
-    local t = UADD.Plain(fs:GetText())
-    if type(t) == "string" and t:find(CYR) then U.SafeCall(ns.Fonts.Fix, fs) end   -- Ukrainian needs it
-    ns.Screen.Schedule()
+    if ns.On() and not ns.Screen.WaitCombat() then   -- else after combat, a look puts our words in
+        U.SafeCall(W.Apply, fs, true)
+        ns.Screen.Schedule()
+    end
+    local t = UADD.Plain(fs:GetText())   -- the font follows the text, on, off and in combat (lesson 32)
+    if type(t) == "string" and t:find(CYR) then U.SafeCall(ns.Fonts.Fix, fs) end
 end
 
 function W.Hook(fs)

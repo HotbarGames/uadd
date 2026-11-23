@@ -175,8 +175,7 @@ function S.Tip()
     local owner = S.menu and S.menu.close
     GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
     GameTooltip:AddLine(L["Done"])
-    local fs = _G.GameTooltipTextLeft1
-    fs:SetFont(STANDARD_TEXT_FONT, 12, "")
+    local fs = _G.GameTooltipTextLeft1   -- OpenMap never sets a tooltip line's font: the game's object
     fs:SetText(L["Done"])
     fs:Show()
     GameTooltip:Show()
@@ -188,7 +187,6 @@ function S.QuestTip(level, req)
     local t = (LEVEL or "Level") .. " " .. level .. "  (" .. L["from %d"]:format(req) .. ")"
     GameTooltip:AddLine(t)
     local fs = _G.GameTooltipTextLeft1
-    fs:SetFont(STANDARD_TEXT_FONT, 12, "")
     fs:SetText(t)
     fs:Show()
     GameTooltip:Show()

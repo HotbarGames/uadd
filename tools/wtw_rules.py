@@ -34,6 +34,8 @@ SORTS = {
     "L.2e7cadcc": "f", "L.8930958f": "fv", "L.3d8f8002": "f", "L.a67a9685": "f", "L.ce6ee520": "f",
     "L.c455616e": "v",    # the export file's path
     "L.cc8e48a1": "v",    # a chat player link
+    "L.6fe136bf": "f", "L.5b49ebd2": "f",    # the context menu's "Whisper/Block <short name>"
+    "L.26a34d4a": "n",    # the zone alert: a name, then the zone's game name (no route for it here: stays English)
     "L.17d2f1f2": "u",    # Format.Bytes: a size in its own English units (lesson 15): the line stays English
 }
 

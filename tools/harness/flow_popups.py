@@ -151,6 +151,7 @@ def _game(make, cut=None):
     def started(self):
         self.lua.execute(code)
         self.H.pops.setCut(cut and lua_str(cut))
+        self.H.boxQuiet = bool(cut)      # a mutant's boxes are wanted (its step fails), not in the segment's check
         start(self)
     Client.start = started
     try:

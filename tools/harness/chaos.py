@@ -161,6 +161,7 @@ def _adder(checks):
 def part(folder):
     """One module's games: its cases (module()), its tooltip font check, then its install failing part-way.
     Returns (checks, facts); facts["later"] holds the part-way checks, which go after the extra cases (assemble)."""
+    import boxes
     import chaos_more
     import tipfont
     checks, later, notes, hooks = [], [], [], {}
@@ -171,7 +172,7 @@ def part(folder):
             module(folder, target, build, check, notes, hooks)
         except Exception as e:      # a broken recipe is a failure of this test, not a crash of run.py
             check(f"chaos: {folder} ran", False, f"{type(e).__name__}: {e} | seed {SEED}")
-        checks += tipfont.segment("chaos " + folder, Check)
+        checks += tipfont.segment("chaos " + folder, Check) + boxes.segment("chaos " + folder, Check)
         chaos_more.partway(_adder(later), Spied, hooks, SEED, folder)
     return checks, {"notes": notes, "hooks": hooks, "later": later}
 

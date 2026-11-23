@@ -246,6 +246,8 @@ function W.Refresh()
         "PawnUI_CompareTab_Refresh", "PawnUIUpdateHeader" }) do
         U.SafeCall(rawget(_G, fn))
     end
+    -- Its refresh may make new rows (the stats list) that showed our words before any hook saw them.
+    if ns.Fonts and ns.Fonts.Scan then U.SafeCall(ns.Fonts.Scan) end
 end
 
 -- ── Hooks (once; they act only while our words are wanted) ────────────────────────────────────

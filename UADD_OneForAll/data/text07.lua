@@ -1,13 +1,10 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.13. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
-T["Code.8bbc10e5"] = "Таланти, показані тут, як короткий текст для копіювання й обміну. Імпорт читає його знову."
-T["Code.409320c8"] = "Талант цього білда не знайдено в деревах талантів гри."
-T["Code.94525c07"] = "Білд пропускає потрібні очки або таланти (створений для іншої версії гри?)."
 T["Code.d270fb0a"] = "Білд імпортовано для %s. Щоб залишити його, збережіть шаблон."
 S["Code.d270fb0a"] = "n"
 T["Code.5191fa14"] = "Незбережені зміни"
@@ -277,3 +274,6 @@ S["Code.b883945b"] = "v"
 T["Code.2dc51f3b"] = "Расове закляття (рівень 10)"
 T["Code.2dc5237c"] = "Расове закляття (рівень 20)"
 T["Code.fcd5b75e"] = "Спершу відкрийте вікно класового тренера, потім знову введіть /ofa trainer."
+T["Code.b52c4743"] = "Прочитано %d {рядок|рядки|рядків} тренера (назва | текст рангу | тип | вартість | рівень | ID закляття):"
+S["Code.b52c4743"] = "v"
+T["Code.be9aa278"] = "Ваш клас: що можна вивчити далі"

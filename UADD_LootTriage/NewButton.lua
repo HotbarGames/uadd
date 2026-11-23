@@ -11,14 +11,13 @@
 
 local _, ns = ...
 local U = UADD
-local A = UADD.AceFont
 local N = {}
 ns.NewButton = N
 
 local find = string.find
 local watched = {}
 local CYR = "[\208-\210]"
-local APP = "LootTriage"
+local busy = false         -- our own font change: the label's font hooks stay out
 local NEW_UK = "Що нового"
 local labels = {}          -- a button's label -> { button, fit = size the button to it, en = the English we swapped }
 
@@ -32,7 +31,10 @@ local function GlobalEnglish()
 end
 
 local Label
-local function Relabel(lab) Label(lab) end           -- the addon set its font object again (its hover)
+local function Relabel(lab) if not busy then pcall(Label, lab) end end   -- the addon set its font again (its hover)
+
+local function FontOn(lab) busy = true local ok, yes = pcall(ns.Screen.Font, lab) busy = false return ok and yes end
+local function FontOff(lab) busy = true pcall(ns.Screen.Unfont, lab) busy = false end
 
 local function Size(l, lab)
     if l.fit and l.button.SetWidth then l.button:SetWidth(18 + 5 + (lab:GetStringWidth() or 0)) end
@@ -45,16 +47,16 @@ Label = function(lab)
     local t, en = lab:GetText(), GlobalEnglish()
     if Wanted() and en and (t == en or t == NEW_UK) then
         if t == en then l.en = en lab:SetText(NEW_UK) end
-        if A and A.Set then pcall(A.Set, lab, APP, Relabel) end
+        FontOn(lab)
         local ok, path = pcall(lab.GetFont, lab)
         if not (ok and U.IsCyrFont(path)) then          -- no Cyrillic in its font: its English
             lab:SetText(l.en or en)
-            if A and A.Back then pcall(A.Back, lab) end
+            FontOff(lab)
         end
         Size(l, lab)
     elseif t == NEW_UK then
         lab:SetText(l.en or en or rawget(_G, "GAMEMENU_NEW_BUTTON"))   -- the English first, then its font
-        if A and A.Back then pcall(A.Back, lab) end
+        FontOff(lab)
         Size(l, lab)
     end
 end
@@ -62,6 +64,10 @@ end
 local function AddLabel(button, lab, fit)
     if type(lab) ~= "table" or labels[lab] or not lab.GetText or not lab.SetText then return end
     labels[lab] = { button = button, fit = fit }
+    if not U.Locked(lab) then                                   -- its hover sets the label's font again
+        hooksecurefunc(lab, "SetFontObject", Relabel)
+        hooksecurefunc(lab, "SetFont", Relabel)
+    end
     Label(lab)
 end
 

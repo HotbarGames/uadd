@@ -135,6 +135,21 @@ local function App(Check)
     on = false
 end
 
+-- After "off" the font follows the text: Ukrainian (kept until a reload) in a Cyrillic font, never a box; English set
+-- (as after the reload; a button's through the button, QuestieOptionsControls.lua:929) in its own font again.
+local function Put(fs, text)
+    local b = fs:GetParent()
+    if type(b) == "table" and b.GetFontString and b:GetFontString() == fs then b:SetText(text) else fs:SetText(text) end
+end
+local function Follows(fs)
+    local t = fs:GetText()
+    if type(t) == "string" and t:find("[\208-\210]") and fs:IsVisible() and not IsCyr(fs) then
+        return false, "Ukrainian in " .. Show(Font(fs))
+    end
+    Put(fs, "General")
+    return not IsCyr(fs), "English in " .. Show(Font(fs))
+end
+
 -- The Ukrainian buttons of Questie's own window ("Моя подорож"), and how many are in our font.
 local function Buttons()
     local buttons, inOurs = {}, 0
@@ -154,9 +169,14 @@ local function NoOldWindow(Check)
     local buttons, inOurs = Buttons()
     Check("buttons: in our font", #buttons > 0 and inOurs == #buttons, inOurs .. "/" .. #buttons)
     HF().Stop()
-    local back = 0
-    for _, fs in ipairs(buttons) do if not IsCyr(fs) then back = back + 1 end end
-    Check("off: buttons have their own font back", back == #buttons, back .. "/" .. #buttons)
+    local back, why = 0, ""
+    for _, fs in ipairs(buttons) do
+        local t = fs:GetText()
+        local ok, w = Follows(fs)
+        if ok then back = back + 1 elseif why == "" then why = " " .. w end
+        Put(fs, t)                                   -- Questie's Ukrainian again, for "on again"
+    end
+    Check("off: buttons: Ukrainian in Cyrillic font, English in own", back == #buttons, back .. "/" .. #buttons .. why)
     HF().Start()
     Check("on again: buttons in our font", select(2, Buttons()) == #buttons, select(2, Buttons()) .. "/" .. #buttons)
     Check("GameFontNormalSmall unchanged", Same({ GameFontNormalSmall:GetFont() }, shared),
@@ -257,10 +277,11 @@ function F.dropdown(old)
     Open(d)
     local before = HF().ItemCount()
     HF().Stop()
-    Check("off: the closed dropdown's value has its own font back", v and not IsCyr(v.text), v and Show(Font(v.text)))
+    Check("off: the closed dropdown's value: Ukrainian in a Cyrillic font, English in its own",
+        v and Follows(v.text), v and Show(Font(v.text)))
     local back = 0
-    for _, fs in ipairs(buttons) do if not IsCyr(fs) then back = back + 1 end end
-    Check("off: buttons have their own font back", back == #buttons, back .. "/" .. #buttons)
+    for _, fs in ipairs(buttons) do if Follows(fs) then back = back + 1 end end
+    Check("off: buttons: Ukrainian in a Cyrillic font, English in their own", back == #buttons, back .. "/" .. #buttons)
     local ok, detail = Changed(orig)
     Check("off: own font back", before > 0 and ok and HF().ItemCount() == 0, before .. " before; " .. detail)
     Close(d)

@@ -47,37 +47,30 @@ FONT_FIX = "module font helper: Cyrillic file on one FontString, back with its f
 TODO = "TODO: move to helper (U.SaveFont / U.FontBack in UADD/Font.lua)"; CYRON = "CyrOn: after U.SaveFont, read back; U.FontBack"
 OWN_FONT = "our own named font object (UADD_...), a copy with the Cyrillic file"
 SWAP = "the addon's global strings (key binding names), swapped both ways on on/off"
+PROBE = "the font probe (lesson 44): only FontStrings of its own hidden frame and its own UADD_ProbeFont"
 ALLOW = {
-    ("UADD/AceFont.lua", "set font"): (1, "core: Ace3 widgets' own FontStrings"),
-    ("UADD/Lines.lua", "set font"): (1, "core U.TipLines: Cyrillic on a tooltip line; back with U.FontBack"),
+    ("UADD/Probe.lua", "set font"): (2, PROBE), ("UADD/Probe.lua", "new font"): (1, PROBE),
     ("UADD/Core.lua", "global write"): (1, "SLASH_UADD1: the /uadd command"),
     ("UADD/Core.lua", "game field"): (1, "SlashCmdList.UADD: the /uadd command"),
-    ("UADD_Attune/Fonts.lua", "set font"): (3, FONT_FIX),
     ("UADD_Auctionator/Fonts.lua", "set font"): (3, FONT_FIX),
     ("UADD_AutoPotion/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
-    ("UADD_AutoPotion/Bindings.lua", "global write"): (2, SWAP),
+    ("UADD_AutoPotion/Bindings.lua", "global write"): (2, SWAP), ("UADD_Bagnon/Locale.lua", "global write"): (1, SWAP),
     ("UADD_LiteMount/Tables.lua", "global write"): (2, SWAP), ("UADD_LiteMount/Fonts.lua", "set font"): (3, FONT_FIX),
-    ("UADD_Bagnon/Locale.lua", "global write"): (1, SWAP),
     ("UADD_DialogueUI/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
     ("UADD_DungeonJournal/Fonts.lua", "set font"): (2, FONT_FIX + "; " + TODO),
     ("UADD_DungeonJournal/Fonts.lua", "new font"): (1, OWN_FONT),
     ("UADD_ForeverXPBar/Fonts.lua", "set font"): (3, FONT_FIX),
     ("UADD_GatherMate2/Swap.lua", "global write"): (2, SWAP),
     ("UADD_LayerSwap/Fonts.lua", "set font"): (3, FONT_FIX),
-    ("UADD_Mastercraft/Tooltip.lua", "set font"): (1, "Cyrillic on a tooltip line; " + TODO),
-    ("UADD_OpenMap/Fonts.lua", "set font"): (1, FONT_FIX),
     ("UADD_Pawn/Swap.lua", "global write"): (2, SWAP),
     ("UADD_Questie/HeaderFont.lua", "new font"): (1, OWN_FONT),
     ("UADD_Questie/HeaderFont.lua", "set font"): (1, "our own font object UADD_QuestieHeaderFont"),
     ("UADD_Questie/Locale.lua", "global write"): (1, "QUESTIE_LOCALES_OVERRIDE: Questie's own documented locale switch"),
-    ("UADD_SpeedyAutoLoot/Module.lua", "set font"): (1, "Cyrillic file after U.SaveFont; back with U.FontBack"),
     ("UADD_WaypointUI/Fonts.lua", "set font"): (1, "Cyrillic file on Waypoint UI's own font objects after "
                                                    "U.SaveFont, read back; back with U.FontBack"),
     ("UADD_WhatsTraining/Screen.lua", "set font"): (2, FONT_FIX + "; " + TODO),
-    ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP),
-    ("UADD_WhatTheWhisper/Swap.lua", "global write"): (1, SWAP),
+    ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP), ("UADD_WhatTheWhisper/Swap.lua", "global write"): (1, SWAP),
     ("UADD_WowheadQuickLink/Module.lua", "global write"): (1, SWAP),
-    ("UADD_WowheadQuickLink/Module.lua", "set font"): (1, CYRON), ("UADD_BugSack/Screen.lua", "set font"): (1, CYRON),
     ("UADD/Lines.lua", "chat replace"): (2, "core chat bus (U.ChatHook): one wrap for all modules, lesson 35"),
 }
 WALK_TODO = "a frame walk with no IsForbidden test; TODO: use U.Regions / U.Children (UADD/Guard.lua)"

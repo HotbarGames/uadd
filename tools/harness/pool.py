@@ -2,7 +2,7 @@
 
 A job is a module-level function that returns (checks, facts). It runs in a child forked from this process, so
 it starts with what the parent already read (loader's file memo) and leaves nothing behind for the next job: its
-Lua states, hooks and the tooltip font counts (tipfont.STATE) die with it. A job may start more jobs with
+Lua states, hooks, the tooltip font counts and the box hits (tipfont.STATE, boxes.STATE) die with it. A job may start more jobs with
 spawn(fn, *args): it gets a place-holder check at once, which `expand` later swaps for that job's checks, so the
 check list keeps the order of a run with no pool.
 
@@ -22,11 +22,17 @@ import time
 import traceback
 from multiprocessing.connection import Pipe, wait
 
+import boxes
 import tipfont
 
 MARK = "\x00job:"           # the name of a place-holder check: MARK + job id
 MIN_FREE_MB = 2500           # do not start another job while less memory than this is free (one job: 0.5-3 GB)
+# tip: {"tip": the tooltip font counts (tipfont.take), "box": the symptom check's hits (boxes.take)}
 Result = collections.namedtuple("Result", "checks facts tip secs error")
+
+
+def _take():
+    return {"tip": tipfont.take(), "box": boxes.take()}
 
 _CHILD = [None]              # in a child: its end of the pipe to the parent
 
@@ -109,13 +115,13 @@ class Pool:
     def _child(self, jid, conn):
         _CHILD[0] = conn
         fn, args, _ = self.jobs[jid]
-        tipfont.take()                     # what the parent had is not this job's
+        _take()                            # what the parent had is not this job's
         t0 = time.time()
         try:
             checks, facts = fn(*args)
-            msg = ("done", _plain(checks), _plain_facts(facts), tipfont.take(), time.time() - t0, None)
+            msg = ("done", _plain(checks), _plain_facts(facts), _take(), time.time() - t0, None)
         except BaseException:
-            msg = ("done", [], {}, tipfont.take(), time.time() - t0, traceback.format_exc()[-1500:])
+            msg = ("done", [], {}, _take(), time.time() - t0, traceback.format_exc()[-1500:])
         conn.send(msg)
 
     # ── the parent ─────────────────────────────────────────────────────────────────────────────
@@ -209,14 +215,15 @@ class Pool:
 
     def _one(self, jid):
         fn, args, _ = self.jobs[jid]
-        outer = tipfont.take()             # a job that spawned this one keeps what it had so far
+        outer = _take()                    # a job that spawned this one keeps what it had so far
         t0 = time.time()
         try:
             checks, facts = fn(*args)
-            self.results[jid] = Result(_plain(checks), facts, tipfont.take(), time.time() - t0, None)
+            self.results[jid] = Result(_plain(checks), facts, _take(), time.time() - t0, None)
         except Exception:
-            self.results[jid] = Result([], {}, tipfont.take(), time.time() - t0, traceback.format_exc()[-1500:])
-        tipfont.STATE.update(outer)
+            self.results[jid] = Result([], {}, _take(), time.time() - t0, traceback.format_exc()[-1500:])
+        tipfont.STATE.update(outer["tip"])
+        boxes.STATE.update(outer["box"])
         gc.collect()
 
     # ── the results ────────────────────────────────────────────────────────────────────────────
@@ -247,5 +254,10 @@ class Pool:
 
     def tip(self, jid):
         """The tooltip font counts of the job and its spawned jobs, merged (tipfont.merge)."""
-        return tipfont.merge([self.results[j].tip for j in self.family(jid)
+        return tipfont.merge([self.results[j].tip["tip"] for j in self.family(jid)
                               if j in self.results and self.results[j].tip])
+
+    def boxes(self, jid):
+        """The symptom check's hits of the job and its spawned jobs, merged (boxes.merge)."""
+        return boxes.merge([self.results[j].tip["box"] for j in self.family(jid)
+                            if j in self.results and self.results[j].tip])

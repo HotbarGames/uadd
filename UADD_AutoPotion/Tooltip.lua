@@ -1,21 +1,49 @@
 -- Tooltips over Auto Potion's settings pages (its check boxes): Auto Potion reads its texts when the
 -- mouse comes over a box (GameTooltip:SetText, or AddLine under a spell's own tooltip). While GameTooltip
 -- is owned by a frame inside one of its pages (Screen.RootSet, up the parent chain), each line we know
--- is set to our words when the tooltip shows, gets our font file (UADD/AceFont.lua, that one line
--- only), and the tooltip is laid out again (the same way as UADD_LayerSwap/Tooltip.lua). Spell and item
+-- is set to our words when the tooltip shows, gets UADD's Cyrillic font object (that one line only),
+-- and the tooltip is laid out again (the same way as UADD_LayerSwap/Tooltip.lua). Spell and item
 -- lines are not ours and stay as the game wrote them. The hold key puts the English back on a shown
--- tooltip; the font goes back when the tooltip is cleared or hidden. Other tooltips are never touched.
--- Nothing is changed in combat.
+-- tooltip; the font object goes back when the tooltip is cleared or hidden. Other tooltips are never
+-- touched. Nothing is changed in combat.
 
 local _, ns = ...
 local T = {}
 ns.Tooltip = T
 
-local APP = "APTip"
 local CYR = "[\208-\210]"
 local hooked, guard = false, false
 local lines = {}          -- line FontString -> { en = English, uk = ours } on the shown tooltip
+local fonts = {}          -- line FontString -> its own font (UADD.SaveFont), saved before ours went on
 local tip                 -- GameTooltip
+
+-- A game tooltip line is never given a file by hand (lesson 18 again, lesson 44): UADD's Cyrillic font
+-- object goes on with SetFontObject, read back. When it does not take, the line gets its object back and
+-- its English again: whole English, never boxes. A line that keeps a file set by hand before us (our
+-- object is on, its file stayed: lesson 44) has no family left to lose: our file goes on by hand
+-- (U.CyrOnOwn), and U.FontBack puts that same file back.
+local function Kept(fs)
+    local o = fs.GetFontObject and fs:GetFontObject()
+    local ok, n = pcall(function() return o:GetName() end)
+    return ok and type(n) == "string" and n:find("^UADD_CyrFont") ~= nil
+end
+
+local function FontOn(fs, l)
+    if not fonts[fs] then
+        if UADD.IsCyrFont((fs:GetFont())) then return end
+        fonts[fs] = UADD.SaveFont(fs)
+    end
+    if UADD.CyrOnLocked(fs) or Kept(fs) and UADD.CyrOnOwn(fs, fonts[fs]) then return end
+    UADD.FontBack(fs, fonts[fs])
+    fonts[fs] = nil
+    if l then pcall(fs.SetText, fs, l.en) end
+    lines[fs] = nil
+end
+
+local function FontsBack()
+    for fs, was in pairs(fonts) do pcall(UADD.FontBack, fs, was) end
+    wipe(fonts)
+end
 
 local function Ours(owner)
     local set, f = ns.Screen.RootSet(), owner
@@ -59,7 +87,7 @@ local function Translate()
             lines[fs] = nil
         end
         local now = UADD.Plain(fs:GetText())
-        if now and now:find(CYR) then UADD.AceFont.Set(fs, APP) end
+        if now and now:find(CYR) then FontOn(fs, lines[fs]) end
     end)
     return any
 end
@@ -73,7 +101,7 @@ end
 function T.Stop()
     if guard then return end
     wipe(lines)
-    UADD.AceFont.Stop(APP)
+    FontsBack()
 end
 
 -- The hold key on a shown tooltip: English back (show) or our words again.
@@ -85,7 +113,7 @@ function T.Sync(show)
             if UADD.Plain(fs:GetText()) == l.uk then pcall(fs.SetText, fs, l.en) end
         end
         guard = false
-        UADD.AceFont.Stop(APP)
+        FontsBack()
         Layout()
     elseif ns.WordsWanted() and Ours(tip:GetOwner()) then
         if Translate() then Layout() end
@@ -105,5 +133,7 @@ end
 function T.Count()
     local n = 0
     for fs, l in pairs(lines) do if UADD.Plain(fs:GetText()) == l.uk then n = n + 1 end end
-    return n, UADD.AceFont.Count(APP)
+    local f = 0
+    for fs in pairs(fonts) do if UADD.IsCyrFont((fs:GetFont())) then f = f + 1 end end
+    return n, f
 end

@@ -3,7 +3,7 @@
 --   * Its own window frames redraw from its locale table (Module.lua asks it to); these do not:
 --       - its page in the game's settings (WhatTheWhisperOptionsPanel): the line under the title and the
 --         button. They use the game's fonts, which lack Ukrainian letters on an English client, so a
---         FontString that shows Cyrillic gets UADD's Cyrillic font (UADD/AceFont.lua), and its own font
+--         FontString that shows Cyrillic gets UADD's Cyrillic font (FontOn below), and its own font
 --         back when it shows Latin again (lesson 32);
 --       - the buttons of its dialogs made once (copy, confirm, quick replies, prompt);
 --       - the category tabs of its emoji picker.
@@ -17,7 +17,6 @@ local U = UADD
 local S = {}
 ns.Screen = S
 
-local APP = "WhatTheWhisper"
 local CYR = "[\208-\210]"           -- the first byte of a Cyrillic letter in UTF-8
 local DIALOGS = {
     WhatTheWhisperCopyDialog = { "saveFile" },
@@ -56,15 +55,59 @@ local function Key(obj, text, hint)
     return k or nil
 end
 
+-- Our font on the game's FontStrings here (lessons 18, 32, 44): its font saved first (never while ours is on), a
+-- Cyrillic font OBJECT of ours put on (no file pinned); only where that does not take, the file by hand
+-- (U.CyrOnOwn). U.FontBack with that same record gives its own object, and a hand-set file, back.
+local fonts = {}                    -- a FontString -> its own font (U.SaveFont) while ours is on
+local hooked = {}
+local busy = false
 local Decide
-Decide = function(fs)
-    if type(fs) ~= "table" or not fs.GetText then return end
-    local t = U.Plain(fs:GetText())
-    if ns.On() and t and t:find(CYR) then
-        UADD.AceFont.Set(fs, APP, Decide)
-    else
-        UADD.AceFont.Back(fs)
+
+local function OnTheirFont(fs)
+    if busy then return end
+    if fonts[fs] and not U.IsCyrFont((fs:GetFont())) then fonts[fs] = nil end   -- their font now
+    U.SafeCall(Decide, fs)
+end
+
+local function FontOn(fs)
+    if U.IsCyrFont((fs:GetFont())) then return end   -- ours already (kept), or a font with our letters
+    fonts[fs] = nil
+    if not hooked[fs] and not U.Locked(fs) then
+        hooked[fs] = true
+        hooksecurefunc(fs, "SetFont", OnTheirFont)
+        hooksecurefunc(fs, "SetFontObject", OnTheirFont)
+        if U.GuardWatch then U.GuardWatch(fs) end
     end
+    local was = U.SaveFont(fs)
+    busy = true
+    local ok, took = pcall(U.CyrOnLocked, fs)
+    if not (ok and took) and not U.Locked(fs) then ok, took = pcall(U.CyrOnOwn, fs, was) end
+    if ok and took then fonts[fs] = was else pcall(U.FontBack, fs, was) end   -- whole English, never half a font
+    busy = false
+end
+
+local function FontOff(fs)
+    local was = fonts[fs]
+    if not was then return end
+    fonts[fs] = nil
+    busy = true
+    pcall(U.FontBack, fs, was)
+    busy = false
+    -- U.FontBack keeps ours while the line still shows Cyrillic (another of its languages, Russian): keep the
+    -- record too, so its own font goes back once the line shows Latin again (never ours left on its English).
+    if U.IsCyrFont((fs:GetFont())) and not U.IsCyrFont(was.path) then fonts[fs] = was end
+end
+
+local function AllBack()
+    local list = {}
+    for fs in pairs(fonts) do list[#list + 1] = fs end
+    for _, fs in ipairs(list) do FontOff(fs) end
+end
+
+Decide = function(fs)
+    if type(fs) ~= "table" or not fs.GetText or not fs.GetFont then return end
+    local t = U.Plain(fs:GetText())
+    if ns.On() and t and t:find(CYR) then FontOn(fs) else FontOff(fs) end
 end
 S.Decide = Decide
 
@@ -152,7 +195,7 @@ function S.Apply()
     U.SafeCall(Panel)
     U.SafeCall(Dialogs)
     U.SafeCall(Emoji)
-    if not ns.Swap.On() then UADD.AceFont.Stop(APP) end
+    if not ns.Swap.On() then AllBack() end
 end
 
 -- Off, held, or another language: the same walk (its words are back in its table by now), but only texts
@@ -161,7 +204,7 @@ function S.Restore()
     backOnly = true
     S.Apply()
     backOnly = false
-    UADD.AceFont.Stop(APP)
+    AllBack()
 end
 
 -- Texts showing ours here now, and FontStrings in our font.
@@ -171,4 +214,10 @@ function S.Count()
     return n
 end
 
-function S.Fonts() return UADD.AceFont.Count(APP) end
+function S.Fonts()
+    local n = 0
+    for fs in pairs(fonts) do
+        if U.IsCyrFont((fs:GetFont())) then n = n + 1 end
+    end
+    return n
+end

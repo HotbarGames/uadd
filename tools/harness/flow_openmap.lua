@@ -39,6 +39,19 @@ function M.fonts()
     return table.concat(r, "|")
 end
 
+-- The font follows the text: each stand-in text as "uk" or "en" (does it show Cyrillic?), "cyr" or "latin" (its
+-- font), then "path size flags", joined with "|".
+function M.fontsFollow()
+    local r = {}
+    for _, fs in ipairs(S().fontStrings) do
+        local p, size, flags = fs:GetFont()
+        local uk = (fs:GetText() or ""):find("[\208\209][\128-\191]") and "uk" or "en"
+        local cyr = UADD.IsCyrFont(p) and "cyr" or "latin"
+        r[#r + 1] = ("%s %s %s %s %s"):format(uk, cyr, tostring(p), tostring(size), tostring(flags))
+    end
+    return table.concat(r, "|")
+end
+
 -- A Razorfen Kraul quest whose Ukrainian title the Dungeon Journal module saved: id, en, uk.
 function M.rfkQuest()
     local cache = UADD_DB and UADD_DB.modules and UADD_DB.modules.dj and UADD_DB.modules.dj.cache
@@ -92,7 +105,7 @@ function M.tip()
     local fs = _G.GameTooltipTextLeft1
     local shown, font = Get(fs), FontOf(fs)
     local boxes = H.cyrBoxes and H.cyrBoxes() or {}
-    local n = UADD.AceFont.Count("OpenMapTip")
+    local n = UADD.OpenMapTooltip.Count()
     GameTooltip:Hide()
     return { text = shown, font = font, after = FontOf(fs), n = n, boxes = #boxes }
 end

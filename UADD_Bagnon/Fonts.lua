@@ -159,6 +159,7 @@ local function OnTip(tip)
 end
 
 local function TipBack() U.SafeCall(UADD.AceFont.Stop, TIP) end
+local function TipCleared() U.SafeCall(UADD.AceFont.Stop, TIP, true) end   -- no line of it is drawn now
 
 local function OnMenu(owner)
     if not ns.On() or not Ours(owner) then return end
@@ -186,7 +187,7 @@ function F.Install()
     if not tipHooked and GameTooltip then
         tipHooked = true
         hooksecurefunc(GameTooltip, "Show", function(tip) U.SafeCall(OnTip, tip) end)
-        GameTooltip:HookScript("OnTooltipCleared", function(t) U.SafeCall(TipBack, t) end)
+        GameTooltip:HookScript("OnTooltipCleared", function(t) U.SafeCall(TipCleared, t) end)
         GameTooltip:HookScript("OnHide", function(t) U.SafeCall(TipBack, t) end)
     end
     if not menuHooked and MenuUtil and type(MenuUtil.CreateContextMenu) == "function" then

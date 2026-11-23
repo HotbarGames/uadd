@@ -1,13 +1,10 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.13. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
-T["Code.b52c4743"] = "Прочитано %d {рядок|рядки|рядків} тренера (назва | текст рангу | тип | вартість | рівень | ID закляття):"
-S["Code.b52c4743"] = "v"
-T["Code.be9aa278"] = "Ваш клас: що можна вивчити далі"
 T["Code.0515a9bb"] = "Усі закляття цього тренера"
 T["Code.a9278a30"] = "Чого навчає класовий тренер."
 T["Code.bc9e8f61"] = "Володіння зброєю"
@@ -277,3 +274,6 @@ S["Code.2d19fdea"] = "fv"
 T["Code.0a749a80"] = "Гра триває"
 T["Code.beded9df"] = "Очікування гравців"
 T["Code.570512e5"] = "Спершу залиште свій стіл, щоб приєднатися до іншого."
+T["Code.abb9adab"] = "Змінити"
+T["Code.59070c69"] = "Відхиляє це запрошення та всі інші на 30 хвилин. Повторне відкриття вікна ігор гільдії скасовує це."
+T["Code.ca86ac4c"] = "Тестове запрошення: прийнято (нічого не станеться)."

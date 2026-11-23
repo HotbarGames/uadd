@@ -2,8 +2,9 @@
 -- In the client GameTooltipText and GameTooltipHeaderText are font FAMILIES: one file per alphabet, a
 -- Cyrillic one too, while GetFont shows only FRIZQT__.TTF. A line that follows its font object shows
 -- UALL Forever's Ukrainian; fs:SetFont(path) pins the line to that one Latin file (boxes) until a
--- SetFontObject. Here: the lines of the game's tooltips start on those objects; SetFont pins a line
--- (its font object stays: GetFontObject still gives it back), SetFontObject unpins it.
+-- /reload: as in the client (lesson 44), a later SetFontObject keeps the hand-set file. Here: the lines of
+-- the game's tooltips start on those objects; SetFont pins a line (its font object stays: GetFontObject
+-- still gives it back), and SetFontObject sets the object but leaves the pin (wow_widgets.lua).
 -- The check, on lines UADD's code pinned that were not pinned before ours: UADD puts the old font back
 -- with SetFontObject ("back"), never by pinning the old file ("bad"); and when a tooltip is cleared (its
 -- OnTooltipCleared, run through GetScript or ClearLines / SetOwner) no such line is still pinned by
@@ -60,7 +61,8 @@ W.SetFont = function(self, path, size, flags)
     if src then
         if not pin then
             rawset(self, "__ourPin", { had = obj ~= nil, before = before ~= nil, src = src })
-            if cyr then report("put") end
+            -- The guard's repair of a line another addon pinned (UADD/Guard.lua) is no module's put.
+            if cyr and not src:find("^@AddOns/UADD/Guard%.lua") then report("put") end
         end
         rawset(self, "__pinned", "ours")
     else
@@ -70,22 +72,34 @@ W.SetFont = function(self, path, size, flags)
     if H.setFontClearsObject then rawset(self, "__fontObject", nil) end
     return ok
 end
--- H.tipKeepsFile: as in the client (lesson 44), a file set by hand on a line stays over SetFontObject; the
--- object is set, GetFont still gives the file. A Latin file pinned by UADD then still counts as "bad".
+-- As in the client (lesson 44; wow_widgets.lua): a file set by hand on a line stays over SetFontObject; the
+-- object is set, GetFont still gives the file. Such a line stays pinned ("kept"); a Latin file pinned by UADD
+-- still counts as "bad" (the SetFont above). Whatever the cause, Cyrillic shown in a font without it is a hit
+-- of the symptom check (boxes.lua, loaded below).
+-- UADD's own Cyrillic font OBJECT on a game line (U.CyrOnLocked) is a "put" too: the line must get its own
+-- object back ("back") before its tooltip is cleared, or it is "bad" there (Cleared, below).
+local function CyrObject(o)
+    if type(o) == "string" then o = rawget(_G, o) end
+    if type(o) ~= "table" or not (UADD and UADD.IsCyrFont) then return false end
+    local ok, path = pcall(o.GetFont, o)
+    return ok and UADD.IsCyrFont(path) and true or false
+end
 W.SetFontObject = function(self, o)
-    local keep = H.tipKeepsFile and rawget(self, "__tipLine") and rawget(self, "__pinned") and { self:GetFont() }
+    local before, had = rawget(self, "__pinned"), rawget(self, "__fontObject")
     setObject(self, o)
     if rawget(self, "__type") ~= "FontString" then return end
-    if keep and keep[1] then
-        setFont(self, keep[1], keep[2], keep[3])
-        if rawget(self, "__ourPin") and OursAt() then report("back") end
-        rawset(self, "__ourPin", nil)
-        rawset(self, "__pinned", "kept")
+    local src = rawget(self, "__tipLine") and CyrObject(o) and OursAt()
+    if src then
+        if not rawget(self, "__ourPin") then
+            rawset(self, "__ourPin", { had = had ~= nil, before = before ~= nil, src = src })
+            if not src:find("^@AddOns/UADD/Guard%.lua") then report("put") end
+        end
+        rawset(self, "__pinned", "ours")
         return
     end
-    if rawget(self, "__ourPin") and OursAt() then report("back") end      -- UADD gave the family back
-    rawset(self, "__pinned", nil)
+    if rawget(self, "__ourPin") and OursAt() then report("back") end      -- UADD gave the object back
     rawset(self, "__ourPin", nil)
+    rawset(self, "__pinned", rawget(self, "__hand") and "kept" or nil)
 end
 
 local function Lines(tip)
@@ -134,3 +148,11 @@ local function Fire(self)
 end
 W.ClearLines = function(self, ...) clearLines(self, ...) Fire(self) end
 W.SetOwner = function(self, ...) setOwner(self, ...) Fire(self) end
+
+-- The symptom check (boxes.lua, boxes.py), through lupa's python bridge: loader.py stays as it is.
+local py = rawget(_G, "python")
+if type(py) == "table" or type(py) == "userdata" then
+    local mod = py.eval("__import__('boxes')")
+    H.boxReport = mod.report
+    assert((loadstring or load)(mod.lua_source(), "@harness/boxes.lua"))()
+end

@@ -24,6 +24,10 @@ def first(f, c, step):
     f.check(f"{step}: dropdown menu entries ours while open, own font after", ok, txt(detail))
     ok, detail = c.F.controlShift()
     f.check(f"{step}: show-original key and combat give option texts their exact own font", ok, txt(detail))
+    label, ok, n, swapped = c.F.controlSearch()
+    f.check(f"{step}: Questie window: search label in our font", bool(label), str(label))
+    f.check(f"{step}: Questie window: a tab its search builds again has its texts in our font",
+            bool(swapped) and n > 0 and ok == n, f"{ok}/{n}, content swapped {swapped}")
 
 
 def snapshot(c):
@@ -32,6 +36,9 @@ def snapshot(c):
 
 
 def after_off(f, c, before, step):
-    ok, n, bad = c.F.controlAfterOff()
-    f.check(f"{step}: options control texts get their exact own font back", before > 0 and ok == n == before,
-            f"{ok}/{n} of {before}" + (f"; {txt(bad)}" if txt(bad) else ""))
+    cyr, ok, n, bad = c.F.controlAfterOff()
+    tail = f"; {txt(bad)}" if txt(bad) else ""
+    f.check(f"{step}: options control texts still Ukrainian keep a Cyrillic font (no boxes)",
+            before > 0 and cyr == n == before, f"{cyr}/{n} of {before}{tail}")
+    f.check(f"{step}: options control texts set English get their exact own font back",
+            before > 0 and ok == n == before, f"{ok}/{n} of {before}{tail}")

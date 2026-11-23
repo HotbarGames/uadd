@@ -10,6 +10,9 @@
 --     exactly as they came, on, held or off.
 --   * The dialog grows or shrinks by what the text's height changed (SetHeight only; the game's
 --     StaticPopup_Resize writes fields, so it is not called).
+--   * The font goes on through UADD's font object only (Fonts.Shared), never a file by hand: the
+--     dialog is the game's, shared with every addon (lesson 18). When it does not take, the text
+--     stays OpenMap's English.
 --   * When the dialog hides (or the game shows another question in it), its fonts go back, so
 --     other addons' questions in the same dialog look as they did.
 --   * The hold key: OpenMap's English; the font stays only on a text that still has Ukrainian
@@ -80,10 +83,11 @@ local function Show(d, rec, uk, done)
             p.fs:SetText(want)
             now = want
         end
-        if not done and ns.On() and type(now) == "string" and now:find(CYR) then
-            ns.Fonts.Fix(p.fs)
-        else
+        -- the game's shared dialog: UADD's font object only, never a file by hand (lesson 18)
+        local face = not done and ns.On() and type(now) == "string" and now:find(CYR) and ns.Fonts.Shared(p.fs)
+        if not face then
             ns.Fonts.Back(p.fs)
+            if now == p.uk and p.uk ~= p.en then p.fs:SetText(p.en) end   -- no font for ours: its English whole
         end
     end
     local h1 = rec.text and rec.text:GetHeight()
