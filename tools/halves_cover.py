@@ -92,8 +92,8 @@ UNFIT = {
     "UADD_OneForAll": dict(
         {"Code." + k: "a real gap: its t slot holds a capitalised text of ours (a profession, a filter), and Words.lua "
                       "Ours takes only small letters there, so the whole line stays English"
-         for k in ("530a41e7 7d7ef18e 99bc95d2 62fba321 93f737ea abccb153 268cf87e 0c54d8fb 1617a860 944cf9dd "
-                   "f6f15ff7 699ab1d9 ecf3e226 efb22e55 9b269860 b5bd0e78 d8e9ae47 e39f3245 2e174645 dedd2926 "
+         for k in ("7d7ef18e 62fba321 93f737ea abccb153 268cf87e 0c54d8fb 1617a860 "
+                   "699ab1d9 ecf3e226 efb22e55 9b269860 b5bd0e78 d8e9ae47 e39f3245 2e174645 dedd2926 "
                    "cb43a0f6 be5ed555 d25947f0 3e777cab").split()},
         **{"Code." + k: "a real gap: a free name with a value in one line; Words.lua fills a free name only in a "
                         "template of one slot (NameSlot), so the whole line stays English"

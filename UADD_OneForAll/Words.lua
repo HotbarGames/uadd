@@ -183,7 +183,7 @@ end
 -- 5b'. A template whose first slot is our text before a dot ("Neutral  ·  18 rewards"): the head is one slot, the
 -- numbers after it the others (Shapes alone does not make that pair).
 local function HeadNum(s)
-    local e = find(s, "%s%s|?c?%x*·")
+    local e = find(s, "%s%s|?c?%x*\194\183")
     if not e or e < 2 or e > 61 then return nil end
     local slots = { { a = 1, b = e - 1, en = sub(s, 1, e - 1) } }
     local i = e

@@ -59,12 +59,12 @@ end
 
 function Joined(s)
     if #s > 300 then return nil end
-    local dot = find(s, "·", 1, true)
+    local dot = find(s, "\194\183", 1, true)   -- the addon's middle dot (bytes: a pattern, not text we draw)
     if not dot and not find(s, "  ", 1, true) then return nil end
     local out, n, pos = {}, 0, 1
     while pos <= #s + 1 do
         -- the next separator: a dot between wide gaps, maybe in its own colour, or a wide gap
-        local a, b, code = find(s, "%s%s(|?c?%x*)·%s%s", pos)
+        local a, b, code = find(s, "%s%s(|?c?%x*)\194\183%s%s", pos)
         if a and code ~= "" and not find(code, "^|c%x%x%x%x%x%x%x%x$") then a = nil end
         local sep = "  -  "
         if a then
