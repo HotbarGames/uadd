@@ -147,10 +147,12 @@ R[7] = function()
 end
 
 R[8] = function()
-    local fs = S.Pin()
+    local fs, news = S.Pin(), S.News()
     M.wait(0.2)
     S.Redraw() M.wait(0.1)
-    return Res({}, "a map pin inside its window is left alone (game names)", fs:GetText() == T.pin, fs:GetText())
+    local out = Res({}, "a map pin inside its window is left alone (game names)", fs:GetText() == T.pin, fs:GetText())
+    return Res(out, "its news window stays English, also a word that is ours elsewhere (lesson 43)",
+        news:GetText() == T.button, news:GetText())
 end
 
 -- Step 10, in a game whose OneForAll is set to another language: the module is off and says so.

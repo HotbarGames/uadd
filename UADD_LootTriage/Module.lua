@@ -5,8 +5,9 @@
 --   * its lines in item tooltips (U.TipLines on GameTooltip: a line is tried only when it may be ours,
 --     Words.Maybe, and only when LootTriage's files wrote it, lesson 12);
 --   * its chat lines (U.ChatLines: its prefix, and its help lines with no prefix);
---   * its own settings window, its row in the game's Settings panel (Screen.lua), its What's New (News.lua),
---     the game's menu its dropdowns open (Menu.lua: our font on our names there).
+--   * its own settings window, its row in the game's Settings panel (Screen.lua), the word on the two buttons
+--     that open its What's New (NewButton.lua), the game's menu its dropdowns open (Menu.lua: our font on our
+--     names there). Its What's New dialog stays its English (lesson 43).
 -- Off, and while the hold key is held: its English everywhere it went in. Its own names that it reads back
 -- (the keep reasons it uses as keys, its saved choices) are never changed: only where they are drawn.
 -- On a client that is not English the module does nothing. No English of it is stored here.
@@ -58,7 +59,7 @@ local help = U.ChatLines({ from = FROM, wanted = ns.WordsWanted,
 
 local function Sync()
     U.SafeCall(ns.Screen.Sync)
-    U.SafeCall(ns.News.Sync)
+    U.SafeCall(ns.NewButton.Sync)
     U.SafeCall(ns.Menu.Sync)
 end
 ns.Sync = Sync
@@ -70,7 +71,7 @@ local function Begin()
     U.SafeCall(chat.Install)
     U.SafeCall(help.Install)
     U.SafeCall(ns.Screen.Install)
-    U.SafeCall(ns.News.Install)
+    U.SafeCall(ns.NewButton.Install)
     U.SafeCall(ns.Menu.Install)
     Sync()
 end
@@ -80,8 +81,8 @@ local function End()
     U.SafeCall(tips.Restore)
     U.SafeCall(chat.Restore)
     U.SafeCall(help.Restore)
-    U.SafeCall(ns.News.Sync)
-    U.SafeCall(ns.Menu.Restore)                     -- before Screen.Remove gives every font of ours back
+    U.SafeCall(ns.NewButton.Sync)
+    U.SafeCall(ns.Menu.Restore)                    -- before Screen.Remove gives every font of ours back
     U.SafeCall(ns.Screen.Remove)
     W.Forget()
 end

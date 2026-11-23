@@ -27,7 +27,8 @@ end
 function S.Chat() for _, line in ipairs(F.chat) do DEFAULT_CHAT_FRAME:AddMessage(line) end end
 function S.Say(line) DEFAULT_CHAT_FRAME:AddMessage(line) end
 
--- What's New: a nameless dialog, made on first show; each show sizes it after its text.
+-- What's New: a nameless dialog, made on first show; each show sizes it after its text. UADD must leave it
+-- English (lesson 43); its lines come from the addon's own news file at run time.
 function S.News()
     local d = S.dialog
     if not d then

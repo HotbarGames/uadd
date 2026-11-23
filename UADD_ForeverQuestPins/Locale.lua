@@ -24,12 +24,11 @@ Lc.NAMES = {
     ["Quest %d skipped breadcrumbs: %s"] = "quest IDs (debug)",
     ["Quest %s%s: %s (%s)"] = "a quest title (debug)",
 }
--- Not L keys: Forever Quest Pins prints this one with its own English (Chat.lua).
-Lc.CHAT = { ["What is new in %s:"] = true }
+-- Its What's New lines and their login header are not ours: they stay English (lesson 43).
 
 local entries, rev, count = {}, {}, 0      -- en -> uk; uk -> en (false: two English share it)
 local pats = {}                             -- { en, uk, enPat, ukPat } for keys with number slots only
-local wrote, saved, whats = {}, {}, {}      -- en -> uk we wrote; en -> { what was there }; What's New lines
+local wrote, saved = {}, {}                 -- en -> uk we wrote; en -> { what was there }
 local LABELS = { "TrackerSortLabels", "TrackerFilterLabels" }
 local labels = {}                           -- table name -> { key -> { en, uk } } we switched
 local built = false
@@ -106,7 +105,7 @@ local function Build()
             entries[en] = uk
             count = count + 1
             if rev[uk] == nil then rev[uk] = en elseif rev[uk] ~= en then rev[uk] = false end
-            if not Lc.CHAT[en] and en:find("%", 1, true) then
+            if en:find("%", 1, true) then
                 local ep, up = Pattern(en), Pattern(uk)
                 if ep and up then pats[#pats + 1] = { en, uk, ep, up } end
             end
@@ -121,7 +120,7 @@ function Lc.Uk(t)
     Build()
     if type(t) ~= "string" or t == "" then return nil end
     local uk = entries[t]
-    if uk and not Lc.CHAT[t] then return uk end
+    if uk then return uk end
     if not t:find("%d") then return nil end
     for _, p in ipairs(pats) do
         local caps = { t:match(p[3]) }
@@ -146,7 +145,7 @@ end
 
 function Lc.Word(en) Build() return entries[en] end
 
--- Our Ukrainian for a key whose slots hold game names (Lc.NAMES, Lc.CHAT), when it fits; never in L.
+-- Our Ukrainian for a key whose slots hold game names (Lc.NAMES), when it fits; never in L.
 function Lc.Template(en)
     local uk = ns.UK and ns.UK[en]
     if Lc.Usable(en, uk) then return uk end
@@ -177,23 +176,12 @@ local function Install()
     local L = fqp and fqp.L
     if type(L) ~= "table" then return end
     for en, uk in pairs(entries) do
-        if wrote[en] == nil and not Lc.CHAT[en] then
+        if wrote[en] == nil then
             local had = rawget(L, en)
             if had == nil or had == en then
                 saved[en] = { had }
                 rawset(L, en, uk)
                 wrote[en] = uk
-            end
-        end
-    end
-    -- What's New: its lines are printed at login (Setup.lua), so they are switched in its own table.
-    local news = type(fqp.WhatsNew) == "table" and fqp.WhatsNew.lines
-    if type(news) == "table" then
-        for i, line in ipairs(news) do
-            local uk = type(line) == "string" and entries[line]
-            if uk and not whats[i] then
-                whats[i] = { line, uk }
-                news[i] = uk
             end
         end
     end
@@ -224,11 +212,6 @@ local function Uninstall()
     end
     wipe(wrote)
     wipe(saved)
-    local news = fqp and type(fqp.WhatsNew) == "table" and fqp.WhatsNew.lines
-    for i, pair in pairs(whats) do
-        if type(news) == "table" and news[i] == pair[2] then news[i] = pair[1] end
-    end
-    wipe(whats)
     for name, done in pairs(labels) do
         local t = fqp and fqp[name]
         for k, pair in pairs(done) do

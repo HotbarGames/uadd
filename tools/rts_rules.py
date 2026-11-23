@@ -18,7 +18,7 @@ MAX_BATCH = 150
 FILE_NOTE = {
     "Core.lua": "chat prints and the /rts help", "Map.lua": "the journey map window",
     "Panel.lua": "the History / Characters panel", "Options.lua": "the options page",
-    "MinimapButton.lua": "the minimap button tooltip and /rts minimap", "WhatsNew.lua": "the What's New frame",
+    "MinimapButton.lua": "the minimap button tooltip and /rts minimap", "WhatsNew.lua": "the /rts help line of its news",
     "Screens.lua": "a screen tab", "Style.lua": "route legend, day heads", "StatsScreen.lua": "the Stats screen",
     "Range.lua": "the range menu", "LevelShot.lua": "the screenshot line", "Journal.lua": "/rts stats",
     "LevelChat.lua": "the level-up chat summary", "FriendsPanel.lua": "the remove-friend popup",

@@ -69,20 +69,21 @@ Close the game, then run `install.bat` (or copy `UADD`, `UADD_Questie` and `UADD
 22. Open OpenMap's options (right-click the minimap button, or "Відкрити налаштування OpenMap" on its page
     in the game's Settings, Esc > Options > AddOns): names and descriptions are Ukrainian, no boxes. Close
     it and open another addon's options (Questie's): its fonts look as they do without UADD.
-23. Open the News window (What's new): the title "Що нового", the buttons and the Credits page are
-    Ukrainian, no boxes. The title loses its old-style MORPHEUS look (the game has no such font with
-    Ukrainian letters); the English version lines keep it.
-24. With the menu, the options window and News open, hold Shift: all three turn English. Let go: Ukrainian.
-    Hold Shift in a fight: nothing changes until the fight ends, then English while you still hold it.
-25. `/uadd openmap off` with them open: English at once, the News title back in MORPHEUS. `on`: Ukrainian.
+23. The menu's "What's new" entry is Ukrainian («Що нового»). Open it: the News window and its Credits
+    page stay OpenMap's English (we never translate a What's New window), the title in its MORPHEUS look,
+    no boxes. OpenMap's chat line about an update stays English too.
+24. With the menu and the options window open, hold Shift: both turn English. Let go: Ukrainian. News stays
+    English all the time. Hold Shift in a fight: nothing changes until the fight ends, then English while you
+    still hold it.
+25. `/uadd openmap off` with them open: English at once; News stays English, in MORPHEUS. `on`: Ukrainian.
 26. Point at buttons and tabs on OpenMap's menu, the dungeon map's side tabs and map pins: the tooltips are
     Ukrainian, no boxes. Then point at an item in your bags: its tooltip looks as without UADD.
 27. In OpenMap's options window open a dropdown list: its items are Ukrainian, no boxes. Close the list: the
     chosen value shows with no boxes. Do the same in Questie's options window. Then switch tabs, close the
     window and open another addon's options: its fonts look as without UADD.
 28. On the dungeon map, hold Shift: the side tab tooltip says "Dungeon", the menu header "Dungeons" (both
-    «Підземелля» in Ukrainian). `/uadd openmap off`: tooltips, the options window and the News window are all
-    English in their own fonts, also windows you open for the first time after "off".
+    «Підземелля» in Ukrainian). `/uadd openmap off`: tooltips and the options window are all English in
+    their own fonts (the News window stays English on and off), also windows you open for the first time after "off".
 
 ### Dialogue UI
 
@@ -153,8 +154,8 @@ English; `on`: Ukrainian.
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "Road to Sixty". Open its journey map and its panel: the tabs,
 buttons, labels and tips are Ukrainian, with letters, not boxes, and they fit. Open its settings (Esc > Options >
-AddOns, or its minimap button): the section titles, options and tooltips are Ukrainian. Open its What's New
-window and its stats page: Ukrainian. Its chat lines are Ukrainian. Zone, quest, item and player names stay as the
+AddOns, or its minimap button): the section titles, options and tooltips are Ukrainian. Open its stats page:
+Ukrainian. Open its What's New window: it stays English (we never translate its news). Its chat lines are Ukrainian. Zone, quest, item and player names stay as the
 game gives them (UALL Forever or ClassicUA names them), and so do the lines it saved about your journey. Hold the
 show-original key with a window open: English. `/uadd missed` shows what stayed English. `/uadd rts off`: English;
 `on`: Ukrainian.
@@ -165,8 +166,9 @@ Needs OneForAll's own language set to English (its Settings > General). Type `/u
 `/uadd` lists "OneForAll". Open its main window and go through every tab (dungeons, quests, loot, professions,
 talents, hunter pets, and the rest): tabs, buttons, labels, tips and descriptions are Ukrainian, with letters, not
 boxes, and they fit. Open its Settings, the info bar, the minimap button and its menu, the world map button and menu,
-and its small windows (Welcome, What's New, craft list, trainer spells, skill-up guide, weight editor, quest chain):
-Ukrainian. Hover things: tooltips are Ukrainian. Its chat lines and loot feed lines are Ukrainian. Zone, quest, NPC,
+and its small windows (Welcome, craft list, trainer spells, skill-up guide, weight editor, quest chain): Ukrainian.
+Its "Noteworthy changes" window (`/ofa news`) stays English (we never translate its news); the Settings button that
+opens it is Ukrainian. Hover things: tooltips are Ukrainian. Its chat lines and loot feed lines are Ukrainian. Zone, quest, NPC,
 item, spell and player names, and your profile names, stay as the game gives them (UALL Forever or ClassicUA names
 them). Pick another language in its Settings (German, say), reload: UADD does nothing there. Hold the show-original
 key with a window open: English. `/uadd missed` shows what stayed English. `/uadd oneforall off`: English; `on`:
@@ -175,8 +177,9 @@ Ukrainian.
 ### LootTriage
 
 Type `/uadd missed on` first. Log in: `/uadd` lists "LootTriage". Open its settings window and its row in the game's
-AddOns settings panel; open its What's New window; loot something: the loot window's Delete button, the tooltip
-lines and the chat messages are Ukrainian, with letters, not boxes, and they fit. Item and quest names come from
+AddOns settings panel; loot something: the loot window's Delete button, the tooltip lines and the chat messages
+are Ukrainian, with letters, not boxes, and they fit. Its two "New" buttons read «Що нового»; the What's New window
+they open stays English (we never translate its news). Item and quest names come from
 UALL Forever or ClassicUA; one with no name stays English. `/uadd missed` shows what stayed English.
 `/uadd lt off`: English; `on`: Ukrainian.
 
@@ -240,8 +243,8 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
   binding list font (letters or boxes), whether the Ukrainian fits, and the weekday stamps in the list are only
   seen in the real client.
 - LootTriage's real windows: its settings window, its dropdown menus, its row in the AddOns settings panel, the loot window's Delete
-  button, the tooltip lines, the chat messages and the What's New window, the fonts (letters or boxes), and whether
-  the Ukrainian fits, are only seen in the real client.
+  button, the tooltip lines, the chat messages, the "New" buttons (and that the What's New window they open stays
+  English), the fonts (letters or boxes), and whether the Ukrainian fits, are only seen in the real client.
 - DeleteCheapestItem Reloaded's real windows: its main window's top lines (money, links, counts), the fixed-width
   Remove and Delete buttons, its settings page on the game's Settings window, the profile question, the minimap
   tooltip, the fonts (letters or boxes), and whether the Ukrainian fits, are only seen in the real client.
@@ -251,8 +254,8 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - BugSack's real windows: the sack window (tabs, buttons, Filter label, session line) with a real error in it, its
   options page and tooltips, the send popup, the minimap tooltip, the fonts (letters or boxes), and whether the
   Ukrainian fits, are only seen in the real client.
-- Road to Sixty's real windows: the journey map, the panel and its tabs, the settings page, the What's New window,
-  the stats page, the minimap button's tooltip, the fonts (letters or boxes), whether the Ukrainian fits its fixed
+- Road to Sixty's real windows: the journey map, the panel and its tabs, the settings page, the What's New window
+  (whole English), the stats page, the minimap button's tooltip, the fonts (letters or boxes), whether the Ukrainian fits its fixed
   boxes, and that the chat and the saved journey lines still work, are only seen in the real client.
 - OneForAll's real windows: every tab of the main window, the settings, the info bar, the map buttons and menus, the
   small windows, the tooltips, the fonts (letters or boxes), whether the Ukrainian fits its fixed boxes, and that its

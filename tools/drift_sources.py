@@ -18,6 +18,7 @@ from unittest import mock
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import copy_scan as C  # noqa: E402
+import news_texts as N  # noqa: E402
 
 REPO = HERE.parent
 UALLF_FILES = ("NpcNames.lua", "Items.lua", "World.lua", "Quests.lua")   # what the DJ prose reads of UALLF
@@ -264,7 +265,8 @@ def scan(mod, folder, cache, pool):
     if version is None and mod in VERSION_FROM:
         version, interface = toc(folder.parent / VERSION_FROM[mod])
     try:
-        rows = [list(r) for r in MODULES[mod][1](folder)]
+        # What's New and update texts never show as drift: UADD leaves them English (lesson 43, tools/news_texts.py).
+        rows = [list(r) for r in MODULES[mod][1](folder) if not N.news_row(mod, r)]
     except Exception as e:  # noqa: BLE001 - shown as a note; --update-versions refuses
         rows = [["!", None, f"texts not read: {type(e).__name__}: {e}", ""]]
     got = {"stamp": stamp, "version": version, "interface": interface, "files": code_files(folder, files),

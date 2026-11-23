@@ -21,15 +21,15 @@ TAG = "Forever Quest Pins:|r "
 KNOWN = {"Quix Hunt": "Полювання Квікса", "Zorp Trail": "Стежка Зорпа", "Blatter Vale": "Долина Блаттер"}
 STRANGER = "Wobble Moor"                             # a name UADD.UALL does not know
 STEPS = {
-    "login": "1 at login: World Map filter list, setup window, settings page, tips and What's New ours",
+    "login": "1 at login: World Map filter list, setup window, settings page and tips ours, What's New its English",
     "spoiled": "1 spoiled words not used (a % spec or an escape the English lacks)",
     "menu": "2 World Map filter list and its button's tooltip ours, off gives its English, on gives ours back",
     "hold": "3 hold key: filter list, setup window, breadcrumb dialog, tips, What's New and L English, back on release",
     "hold canvas": "3 hold canvas (texts with a bit glued on: the level range, \" (BETA)\", two joined sentences): "
                    "English while held, ours on release",
     "names": "4 names: breadcrumb and abandoned lines ours only when every name is known (UADD.UALL), "
-             "else whole English; root stubs change nothing; no Lc.NAMES key in L; a What's New line that "
-             "quotes quest names stays English, the others ours",
+             "else whole English; root stubs change nothing; no Lc.NAMES key in L; every What's New line "
+             "stays English (lesson 43)",
     "untitled": "4 untitled quest (its L[\"Quest \"] is our word): a breadcrumb or abandoned line that is not ours "
                 "is whole English (\"Quest 5\"), off too; ours when every name is known (lesson 27)",
     "off": "5 off: filter list, setup window, breadcrumb dialog, tips, What's New and L English again",
@@ -83,10 +83,10 @@ def counts(M):
 def login(check, M):
     got, full = counts(M)
     miss = {w: txt(M.scan(w)[2]) for w in ("setup", "canvas")}
-    news_miss = M.news()[2]                  # What's New lines we have a word for that show English
+    # What's New stays its English (lesson 43): lines there, none of them Cyrillic.
     ok = (M.there("canvas") and full["menu"] > 0 and got["menu"] == full["menu"] and got["setup"] > 0
           and got["canvas"] > 0 and not any(miss.values()) and got["tips"] == full["tips"] > 0
-          and got["news"] > 0 and news_miss == 0)
+          and full["news"] > 0 and got["news"] == 0)
     check(STEPS["login"], ok, (got, full, {k: v[:120] for k, v in miss.items() if v}))
     return ok
 
@@ -152,9 +152,9 @@ def names(check, c, M, K):
     M.say(lua_str(gone_en(K, "Quix Hunt")))
     got["root gone"] = c.chat()[-1]
     M.known(True)
-    # What's New: a line that quotes quest names (game names, lesson 9) stays English; the others are ours.
+    # What's New: every line stays its English (lesson 43), the ones that quote quest names too.
     news = txt(M.newsLines()).split("\n")
-    news_ok = bool(news) and all(cyr(t) != ('"' in t) for t in news)
+    news_ok = bool(news) and not any(cyr(t) for t in news)
     got["news"] = " / ".join(t[:40] for t in news)
     ours = [got[k] for k in ("full", "no zone")] + [got["gone"].replace(TAG, "")]
     ok = (all(cyr(t) and not latin(t) for t in ours) and all(v in got["full"] for v in KNOWN.values())

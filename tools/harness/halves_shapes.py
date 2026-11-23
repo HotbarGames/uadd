@@ -26,7 +26,7 @@ ATT_BY_KEY = {"WHAT": "Guild"}   # a place Attune fills with the text of one of 
 # Words.lua's own shapes around a name ("Level %s", the card's "Name, Name", a dungeon and its levels),
 # in colour pieces, and as OpenMap's Map/Dungeons.lua builds them: its English around L's words (ours,
 # so Ukrainian) and a level range in colour. Then the lines OpenMap builds from L's words and its own
-# parts (Parts.lua): the News title with a version, a note's and a pin's title, a pin row and the dock's
+# parts (Parts.lua): a note's and a pin's title, a pin row and the dock's
 # "To" (both forms) with a zone name.
 RFK, RANGE = "Razorfen Kraul", "|cffff804024-33|r"
 OM_SHAPES = (("Level %s", {}), ("%s, %s", {1: RFK, 2: RFK}), ("%s  %d-%d", {1: RFK}),
@@ -35,7 +35,7 @@ OM_SHAPES = (("Level %s", {}), ("%s, %s", {1: RFK, 2: RFK}), ("%s  %d-%d", {1: R
              ("Level %s   |cffbbbbbb%s|r", {1: RANGE, 2: "Raid"}), ("Level %s   |cffbbbbbbРейд|r", {1: RANGE}),
              ("Level %s  (від 20)", {}), ("|cffffd100%s  %s, %s  %s|r", {1: RFK, 2: RANGE, 3: RFK, 4: RANGE}),
              ("|cffe6c27a%s|r  |cff998866(Questie)|r", {1: "Quests"}), ("|cff808080%s|r", {1: "done"}),
-             ("What's new in OpenMap  |cff998866%s|r", {1: "v0.8.9"}), ("Нова нотатка · %s", {1: RFK}),
+             ("Нова нотатка · %s", {1: RFK}),
              ("Нотатка #%d · %s", {2: RFK}), ("%s · |cffffffffmy note|r |cffe6c27a(малюнок)|r", {1: RFK}),
              ("Мітка · %s  %.1f, %.1f", {1: RFK}), ("Куди: %s", {1: RFK}), ("To %s", {1: RFK}))
 # The World Map's hover label as OpenMap writes it (Label.lua): a zone and its level range in colour.

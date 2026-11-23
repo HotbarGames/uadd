@@ -129,7 +129,8 @@ function M.drawRow()
 end
 
 -- Every text the module may change: W window labels, D the dropdown's text, C its choices, N the news button's
--- label, B the panel's New button, V the version, P the panel data, R the drawn row, X the What's New dialog.
+-- label, B the panel's New button, V the version, P the panel data, R the drawn row, X the What's New dialog
+-- (that one must stay its English, lesson 43).
 function M.snap()
     local s, out = S(), {}
     M.lt("")

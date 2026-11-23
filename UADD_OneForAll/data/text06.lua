@@ -5,8 +5,6 @@
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
-T["Code.b7e6b89e"] = "Вправність"
-T["Code.eaec46ee"] = "Проникнення чарів"
 T["Code.05acf9ec"] = "%d з %d"
 S["Code.05acf9ec"] = "vv"
 T["Code.4919da4d"] = "(загалом %s%%)"
@@ -276,3 +274,6 @@ T["Code.44a03da7"] = "Зберегти шаблон"
 T["Code.181c6902"] = "Зберегти поточні таланти як %sШаблон %d|r для %s?\nЗбережений шаблон буде замінено."
 S["Code.181c6902"] = "vvn"
 T["Code.24a80e5b"] = "Скинути шаблон"
+T["Code.68f9c3c8"] = "Скинути %sШаблон %d|r для %s?\nУсі очки талантів цього шаблону буде видалено."
+S["Code.68f9c3c8"] = "vvn"
+T["Code.dfc3f8ac"] = "Завантажте білд за посиланням talentsforever.com або wowforevertalents.com, або з рядка білда OneForAll."

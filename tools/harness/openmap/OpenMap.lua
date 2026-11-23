@@ -10,16 +10,15 @@
 -- colour), so a line can hold both: our words from L and English around them.
 
 --   * OpenMap.L: its locale table, made as OpenMap's Core.lua makes it (English back when nothing
---     is set). One text a locale file of its own set ("Older"), to check it comes back exactly.
+--     is set). One text a locale file of its own set ("Done"), to check it comes back exactly.
 --   * Its map menu (OpenMapMenu: tab names read once at load, rows read from L each time), the
---     News window (OpenMapNews: a MORPHEUS title, a version line, Newer / Older buttons) and its
---     page in the game's Settings (made at PLAYER_LOGIN, like OpenMap's Init.lua).
+--     News window (OpenMapNews: a MORPHEUS title, a version line, Newer / Older buttons: it stays
+--     English, lesson 43) and its page in the game's Settings (made at PLAYER_LOGIN, like OpenMap's Init.lua).
 
 OpenMap = { L = setmetatable({}, { __index = function(_, k) return k end }) }
 local L = OpenMap.L
-L["Older"] = "Older pages"
+L["Done"] = "Done here"
 local TABS = { L["On the map"], L["Look"], L["More"] }   -- read once, as OpenMap's Panel.lua does
-local KIND = L["Idea"]                                    -- a load-time text in the News window
 
 local S = {}
 OpenMapStandIn = S
@@ -159,23 +158,26 @@ function S.OpenMenu()
         m.row = Text(m, 12)
         m.count = Text(m, 12)
         m.close = Button(m, 12)
+        m.dungeon, m.dungeons = Text(m, 12), Text(m, 12)   -- two keys, one Ukrainian text
         m.row:SetText(L["Open OpenMap's settings"])
         m.count:SetText(L["%d bosses"]:format(3))
-        m.close:SetText(L["Close"])
+        m.close:SetText(L["Done"])
         S.menu = m
     end
+    m.dungeon:SetText(L["Dungeon"])
+    m.dungeons:SetText(L["Dungeons"])
     S.building = false
     m:Show()
 end
 
--- A tooltip over the menu's Close button, its line read from L (like OpenMap's OnEnter handlers).
+-- A tooltip over the menu's Done button, its line read from L (like OpenMap's OnEnter handlers).
 function S.Tip()
     local owner = S.menu and S.menu.close
     GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
-    GameTooltip:AddLine(L["Close"])
+    GameTooltip:AddLine(L["Done"])
     local fs = _G.GameTooltipTextLeft1
     fs:SetFont(STANDARD_TEXT_FONT, 12, "")
-    fs:SetText(L["Close"])
+    fs:SetText(L["Done"])
     fs:Show()
     GameTooltip:Show()
 end
@@ -193,6 +195,7 @@ function S.QuestTip(level, req)
 end
 
 -- The News window, like OpenMap's News.lua: the title in MORPHEUS at 28, the rest from L.
+-- It stays English, on, held and off (lesson 43): UADD has no Ukrainian for its words.
 function S.OpenNews()
     S.building = true
     local f = S.news
@@ -203,19 +206,15 @@ function S.OpenNews()
         f.version = f:CreateFontString(nil, "OVERLAY")
         f.version:SetFont("Fonts\\MORPHEUS.TTF", 20, "")
         f.head = Text(f, 18)
-        f.kind = Text(f, 12)
-        f.newer, f.older = Button(f, 12), Button(f, 12)
-        f.dungeon, f.dungeons = Text(f, 12), Text(f, 12)   -- two keys, one Ukrainian text
+        f.newer, f.older, f.close = Button(f, 12), Button(f, 12), Button(f, 12)
         S.news = f
     end
-    f.dungeon:SetText(L["Dungeon"])
-    f.dungeons:SetText(L["Dungeons"])
-    f.title:SetText(L["What's new"])
+    f.title:SetText(L["What's new in OpenMap"])
     f.version:SetText("OpenMap 1.2.0")
     f.head:SetText(L["%d versions"]:format(5))
-    f.kind:SetText(KIND)
     f.newer:SetText(L["Newer"])
     f.older:SetText(L["Older"])
+    f.close:SetText(L["Close"])
     S.building = false
     f:Show()
 end

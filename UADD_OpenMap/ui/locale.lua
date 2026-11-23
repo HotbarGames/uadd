@@ -2,19 +2,19 @@
 -- Keys are OpenMap's English texts, whole. This file is data only: it changes nothing by itself.
 -- MAP holds texts OpenMap looks up when it shows them. LOADTIME holds texts OpenMap reads once,
 -- while its files load (tab names, key bindings, the townsfolk filters, sketch tools and colours,
--- the report popup, every Credits line), so a swap made later never reaches the copy it keeps.
--- MONTHS is not from L: it is OpenMap's own month list, used only when the game has none; the
--- Ukrainian is in the genitive, because it sits in a date ("13 листопада 2026").
+-- the report popup), so a swap made later never reaches the copy it keeps.
 --
 -- Left out on purpose (tools/test_openmap_strings.py lists them too):
 --   "OpenMap"     the addon's name.
---   "%d %s %s"    a date (day, month, year): no words, and the order is already right.
---   Text OpenMap writes without L: the changelog (about 62 items) and the diagnostic lines of
---   /openmap debug and bench (about 25). They stay English.
+--   The News window (Map/News.lua: What's new, its pages, dates) and its Credits page
+--   (Credits.lua): an addon's news stays its own English (lesson 43, tools/news_texts.py).
+--   The menu's "What's new" entry, which only opens it, and the two update chat lines are ours.
+--   Text OpenMap writes without L: the changelog and the diagnostic lines of /openmap debug and
+--   bench (about 25). They stay English.
 -- Place names inside a sentence ("Searing Gorge", "Mount Hyjal", "Dire Maul - East") stay English
 -- here: names come from UALL. "Dire Maul - East" is typed in a slash command, so it must stay.
 -- UADD_OpenMap/Locale.lua puts these in OpenMap's L; Words.lua uses them for texts read earlier.
--- Over the 300-line budget on purpose: it is one flat table of 567 texts.
+-- Over the 300-line budget on purpose: it is one flat table of 521 texts.
 local _, ns = ...
 -- G"id" takes a word from the shared base, UADD/glossary/*.lua (see docs/GLOSSARY.md).
 local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil end
@@ -294,18 +294,10 @@ local MAP = {
     ["Remember while visible"] = "Пам'ятати, поки видно",
     ["Shift-click: share in chat"] = "Shift-клік: поділитися в чаті",
 
-    -- News.lua
-    ["%d changes, newest first."] = "Змін: %d, нові вгорі.",
-    ["%d versions"] = "Версій: %d",
-    ["click, then Ctrl-C"] = "клацніть, потім Ctrl-C",
-    ["Close"] = G"ui.close",
-    ["Coming in the next version."] = "Буде в наступній версії.",
-    ["Newer"] = "Новіші",
-    ["Older"] = "Старіші",
-    ["OpenMap is made by |cffe6b85cJi Unit (RP-PvP Horde)|r, and it's open source: join in on GitHub"] =
-        "OpenMap створив |cffe6b85cJi Unit (RP-PvP Horde)|r, і це відкритий код: долучайтеся на GitHub",
+    -- Options next to the News (the News window itself stays English), and its two update chat lines
     ["OpenMap %s is out (you have %s). Update through CurseForge."] =
         "Вийшла OpenMap %s (у вас %s). Оновіть через CurseForge.",
+    ["Updated to %s: see What's new in the OpenMap menu."] = "Оновлено до %s: дивіться «Що нового» в меню OpenMap.",
     ["Say when OpenMap has an update"] = "Повідомляти, коли в OpenMap є оновлення",
     ["When a friend, guild member or group member has a newer OpenMap, a line in chat says so, once a session. Your version goes only in messages OpenMap already sends them. Off, nothing is said and your version isn't sent."] =
         "Коли в друга, члена гільдії чи групи новіша OpenMap, у чаті з'явиться рядок про це, раз за сеанс. Вашу версію бачать лише в повідомленнях, які OpenMap їм і так надсилає. Вимкнено: нічого не повідомляється, і ваша версія не надсилається.",
@@ -314,17 +306,6 @@ local MAP = {
         "У підземеллях відкривати звичайну карту гри замість карти підземелля від OpenMap. Знову ввімкнути можна будь-коли: меню OpenMap > Підземелля > Карти підземель усередині підземель.",
     ["OpenMap's dungeon maps are off inside dungeons. To turn them back on: OpenMap's menu > Dungeons > Dungeon maps inside dungeons."] =
         "Карти підземель від OpenMap усередині підземель вимкнено. Щоб ввімкнути їх знову: меню OpenMap > Підземелля > Карти підземель усередині підземель.",
-    ["place names and quest areas on the controller map, and it reopening as you set"] =
-        "назви місць і ділянки завдань на карті для контролера, і повторне відкриття карти, як ви налаштували",
-    ["the quest level on OpenMap's quest icons"] = "рівень завдання на значках завдань OpenMap",
-    ["Released %s."] = "Випуск: %s.",
-    ["Thank you to everyone who has made OpenMap better."] = "Дякуємо всім, хто зробив OpenMap кращим.",
-    ["Upcoming"] = "Незабаром",
-    ["Updated to %s: see What's new in the OpenMap menu."] = "Оновлено до %s: дивіться «Що нового» в меню OpenMap.",
-    ["Versions: |cffffffff%d|r"] = "Версій: |cffffffff%d|r",
-    ["What's new in OpenMap"] = "Що нового в OpenMap",
-    ["Credits"] = "Подяки",
-    ["Unreleased"] = "Ще не вийшло",
 
     -- Paint.lua (map notes)
     ["(no text)"] = "(без тексту)",
@@ -622,8 +603,6 @@ local MAP = {
         "Enhance QoL: якщо в ньому ввімкнено Mover > World Map, вимкніть це. І він, і OpenMap змінюють розмір карти, і її масштаб збивається.",
     ["Kept as it is. You can turn it off any time in ClassicUI Forever's options (World map)."] =
         "Залишено як є. Його можна будь-коли вимкнути в налаштуваннях ClassicUI Forever («World map»).",
-    ["OpenMap is free and made in spare time. To support it:"] =
-        "OpenMap безкоштовний і робиться у вільний час. Підтримати його:",
     ["Keeps the chat windows on show over the map while it's full screen, to keep talking while you look."] =
         "Лишає вікна чату поверх карти на весь екран, щоб ви могли спілкуватися, поки дивитеся.",
     ["MapUtils also changes the world map's zoom and scale: with it and OpenMap both on, the map and Blizzard's quest areas can jump while zooming. Turn one of them off if you see that."] =
@@ -771,67 +750,8 @@ local LOADTIME = {
         "Рейдова мітка: клацніть, щоб поставити. Правий клік по цій кнопці — інша мітка.",
     ["Erase"] = "Стерти",
     ["Click a drawing to take it off."] = "Клацніть малюнок, щоб прибрати його.",
-    -- Credits.lua: headings, then what each person did (lower case: it follows a name)
-    ["Made by"] = "Автор",
-    ["Programming"] = "Програмування",
-    ["Map art"] = "Зображення карти",
-    ["Maps painted by hand"] = "Карти, намальовані вручну",
-    ["Translations"] = "Переклади",
-    ["Libraries"] = "Бібліотеки",
-    ["Reports and ideas"] = "Повідомлення й ідеї",
-    ["Everyone who reports problems and ideas on CurseForge."] =
-        "Усі, хто повідомляє про проблеми й ділиться ідеями на CurseForge.",
-    ["If a word reads wrong in your language, say so on CurseForge: it's fixed for the next version."] =
-        "Якщо слово вашою мовою звучить неправильно, напишіть про це на CurseForge: у наступній версії його виправлять.",
-    ["Hand painted custom art for OpenMap including the sea elements, blank land between zones, and his maps of WoW Forever dungeons."] =
-        "Намальовані вручну зображення для OpenMap: море, порожні землі між зонами і його карти підземель WoW Forever.",
-    ["the map art is the game's own"] = "зображення карти взято з самої гри",
-    ["a dungeon's map opening when you open the map inside it, and one icon for townsfolk who walk about"] =
-        "карта підземелля, що відкривається, коли ви відкриваєте карту в ньому, і один значок для міських служб, що ходять туди-сюди",
-    ["dungeon and cave maps in every language (they showed green on some languages' clients)"] =
-        "карти підземель і печер усіма мовами (у клієнтах деякими мовами вони були зелені)",
-    ["flight masters named in your client's language"] = "назви майстрів польотів мовою вашого клієнта",
-    ["friends on other numbered realms on the map"] = "друзі з інших нумерованих серверів на карті",
-    ["gold-bordered dots for your party and raid"] = "точки із золотою облямівкою для вашої групи й рейду",
-    ["how the map reopens, and middle-click to center on you"] =
-        "як карта відкривається знову, і клік середньою кнопкою, щоб показати вас у центрі",
-    ["map brightness"] = "яскравість карти",
-    ["one marker per friend or guildmate, none left over when they join your group, and the newest dungeons' entrances"] =
-        "одна мітка на друга чи члена гільдії, без зайвих, коли вони приєднуються до вашої групи, і входи до найновіших підземель",
-    ["OpenMap's map with a controller (the Gamepad UI)"] = "карта OpenMap з контролером (інтерфейс геймпада)",
-    ["the controller map option turned on in combat, and B by a quest's details"] =
-        "налаштування карти для контролера, увімкнене в бою, і кнопка B біля подробиць завдання",
-    ["Questie 12.8's icons found on the map"] = "значки Questie 12.8, знайдені на карті",
-    ["the map in combat, RareScanner's icons over the map and other map addons' pins"] =
-        "карта в бою, значки RareScanner поверх карти й позначки інших аддонів карти",
-    ["the map's hitches while panning, found and measured with /openmap bench"] =
-        "ривки карти під час пересування, знайдені й виміряні через /openmap bench",
-    ["the resizable settings menu, resizing the map with Move Any, and the Titan Panel launcher"] =
-        "меню налаштувань зі змінним розміром, зміна розміру карти через Move Any і кнопка в Titan Panel",
-    ["the switch for dungeon maps, and separate switches for friends and guild"] =
-        "перемикач карт підземель і окремі перемикачі для друзів і гільдії",
-    ["the yellow ping hidden with your arrow"] = "жовтий сигнал, схований разом із вашою стрілкою",
-    ["zooming about four times smoother, found and measured"] = "наближення приблизно вчетверо плавніше, знайдене й виміряне",
-    ["Forever City Labels' pins on the stitched map"] = "позначки Forever City Labels на суцільній карті",
-    ["baked zone tiles for the Russian client"] = "готові фрагменти зон для російського клієнта",
-    ["quests from every zone read a few at a time"] = "завдання з усіх зон, які читаються по кілька за раз",
-    ["sharper middle zooms, and unexplored land darkened as one shade"] =
-        "чіткіші середні наближення і недосліджені землі, затемнені одним відтінком",
-    ["the map in combat, ClassicUI Forever's window, and Esc on a dungeon's map"] =
-        "карта в бою, вікно ClassicUI Forever і Esc на карті підземелля",
-    ["the zones' tiles baked in Brazilian Portuguese, less work while the map is closed or moving, and its art ready before it opens"] =
-        "готові фрагменти зон бразильською португальською, менше роботи, поки карта закрита чи рухається, і її зображення, готові ще до відкриття",
-    ["your position read safely, the maximized dungeon map, the Stockade's map, and German"] =
-        "безпечне читання вашої позиції, розгорнута карта підземелля, карта The Stockade і німецька мова",
 }
 
--- Not L keys: OpenMap's own month list (News.lua), for dates. Genitive: "13 листопада 2026".
-local MONTHS = {
-    ["January"] = "січня", ["February"] = "лютого", ["March"] = "березня", ["April"] = "квітня",
-    ["May"] = "травня", ["June"] = "червня", ["July"] = "липня", ["August"] = "серпня",
-    ["September"] = "вересня", ["October"] = "жовтня", ["November"] = "листопада", ["December"] = "грудня",
-}
-
-local locale = { MAP = MAP, LOADTIME = LOADTIME, MONTHS = MONTHS }
+local locale = { MAP = MAP, LOADTIME = LOADTIME }
 if ns then ns.locale = locale end
 return locale

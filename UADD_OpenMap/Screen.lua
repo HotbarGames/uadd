@@ -4,9 +4,10 @@
 --   * the dungeon view (OpenMapDungeonView and its side panel), the dungeon chooser and the card on
 --     a dungeon's map: every text there gets the Cyrillic font (Questie's Ukrainian titles need it);
 --   * the map menu (OpenMapMenu), the pin list and editor, the note editor and export box, the
---     report box, the News window (OpenMapNews) and the page in the game's Settings: words, and the
---     Cyrillic font on a text only once it shows Ukrainian letters (the News title keeps its
---     MORPHEUS font while it reads English);
+--     report box and the page in the game's Settings: words, and the Cyrillic font on a text only
+--     once it shows Ukrainian letters;
+--   * not the News window (OpenMapNews, with its Credits page): an addon's news stays its own English,
+--     on, held and off (lesson 43, tools/news_texts.py), so it is no root and its MORPHEUS title is untouched.
 -- The options window (AceConfig, built from L, so its words come from Locale.lua) is not ours to
 -- walk: its widgets are shared with other addons' windows, so UADD/AceFont.lua does its fonts.
 -- OpenMap makes these frames on first use, so we look for them every TICK seconds while the World
@@ -25,7 +26,7 @@ local TICK = 0.5
 local FIND = 1
 local IDLE_MAX = 4   -- seconds: the longest wait between looks while a look finds nothing new
 
-local NAMED = { "OpenMapMenu", "OpenMapNews", "OpenMapPins", "OpenMapPinEditor", "OpenMapPinsCode",
+local NAMED = { "OpenMapMenu", "OpenMapPins", "OpenMapPinEditor", "OpenMapPinsCode",
     "OpenMapNoteEditor", "OpenMapNotesExport", "OpenMapReport" }
 
 local roots, seen, hookedRoot = {}, {}, {}

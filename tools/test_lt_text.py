@@ -16,6 +16,7 @@ import luatok  # noqa: E402
 import lt_rules as R  # noqa: E402
 import lt_source as S  # noqa: E402
 import make_lt_text as M  # noqa: E402
+import news_texts as N  # noqa: E402
 
 ADDON = S.addon_dir()
 INSTALLED = (ADDON / S.TOC).is_file()
@@ -131,15 +132,17 @@ class Rules(unittest.TestCase):
 
     def test_batches(self):
         self.assertEqual((R.batch_of("Settings.lua"), R.batch_of("SettingsWindow.lua")), (1, 1))
-        self.assertEqual((R.batch_of("WhatsNew.lua"), R.batch_of("Gizmo.lua")), (3, 2))
-        self.assertEqual([b[0] for b in R.BATCHES], [1, 2, 3])
+        self.assertEqual(R.batch_of("Gizmo.lua"), 2)
+        self.assertEqual([b[0] for b in R.BATCHES], [1, 2])        # its What's New is no batch (lesson 43)
+        self.assertNotIn("WhatsNew.lua", R.BATCH_FILES)
+        self.assertNotIn("WhatsNew.lua", R.FILE_NOTE)
         with self.assertRaises(SystemExit):
             R.split([row("g%d" % i) for i in range(R.MAX_BATCH + 1)])
 
 
 class Drafts(unittest.TestCase):
     ROWS = [row('Wobbly "gizmo"'), row("Two\nlines"), row("Plain gizmo", 2), row("Wobbly \\ gizmo", 2),
-            row("Bent gizmo ", 3), row("Left gizmo", 3)]
+            row("Bent gizmo ", 2), row("Left gizmo", 2)]
     DRAFT = ("# made-up\nEN: Wobbly \\\"gizmo\\\"\nUA: Хиткий «гвинтик»\n\nEN: Two\\nlines\nUA: Два\\nрядки\n\n"
              "EN: Plain gizmo\nUA: Простий гвинтик\n\nEN: Wobbly \\ gizmo\nUA: Хиткий \\\\ гвинтик\n\n"
              "EN: Bent gizmo\nUA: Зігнутий гвинтик\n\nEN: Left gizmo\nUA: \n\nEN: Nowhere gizmo\nUA: Ніде\n")
@@ -176,7 +179,7 @@ class Drafts(unittest.TestCase):
                 "EN: Plain gizmo\nUA: ", "EN: Plain gizmo\nUA: Мій гвинтик", 1))
             write(d, "draft_01.txt", self.DRAFT)
             sizes, gone, filled, unmatched = M.review(self.ROWS, d)
-            self.assertEqual((sizes, gone, filled), ({1: 2, 2: 2, 3: 2}, 0, 3))
+            self.assertEqual((sizes, gone, filled), ({1: 2, 2: 4}, 0, 3))
             M.review(self.ROWS, d)
             rev = K.read_all(d)
             self.assertEqual(rev[self.ROWS[2][0]][1], "Мій гвинтик")   # the review's own UA wins
@@ -210,11 +213,25 @@ class Installed(unittest.TestCase):
         for key, en, b, *_ in self.rows:
             self.assertNotIn(None, R.sorts(key, en), key)
             sizes[b] = sizes.get(b, 0) + 1
-        self.assertEqual(sorted(sizes), [1, 2, 3])
+        self.assertEqual(sorted(sizes), [1, 2])
         self.assertTrue(all(n <= R.MAX_BATCH for n in sizes.values()), sizes)
         for key, letters in R.SORTS.items():
             self.assertIn(key, rows, key)
             self.assertEqual(len(letters), len(K.slots(rows[key])), key)
+
+    def test_whats_new_left_english(self):
+        """Lesson 43: no row is shown only in its What's New; its texts are in the addon, so the drop is real."""
+        news = [f for f in S.files(ADDON) if N.is_news(f)]
+        self.assertTrue(news, "no What's New file found: check tools/news_texts.FILE")
+        shown = {code(en) for f in news for en, _, why, _ in S.literals(ADDON / f) if not why}
+        self.assertTrue(shown)
+        for key, en, b, where, _ in self.rows:
+            self.assertFalse(N.news_only(where), key)
+        rows = {r[0] for r in self.rows}
+        self.assertTrue(shown - rows, "every What's New text is a row")
+        if (MOD / "data" / "text01.lua").is_file():
+            t, _ = data_entries(MOD / "data")
+            self.assertEqual(sorted((shown - rows) & set(t)), [], "our data holds a What's New text")
 
     def test_no_english_in_our_files(self):
         ens = {en for _, en, *_ in self.rows if len(en.strip()) > 3}

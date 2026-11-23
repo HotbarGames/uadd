@@ -31,7 +31,7 @@ M.SEED = {
     ["+%d level%s since you started"] = "+%d рів.%s від початку",   -- slot 2: the English "s", blanked
     ["Race created: %s | Code: %s. Share the code with friends."] =
         "Перегони створено: %s | Код: %s. Поділіться кодом із друзями.",
-    ["I understand"] = "Зрозуміло",
+    ["Close"] = "Закрити",   -- a word of ours that the What's New page shows: there it stays English
     ["Optional challenges, races, leaderboards, level-up cards and Played records."] = "Виклики й перегони.",
     ["ForeverXP Bar: the minimap icon setting changed.\n\nReload the UI now to apply and save it?"] =
         "ForeverXP Bar: кнопку на мінікарті змінено.\n\nПерезавантажити інтерфейс зараз?",

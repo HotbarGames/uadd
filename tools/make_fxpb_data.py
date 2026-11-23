@@ -2,7 +2,7 @@
 
 ForeverXP Bar is all rights reserved and has no locale table, so the module finds its texts on screen by
 hash (UADD/Hash.lua). This tool reads the addon's Lua files (tools/fxpb_scan.py finds the texts it shows,
-tools/fxpb_rules.py says what is left out and why) and writes
+tools/fxpb_rules.py says what is left out and why: its What's New page among them) and writes
   * local/foreverxpbar.txt (git-ignored): every text's English (EN) and our Ukrainian (UA), by screen area;
   * UADD_ForeverXPBar/data/words.lua (tracked): hashes of the English and our Ukrainian (tools/fxpb_words.py).
 
@@ -48,7 +48,7 @@ AREAS = [
      [(MAIN, 1, 5299), (MAIN, 12601, 12899)]),
     ("options", "Minimap button, settings window, options pages", [(MAIN, 5300, 7399),
                                                                    ("ForeverXPBarSounds.lua", 1, 9999)]),
-    ("settings", "Adjust, profiles, challenge setup, help page, what's new, reset popups", [(MAIN, 7400, 8899)]),
+    ("settings", "Adjust, profiles, challenge setup, help page, reset popups", [(MAIN, 7400, 8899)]),
     ("card", "Record panel, level-up card, chat card", [(MAIN, 8900, 9899)]),
     ("race", "Challenge goal, races, leaderboard", [(MAIN, 9900, 12600)]),
     ("chat", "Chat messages and /fxpb help", [(MAIN, 12900, 99999)]),
@@ -101,6 +101,15 @@ def debug_lines(toks, text):
     return out
 
 
+def news_lines(text):
+    """Line numbers of the What's New page (fxpb_rules.NEWS_START to NEWS_END), or an empty set when the
+    addon no longer has both marks (test_fxpb_strings checks the installed addon has them)."""
+    lines = text.split("\n")
+    lo = next((n for n, s in enumerate(lines, 1) if R.NEWS_START.search(s)), None)
+    hi = next((n for n, s in enumerate(lines, 1) if lo and n > lo and R.NEWS_END.search(s)), None)
+    return set(range(lo, hi + 1)) if lo and hi else set()
+
+
 def area_of(fname, line):
     for aid, _, ranges in AREAS:
         if any(f == fname and lo <= line <= hi for f, lo, hi in ranges):
@@ -138,10 +147,11 @@ def collect(src_dir=None):
             if kind == luatok.STR:
                 lits.setdefault(H.key(utf8(val)), utf8(val))
         src, dbg = text.split("\n"), debug_lines(toks, text)
+        news = news_lines(text) if fname == MAIN else set()
         for item in S.scan(text):
             where = f"{FILE_ID[fname]}L{item.line}"
             item.text = utf8(item.text)
-            why = R.skip_reason(item, src[item.line - 1], item.line in dbg)
+            why = "news" if item.line in news else R.skip_reason(item, src[item.line - 1], item.line in dbg)
             if why:
                 skipped.append((why, item, where))
             elif (item.kind, item.text) in seen:

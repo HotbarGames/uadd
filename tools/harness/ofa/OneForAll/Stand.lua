@@ -85,6 +85,19 @@ function S.Pin()
     return S.pinText
 end
 
+-- Its news window, made later inside a walked window, with a word that is ours on the main window's button.
+function S.News()
+    if not S.news then
+        local f = CreateFrame("Frame", "OneForAllWhatsNew", S.main)
+        f:SetSize(20, 20)
+        f:SetPoint("TOP")
+        S.news = f
+        S.newsText = Label(f, S.T.button, -2)
+    end
+    S.news:Show()
+    return S.newsText
+end
+
 function S.Tip()
     GameTooltip:SetOwner(UIParent)
     GameTooltip:AddLine(S.T.tip)

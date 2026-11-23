@@ -84,7 +84,7 @@ WALK_TODO = "a frame walk with no IsForbidden test; TODO: use U.Regions / U.Chil
 for _f, _n in {"Attune/Claim": 4, "Attune/Screen": 6, "Auctionator/Menu": 2, "Auctionator/Rows": 1,
                "Auctionator/Screen": 2, "AutoPotion/Screen": 2, "Bagnon/Fonts": 2, "DialogueUI/Screen": 3,
                "DungeonJournal/Language": 2, "DungeonJournal/Map": 1, "DungeonJournal/Screen": 2,
-               "DungeonJournal/Search": 1, "ForeverXPBar/Screen": 4, "GatherMate2/Fonts": 2, "LayerSwap/Screen": 2,
+               "DungeonJournal/Search": 1, "ForeverXPBar/Screen": 2, "GatherMate2/Fonts": 2, "LayerSwap/Screen": 2,
                "OpenMap/Screen": 3, "Pawn/Fonts": 2, "Pawn/Swap": 2,
                "Questie/ControlFont": 2, "Questie/HeaderFont": 2, "RareScanner/Fonts": 2, "Scrap/Fonts": 2,
                "SpeedyAutoLoot/Module": 2, "TomTom/Fonts": 2}.items():

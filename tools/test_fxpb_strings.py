@@ -83,6 +83,16 @@ class Data(unittest.TestCase):
                 bad.append(f"#{n} {why}: {H.key(s)}")   # #n: the number in local/foreverxpbar.txt
         self.assertEqual(bad, [])
 
+    def test_whats_new_page_left_out(self):
+        """The What's New page stays English: the addon still has both marks of its range, its texts are
+        left out ("news"), and no kept text is found only inside it."""
+        news = M.news_lines(luatok.read(M.addon_dir() / M.MAIN))
+        self.assertGreater(len(news), 50, "the What's New marks (fxpb_rules.NEWS_START/END) are gone: find the page again")
+        self.assertGreaterEqual(sum(why == "news" for why, _, _ in self.skipped), 10)
+        inside = [H.key(t) for rows in self.kept.values() for _, t, where in rows
+                  if all((m := re.fullmatch(r"L(\d+)", w)) and int(m[1]) in news for w in where)]
+        self.assertEqual(inside, [])
+
     def test_templates_have_slots(self):
         no_slot = [H.key(s) for kind, s in self.texts if kind == "format" and not H.is_template(s)]
         self.assertEqual(no_slot, [])
@@ -166,6 +176,19 @@ class Fixture(unittest.TestCase):
         self.assertEqual(reasons["Nobody called '%s' is here."], "code")
         self.assertEqual(reasons["alliance"], "code")
         self.assertEqual(reasons["PLAYER_LEVEL_UP"], "code")
+
+    def test_news_page_range(self):
+        page = 'label:SetText("Show Pie Slice")\nlocal notice = Fx._newBox(UIParent, 1)\nt:SetText("Big news")\n' \
+               'openFeatureGuide = function()\nb:SetText("Big news")\nc:SetText("Old news")\n'
+        self.assertEqual(M.news_lines(page), {2, 3, 4})
+        self.assertEqual(M.news_lines(page.replace("openFeatureGuide", "other")), set())
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / M.MAIN).write_text(page, encoding="utf-8")
+            kept, skipped = M.collect(d)
+        got = {t: where for rows in kept.values() for _, t, where in rows}
+        self.assertEqual(got.get("Big news"), ["L5"], "a text also used outside the page is kept from there")
+        self.assertIn("Old news", got)
+        self.assertIn(("news", "Big news"), {(why, it.text) for why, it, _ in skipped})
 
     def test_data_round_trip(self):
         texts = [("exact", "Show Pie Slice"), ("exact", "Off"), ("format", "%d hops, %.1f%% done"),

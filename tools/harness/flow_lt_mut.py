@@ -202,7 +202,6 @@ MUTANTS = {
     "maybe": ("Words.lua", 'function W.Maybe(s)\n    if type(s) ~= "string" then return false end',
               "function W.Maybe(s)\n    do return true end", "4 lines not its own cost nothing"),
     "font": ("Screen.lua", "if Font(fs) then rec[fs] = { en = t, uk = uk }", "if true then rec[fs] = { en = t, uk = uk }", "m4"),
-    "newsfont": ("News.lua", "if ns.Screen.Font(fs) then rec = {", "if true then rec = {", "m4"),
     "refresh": ("Screen.lua", 'hooksecurefunc(c, "Refresh", ns.Guard(WalkAll))', 'hooksecurefunc(c, "Refresh", U.Safe("lt", WalkAll))',
                 "m12"),
     "renamed": ("Screen.lua", "        if r and t == r.uk then fs:SetText(r.en) end", "        if r then fs:SetText(r.en) end",
@@ -220,11 +219,11 @@ MUTANTS = {
              "14 its dropdown's menu: our names in our Cyrillic font"),
     "canfont": ("Screen.lua", "if not ns.Menu.CanFont() then return list end", "", "m4"),
     "owner": ("Screen.lua", "if Forbidden(o) then break end", "", "15 a tooltip with a forbidden owner: no error, no fault"),
-    "newslabel": ("News.lua", "if t == en then l.en = en lab:SetText(NEW_UK) end", "",
+    "newslabel": ("NewButton.lua","if t == en then l.en = en lab:SetText(NEW_UK) end", "",
                   "16 its New buttons: ours in our font, the button sized to it, the global not written"),
-    "newsrefont": ("News.lua", "pcall(A.Set, lab, APP, Relabel)", "pcall(A.Set, lab, APP)",
+    "newsrefont": ("NewButton.lua","pcall(A.Set, lab, APP, Relabel)", "pcall(A.Set, lab, APP)",
                    "16 New button hover sets its font object: ours stays"),
-    "newsglobal": ("News.lua", 'if type(g) ~= "string" or g == "" or find(g, CYR) then', 'if type(g) ~= "string" or g == "" then',
+    "newsglobal": ("NewButton.lua",'if type(g) ~= "string" or g == "" or find(g, CYR) then', 'if type(g) ~= "string" or g == "" then',
                    "16 the game's word already Cyrillic: left as it is, the global too"),
 }
 

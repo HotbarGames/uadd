@@ -17,8 +17,9 @@ local U = UADD
 local S = {}
 ns.Screen = S
 
-local ROOTS = { "RoadToSixtyJourneyFrame", "RoadToSixtyMinimapButton", "RoadToSixtyCompareWindow",
-    "RoadToSixtyWhatsNew" }
+local ROOTS = { "RoadToSixtyJourneyFrame", "RoadToSixtyMinimapButton", "RoadToSixtyCompareWindow" }
+-- Its What's New window stays English (lesson 43: never its news), also when made later by the name prefix.
+local SKIP = { RoadToSixtyWhatsNew = true }
 local CATEGORY = "Road to Sixty"                 -- the addon's own name, as it registers its Settings category
 
 local canvas                                     -- its Settings canvas, once found
@@ -106,6 +107,7 @@ local W = U.Walk({
     On = function() return ns.On() end,
     Wanted = function() return ns.WordsWanted() end,
     roots = Roots,
+    skip = SKIP,
     Lookup = function(en, fs)
         if type(fs) == "table" and NameLabel(fs) then return nil, false end
         return ns.Words.Translate(en)

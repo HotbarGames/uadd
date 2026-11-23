@@ -2,8 +2,8 @@
 -- touches it: named frames (bar, minimap button, options, record, race), the bar's per-tick texts in
 -- FRIZQT and in one of its own Latin-only font files, panel labels in ARIALN, a nameless page for the
 -- game's Settings window, a tooltip on its minimap button, printMsg chat lines, what it sends to
--- other players, an edit box and a scanning tooltip it reads back, a nameless feature guide and
--- drop-down list (made with the options window), a second Settings page made at PLAYER_ENTERING_WORLD,
+-- other players, an edit box and a scanning tooltip it reads back, a nameless What's New page (stays
+-- English) and drop-down list (made with the options window), a second Settings page made at PLAYER_ENTERING_WORLD,
 -- a StaticPopup question, and another addon's nameless dialog. Its texts are a few of its real
 -- labels (UADD_ForeverXPBar/data/words.lua has their hashes).
 local S = {}
@@ -166,7 +166,7 @@ end
 -- Its read-back: the edit box's code and the scanning tooltip's line.
 function S.ReadBack() return box:GetText(), S.Scan() end
 
--- ── Made with the options window: a drop-down's list and the feature guide, nameless on UIParent
+-- ── Made with the options window: a drop-down's list and the What's New page, nameless on UIParent
 local dd = CreateFrame("Button", nil, opt)
 dd:SetPoint("TOPLEFT", opt, "TOPLEFT", 10, -40)
 local pop = CreateFrame("Frame", nil, UIParent)
@@ -178,7 +178,7 @@ local guide = CreateFrame("Frame", nil, UIParent)
 guide:SetFrameStrata("FULLSCREEN_DIALOG")
 guide:SetPoint("CENTER", UIParent, "CENTER", 0, 25)
 Text(guide, "guideTitle", BAR_FONT, 13, "", "|cff8ee6deXP|r Bar  |cff8a8a8aWhat's New|r")
-Text(CreateFrame("Button", nil, guide), "guideOk", BAR_FONT, 12, "", "I understand")
+Text(CreateFrame("Button", nil, guide), "guideOk", BAR_FONT, 12, "", "Close")   -- the flow seeds a word for it
 guide:Hide()
 -- Another addon's nameless dialog with a short word ForeverXP Bar has too: not ForeverXP Bar's.
 local other = CreateFrame("Frame", nil, UIParent)

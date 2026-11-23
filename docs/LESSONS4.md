@@ -79,9 +79,39 @@ only, and the What's New lines are a plain list in `WhatsNew.lua`.
   were held as "not named", though we had them.
 
 **Check.** `python3 -m unittest tools.test_drift`: `test_update_holds_untranslated` (a new text our data does not
-name is not recorded, its drift still shows; recorded once named, or with `--module`) and `test_whats_new_lines_read`
-(drift_fqp reads the `lines = { ... }` of a made-up WhatsNew.lua), `test_escaped_key_named` (a key with `\n` and
-`\\` names its text).
+name is not recorded, its drift still shows; recorded once named, or with `--module`) and `test_escaped_key_named`
+(a key with `\n` and `\\` names its text).
+
+**Since 2026-11-23** news texts are the one exception to "read every place": an addon's What's New, News and
+changelog stay English (lesson 43), so drift reads none of them. The What's New check is now
+`test_whats_new_lines_not_read` (drift_fqp skips the `lines = { ... }` of a made-up WhatsNew.lua, and keeps an L key
+there that another file also uses) and `test_news_rows_skipped`.
+
+## 43. News we translated after the players had read it
+
+**What went wrong.** Six modules translated their addon's What's New, News or changelog window: Forever Quest Pins'
+login lines and window, OpenMap's News window and Credits page, LootTriage's What's New dialog, OneForAll's
+"Noteworthy changes", Road to Sixty's What's New and ForeverXP Bar's changes page. Our update always comes after the
+addon's, so players had read the news in English already. Each new news line was also drift work on every update
+(lesson 42 was one), and owner minutes in the game, for nothing (the owner, 2026-11-23).
+
+**Rule.**
+
+- Never translate an addon's What's New, News or changelog window, nor a page shown only inside it: it stays the
+  addon's own English, on, held and off. Its frame is no root to walk or hook; a skip table may name it to leave it
+  alone.
+- Extractors, generators and drift leave news out (`tools/news_texts.py`: a news file by its name, `TEXTS` for a
+  news text outside one).
+- Not news, so still ours: a button or menu entry that only opens the news ("What's new"), a help line that names
+  it, and a fixed one-line chat notice that a new version is out or that the addon was updated to X (it tells no
+  changes). These go in `KEEP` when the addon keeps them in its news file.
+
+**Check.** `python3 -m unittest tools.test_news`: no shipped module code names a news frame outside a skip table
+(it finds the old OpenMap and Road to Sixty roots), no `TEXTS` entry and no Forever Quest Pins What's New line is
+in our data, and `is_news` on made-up paths. `python3 -m unittest tools.test_drift` (`test_news_rows_skipped`).
+Per module: `tools/test_openmap_strings.py` (`test_news_stays_english`, `test_update_lines_are_ours`),
+`tools/test_lt_text.py`, and the flows of Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty and
+ForeverXP Bar (the news window stays English on, held and off).
 
 ## More cases of older lessons
 

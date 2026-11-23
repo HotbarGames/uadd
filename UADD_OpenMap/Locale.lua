@@ -92,7 +92,7 @@ Lc.FREE = {
     ["addons' memory: %s"] = { 1 }, ["garbage a second: %.1f MB in all, of which %s"] = { 2 },
     ["Lua memory %.0f MB (%+.1f MB a minute), map pins %d (most: %s %d)"] = { 4 },
     ["%s is also changing the world map. Turn off its world map options (or the addon) so the two don't fight."] = { 1 },
-    ["Leatrix Maps: turn off %s there; OpenMap does the same for its map."] = { 1 }, ["Released %s."] = { 1 },
+    ["Leatrix Maps: turn off %s there; OpenMap does the same for its map."] = { 1 },
     ["A map addon brings its own HereBeDragons (%s), which OpenMap doesn't know: its pins keep the game's own placement."] = { 1 },
     ["Back to %s"] = { 1 }, ["Map by %s"] = { 1 }, ["Somewhere in %s"] = { 1 }, ["Shared by %s"] = { 1 },
     ["From %s: about %s"] = { 1 }, ["No flight route from %s to %s."] = { 1, 2 }, ["Drawing on the pin: %s"] = { 1 },

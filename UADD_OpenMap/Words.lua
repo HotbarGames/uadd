@@ -1,5 +1,5 @@
 -- The words on OpenMap's windows, in Ukrainian, for texts L (Locale.lua) does not reach.
---   * OpenMap reads some texts once, while its files load (tab names, Credits lines, ...), and
+--   * OpenMap reads some texts once, while its files load (tab names, key bindings, ...), and
 --     sets others before we ran. So each text OpenMap sets is also swapped right after it is set:
 --     SetText on its FontString (and on its Buttons, whose SetText does not go through the
 --     FontString) is hooked once (hooksecurefunc), and the hook puts our words in.

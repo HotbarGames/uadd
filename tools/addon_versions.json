@@ -1178,11 +1178,11 @@
     "Waypoints.lua",
     "WhatsNew.lua"
    ],
-   "count": 225,
+   "count": 224,
    "tags": {
-    "L": 225
+    "L": 224
    },
-   "ids": "c28f0e00b78bb7b85630aa860a1b75e7238b8c2d"
+   "ids": "ee91e4789c8f6733be9ebe5bcedbe1c9d1eb5139"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
@@ -1197,11 +1197,11 @@
     "ForeverXPBarFonts.lua",
     "ForeverXPBarSounds.lua"
    ],
-   "count": 774,
+   "count": 764,
    "tags": {
-    "X": 774
+    "X": 764
    },
-   "ids": "8da090eff7e9096bdc20eefd6679d0d878ff1456"
+   "ids": "4814f78d0165c5875214b1a0363ced8f61e53b0f"
   },
   "UADD_GatherMate2": {
    "addon": "GatherMate2",
@@ -1374,11 +1374,11 @@
     "Tooltip.lua",
     "WhatsNew.lua"
    ],
-   "count": 230,
+   "count": 163,
    "tags": {
-    "L": 230
+    "L": 163
    },
-   "ids": "2b91fa4c3a280de87ac0b13afa46936579648323"
+   "ids": "141e4f4d610ad851f55a9c8844e9757410fc3de4"
   },
   "UADD_Mastercraft": {
    "addon": "Mastercraft",
@@ -1638,11 +1638,11 @@
     "UI/WhatsNew.lua",
     "UI/Widgets.lua"
    ],
-   "count": 2446,
+   "count": 2434,
    "tags": {
-    "L": 2446
+    "L": 2434
    },
-   "ids": "6ea93ac285e02908f067a31a813332690c92e2e0"
+   "ids": "919e1f2cecd1d6d0cbcfa75c8e84affe3584da4d"
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
@@ -1723,11 +1723,11 @@
     "Map/Window.lua",
     "Map/WorldMap.lua"
    ],
-   "count": 578,
+   "count": 522,
    "tags": {
-    "L": 578
+    "L": 522
    },
-   "ids": "ebdc0a6c51f9b2235d582b4353a1be8a62af119f"
+   "ids": "424dd1d1f0d1d07a29797b7e75ee2fe28a518023"
   },
   "UADD_Pawn": {
    "addon": "Pawn",
@@ -2371,11 +2371,11 @@
     "ZoneOverlaysAnniversary.lua",
     "ZoneOverlaysEra.lua"
    ],
-   "count": 299,
+   "count": 293,
    "tags": {
-    "L": 299
+    "L": 293
    },
-   "ids": "caeea6a9bef27d68a0f140feea3d16f50e1b2a1c"
+   "ids": "08f2065862cb7f755b81a189835a7123fc0e3c6f"
   },
   "UADD_Scrap": {
    "addon": "Scrap",

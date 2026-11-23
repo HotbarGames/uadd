@@ -1,7 +1,6 @@
 -- More of the stand-in (OpenMap.lua): lines built the way OpenMap builds them, from L's words (ours
 -- while UADD_OpenMap is on) and its own parts: its version, a zone name the game gives in English,
 -- a player's note. Written for the checks, not taken from OpenMap. For flow_openmap_built.py.
---   * the News window's top title: L's words, then the version in colour ("v0.8.9", or "dev");
 --   * the note editor's title (OpenMapNoteEditor): a new note, or note #3, then the zone;
 --   * the pin editor's title (OpenMapPinEditor): the pin, the zone, x and y, who shared it;
 --   * a row of the pin list (OpenMapPins): the zone, the player's note in white, then what it is;
@@ -21,15 +20,11 @@ end
 
 -- d = { version, zone, from (who shared the pin), note (the player's own) }
 function S.OpenBuilt(d)
-    S.OpenNews()
     S.building = true
-    local n = S.news
-    n.top = n.top or Text(n, 14)
     local notes, pin, pins = Frame("OpenMapNoteEditor"), Frame("OpenMapPinEditor"), S.pins
     notes.old = notes.old or Text(notes, 14)
     pins.row = pins.row or Text(pins, 12)
     S.building = false
-    n.top:SetText(L["What's new in OpenMap"] .. "  |cff998866" .. d.version .. "|r")
     notes.title:SetText(L["New note"] .. " · " .. d.zone)
     notes.old:SetText(L["Note"] .. " #" .. 3 .. " · " .. d.zone)
     pin.title:SetText(("%s · %s  %.1f, %.1f%s"):format(L["Map pin"], d.zone, 45.2, 30.1,
@@ -44,7 +39,7 @@ end
 -- The texts, by short name.
 function S.BuiltTexts()
     local notes, pin = _G.OpenMapNoteEditor, _G.OpenMapPinEditor
-    return { top = S.news.top:GetText(), new = notes.title:GetText(), old = notes.old:GetText(),
+    return { new =notes.title:GetText(), old = notes.old:GetText(),
         pin = pin.title:GetText(), row = S.pins.row:GetText() }
 end
 
@@ -52,7 +47,6 @@ function S.CloseBuilt()
     _G.OpenMapNoteEditor:Hide()
     _G.OpenMapPinEditor:Hide()
     S.pins:Hide()
-    S.news:Hide()
 end
 
 -- The dock's tooltip: L["To"] and the zone. Its line while shown.

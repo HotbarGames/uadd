@@ -10,6 +10,10 @@ OneForAll is GPL-3.0-or-later, so its English may be named here. Pools (OneForAl
   code     literals its code shows through a text call (SetText, AddLine, labels, ...) and not through L
 Left out on purpose: quest notes and book notes (v1), game names in data (they come from UALL Forever and
 ClassicUA), GuildGames.lua and ProfessionGuild.lua literals (their wire and parsing; only L there), Locales/.
+Its news (lesson 43, tools/news_texts.py) stays English: every text of UI/WhatsNew.lua (the "Noteworthy changes"
+window and its screenshot window) that no other file of it uses, and the keys of an old "Noteworthy changes ..."
+section of its locale that no file uses any more. "Noteworthy changes" itself (the Settings button that opens the
+window) and "Version" (also its main window) stay ours.
 Derived rows (built from another row's Ukrainian, never reviewed): UPPER (a tile label it shows in capitals) and
 COLON (SkillUpUI cuts a colon and adds a full stop).
 `python3 tools/ofa_source.py all` prints every code literal and why it is left out; with no argument the rows.
@@ -23,6 +27,7 @@ sys.path.insert(0, str(HERE))
 import hashtext as H  # noqa: E402
 import key_text as K  # noqa: E402
 import lua_literals as LL  # noqa: E402
+import news_texts as N  # noqa: E402
 import ofa_rules as R  # noqa: E402
 
 FOLDER, TOC = "OneForAll", "OneForAll.toc"
@@ -76,6 +81,29 @@ def lnum_key(text):
     return re.sub(r"\d[\d.]*", one, text.replace("%", "%%"))
 
 
+NEWS_SECTION = re.compile(r"(?i)^noteworthy changes\b")
+
+
+def lua_quoted(s):
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\t", "\\t") + '"'
+
+
+def news_texts(addon, keys=()):
+    """The English that only its news shows: each literal of a news file (WhatsNew.lua) that no other code or data
+    file has, and each of `keys` (an old news section's keys) that no file has."""
+    news, rest = set(), []
+    for p in sorted(addon.rglob("*.lua")):
+        rel = p.relative_to(addon).as_posix()
+        if rel.startswith("Locales/"):
+            continue
+        if N.is_news(rel):
+            news.update(en for en, _, _, _ in LL.literals(p))
+        else:
+            rest.append(p.read_text(encoding="utf-8", errors="replace"))
+    rest = "\n".join(rest)
+    return {en for en in news | set(keys) if lua_quoted(en) not in rest}
+
+
 def code_files(addon):
     for p in sorted(list(addon.glob("*.lua")) + list(addon.glob("UI/*.lua"))):
         if p.name not in CODE_SKIP:
@@ -105,7 +133,12 @@ def source(addon):
 
     de = addon / "Locales" / "deDE.lua"
     sections = {}
-    for en, section, line in locale_keys(de) if de.is_file() else []:
+    keys = locale_keys(de) if de.is_file() else []
+    news = news_texts(addon, [en for en, section, _ in keys if NEWS_SECTION.match(section)])
+    for en, section, line in keys:
+        if en in news:
+            why["news (What's New)"] = why.get("news (What's New)", 0) + 1
+            continue
         if "LNum" in section and K.SLOT.search(en.replace("%%", "")):
             R.NUMBERED.add(en)                   # a data sentence drawn through FLT.LNum: each %s is a number
         r = add(en, ("Locales/deDE.lua", line), "L: " + section, "L")
@@ -161,7 +194,11 @@ def source(addon):
             DERIVED[UI_upper(en)] = ("Code." + H.djb2(en), "upper")
     for en in COLON_KEYS:
         DERIVED[en[:-1] + "."] = ("Code." + H.djb2(en), "colon")
-    return R.split(groups), why
+    kept = [(area, pool, N.drop(rows)) for area, pool, rows in groups]     # code literals of WhatsNew.lua only
+    gone = sum(len(g[2]) for g in groups) - sum(len(g[2]) for g in kept)
+    if gone:
+        why["news (What's New)"] = why.get("news (What's New)", 0) + gone
+    return R.split(kept), why
 
 
 def UI_upper(s):

@@ -9,7 +9,8 @@ in code), so no game folder and no real English are needed:
 - texts not all read (an extractor fails, or finds none where the record has some): a note and exit 1;
   --update-versions refuses (exit 2) and leaves the record as it was;
 - --update-versions leaves out (exit 1) a module with new texts our data does not name, unless --module names it;
-- Forever Quest Pins' extractor reads the What's New lines (WhatsNew.lua `lines = { ... }`);
+- What's New texts never show as drift (lesson 43): Forever Quest Pins' extractor skips its WhatsNew.lua lines,
+  and news_texts.news_row drops news rows of every module (KEEP: a help line in a news file that is ours);
 - the cache stamp follows the UALLF files (DungeonJournal only) and lupa; what drift.py cannot see is printed
   and in --help;
 - tools/addon_versions.json covers every UADD_* module that has addon data, holds hashes only, is small, and
@@ -199,15 +200,33 @@ class Drift(unittest.TestCase):
 
 
 class FqpNews(unittest.TestCase):
-    def test_whats_new_lines_read(self):
-        # lesson 42: the What's New lines are shown on login, so drift reads them too
+    def test_whats_new_lines_not_read(self):
+        # lesson 43: UADD leaves What's New English, so drift lists none of its lines; an L key there that another
+        # file also has keeps that other file as its place
         import drift_fqp
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
             (d / "WhatsNew.lua").write_text('local news = { version = "1.0", lines = {\n  "Wobble the gizmo.",\n'
-                                            '  "Fold the crane." },\n}\nlocal x = "not a line"\n', encoding="utf-8")
+                                            '  "Fold the crane." },\n}\nlocal t = L["Close the lid"]\n'
+                                            'local u = L["Spin the top"]\n', encoding="utf-8")
+            (d / "Zoo.lua").write_text('local x = L["Spin the top"]\n', encoding="utf-8")
             rows = drift_fqp.extract(d)
-        self.assertEqual(sorted(r[2] for r in rows), ["Fold the crane.", "Wobble the gizmo."])
+        self.assertEqual(sorted((r[2], r[3]) for r in rows),
+                         [("Close the lid", "WhatsNew.lua"), ("Spin the top", "Zoo.lua")])
+
+    def test_news_rows_skipped(self):
+        # lesson 43: a row of a news file, or a text in news_texts.TEXTS, never shows as drift; a note stays
+        import news_texts as N
+        self.assertTrue(N.news_row("UADD_ForeverQuestPins", ("L", None, "Close the lid", "WhatsNew.lua")))
+        self.assertTrue(N.news_row("UADD_OpenMap", ("L", None, "x", "Map/News.lua")))
+        self.assertTrue(N.news_row("UADD_X", ("L", None, "x", "Data/Forever/Changelog.lua")))
+        self.assertTrue(N.news_row("UADD_ForeverQuestPins", ("L", None, "What is new in %s:", "Setup.lua")))
+        self.assertFalse(N.news_row("UADD_ForeverQuestPins", ("L", None, "Spin the top", "Zoo.lua")))
+        self.assertFalse(N.news_row("UADD_X", ("!", None, "a note", "WhatsNew.lua")))
+        self.assertFalse(N.news_row("UADD_X", ("L", None, "x", "NewsletterPanel.lua")))
+        for mod, keys in N.KEEP.items():
+            for key in keys:
+                self.assertFalse(N.news_row(mod, ("L", key, "x", "WhatsNew.lua")), (mod, key))
 
     def test_escaped_key_named(self):
         # lesson 42: a key with Lua escapes (\n, \\) names the text the addon shows, so the guard does not hold it

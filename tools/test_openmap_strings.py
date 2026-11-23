@@ -2,13 +2,15 @@
 
 - every L key OpenMap uses is in MAP or LOADTIME, or is a planned skip (SKIP_NAMES, SKIP_OTHER);
   no key is there that OpenMap does not use; LOADTIME keys are OpenMap keys too;
+- a key OpenMap uses only in its News window (Map/News.lua, tools/news_texts.py) or on that window's
+  Credits page (NEWS_PAGES) is not ours: an addon's news stays its own English (lesson 43); its two
+  update chat lines (news_texts.KEEP) are ours, though News.lua prints them;
 - no key twice, and no key both in MAP and in LOADTIME;
 - every G"id" link names a glossary entry;
 - each Ukrainian value has the same %s/%d list, |c |r |T |t |H |h |n escapes, newlines and
   leading or trailing spaces as its English key;
 - each value uses only letters the game fonts draw, has no Russian-only letters, and is
-  Ukrainian (has a Cyrillic letter);
-- MONTHS has all twelve months.
+  Ukrainian (has a Cyrillic letter).
 
 OpenMap is not in this repo: its files are read from the game folder, or from the path in
 OPENMAP_DIR. Without it, the tests that need it are skipped.
@@ -26,17 +28,18 @@ REPO = HERE.parent
 sys.path.insert(0, str(HERE))
 import glossary  # noqa: E402
 import luatok  # noqa: E402
+import news_texts  # noqa: E402
 import test_font_chars  # noqa: E402  (its ALLOWED: the letters the game fonts draw)
 
 LOCALE = REPO / "UADD_OpenMap" / "ui" / "locale.lua"
 OPENMAP_DEFAULT = "/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/OpenMap"
 OPENMAP = Path(os.environ.get("OPENMAP_DIR", OPENMAP_DEFAULT))
 
-TABLES = ("MAP", "LOADTIME", "MONTHS")
+TABLES = ("MAP", "LOADTIME")
 SKIP_NAMES = {"OpenMap"}      # only a name: names come from UALL
-SKIP_OTHER = {"%d %s %s"}     # a date: no words, nothing to translate
-MONTH_NAMES = ("January", "February", "March", "April", "May", "June", "July", "August",
-               "September", "October", "November", "December")
+SKIP_OTHER = set()
+# The Credits page shows only inside the News window, so its words are news too.
+NEWS_PAGES = {"Credits.lua"}
 
 # A format spec as string.format reads it, minus the space flag: "0% keeps" is not a spec.
 SPEC = re.compile(r"%(?:%|(?:\d+\$)?[-+#0]*\d*(?:\.\d+)?[a-zA-Z])")
@@ -62,7 +65,7 @@ def entries(toks):
 
 
 def ours():
-    """{table name: [(key, kind, value, line)]} for MAP, LOADTIME and MONTHS in locale.lua."""
+    """{table name: [(key, kind, value, line)]} for MAP and LOADTIME in locale.lua."""
     toks = list(luatok.tokens(luatok.read(LOCALE)))
     found = {}
     i = 0
@@ -91,9 +94,9 @@ def resolved():
             for t, rows in ours().items() for k, kind, v, line in rows]
 
 
-def openmap_keys():
-    """Every L["..."] key in OpenMap's own code (not its Locales or Libs)."""
-    keys = set()
+def key_uses():
+    """{L["..."] key: {file paths, relative to OpenMap}} in OpenMap's own code (not its Locales or Libs)."""
+    uses = {}
     for d, dirs, files in os.walk(OPENMAP):
         rel = Path(d).relative_to(OPENMAP).parts
         if rel and rel[0] in ("Locales", "Libs"):
@@ -102,12 +105,35 @@ def openmap_keys():
         for f in files:
             if not f.endswith(".lua"):
                 continue
+            path = (Path(d) / f).relative_to(OPENMAP).as_posix()
             toks = list(luatok.tokens(luatok.read(Path(d) / f)))
             for i in range(len(toks) - 3):
                 if (toks[i][:2] == (luatok.NAME, "L") and toks[i + 1][:2] == (luatok.SYM, "[")
                         and toks[i + 2][0] == luatok.STR and toks[i + 3][:2] == (luatok.SYM, "]")):
-                    keys.add(toks[i + 2][1])
-    return keys
+                    uses.setdefault(toks[i + 2][1], set()).add(path)
+    return uses
+
+
+def is_news_file(rel):
+    """OpenMap's News window (news_texts) or a page shown only inside it (NEWS_PAGES)."""
+    return news_texts.is_news(rel) or Path(rel).name in NEWS_PAGES
+
+
+KEEP = news_texts.KEEP.get("UADD_OpenMap", set())   # its two update chat lines: ours, though News.lua prints them
+
+
+def is_news_key(key, files):
+    return key not in KEEP and all(is_news_file(f) for f in files)
+
+
+def openmap_keys():
+    """Every L key OpenMap's own code uses outside its News window, and the KEEP lines: the keys we translate."""
+    return {k for k, files in key_uses().items() if not is_news_key(k, files)}
+
+
+def news_keys():
+    """The L keys OpenMap uses only in its News window and its Credits page: they stay English."""
+    return {k for k, files in key_uses().items() if is_news_key(k, files)}
 
 
 def specs(s):
@@ -182,9 +208,6 @@ class OurStrings(unittest.TestCase):
                for _, k, uk, line, _ in self.rows if uk is not None and shape(k) != shape(uk)]
         self.assertEqual(bad, [], "%s/%d, | escapes, newlines or edge spaces differ")
 
-    def test_months(self):
-        self.assertEqual(sorted(k for k, *_ in self.tables["MONTHS"]), sorted(MONTH_NAMES))
-
     def test_spec_regex(self):
         self.assertEqual(SPEC.findall("0% keeps it solid"), [])
         self.assertEqual(SPEC.findall("%.0f MB (%+.1f MB) %d%% %s"), ["%.0f", "%+.1f", "%d", "%%", "%s"])
@@ -211,6 +234,25 @@ class AgainstOpenMap(unittest.TestCase):
 
     def test_skips_are_keys(self):
         self.assertEqual(sorted((SKIP_NAMES | SKIP_OTHER) - self.en), [], "planned skips OpenMap no longer has")
+
+    def test_news_stays_english(self):
+        news = news_keys()
+        self.assertGreater(len(news), 10, "News window keys not found (Map/News.lua moved?)")
+        ours_ = {k for t in ("MAP", "LOADTIME") for k, *_ in self.tables[t]}
+        self.assertEqual(sorted(ours_ & news), [], "we ship Ukrainian for a news text (lesson 43)")
+
+    def test_whats_new_entry_is_ours(self):
+        # The menu's "What's new" entry only opens the News window: it is ours, not news.
+        self.assertIn("What's new", self.en)
+
+    def test_update_lines_are_ours(self):
+        # A one-line "new version is out" / "updated to X" chat notice is not a changelog: we translate it,
+        # though OpenMap prints it from Map/News.lua.
+        uses = key_uses()
+        ours_ = {k for t in ("MAP", "LOADTIME") for k, *_ in self.tables[t]}
+        for key in KEEP:
+            self.assertIn(key, uses, "OpenMap no longer has this update line")
+            self.assertIn(key, ours_, "an update chat line has no Ukrainian")
 
 
 if __name__ == "__main__":

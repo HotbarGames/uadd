@@ -5,13 +5,6 @@
 local _, ns = ...
 local T = ns.RTS or {}; ns.RTS = T
 local S = ns.SORT or {}; ns.SORT = S
-T["Code.d9e829dd"] = "Пішки"
-T["Code.73ce08ff"] = "Рівнів ще немає"
-T["Code.a141cefe"] = "Рівень %d%s"
-S["Code.a141cefe"] = "vv"
-T["Code.1c0c3000"] = "поки що"
-T["Code.43e81a9d"] = "запис почався не з початку"
-T["Code.b27280e0"] = "Досвід за вбивства"
 T["Code.a46858be"] = "за завдання"
 T["Code.8645a025"] = "Рівні з %d по %d"
 S["Code.8645a025"] = "vv"

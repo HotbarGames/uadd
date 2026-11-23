@@ -9,7 +9,7 @@ at run time (feed(), from tools/lt_source.py).
     are not its own cost no Translate, no Hash, no cache. 5 hold key: English; release: ours. 6 off: all English as
     in game E, on: ours. 7 a text it renamed itself is left as it is on off (lesson 23). 8 its dropdown's choices:
     ours with the same values, its own function back when off. 9 the Settings panel row both ways. 10 What's New
-    both ways, also from the panel's New button. 11 its chat and help lines. 12 five errors in its hooks: off, the
+    stays its English (lesson 43), from both buttons, on, held and off. 11 its chat and help lines. 12 five errors in its hooks: off, the
     English back (lesson 19); on: ours again. 13 status. 16 the game's word on its two New buttons: ours in our
     font (also through its hover), English on the hold key and off, the global never written, one already
     Cyrillic left. No half line (halves_mods.lt).
@@ -25,6 +25,7 @@ from flow_pawn_game import cyr, diff as _diff, errors
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import lt_rules as R  # noqa: E402
 import lt_source as G  # noqa: E402
+import news_texts as N  # noqa: E402
 from flow import Check  # noqa: E402
 from loader import Addon, Client, lua_str, read_text, txt  # noqa: E402
 
@@ -35,7 +36,6 @@ TIPS = ("Tooltip.lua", "Loot.lua")
 WIN = ("Settings.lua", "SettingsWindow.lua")
 CHOICES = ("Code.2a01e32d", "Code.345f502a", "Code.5cc4fa39")
 PANEL = ("Code.9c2202f0", "Code.7c8a4b57", "Code.775f1a16")
-NEWS_LABEL = "Code.0b880c2f"
 CHAT = ("Code.677e69f9", "Code.21e9e085", "Code.01721026", "Code.5116e3ec", "Code.0c4d453c")
 HELP = ("Code.7dc3363b", "Code.4a6c5645", "Code.6871896a", "Code.6eae7f9c", "Code.67046501", "Code.44367bc2",
         "Code.9d6152b4")
@@ -67,15 +67,29 @@ def _q(s):
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r") + '"'
 
 
+def news_lines():
+    """The What's New dialog's lines, read from the installed addon's own file at run time (no row of ours has
+    them: lt_source drops them, lesson 43)."""
+    out, seen = [], set()
+    for f in G.files(G.addon_dir()):
+        if not N.is_news(f):
+            continue
+        for v, _, why, _ in G.literals(G.addon_dir() / f):
+            k = "Code." + G.H.djb2(v)
+            if not why and R.keep(k, v)[0] and k not in seen:
+                seen.add(k)
+                out.append(v)
+    return out
+
+
 def feed():
     """Lua code setting LootTriageStandInFeed from the installed addon's English, and the window's label keys."""
     rs = rows()
     skip = set(R.CODE) | set(R.NAMES)
     files = lambda r: {f for f, _ in r[3]}  # noqa: E731
     win = [r[0] for r in rs if files(r) & set(WIN) and "%" not in r[1] and r[0] not in skip][:40]
-    news = [r[0] for r in rs if "WhatsNew.lua" in files(r) and r[0] not in skip and r[0] != NEWS_LABEL]
     en = {r[0]: r[1] for r in rs}
-    news_text = [en[k] for k in news]
+    news_text = news_lines()
     # its help: the header through its Print (with its prefix, Settings.lua ShowHelp), the lines bare
     chat = [(PREFIX if k == HELP[0] else "") + en[k].replace("%d", "5") for k in HELP if k in en]
     return ("LootTriageStandInFeed = { en = { %s }, win = { %s }, choices = { %s }, news = { %s }, chat = { %s },"
@@ -192,9 +206,23 @@ def steps(check, c, M, E, A, en):
     check("9 panel row ours", all(cyr(A[k]) for k in ("P:name", "P:buttonText", "P:tooltip", "R:text", "R:button")),
           {k: A[k] for k in A if k[:2] in ("P:", "R:")})
     menu_steps(check, M)
-    check("10 What's New ours", cyr(A["X"]) and E["X"] != A["X"], A["X"][:200])
+    dlg = S.dialog.text
+    check("10 What's New stays its English (lesson 43)", E["X"] and "\n" in E["X"] and not cyr(E["X"])
+          and A["X"] == E["X"], A["X"][:200])
     M.click(S.newButton)
-    check("10 its panel New button: ours", txt(S.dialog.text.GetText(S.dialog.text)) == A["X"])
+    xp = txt(dlg.GetText(dlg))
+    M.key(True)
+    M.click(S.win.news)
+    xh = txt(dlg.GetText(dlg))
+    M.key(False)
+    M.uadd("lt off")
+    M.click(S.newButton)
+    xo = txt(dlg.GetText(dlg))
+    M.uadd("lt on")
+    M.click(S.newButton)
+    xa = txt(dlg.GetText(dlg))
+    check("10 What's New from its panel New button, held, off and on again: its English",
+          xp == xh == xo == xa == E["X"], [x[:80] for x in (xp, xh, xo, xa)])
     flow_lt_news.steps(check, M, E)
     S.Rename(1, lua_str("Quix label"))
     M.uadd("lt off")

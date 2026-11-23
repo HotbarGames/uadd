@@ -1,5 +1,5 @@
 """UADD_OpenMap on lines OpenMap builds from L's words (ours) and its own parts, on the stand-in
-(tools/harness/openmap/Built.lua): the News title with its version, the note and pin editors'
+(tools/harness/openmap/Built.lua): the note and pin editors'
 titles, a row of the pin list and the dock's tooltip, each with a zone name the game gives in English.
 
 With a zone UALL saved, each line is whole Ukrainian (the version and the player's note kept as they
@@ -27,9 +27,7 @@ def _texts(M, s, version, zone):
 
 def _want(L, zone, version="v0.8.9"):
     pin = "%s · %s  45.2, 30.1  |cff99ccff%s|r" % (L("Map pin"), zone, L("Shared by %s").replace("%s", "Quix"))
-    top = L("What's new in OpenMap")
-    return {"top": f"{top}  |cff998866{version}|r",
-            "new": f"{L('New note')} · {zone}", "old": f"{L('Note')} #3 · {zone}", "pin": pin,
+    return {"new": f"{L('New note')} · {zone}", "old": f"{L('Note')} #3 · {zone}", "pin": pin,
             "row": f"{zone} · |cffffffffmy note|r |cffe6c27a({L('drawing')})|r |cff80f070({L('followed')})|r"}
 
 
@@ -38,10 +36,8 @@ def run(s, M, check):
     zone_uk = txt(M.cached("zones", ZONE))
     got = _texts(M, s, "v0.8.9", ZONE)
     want = _want(L, zone_uk)
-    check("built lines: News title with its version, note and pin titles, pin row all Ukrainian",
+    check("built lines: note and pin titles, pin row all Ukrainian",
           zone_uk and got == want and not any(ZONE in v for v in got.values()), {"got": got, "want": want})
-    dev = _texts(M, s, "dev", ZONE)["top"]
-    check("built lines: the News title with a checkout's \"dev\" stays Ukrainian", dev == _want(L, zone_uk, "dev")["top"], dev)
 
     _texts(M, s, "v0.8.9", ZONE)
     M.key(True)
@@ -55,8 +51,8 @@ def run(s, M, check):
     check("built lines, hold key released: Ukrainian again", back == want, back)
 
     odd = _texts(M, s, "v0.8.9", NOWHERE)
-    mixed = [v for k, v in odd.items() if k != "top" and CYR.search(v)]
-    check("built lines, a zone nobody saved: whole English, never half", not mixed and odd["top"] == want["top"], odd)
+    mixed = [v for v in odd.values() if CYR.search(v)]
+    check("built lines, a zone nobody saved: whole English, never half", not mixed, odd)
 
     tip = txt(M.dockTip(lua_str(ZONE)))
     check("dock tooltip: L[\"To\"] and the zone, all Ukrainian", tip == f"{L('To')} {zone_uk}", tip)

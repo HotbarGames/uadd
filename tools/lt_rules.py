@@ -28,7 +28,6 @@ NAMES = {
     "Code.3bc96936": "its chat prefix (its name in colour): kept as it is",
     "Code.5849882e": "a price addon's name", "Code.ffc7ba27": "a price addon's name",
     "Code.06a8adae": "a slash command", "Code.0b878934": "a slash command",
-    "Code.c940fad7": "the What's New title: its name and the version",
 }
 
 # A letter per slot, by key (%d slots count anyway; key_text makes %d/%f and |cff%s slots v).
@@ -57,15 +56,14 @@ FILE_NOTE = {
     "Bags.lua": "the bags (marks and highlights)",
     "LootTriage.lua": "the core: chat lines, help, why an item is kept",
     "Quests.lua": "the quests a tooltip names",
-    "WhatsNew.lua": "the What's New dialog",
 }
 
-BATCH_FILES = {"SettingsWindow.lua": 1, "Settings.lua": 1, "WhatsNew.lua": 3}
+# Its What's New (WhatsNew.lua) is no batch: UADD leaves it English (lesson 43), and lt_source drops its texts.
+BATCH_FILES = {"SettingsWindow.lua": 1, "Settings.lua": 1}
 BATCHES = [
     (1, "the settings window and its pages (SettingsWindow.lua, Settings.lua)", lambda k, sec: sec == 1),
     (2, "tooltips, loot window, bags, chat and help, quests (Tooltip.lua, Loot.lua, Bags.lua, LootTriage.lua, ...)",
-     lambda k, sec: sec == 2),
-    (3, "the What's New dialog (WhatsNew.lua)", lambda k, sec: True),
+     lambda k, sec: True),
 ]
 MAX_BATCH = 150
 

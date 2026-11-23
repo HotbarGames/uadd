@@ -1,7 +1,8 @@
 -- UADD - OpenMap: start-up, the status line and "/uadd openmap ...".
 --
--- All of OpenMap in Ukrainian: its menu on the World Map, the dungeon view, its options, the News
--- window and its page in the game's Settings.
+-- All of OpenMap in Ukrainian: its menu on the World Map, the dungeon view, its options and its
+-- page in the game's Settings. Not its News window (What's new, Credits): an addon's news stays its
+-- own English (lesson 43); the menu's "What's new" entry and the two update chat lines are ours.
 --   * Locale.lua puts our words in OpenMap's own locale table (L), which OpenMap reads each time
 --     it shows a text. Words.lua swaps the texts OpenMap read before that (once, as it loaded).
 --   * Fonts.lua gives a Cyrillic font to the texts that need one: the client's standard font has

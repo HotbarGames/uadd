@@ -6,9 +6,9 @@ printMsg lines, what it sends, an edit box and a tooltip it reads back). A small
   * Game A (English client): exact texts, templates (%s/%d, nested, a blanked plural slot; times,
     Completed/Rested and glued texts in flow_fxpb_words.py), a Cyrillic font at the same size and
     flags, cheap bar ticks, chat lines, its minimap tooltip only, sent/read-back texts stay English,
-    the hold key, nameless frames (Settings page, feature guide, drop-down list; not another addon's
-    dialog), its StaticPopup, hints and no half-translated line (flow_fxpb_mixed.py), font put back
-    on a text with no words of ours, combat (no search), "/uadd fxpb off" and "on" again; no Lua errors.
+    the hold key, nameless frames (Settings page, drop-down list; not another addon's dialog, nor its What's New page,
+    which stays English), its StaticPopup, hints and no half-translated line (flow_fxpb_mixed.py), font put back on a
+    text with no words of ours, combat (no search), "/uadd fxpb off" and "on" again; no Lua errors.
   * Game B: no ForeverXP Bar (the module stays idle). Run by run.py.
 """
 import collections
@@ -83,8 +83,7 @@ def game_a(check, facts):
     # Exact texts, templates, fonts.
     _eq(check, "exact text (bar label)", M.text("lock"), S["Lock Bar"])
     _eq(check, "template %s (time this level)", M.uk(lua_str("Time this level: 1h 2m")), S["Time this level: %s"] % "1 год 2 хв")
-    _eq(check, "template %d and %s (race created)", M.text("raceInfo"),
-        S["Race created: %s | Code: %s. Share the code with friends."] % ("Speed", "AB12"))
+    _eq(check, "template %d and %s (race created)", M.text("raceInfo"), S["Race created: %s | Code: %s. Share the code with friends."] % ("Speed", "AB12"))
     rate, left = want(M, 1, "uk")
     _eq(check, "template inside a template (leveling in)", M.text("underLeft"), left)
     _eq(check, "#476: '+%d level%s' -> no English 's'", M.uk(lua_str("+3 levels since you started")), "+3 рів. від початку")
@@ -115,8 +114,7 @@ def game_a(check, facts):
     check("a text with no words of ours gets its own font back", txt(M.font("rate")[0]) == FRIZ, M.font("rate"))
     M.tick(TICKS + 1)
     check("... and ours again with our words", Cyr(M.font("rate")[0]), M.font("rate"))
-    # Chat.
-    M.print(lua_str("position and size reset."))
+    M.print(lua_str("position and size reset."))   # chat
     _eq(check, "chat line with its prefix translated", M.lastChat(), "|cff8ee6deForeverXP Bar|r " + S["position and size reset."])
     M.print(lua_str("Some other line."))
     _eq(check, "unknown chat line stays", M.lastChat(), "|cff8ee6deForeverXP Bar|r Some other line.")
@@ -146,20 +144,23 @@ def game_a(check, facts):
     _eq(check, "tab shown later picked up", M.text("leveling"), S["Leveling info"])
     check("nameless Settings page found", M.extras() >= 1, M.extras())
     check("the Settings page made at PLAYER_ENTERING_WORLD found", M.isExtra("pageDesc"), M.extras())
-    check("feature guide found (a long text of its own)", M.isExtra("guideOk"), M.extras())
+    check("What's New page not taken (it stays English)", not M.isExtra("guideOk"), M.extras())
     check("a drop-down's list with short words found (anchored inside its window)", M.isExtra("popRow"), M.extras())
     check("another addon's dialog with a short word of its own not taken", not M.isExtra("otherText"), M.extras())
-    for what, name, en in (("guide", "guideOk", "I understand"), ("pop", "popRow", "Lock Bar"),
-                           ("page2", "pageDesc", "Optional challenges, races, leaderboards, level-up cards and Played records.")):
+    for what, name, en in (("pop", "popRow", "Lock Bar"), ("page2", "pageDesc", "Optional challenges, races, leaderboards, level-up cards and Played records.")):
         M.show(what, True)
         M.wait(0.1)
         _eq(check, f"{what} text", M.text(name), S[en])
         M.show(what, False)
     check("Settings page 2 text in our font", Cyr(M.font("pageDesc")[0]), M.font("pageDesc"))
-    M.show("other", True)
+    for what in ("guide", "other"):   # its What's New page, another addon's dialog: neither is taken
+        M.show(what, True)
     M.wait(1.2)
+    _eq(check, "What's New page: a word of ours stays English there", M.text("guideOk"), "Close")
+    _eq(check, "What's New page: title stays English", M.text("guideTitle"), "|cff8ee6deXP|r Bar  |cff8a8a8aWhat's New|r")
     _eq(check, "another addon's dialog untouched", M.text("otherText"), "Options")
-    M.show("other", False)
+    for what in ("guide", "other"):
+        M.show(what, False)
     M.page(True)
     M.wait(0.1)
     _eq(check, "Settings page text", M.text("pageFlight"), S["Flight travel"])
@@ -245,8 +246,7 @@ def game_a(check, facts):
     _eq(check, "off: Completed and Rested exact English", M.text("underRight"), BOTH_EN)
     _eq(check, "off: camp countdown exact English", M.text("camp"), CAMP_EN)
     own = "Interface\\AddOns\\ForeverXPbar\\Fonts\\BigNoodleToo.ttf"
-    check("off: their own font exact", [(txt(p), s, txt(fl)) for p, s, fl in (M.font("underRight"), M.font("camp"))]
-          == [(own, 12, ""), (own, 10, "OUTLINE")], f"{M.font('underRight')} {M.font('camp')}")
+    check("off: their own font exact", [(txt(p), s, txt(fl)) for p, s, fl in (M.font("underRight"), M.font("camp"))] == [(own, 12, ""), (own, 10, "OUTLINE")], f"{M.font('underRight')} {M.font('camp')}")
     _eq(check, "off: #476 exact English", M.text("since"), "+3 levels since you started")
     p, size, flags = M.font("underLeft")
     check("off: exact font (file, size, flags)", (txt(p), size, txt(flags)) == ("Interface\\AddOns\\ForeverXPbar\\Fonts\\BigNoodleToo.ttf", 14, ""), f"{p} {size} {flags!r}")

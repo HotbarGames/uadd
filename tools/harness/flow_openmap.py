@@ -5,7 +5,7 @@ Run by flow_dj_module.py, so run.py runs it too:
   * in_game(s, check, facts): in the Dungeon Journal module's game (names collected), the Razorfen
     Kraul view: Ukrainian quest titles in a Cyrillic font, Ukrainian labels and names, size and
     flags kept, redraws, the hold key, OpenMap's L (on, hold key, combat, a bad text, off), its
-    menu, News and Settings page, its StaticPopup questions, the World Map's hover label, "/uadd dj
+    menu and Settings page (its News window stays English), its StaticPopup questions, the World Map's hover label, "/uadd dj
     off" leaves it alone, "/uadd openmap off" puts everything back exactly and "on" again, the Dungeon Journal's own panel inside the dungeon (a
     fact), the guard (no Ukrainian text in a font without Ukrainian letters) and no Lua errors.
   * alone(saved, check, facts): a second game with UADD and UADD_OpenMap only (no Dungeon
@@ -191,29 +191,30 @@ def _d(r):
     return {txt(k): txt(v) for k, v in r.items()}
 
 
+def _cyr(x):
+    """A text with a Ukrainian letter (ours), not OpenMap's English."""
+    return any("Ѐ" <= c <= "ӿ" for c in str(x))
+
+
 def _more(s, M, check):
     """OpenMap's L, its menu, News and Settings page: on, the hold key, combat, a bad text, off."""
     ours, total, english = M.lState()
     check("L: our words in OpenMap's locale table", total > 400 and ours == total, f"{ours}/{total}")
     check("L: a word reads in Ukrainian", txt(M.L("Look")) == "Вигляд", txt(M.L("Look")))
     check("L: a Ukrainian text two keys share reads Ukrainian for both", M.shared("Dungeon") and M.shared("Dungeons")
-          and txt(M.L("Dungeon")) == "Підземелля" and txt(M.L("Dungeons")) == "Підземелля",
-          [txt(M.L("Dungeon")), txt(M.L("Dungeons"))])
+          and txt(M.L("Dungeon")) == "Підземелля" and txt(M.L("Dungeons")) == "Підземелля", [txt(M.L("Dungeon")), txt(M.L("Dungeons"))])
     M.menu()
     M.news()
     M.wait(1.5)   # a new frame is found within a second (as in the game), then walked
     m = _d(M.menu())
     check("menu: load-time tab names in Ukrainian", [m["tab1"], m["tab2"]] == ["На карті", "Вигляд"], m)
-    check("menu: rows from L in Ukrainian", m["row"] == "Відкрити налаштування OpenMap"
-          and m["count"] == "Босів: 3" and m["close"] != "Close", m)
+    check("menu: rows from L in Ukrainian", m["row"] == "Відкрити налаштування OpenMap" and m["count"] == "Босів: 3" and _cyr(m["close"]), m)
+    check("menu: two keys with one Ukrainian text both in Ukrainian", [m["dungeon"], m["dungeons"]] == ["Підземелля", "Підземелля"], [m["dungeon"], m["dungeons"]])
     n = _d(M.news())
-    check("News: texts in Ukrainian (from L and load-time)",
-          [n["title"], n["head"], n["kind"], n["newer"], n["older"]] == ["Що нового", "Версій: 5", "Ідея", "Новіші", "Старіші"], n)
-    check("News: two keys with one Ukrainian text both in Ukrainian",
-          [n["dungeon"], n["dungeons"]] == ["Підземелля", "Підземелля"], [n["dungeon"], n["dungeons"]])
-    check("News: the Ukrainian title in a Cyrillic font at its size, the English version line keeps MORPHEUS",
-          n["titleFont"] in ("Fonts\\FRIZQT___CYR.TTF 28", "Fonts\\ARIALN.TTF 28")
-          and n["versionFont"] == "Fonts\\MORPHEUS.TTF 20", [n["titleFont"], n["versionFont"]])
+    check("News: stays OpenMap's English (lesson 43)", [n["title"], n["head"], n["newer"], n["older"], n["close"]]
+          == ["What's new in OpenMap", "5 versions", "Newer", "Older", "Close"], n)
+    check("News: its title and version line keep MORPHEUS at their sizes",
+          [n["titleFont"], n["versionFont"]] == ["Fonts\\MORPHEUS.TTF 28", "Fonts\\MORPHEUS.TTF 20"], [n["titleFont"], n["versionFont"]])
     pnl = _d(M.panel())
     check("Settings page: the button in Ukrainian, the title as OpenMap wrote it",
           pnl["button"] == "Відкрити налаштування OpenMap" and pnl["title"] == "|cff33ccffOpen|rMap", pnl)
@@ -223,7 +224,7 @@ def _more(s, M, check):
     check("the once-a-second look runs while the World Map is shown", M.finding())
     t = _d(M.tip())
     check("tooltip over OpenMap: our line in a Cyrillic font, its own font back once hidden",
-          t["text"] != "Close" and t["font"] in ("Fonts\\FRIZQT___CYR.TTF 12", "Fonts\\ARIALN.TTF 12")
+          _cyr(t["text"]) and t["font"] in ("Fonts\\FRIZQT___CYR.TTF 12", "Fonts\\ARIALN.TTF 12")
           and str(t["n"]) == "1" and t["after"] == "Fonts\\FRIZQT__.TTF 12", t)
     qt = txt(M.questTip())
     check("quest tooltip: OpenMap's English Level around our words from L, all Ukrainian",
@@ -232,17 +233,16 @@ def _more(s, M, check):
     M.key(True)
     M.wait(HELD)
     ours_h, _, english_h = M.lState()
-    held = [txt(M.menuText("tab1")), txt(M.menuText("row")), txt(M.newsText("title")), txt(M.newsText("older"))]
-    held_d = [txt(M.newsText("dungeon")), txt(M.newsText("dungeons"))]
+    held = [txt(M.menuText("tab1")), txt(M.menuText("row")), txt(M.menuText("close")), txt(M.newsText("title")), txt(M.newsText("older"))]
+    held_d = [txt(M.menuText("dungeon")), txt(M.menuText("dungeons"))]
     M.key(False)
     M.wait(0.1)
     check("hold key: L exactly as OpenMap had it", ours_h == 0 and english_h, f"{ours_h} {english_h}")
-    check("hold key: a Ukrainian text two keys share goes back to each widget's own English",
-          held_d == ["Dungeon", "Dungeons"], held_d)
-    back_d = [txt(M.newsText("dungeon")), txt(M.newsText("dungeons"))]
+    check("hold key: a Ukrainian text two keys share goes back to each widget's own English", held_d == ["Dungeon", "Dungeons"], held_d)
+    back_d = [txt(M.menuText("dungeon")), txt(M.menuText("dungeons"))]
     check("hold key released: both shared-text widgets Ukrainian again", back_d == ["Підземелля", "Підземелля"], back_d)
-    check("hold key: menu and News English (OpenMap's own text kept)",
-          held == ["On the map", "Open OpenMap's settings", "What's new", "Older pages"], held)
+    check("hold key: menu English (OpenMap's own text kept), News still English",
+          held == ["On the map", "Open OpenMap's settings", "Done here", "What's new in OpenMap", "Older"], held)
     check("hold key released: L and menu Ukrainian again", M.lState()[0] == total
           and txt(M.menuText("tab1")) == "На карті", txt(M.menuText("tab1")))
 
@@ -262,26 +262,26 @@ def _more(s, M, check):
     skipped = M.build("%d bosses", "%s босів".encode("utf-8"))
     count = txt(M.L("%d bosses")).replace("%d", "3")
     M.build(None)
-    check("a Ukrainian text whose %-specs differ is not used: English stays", skipped and count == "3 bosses",
-          [skipped, count])
+    check("a Ukrainian text whose %-specs differ is not used: English stays", skipped and count == "3 bosses", [skipped, count])
     check("words built again: Ukrainian back", _d(M.menu())["count"] == "Босів: 3")
 
     s.uadd("openmap off")
     ours_off, _, english_off = M.lState()
-    off_d = [txt(M.newsText("dungeon")), txt(M.newsText("dungeons"))]
+    off_d = [txt(M.menuText("dungeon")), txt(M.menuText("dungeons"))]
     check("/uadd openmap off: a Ukrainian text two keys share goes back to each widget's own English",
           off_d == ["Dungeon", "Dungeons"], off_d)
     m = _d(M.menu())
     n = _d(M.news())
     check("/uadd openmap off: L exactly as OpenMap had it", ours_off == 0 and english_off, f"{ours_off} {english_off}")
     check("/uadd openmap off: menu, News and Settings page English",
-          [m["tab1"], m["row"], n["title"], n["older"], txt(M.panel()["button"])]
-          == ["On the map", "Open OpenMap's settings", "What's new", "Older pages", "Open OpenMap's settings"],
-          [m["tab1"], m["row"], n["title"], n["older"]])
+          [m["tab1"], m["row"], m["close"], n["title"], n["older"], txt(M.panel()["button"])]
+          == ["On the map", "Open OpenMap's settings", "Done here", "What's new in OpenMap", "Older",
+              "Open OpenMap's settings"],
+          [m["tab1"], m["row"], m["close"], n["title"], n["older"]])
     check("/uadd openmap off: a window built while L was ours and never shown reads English",
           txt(M.pinsTitle()) == "Map pins", txt(M.pinsTitle()))
     check("/uadd openmap off: the once-a-second look stopped", not M.finding())
-    check("/uadd openmap off: the News title back in MORPHEUS at 28", n["titleFont"] == "Fonts\\MORPHEUS.TTF 28",
+    check("/uadd openmap off: the News title still in MORPHEUS at 28", n["titleFont"] == "Fonts\\MORPHEUS.TTF 28",
           n["titleFont"])
     s.uadd("openmap on")
     s.pump(30)

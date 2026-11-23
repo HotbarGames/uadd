@@ -25,7 +25,7 @@ SORTS = {
     "Code.c52924cc": "nn", "Code.1cbb536c": "nn", "Code.c97b8fde": "vn", "Code.d16f1ff0": "nn",
     "Code.f8f4014a": "vn", "Code.52617094": "f", "Code.1831f4e0": "f", "Code.48204ce8": "ff",
     "Code.44635a7c": "f", "Code.a141cefe": "vv", "Code.205f37f2": "vu", "Code.9207f3ad": "vt",
-    "Code.9ff8af0a": "ft", "Code.9147fc0f": "v", "Code.eda961e9": "vv", "Code.4d1075a3": "v",
+    "Code.9ff8af0a": "ft", "Code.9147fc0f": "v", "Code.eda961e9": "vv",
     "Code.83a6ef2d": "vu", "Code.667eca79": "vu", "Code.16a2068b": "vu", "Code.ddd48a7c": "",
     "Code.111e0944": "", "Code.32338925": "", "Code.43114625": "f",
     # Map FormatTime and StatsScreen Day print English month names (%b): u, so those lines stay English.
@@ -76,17 +76,17 @@ BOX = {
     "Code.0b880763", "Code.f06d95ad", "Code.0e2d9ee6", "Code.51bc68df", "Code.8ebab381", "Code.52ad78ad",
     "Code.392fdf50", "Code.2bd778c7", "Code.cb152b16", "Code.0dddda23", "Code.7c8ac63b", "Code.7c8c7982",
     "Code.82613931", "Code.ce885eaf", "Code.3e22a095", "Code.0276b293", "Code.adde7058", "Code.ab41f40b",
-    "Code.6240e346", "Code.0cf88a3b", "Code.d55d6af6", "Code.a770e2f7", "Code.4ce5b225", "Code.21bda250",
+    "Code.6240e346", "Code.a770e2f7", "Code.4ce5b225", "Code.21bda250",
     "Code.0d1fc9f5", "Code.ce876053", "Code.ca554e64", "Code.a5b4e728", "Code.0d879b84", "Code.cd4f6d8a",
     "Code.add8a67e", "Code.7c85e4eb", "Code.73a63428", "Code.0e01d638", "Code.7c8cec74", "Code.e0ddf63a",
     "Code.0e1e39f4", "Code.8fd0686d", "Code.cb609b81",
 }
 LONG = {
-    "Code.0b880763": 8, "Code.a770e2f7": 12, "Code.4ce5b225": 14, "Code.21bda250": 12, "Code.d55d6af6": 20,
+    "Code.0b880763": 8, "Code.a770e2f7": 12, "Code.4ce5b225": 14, "Code.21bda250": 12,
     "Code.6240e346": 20, "Code.82613931": 22, "Code.ce885eaf": 22, "Code.3e22a095": 22, "Code.0276b293": 22,
     "Code.ca554e64": 14, "Code.a5b4e728": 14, "Code.0d879b84": 14, "Code.cd4f6d8a": 14, "Code.add8a67e": 14,
     "Code.7c85e4eb": 14, "Code.73a63428": 14, "Code.0e01d638": 14, "Code.7c8cec74": 14, "Code.e0ddf63a": 16,
-    "Code.adde7058": 16, "Code.ab41f40b": 16, "Code.0cf88a3b": 16, "Code.0d1fc9f5": 16, "Code.ce876053": 16,
+    "Code.adde7058": 16, "Code.ab41f40b": 16, "Code.0d1fc9f5": 16, "Code.ce876053": 16,
     "Code.0e1e39f4": 14, "Code.8fd0686d": 22, "Code.cb609b81": 22, "Code.0dddda23": 14, "Code.7c8ac63b": 14,
     "Code.7c8c7982": 14,
 }

@@ -11,6 +11,9 @@ skip_reason(item, line_text) returns None for a text to translate, or a short re
   slash     a help line that is only a slash command
   data      lower-case match lists (buff names the addon looks for), sample racer names
   nowords   no two letters in a row once colour codes and %s are taken out
+  news      on the What's New page (NEWS_START to NEWS_END in the main file): it stays English, as players
+            read the news before our update comes (the owner, 2026-11-23); the main window's button that
+            only opens the page is outside it and stays ours
 """
 import re
 
@@ -21,6 +24,9 @@ KEYWORDS = {"and", "break", "do", "else", "elseif", "end", "false", "for", "func
 DEBUG_STARTS = [r'if cmd == "(globalpeers|repdebug|flightdebug|questdebug|globaldebug|blizzdebug)" then',
                 r"function Camp\.dump\(", r"^\s*if learn then\s*$", r"function Ins\.testHybridTextures\(",
                 r"function Timing\.DebugText\("]
+# The What's New page: from the line that makes its frame to the line that defines its opener (code, not text).
+NEWS_START = re.compile(r"^\s*local notice = Fx\._newBox\(UIParent\b")
+NEWS_END = re.compile(r"^\s*openFeatureGuide = function\(\)")
 DEBUG_TEXT = re.compile(r"^(REP|FLIGHT|QUEST|GLOBAL) DEBUG|^GLOBAL PEERS|^settings check|^#%d id=%s|^loaded %d values$")
 
 STAY_ENGLISH = {"ForeverXP Bar", "ForeverXPBar", "Forever Challenge XP", "XP Race", "FXPB", "FXPBGlobal",

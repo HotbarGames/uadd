@@ -1,4 +1,4 @@
--- Ukrainian for Forever Quest Pins: the L keys of its other files, Setup's pages, and What's New.
+-- Ukrainian for Forever Quest Pins: the L keys of its other files and Setup's pages.
 local _, ns = ...
 local T = ns.UK or {}
 ns.UK = T
@@ -71,14 +71,4 @@ T["Quest categories"] = "Категорії завдань"
 -- Sparkle.lua
 T["Quest item sparkles are off. Restart the game to remove them; /reload is not enough."] = "Блиск предметів завдань вимкнено. Щоб він зник, перезапустіть гру; /reload не досить."
 
--- What's New (WhatsNew.lua lines, and the header printed by Setup.lua)
--- stays English: a line that quotes quest names (game names are ClassicUA's or UALL Forever's, lesson 9).
-T["What is new in %s:"] = "Що нового у %s:"
-T["Let Shift-click hide quest pins on world and continent maps, where pins ignored clicks so the map could still be dragged. Pin tooltips there now mention Shift-click."] = "Shift-клік тепер ховає значки завдань і на картах світу й континентів. Раніше там значки не реагували на кліки, щоб карту можна було тягнути. Підказки значків там тепер згадують Shift-клік."
-T["Recover hidden quest pins saved before 1.1.0. Those lists were keyed by realm name, so they looked empty after 1.1.0 changed the character key."] = "Сховані значки завдань, збережені до 1.1.0, тепер відновлюються. Ці списки були прив'язані до назви сервера, тож після 1.1.0, де змінився ключ персонажа, вони здавалися порожніми."
-T["Keep the enhanced quest tracker out of Blizzard's combat layout. The addon restores Blizzard's tracker methods while in combat, so the scenario tracker can read secret aura data, then re-applies the zone groups, sort, and filters after combat."] =
-    "Покращений трекер завдань більше не заважає бойовому розміщенню Blizzard. У бою аддон повертає трекеру Blizzard його власні методи, щоб трекер сценаріїв міг читати приховані дані аур, а після бою знову застосовує групи за зонами, сортування й фільтри."
-T["Stop quest tracking from writing Blizzard's waypoint or super-track during combat or another restricted action. The write could taint the map's pin refresh and block SetPassThroughButtons. Existing tracking resumes after combat."] =
-    "Відстеження завдань більше не змінює точку маршруту Blizzard і пріоритетне завдання в бою чи під час іншої обмеженої дії. Така зміна могла зіпсувати оновлення значків на карті й заблокувати SetPassThroughButtons. Наявне відстеження відновлюється після бою."
-T["Stop the enhanced quest tracker from erroring when a full tracker cannot fit another zone header. The grouped layout now stops for that pass instead of falling back to Blizzard's flat list, which could raise Cannot anchor to a region dependent on it."] =
-    "Покращений трекер завдань більше не видає помилку, коли в повний трекер не вміщується ще один заголовок зони. Тепер групове розміщення на цей прохід зупиняється, а не переходить на плаский список Blizzard, який міг викликати помилку «Cannot anchor to a region dependent on it»."
+-- What's New (WhatsNew.lua lines, and its login header): none of ours. It stays English (lesson 43).

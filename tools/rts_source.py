@@ -1,9 +1,11 @@
 """Reads Road to Sixty's texts for UADD_RoadToSixty: a thin config over tools/lua_literals.py.
 
 Road to Sixty is all rights reserved: nothing here names its English. v1 scope only (design section 12): the map
-window, the History and Characters panel, the options, the minimap tooltip, the What's New frame (not its
-entries), the Stats screen, the prints and the popups. Left out and English: the later parts (gear screens,
-friends, the pops, the per-kind journal lines), diagnostics, the friends channel protocol, machine keys.
+window, the History and Characters panel, the options, the minimap tooltip, the Stats screen, the prints and the
+popups. Left out and English: the later parts (gear screens, friends, the pops, the per-kind journal lines),
+diagnostics, the friends channel protocol, machine keys, and its What's New (lesson 43, tools/news_texts.py): the
+frame, its entries (WhatsNewData.lua, never read) and its changelog print. WhatsNew.lua is read only for its /rts
+help line (a Command line, shown with the other commands) and for texts it shares with another file.
 `python3 tools/rts_source.py all` prints every literal of those files and why it is left out (for a look,
 never into a tracked file); with no argument it prints the rows.
 """
@@ -14,6 +16,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import hashtext as H  # noqa: E402
 import lua_literals as LL  # noqa: E402
+import news_texts as N  # noqa: E402
 import rts_rules as R  # noqa: E402
 
 FOLDER, TOC = "RoadToSixty", "RoadToSixty.toc"
@@ -53,7 +56,7 @@ def source(addon):
     addon = Path(addon)
     if not (addon / TOC).is_file():
         return [], {}
-    found, why = {}, {}
+    found, why, helps = {}, {}, set()
     for f in V1:
         if not (addon / f).is_file():
             continue
@@ -64,13 +67,18 @@ def source(addon):
             else:
                 kept, reason = (False, left.split(" ")[0]) if left else R.keep(key, en, ctx)
                 if kept:
+                    if N.is_news(f) and ctx == "Command":
+                        helps.add(key)           # a /rts help line that opens the news: ours, like the others
                     if key in found:
                         found[key][3].append((f, line))
                     else:
                         found[key] = [key, en, R.batch_of(f), [(f, line)], R.note(key, f, ctx)]
                     continue
             why[reason] = why.get(reason, 0) + 1
-    return R.split(sorted(found.values(), key=lambda r: r[2])), why
+    rows = [r for r in found.values() if r[0] in helps or not N.news_only(r[3])]
+    if len(rows) < len(found):
+        why["news (What's New)"] = len(found) - len(rows)
+    return R.split(sorted(rows, key=lambda r: r[2])), why
 
 
 if __name__ == "__main__":

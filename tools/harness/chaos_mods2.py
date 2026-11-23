@@ -106,7 +106,7 @@ def _att():
 
 def _rts():
     """Road to Sixty: the harness stand-in (tools/harness/rts/) with the module; its map, compare and news
-    windows shown, so the module has changed texts."""
+    windows shown, so the module has changed texts (the news window stays English, lesson 43)."""
     import flow_rts as F
     if not F.module_there():
         return None

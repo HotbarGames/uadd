@@ -10,7 +10,7 @@
 --   * Off and the hold key: each text goes back to its English only while it still shows ours (lesson 23).
 --   * Its hooks run under ns.Guard, not U.Safe: they put the English back after an off for errors too
 --     (lesson 19).
---   * The version line is not touched; the button that names the game's "New" is News.lua's.
+--   * The version line is not touched; the button that names the game's "New" is NewButton.lua's.
 --   * A forbidden child of UIParent is skipped (any call on one throws), each child under pcall.
 -- The panel row: its initializer's name and tooltip are swapped both ways (lesson 15): the game reads them when
 -- it draws the row and its tooltip (the row has no search tags). The row the game draws gets ours on its name and
@@ -131,7 +131,7 @@ local function Find()
         if ok and yes then
             win, tipOwner = c, nil
             hooksecurefunc(c, "Refresh", ns.Guard(WalkAll))
-            if ns.News and ns.News.Watch then U.SafeCall(ns.News.Watch, c.news) end
+            if ns.NewButton and ns.NewButton.Watch then U.SafeCall(ns.NewButton.Watch, c.news) end
             break
         end
     end

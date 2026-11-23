@@ -4,10 +4,11 @@
 --     banner, session summary, level-up card, race windows;
 --   * nameless ones, found by walking all frames (EnumerateFrames) a few times only: its two pages
 --     in the game's Settings window (page.name is the addon's name; made at PLAYER_ENTERING_WORLD),
---     and, made with the options window, the feature guide (a dialog on UIParent showing one of the
---     addon's own long English texts: never a short common word another addon may show too) and the lists
---     of its drop-downs (on UIParent, anchored to a button inside one of its named frames).
--- Never entered: ForeverXPBarScanTip (it reads item lines back), edit boxes' text, secure frames.
+--     and, made with the options window, the lists of its drop-downs (on UIParent, anchored to a button
+--     inside one of its named frames).
+-- Never entered: ForeverXPBarScanTip (it reads item lines back), edit boxes' text, secure frames, and its
+-- What's New page (a nameless dialog on UIParent): it stays English, as players read the news before our
+-- update comes; data/words.lua holds none of its texts either (tools/make_fxpb_data.py, "news").
 -- When we look: a root shows (OnShow, which also puts right texts the hold key skipped while
 -- hidden), and every TICK seconds: the shown windows, and the always-shown bar every BAR_EVERY ticks
 -- (a new camp icon or tab). Once hooked, each FontString's SetText swaps the words itself, so the
@@ -63,17 +64,8 @@ local function InOurs(f)
     return false
 end
 
--- f shows one of ForeverXP Bar's long English texts (its own, or the one we put in its place).
-local function Distinct(f)
-    if not f.GetRegions then return false end
-    for _, g in ipairs({ f:GetRegions() }) do
-        if g.GetObjectType and g:GetObjectType() == "FontString"
-            and ns.Words.Distinct(ns.Texts.Original(g) or UADD.Plain(g:GetText())) then return true end
-    end
-    return false
-end
-
--- A nameless frame of ForeverXP Bar's: "page" (Settings), "pop" (a drop-down's list), "guide".
+-- A nameless frame of ForeverXP Bar's: "page" (Settings), "pop" (a drop-down's list). Its What's New
+-- page (on UIParent, anchored to UIParent) is neither, so it is never a root.
 local function Kind(f)
     if f.GetName and f:GetName() then return nil end
     if PAGES[rawget(f, "name")] then return "page" end
@@ -83,17 +75,13 @@ local function Kind(f)
         local _, rel = f:GetPoint(1)
         if rel ~= UIParent and InOurs(rel) then return "pop" end
     end
-    if Distinct(f) then return "guide" end
-    if f.GetChildren then
-        for _, c in ipairs({ f:GetChildren() }) do if Distinct(c) then return "guide" end end
-    end
     return nil
 end
 
 local Collect
 
 -- force: now, else at most every FIND_GAP seconds. Done once both pages and the options window's
--- frames are found (the options window makes its guide and lists at once, when it is first built).
+-- frames are found (the options window makes its lists at once, when it is first built).
 local function FindExtra(force)
     if (pages >= 2 and built) or not ns.On() or type(EnumerateFrames) ~= "function" then return end
     if not force and GetTime() - lastFind < FIND_GAP then return end
@@ -172,7 +160,7 @@ OnRoot = function(f)
     if not ns.On() or (InCombatLockdown and InCombatLockdown()) then return end
     U.SafeCall(ns.Texts.Flush)
     if f == rawget(_G, "ForeverXPBarOptionsFrame") or f == rawget(_G, "ForeverXPBarSettingsFrame") then
-        FindExtra()   -- the feature guide is made with the options window
+        FindExtra()   -- the drop-down lists are made with the options window
     end
     if rootSet[f] then
         wipe(seen)

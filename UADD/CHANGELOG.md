@@ -4,16 +4,18 @@
 
 - BugSack: new module; its windows, options, popup and chat lines are in Ukrainian. The error texts stay as they are.
   BugSack: новий модуль; його вікна, налаштування, спливне вікно і рядки в чаті українською. Тексти самих помилок лишаються як є.
-- Road to Sixty: new module; its journey map, panel, settings, minimap button, What's New window and stats are in Ukrainian. Names of zones, quests, items and players stay as the game gives them.
-  Road to Sixty: новий модуль; його карта подорожі, панель, налаштування, кнопка біля мінікарти, вікно «Що нового» і статистика українською. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра.
+- Road to Sixty: new module; its journey map, panel, settings, minimap button and stats are in Ukrainian. Names of zones, quests, items and players stay as the game gives them.
+  Road to Sixty: новий модуль; його карта подорожі, панель, налаштування, кнопка біля мінікарти і статистика українською. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра.
 - OneForAll: new module; its windows, tabs, settings, tooltips and chat lines are in Ukrainian while OneForAll's own language is English. Names of zones, quests, NPCs, items, spells and players stay as the game gives them.
   OneForAll: новий модуль; його вікна, вкладки, налаштування, підказки і рядки в чаті українською, поки мова самого OneForAll англійська. Назви зон, завдань, НПС, предметів, заклинань і гравців лишаються такими, як їх дає гра.
 - Mastercraft: updated for 2.1.1; its new texts are in Ukrainian.
   Mastercraft: оновлено під 2.1.1; його нові тексти українською.
 - OpenMap: updated for v0.8.13; its new texts are in Ukrainian.
   OpenMap: оновлено під v0.8.13; його нові тексти українською.
-- Forever Quest Pins: updated for 1.1.6; its new What's New line is in Ukrainian.
-  Forever Quest Pins: оновлено під 1.1.6; новий рядок у «Що нового» українською.
+- Forever Quest Pins: checked with 1.1.6; its only new text is a What's New line, which stays English.
+  Forever Quest Pins: перевірено з 1.1.6; його єдиний новий текст — рядок у «Що нового», він лишається англійською.
+- What's New, News and changelog windows stay in English in Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty and ForeverXP Bar: players read them before our update comes.
+  Вікна «Що нового», новин і змін лишаються англійською у Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty і ForeverXP Bar: гравці читають їх раніше, ніж виходить наше оновлення.
 
 ## 1.2.4
 

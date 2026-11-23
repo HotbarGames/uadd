@@ -54,7 +54,7 @@ function M.cached(kind, en) return UADD.CachedName(kind, en) end
 
 -- OpenMap's L: one text, and the whole table against our words.
 -- Returns: how many of our words are in L, how many words we have, and whether every key reads
--- as OpenMap would without UADD (English, or the stand-in's own "Older pages").
+-- as OpenMap would without UADD (English, or the stand-in's own "Done here").
 local function Lc() return UADD.OpenMapLocale end
 function M.L(key) return OpenMap.L[key] end
 function M.lState()
@@ -62,7 +62,7 @@ function M.lState()
     for en, uk in pairs(Lc().entries) do
         if not Lc().Shared(en) then total = total + 1 end   -- shared ones come through L's __index
         if rawget(L, en) == uk then ours = ours + 1 end
-        local want = en == "Older" and "Older pages" or en
+        local want = en == "Done" and "Done here" or en
         if L[en] ~= want then english = false end
     end
     return ours, total, english
@@ -81,7 +81,7 @@ function M.menu()
     S().OpenMenu()
     local m = S().menu
     return { tab1 = Get(m.tabs[1].Text), tab2 = Get(m.tabs[2].Text), row = Get(m.row), count = Get(m.count),
-        close = Get(m.close.Text) }
+        close = Get(m.close.Text), dungeon = Get(m.dungeon), dungeons = Get(m.dungeons) }
 end
 function M.pinsTitle() return Get(S().pins.title) end
 function M.finding() return UADD.OpenMapScreen.Finding() end
@@ -105,16 +105,16 @@ function M.questTip()
 end
 function M.menuText(key)
     local m = S().menu
-    local w = { tab1 = m.tabs[1].Text, row = m.row, count = m.count }
+    local w = { tab1 = m.tabs[1].Text, row = m.row, count = m.count, close = m.close.Text,
+        dungeon = m.dungeon, dungeons = m.dungeons }
     return Get(w[key])
 end
 function M.news()
     S().OpenNews()
     local f = S().news
-    return { title = Get(f.title), version = Get(f.version), head = Get(f.head), kind = Get(f.kind),
-        newer = Get(f.newer.Text), older = Get(f.older.Text), dungeon = Get(f.dungeon),
-        dungeons = Get(f.dungeons), titleFont = FontOf(f.title),
-        versionFont = FontOf(f.version) }
+    return { title = Get(f.title), version = Get(f.version), head = Get(f.head),
+        newer = Get(f.newer.Text), older = Get(f.older.Text), close = Get(f.close.Text),
+        titleFont = FontOf(f.title), versionFont = FontOf(f.version) }
 end
 function M.newsText(key) return Get(S().news[key].Text or S().news[key]) end
 function M.closeNews() S().news:Hide() end

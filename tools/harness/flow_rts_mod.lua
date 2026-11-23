@@ -63,10 +63,20 @@ local function Texts(f, out, seen)
 end
 local function All()
     local out, seen = {}, {}
-    for _, f in ipairs({ RoadToSixtyJourneyFrame, RoadToSixtyCompareWindow, RoadToSixtyWhatsNew, S.panel or false }) do
+    for _, f in ipairs({ RoadToSixtyJourneyFrame, RoadToSixtyCompareWindow, S.panel or false }) do
         if f then Texts(f, out, seen) end
     end
     return out
+end
+-- Its What's New window stays English (lesson 43), also when its words are in our data (inject puts them there):
+-- each of its texts is the stand-in's English, none Cyrillic.
+local function NewsEnglish()
+    local got, bad = 0, {}
+    for _, p in ipairs(Texts(RoadToSixtyWhatsNew, {}, {})) do
+        got = got + 1
+        if Cyr(p[2]) or (p[2] ~= T.news and p[2] ~= T.newsHead) then bad[#bad + 1] = p[2] end
+    end
+    return got >= 2 and #bad == 0, got .. " texts; not its English: " .. table.concat(bad, " / ")
 end
 
 R[1] = function()
@@ -88,6 +98,7 @@ R[1] = function()
     Res(out, "4 frames + canvas: none of our texts left English", #left == 0 and ua >= 8, ua .. " Ukrainian; left: " .. table.concat(left, " / "))
     Res(out, "4 frames + canvas: each Ukrainian text in a Cyrillic font", #nofont == 0, table.concat(nofont, " / "))
     Res(out, "the title is ours", Title() == UK.title, Title())
+    Res(out, "its What's New window stays English (lesson 43)", NewsEnglish())
     return out
 end
 
@@ -119,11 +130,14 @@ R[4] = function()
     local t2 = Title()
     local mixed = 0
     for _, p in ipairs(All()) do if Cyr(p[2]) then mixed = mixed + 1 end end
+    local newsOff, newsOffD = NewsEnglish()
     Off(true)
     Res(out, "/uadd rts off: English back", t1 == T.title and tab == T.tabA and mixed == 0, t1 .. " | " .. mixed .. " Cyrillic left")
+    Res(out, "/uadd rts off: its What's New window English", newsOff, newsOffD)
     Res(out, "/uadd rts off: the addon's font back", not f, "")
     Res(out, "redraw while off stays English", t2 == T.title, t2)
     Res(out, "/uadd rts on: ours again", Title() == UK.title, Title())
+    Res(out, "/uadd rts on: its What's New window still English", NewsEnglish())
     return out
 end
 

@@ -17,6 +17,7 @@ sys.path.insert(0, str(HERE))
 import hashtext as H  # noqa: E402
 import luatok  # noqa: E402
 import lt_rules as R  # noqa: E402
+import news_texts as NT  # noqa: E402
 
 ADDON_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns",
               "C:/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns"]
@@ -104,14 +105,16 @@ def literals(path):
 
 def source(addon):
     """(rows, why). rows: (key, English, batch, [(file, line)], note) in batch order; why: {reason: count} of
-    the literals left out."""
+    the literals left out. A text shown only in its What's New (WhatsNew.lua) is no row: UADD leaves it English
+    (lesson 43, tools/news_texts.py); one shown there and elsewhere is a row, its batch and note from elsewhere."""
     addon = Path(addon)
     if not (addon / TOC).is_file():
         return [], {}
-    found, why = {}, {}
+    found, real, why = {}, set(), {}
     for f in files(addon):
         if f in NO_TEXT:
             continue
+        news = NT.is_news(f)
         for en, line, left, ctx in literals(addon / f):
             key = "Code." + H.djb2(en)
             kept, reason = (False, left) if left else R.keep(key, en)
@@ -119,11 +122,14 @@ def source(addon):
                 reason = reason.split(" ")[0] if left else reason
                 why[reason] = why.get(reason, 0) + 1
                 continue
-            if key in found:
-                found[key][3].append((f, line))
-                continue
-            found[key] = [key, en, R.batch_of(f), [(f, line)], R.note(key, f, ctx)]
-    rows = sorted(found.values(), key=lambda r: r[2])     # stable: file and line order inside a batch
+            if key not in found:
+                found[key] = [key, en, R.batch_of(f), [], R.note(key, f, ctx)]
+            found[key][3].append((f, line))
+            if not news and key not in real:               # its first place outside the news names its batch
+                real.add(key)
+                found[key][2], found[key][4] = R.batch_of(f), R.note(key, f, ctx)
+    rows = NT.drop(list(found.values()))
+    rows = sorted(rows, key=lambda r: r[2])               # stable: file and line order inside a batch
     return R.split(rows), why
 
 

@@ -40,6 +40,9 @@ MUTANTS = {
     "spaced": ("Chat.lua", "local PREFIXES = { PREFIX, SPACED }", "local PREFIXES = { PREFIX }", 10),
     "canvas": ("Screen.lua", "if not f then f = Container(cat) end", "", 1),
     "names": ("Screen.lua", "if type(fs) == \"table\" and NameLabel(fs) then return nil, false end", "", 7),
+    # lesson 43: its What's New window stays English (the old code: a root, no skip)
+    "news": ("Screen.lua", "local SKIP = { RoadToSixtyWhatsNew = true }",
+             'local SKIP = {} ROOTS[#ROOTS + 1] = "RoadToSixtyWhatsNew"', 1),
 }
 
 

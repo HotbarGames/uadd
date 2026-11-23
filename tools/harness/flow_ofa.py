@@ -46,7 +46,8 @@ MUTANTS = {
     "chat": ("Chat.lua", "    U.SafeCall(Chat().Install)\n", "", 5),
     "from": ("Chat.lua", "from = FROM,", "", 6),
     "profile": ("Screen.lua", "if not s or ProfileName(s) then", "if not s then", 7),
-    "skip": ("Screen.lua", 'local SKIP_PREFIX = { "OneForAllMapPin", "OneForAllTrainerScanTip" }',
+    "skip": ("Screen.lua", 'local SKIP_PREFIX = { "OneForAllMapPin", "OneForAllTrainerScanTip", "OneForAllWhatsNew", '
+             '"OneForAllNewsShot" }',
              "local SKIP_PREFIX = {}", 8),
     "lang": ("Module.lua", 'ofaEnglish = OfaLanguage() == "enUS"', "ofaEnglish = true", 10),
 }
