@@ -12,6 +12,8 @@
   GearQuest Forever: новий модуль; його вікна, вкладки, налаштування, фільтри, діалоги і рядки в чаті українською, поки в списку мов вибрано «Українська» або автовибір. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра (UALL Forever або ClassicUA).
 - Mastercraft: updated for 2.1.1; its new texts are in Ukrainian.
   Mastercraft: оновлено під 2.1.1; його нові тексти українською.
+- Mastercraft: more lines it builds in code are in Ukrainian (spec cards, cooldown chips, drop rows, auction age, bag and bank counts).
+  Mastercraft: більше рядків, які він складає в коді, українською (картки спеціалізацій, фішки перезарядки, рядки «Випадає з», вік аукціону, кількість у сумках і банку).
 - OpenMap: updated for v0.8.13; its new texts are in Ukrainian.
   OpenMap: оновлено під v0.8.13; його нові тексти українською.
 - Forever Quest Pins: checked with 1.1.6; its only new text is a What's New line, which stays English.
