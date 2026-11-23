@@ -98,6 +98,7 @@ E{ id = "role.ranged_dps", en = "Ranged DPS", uk = "Дальній бій", note
 E{ id = "npc.rank_elite", en = "Elite", uk = "еліта", note = "NPC rank before the creature kind. A noun, so it has no gender and reads right next to any kind word: 'Рівень 60 еліта Людина'. A quest tag is quest.tag_elite." }
 E{ id = "npc.rank_rare_elite", en = "Rare Elite", uk = "рідкісна еліта", note = "NPC rank before the creature kind (Attune). Noun, no gender, like npc.rank_elite. A map filter label is map.filter_rare_elite." }
 E{ id = "map.filter_rare_elite", en = "Rare Elite", uk = "Рідкісний елітний", note = "Map filter label for rare elite NPCs (OpenMap); an adjective, read as a type of NPC. An NPC rank before a kind word is npc.rank_rare_elite." }
+E{ id = "map.filter_rare", en = "Rare", uk = "Рідкісний", note = "Map filter label for rare NPCs (OpenMap). Not item quality (gear.quality_rare)." }
 E{ id = "step.interact", en = "Interact", uk = "Взаємодіяти", note = "Attune step type; a verb like the other step types (Убити, Взяти, Здати). Questie's icon name is icon.interact." }
 E{ id = "icon.interact", en = "Interact", uk = "Взаємодія", note = "Name of the Questie map icon for objectives where you interact with an object or NPC; a noun like 'Розмова'. A step type is step.interact." }
 E{ id = "npc.rank_boss", en = "Boss", uk = "Бос", note = "NPC rank: a dungeon or raid boss." }

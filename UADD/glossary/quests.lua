@@ -22,6 +22,7 @@ E{ id = "quest.tag_repeatable", en = "Repeatable", uk = "Повторюване"
 E{ id = "quest.tag_elite", en = "Elite", uk = "Елітне", note = "Quest tag: needs a group (elite enemies)." }
 E{ id = "quest.tag_heroic", en = "Heroic", uk = "Героїчне", note = "Quest tag: heroic dungeon quest." }
 E{ id = "quest.tag_legendary", en = "Legendary", uk = "Легендарне", note = "Quest tag. Not item quality: a legendary item is 'Легендарний'." }
+E{ id = "quest.tag_epic", en = "Epic", uk = "Епічне", note = "Quest tag. Not item quality: an epic item is 'Епічний'." }
 E{ id = "quest.tag_escort", en = "Escort", uk = "Супровід", note = "Quest tag: walk an NPC somewhere and keep it alive." }
 E{ id = "quest.tag_world_event", en = "World Event", uk = "Світова подія", note = "Quest tag: part of a world or holiday event." }
 

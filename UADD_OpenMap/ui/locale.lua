@@ -720,7 +720,7 @@ local LOADTIME = {
     ["Class trainers"] = "Учителі класів",
     ["Profession trainers"] = "Учителі професій",
     ["Rare Elite"] = G"map.filter_rare_elite",
-    ["Rare"] = "Рідкісний",
+    ["Rare"] = G"map.filter_rare",
     -- Colours (sketch and pins)
     ["Gold"] = "Золотий",
     ["Red"] = "Червоний",

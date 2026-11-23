@@ -96,7 +96,8 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Enchanting | the profession ("Накладання чарів": UALL Forever's word; owner 2026-11-20) | `prof.enchanting` |
 | Enchant | an enchantment put on an item ("Зачарування") | `gear.enchant` |
 | Legendary | an item's quality ("Легендарний"), not the quest tag ("Легендарне") | `gear.quality_legendary`, `quest.tag_legendary` |
-| Rare | an item's quality ("Рідкісний"), not a rare mob | `gear.quality_rare` |
+| Epic | an item's quality ("Епічний"), not the quest tag ("Епічне") | `gear.quality_epic`, `quest.tag_epic` |
+| Rare | an item's quality ("Рідкісний"), not a rare mob, nor OpenMap's map filter for rare NPCs (same word) | `gear.quality_rare`, `map.filter_rare` |
 | Soulbound | an item bound to you ("Персональний": ClassicUA's word, before UALL Forever's «Прив'язаний до душі») | `gear.soulbound` |
 | Trainer | any trainer, in an addon's own sentence ("наставник") | not an entry |
 | Skinning Trainer, ... | the title over a named trainer, as UALL Forever shows it ("Тренер Білування"; owner 2026-11-20) | `npc.trainer_*` |
