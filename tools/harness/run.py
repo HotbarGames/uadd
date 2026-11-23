@@ -30,6 +30,7 @@ UADD_WhatTheWhisper's checks run next, on a stand-in for WhatTheWhisper that run
 UADD_LootTriage's checks run next, on a stand-in for LootTriage fed its English at run time (flow_lt.py).
 UADD_WowheadQuickLink's checks run next, on a stand-in for Wowhead Quick Link that runs its own Lua files (flow_wql.py).
 UADD_BugSack's checks run next, on a stand-in for BugSack fed its English at run time (flow_bs.py).
+UADD_GearQuestForever's checks run next, on a stand-in for GearQuest Forever fed its English at run time (flow_gq.py).
 UADD_RoadToSixty's checks run next, on a stand-in for Road to Sixty (flow_rts.py), then its half-translation
 check (flow_rts_halves.py).
 UADD_OneForAll's checks run next, on a stand-in for OneForAll (flow_ofa.py), then its half-translation check
@@ -101,6 +102,7 @@ def run_all():
     import flow_dci
     import flow_wql
     import flow_bs
+    import flow_gq
     import flow_rts
     import flow_rts_halves
     import flow_ofa
@@ -127,7 +129,7 @@ def run_all():
         ("ttp", flow_tomtom_place), ("ttm", flow_tomtom_menu), ("wp", flow_wp), ("fqp", flow_fqp),
         ("rs", flow_rarescanner), ("pawn", flow_pawn), ("gm", flow_gm), ("scrap", flow_scrap),
         ("sushipop", flow_sushi_popup), ("sal", flow_sal), ("litemount", flow_litemount), ("wtw", flow_wtw),
-        ("lt", flow_lt), ("dci", flow_dci), ("wql", flow_wql), ("bs", flow_bs), ("rts", flow_rts),
+        ("lt", flow_lt), ("dci", flow_dci), ("wql", flow_wql), ("bs", flow_bs), ("gq", flow_gq), ("rts", flow_rts),
         ("rtsh", flow_rts_halves), ("ofa", flow_ofa), ("ofah", flow_ofa_halves), ("pops", flow_popups), ("missed", flow_missed), ("hash", flow_hash),
         ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice), ("focus", flow_focus),
         ("safe", flow_safe), ("chaos", chaos)))

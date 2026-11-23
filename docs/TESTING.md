@@ -160,6 +160,17 @@ game gives them (UALL Forever or ClassicUA names them), and so do the lines it s
 show-original key with a window open: English. `/uadd missed` shows what stayed English. `/uadd rts off`: English;
 `on`: Ukrainian.
 
+### GearQuest Forever
+
+Type `/uadd missed on` first. In its settings, its language list must say Ukrainian or nothing (auto). Log in: `/uadd`
+lists "GearQuest Forever". Open its main window (the log) and go through every tab, the guide, the Orders list, the
+simulator, the filters, the settings and its dialogs: tabs, buttons, labels and tooltips are Ukrainian, with letters, not
+boxes, and they fit. A slot's chat line and the preview are Ukrainian. Quest texts, zone, item and player names stay as
+the game gives them (UALL Forever or ClassicUA names them); a text with no Ukrainian stays whole English. Pick English or
+another language in its list: UADD does nothing there. Hold the show-original key with a window open: English. `/uadd
+missed` shows what stayed English. `/uadd gq off`: English; `on`: Ukrainian. Offline: `python3 tools/harness/flow_gq.py
+--prove` (its flow) and `python3 -m unittest tools/test_gq_text.py`.
+
 ### OneForAll
 
 Needs OneForAll's own language set to English (its Settings > General). Type `/uadd missed on` first. Log in:
@@ -260,6 +271,9 @@ English. `/uadd wtw off`: English; `on`: Ukrainian.
 - OneForAll's real windows: every tab of the main window, the settings, the info bar, the map buttons and menus, the
   small windows, the tooltips, the fonts (letters or boxes), whether the Ukrainian fits its fixed boxes, and that its
   chat lines and loot feed still work, are only seen in the real client.
+- GearQuest Forever's real windows: every tab of its log, the guide bubble, the Orders list with real items, the
+  simulator, the settings and its language list, the dialogs, the fonts (letters or boxes), whether the Ukrainian fits
+  its fixed boxes, and that its chat lines still work, are only seen in the real client.
 
 ## Without the game
 

@@ -1,0 +1,24 @@
+## Interface: 16001, 16000
+## Title: UADD - GearQuest Forever
+## IconTexture: Interface\AddOns\UADD\Logo
+## Notes: GearQuest Forever in Ukrainian: its windows, settings, filters and dialogs. Part of UADD.
+## Author: HotbarGames
+## Version: 1.2.4
+## Dependencies: UADD, GearQuestForever
+## OptionalDeps: UALLF, ClassicUA
+## X-Category: Localization
+## X-License: GPL-3.0
+
+# Our Ukrainian only (made by tools/make_gq_text.py build), then the code.
+data/text01.lua
+data/text02.lua
+data/text03.lua
+data/text04.lua
+data/text05.lua
+data/text06.lua
+Locale.lua
+Fonts.lua
+Screen.lua
+Glued.lua
+Rows.lua
+Module.lua

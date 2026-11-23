@@ -17,7 +17,7 @@ FOLDERS = ["UADD", "UADD_Questie", "UADD_DungeonJournal", "UADD_OpenMap", "UADD_
            "UADD_Scrap", "UADD_SpeedyAutoLoot", "UADD_WaypointUI",
            "UADD_ForeverQuestPins", "UADD_LiteMount", "UADD_WhatTheWhisper", "UADD_LootTriage",
            "UADD_DeleteCheapestItem", "UADD_WowheadQuickLink", "UADD_BugSack",
-           "UADD_RoadToSixty", "UADD_OneForAll"]
+           "UADD_RoadToSixty", "UADD_OneForAll", "UADD_GearQuestForever"]
 EXTRA = {"UADD": ["LICENSE.txt", "CHANGELOG.md", "Logo.tga"], "UADD_Questie": [], "UADD_DungeonJournal": [], "UADD_OpenMap": [],
          "UADD_DialogueUI": [], "UADD_ForeverXPBar": [], "UADD_Auctionator": [], "UADD_Attune": [], "UADD_LayerSwap": [],
          "UADD_AutoPotion": [], "UADD_Bagnon": [], "UADD_Mastercraft": [],
@@ -25,7 +25,7 @@ EXTRA = {"UADD": ["LICENSE.txt", "CHANGELOG.md", "Logo.tga"], "UADD_Questie": []
          "UADD_Scrap": [], "UADD_SpeedyAutoLoot": [], "UADD_WaypointUI": [],
          "UADD_ForeverQuestPins": [], "UADD_LiteMount": [], "UADD_WhatTheWhisper": [], "UADD_LootTriage": [],
          "UADD_DeleteCheapestItem": [], "UADD_WowheadQuickLink": [], "UADD_BugSack": [], "UADD_RoadToSixty": [],
-         "UADD_OneForAll": []}
+         "UADD_OneForAll": [], "UADD_GearQuestForever": []}
 # files from the repo root that go into a folder of the zip: the notices for the OpenMap (MIT) and Questie (GPL)
 # texts we copy must ship with the copies
 FROM_ROOT = {"UADD": ["THIRD-PARTY-NOTICES.md"]}

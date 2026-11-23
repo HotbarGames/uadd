@@ -33,6 +33,7 @@ UADD puts other World of Warcraft addons into Ukrainian. It is made for WoW Fore
 - BugSack
 - Road to Sixty
 - OneForAll
+- GearQuest Forever
 - Questie: its menus and settings. The quest tracker and quest texts come from
   [UALL Forever](https://www.curseforge.com/wow/addons/uall-forever-ukrainian-localization).
 
@@ -49,7 +50,7 @@ Each module needs its addon. UALL Forever and ClassicUA are optional.
 
 Copy the `UADD`, `UADD_Questie`, `UADD_DungeonJournal`, `UADD_OpenMap`, `UADD_DialogueUI`, `UADD_ForeverXPBar`,
 `UADD_Auctionator`, `UADD_Attune`, `UADD_LayerSwap`, `UADD_AutoPotion`, `UADD_Bagnon`, `UADD_Mastercraft`, `UADD_WhatsTraining`, `UADD_TomTom`, `UADD_RareScanner`, `UADD_Pawn`, `UADD_GatherMate2`, `UADD_Scrap`, `UADD_SpeedyAutoLoot`,
-`UADD_WaypointUI`, `UADD_ForeverQuestPins`, `UADD_LiteMount`, `UADD_WhatTheWhisper`, `UADD_LootTriage`, `UADD_DeleteCheapestItem`, `UADD_WowheadQuickLink`, `UADD_BugSack`, `UADD_RoadToSixty` and `UADD_OneForAll` folders into `World of Warcraft\_forever_\Interface\AddOns\`,
+`UADD_WaypointUI`, `UADD_ForeverQuestPins`, `UADD_LiteMount`, `UADD_WhatTheWhisper`, `UADD_LootTriage`, `UADD_DeleteCheapestItem`, `UADD_WowheadQuickLink`, `UADD_BugSack`, `UADD_RoadToSixty`, `UADD_OneForAll` and `UADD_GearQuestForever` folders into `World of Warcraft\_forever_\Interface\AddOns\`,
 or run `install.bat`. Start the game. A module whose addon is not installed stays off.
 
 The first time, UADD collects the names from UALL Forever or ClassicUA in the background. When the chat says the names
@@ -120,6 +121,8 @@ Questie builds that list only once, when it starts.
 | `/uadd rts on` / `off` | Turns the Road to Sixty translation on or off, at once. Off gives Road to Sixty back as it is without UADD. Names of zones, quests, items and players, and what Road to Sixty saved about your journey, stay as they are. |
 | `/uadd oneforall` | Shows the OneForAll module's status and commands. |
 | `/uadd oneforall on` / `off` | Turns the OneForAll translation on or off, at once. Off gives OneForAll back as it is without UADD. It works only while OneForAll's own language is English. Names of zones, quests, items, spells and players, and what OneForAll saved, stay as they are. |
+| `/uadd gq` | Shows the GearQuest Forever module's status and commands. |
+| `/uadd gq on` / `off` | Turns the GearQuest Forever translation on or off, at once. Off gives GearQuest Forever back as it is without UADD. It works while GearQuest Forever's language list says Ukrainian or nothing (auto). Names of zones, quests, items and players stay as the game gives them. |
 | `/uadd combat off` / `on` | Off: the hold key works in a fight too. On (the default): in a fight it does nothing. |
 | `/uadd missed` | Shows, per module, how many texts stayed English because UADD has no Ukrainian for them yet. |
 | `/uadd missed on` / `off` | A tool for testers, off unless you turn it on. On: UADD notes each text it shows in English. Off (the default) costs nothing. The list stays on your PC; nothing is sent. |
@@ -144,7 +147,7 @@ Two tools tell you what needs work. They need no network.
 Do not copy another addon's text or code into this repo in bulk, unless its licence allows it.
 
 - **Not allowed** (all rights reserved): Auctionator (its LICENSE says so), Bagnon (its TOC says so), Mastercraft (its LICENSE.txt says so), TomTom, RareScanner, Scrap, DeleteCheapestItem Reloaded and BugSack (their TOCs say so), Pawn (CC BY-NC-ND 3.0: no derivatives), GatherMate2 (its TOC says all rights reserved, its LICENSE.txt says GPL; we keep to the stricter one), and Attune, Dialogue UI,
-  ForeverXP Bar, Dungeon Journal, LayerSwap, Auto Potion, Speedy AutoLoot, Waypoint UI, WhatTheWhisper, LootTriage, Wowhead Quick Link and Road to Sixty (no licence, so all rights are reserved).
+  ForeverXP Bar, Dungeon Journal, LayerSwap, Auto Potion, Speedy AutoLoot, Waypoint UI, WhatTheWhisper, LootTriage, Wowhead Quick Link, Road to Sixty and GearQuest Forever (no licence, so all rights are reserved).
 - **Allowed**: Questie (GPL-3.0), Forever Quest Pins (GPL-3.0), LiteMount (GPL-2.0), OneForAll (GPL-3.0-or-later), OpenMap (MIT) and What's Training? (MIT). Their notices are in `THIRD-PARTY-NOTICES.md`.
 
 So for the addons that are not allowed:

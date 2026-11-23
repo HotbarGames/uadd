@@ -47,6 +47,7 @@ COVERED = {
     "UADD_DeleteCheapestItem": ("flow_dci.py", "dci"),
     "UADD_WowheadQuickLink": ("flow_wql.py", "wql"),
     "UADD_BugSack": ("flow_bs.py", "bs"),
+    "UADD_GearQuestForever": ("flow_gq.py", "gq"),
     "UADD_RoadToSixty": ("flow_rts_halves.py", "rts"),
     "UADD_OneForAll": ("flow_ofa_halves.py", "ofa"),
 }
@@ -55,6 +56,10 @@ NO_SLOTS = {
                     "(the tracker's objective lines are left to UALL Forever, Tracker.lua)",
 }
 UNFIT = {
+    "UADD_GearQuestForever": {
+        "L.b32b5450": "no entry in our data yet: glue alone (a number, a colour and one of its texts), no words; "
+                      "built at run time with its text already ours, so only the hold key cannot turn it",
+    },
     "UADD_ForeverXPBar": {
         "18:e82f8f8b": "no Ukrainian for it yet: its slot holds a whole message the addon sends to chat, "
                        "joined from parts at run time, so there is no fixed text to translate",

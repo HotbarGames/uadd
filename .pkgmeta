@@ -37,6 +37,7 @@ move-folders:
   UADD/UADD_BugSack: UADD_BugSack
   UADD/UADD_RoadToSixty: UADD_RoadToSixty
   UADD/UADD_OneForAll: UADD_OneForAll
+  UADD/UADD_GearQuestForever: UADD_GearQuestForever
 
 # names come from UALL Forever or ClassicUA when one is installed; without them the menus are still Ukrainian
 optional-dependencies:

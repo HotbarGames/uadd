@@ -96,6 +96,11 @@ def _bs():                    # the sack window open (session label, tabs, optio
     return (M.popup(), c)[1] if M else None
 
 
+def _gq():                    # its window, guide page and Orders rows shown (flow_gq.game)
+    import flow_gq as F
+    return F.game()[0] if F.installed() and F.module_there() else None
+
+
 def _att():
     import flow_att_game as G
     if not G.libraries_there():

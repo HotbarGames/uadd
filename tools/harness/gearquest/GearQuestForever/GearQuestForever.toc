@@ -1,0 +1,7 @@
+## Interface: 16001
+## Title: GearQuest Forever (harness stand-in)
+## Notes: Harness stand-in, not the addon. Its English comes at run time from tools/harness/flow_gq.py.
+## Version: 0
+## SavedVariables: GearQuestForeverDB
+
+Stand.lua

@@ -78,8 +78,11 @@ class Fake(unittest.TestCase):
         for t in ("The price has increased a lot today", "Search for the cheapest items here"):
             self.assertTrue(C.meaningful(t), t)
         for t in ("Gryan Stoutmantle", "Large Brilliant Shard", "Drag to move", "Speak with Shoni Today",
-                  "Fonts/frizqt__.ttf", "%s - %s (%d%%) %s - %s", "AUCTIONATOR_L_SEARCH_HELP"):
+                  "Fonts/frizqt__.ttf", "%s - %s (%d%%) %s - %s", "AUCTIONATOR_L_SEARCH_HELP",
+                  "/gq faction alliance", "/gq spec enhancement"):
             self.assertFalse(C.meaningful(t), t)
+        # a command followed by prose is still prose
+        self.assertTrue(C.meaningful("/gq class hunter sets the class you preview"))
 
     def test_hits_over_and_under_budget(self):
         self.repo("UADD_Auctionator/ui/locale.lua",

@@ -24,7 +24,7 @@ flowchart LR
   - `journal.lua` – Dungeon Journal words: loot filters, item stats, gear slots, favourites.
   - `map.lua` – map pins, waypoints, zoom, floors, TomTom's arrow and coordinates.
   - `rares.lua` – RareScanner: rares, treasures, the explorer, collections, its filters.
-  - `gear.lua` – Pawn: scales, stat weights, upgrades, gems and sockets, more item stats.
+  - `gear.lua` – Pawn: scales, stat weights, upgrades, gems and sockets, more item stats; GearQuest Forever: spec, guide, hunt, log, simulator, score.
 - `tools/glossary.py` – the checker.
 
 ## One entry
@@ -98,6 +98,7 @@ Real cases from Questie (the two Layer rows: OpenMap and LayerSwap):
 | Trainer | any trainer, in an addon's own sentence ("наставник") | not an entry |
 | Skinning Trainer, ... | the title over a named trainer, as UALL Forever shows it ("Тренер Білування"; owner 2026-11-20) | `npc.trainer_*` |
 | Guide | Mastercraft's levelling guide ("Посібник"; UALL Forever's «Наставник» is a person who guides) | `prof.guide` |
+| Guide | GearQuest Forever's talking guide that shows the way ("Гід": a person, гіда, гіду) | `gear.guide` |
 | Pin | a mark the player drops on the map ("Позначка") | `map.pin` |
 | Pin to top | keep a conversation at the top of a list ("Закріпити"; WhatTheWhisper) | `ui.pin_item` |
 | Report | tell the addon's author about a bug ("Повідомити про помилку") | `ui.report_bug` |

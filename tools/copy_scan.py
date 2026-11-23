@@ -27,7 +27,7 @@ RESTRICTED = {
     "Auctionator": "All Rights Reserved in its LICENSE",
     "Mastercraft": "all rights reserved in its LICENSE.txt", "Mastercraft_Inbox": "all rights reserved (Mastercraft's licence)", "DeleteCheapestItem": "All Rights Reserved in its TOC", "BugSack": "All Rights Reserved in its TOC",
     "Pawn": "Creative Commons BY-NC-ND 3.0 (no derivatives)", "GatherMate2": "ARR in its TOC (its LICENSE.txt says GPL; until settled, ARR)","TomTom": "All Rights Reserved in its TOC", "RareScanner": "All Rights Reserved in its TOC", "Bagnon": "All Rights Reserved in its TOC", "BagBrother": "All Rights Reserved in its TOC (Bagnon's texts)", "Scrap": "All Rights Reserved in its TOC",
-    **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion", "SpeedyAutoLoot", "WaypointUI", "WhatTheWhisper", "LootTriage", "WowheadQuickLink", "RoadToSixty"),
+    **dict.fromkeys(("Attune", "DialogueUI", "ForeverXPbar", "ForeverDungeonJournal", "LayerSwap", "AutoPotion", "SpeedyAutoLoot", "WaypointUI", "WhatTheWhisper", "LootTriage", "WowheadQuickLink", "RoadToSixty", "GearQuestForever"),
                     "no licence, so all rights reserved"),
 }
 ALLOWED = {"Questie": "GPL-3.0", "OpenMap": "MIT", "WhatsTraining": "MIT", "ForeverQuestPins": "GPL-3.0", "LiteMount": "GPL-2.0", "OneForAll": "GPL-3.0-or-later"}
@@ -42,9 +42,7 @@ THREADS = 32   # for reading the installed addons
 #     name or label).
 # Texts that Questie, OpenMap or What's Training? also have are common game or UI words, so they are dropped too.
 # A bulk copy (a locale file, English comments, English keys) still shows up as hundreds of texts.
-MIN_LEN = 16
-MIN_WORDS = 3
-MIN_LETTERS = 10
+MIN_LEN, MIN_WORDS, MIN_LETTERS = 16, 3, 10
 # What counts as a label: any other piece with LABEL_LETTERS letters that reads as UI words, not code: one
 # Capitalised word ("Cancel", not "OnClick", "LEFT" or "frame"), or two or more words with a lower-case letter
 # ("Buy Now", "Auction House"). No _ \ / $ @ { } < > = | (identifiers, paths, code, escapes).
@@ -52,6 +50,7 @@ LABEL_LETTERS = 4
 LABEL_MAX = 120
 ONE_WORD = re.compile(r"[A-Z][a-z]{3,}[:.!?]?")
 CODEY = re.compile(r"[_\\/$@{}<>=|]")
+SLASH_COMMAND = re.compile(r"/[a-z0-9]+(?: [a-z0-9-]+){1,3}")   # typed as is ("/gq class hunter"): not prose
 
 SKIP_DIRS = {"libs", "libs_modernah"}   # bundled libraries (Ace3 and others) with their own licences
 TEXT_EXT = (".lua", ".xml", ".toc", ".txt", ".md", ".json")
@@ -86,7 +85,7 @@ def meaningful(piece):
     if len(piece) < MIN_LEN or " " not in piece or sum(c.isascii() and c.isalpha() for c in piece) < MIN_LETTERS:
         return False
     words = WORD.findall(piece)
-    return (sum(len(w) >= 2 for w in words) >= MIN_WORDS
+    return (sum(len(w) >= 2 for w in words) >= MIN_WORDS and not SLASH_COMMAND.fullmatch(piece.strip())
             and any(len(w) >= 4 and w[0].islower() and w not in SMALL for w in words))
 
 

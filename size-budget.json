@@ -2,6 +2,9 @@
   "files": {
     "UADD/uall.lua": {
       "lines": 340
+    },
+    "UADD/UADD.toc": {
+      "maxLine": 410
     }
   },
   "ignore": [

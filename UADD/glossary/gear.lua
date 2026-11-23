@@ -34,3 +34,11 @@ E{ id = "stat.health_regen", en = "Health Regen", uk = "Відновлення �
 E{ id = "stat.mana_regen", en = "Mana Regen", uk = "Відновлення мани", note = "Mana back over time. AutoPotion, 2026-11-21." }
 E{ id = "stat.armor_penetration", en = "Armor Penetration", uk = "Пробиття броні", note = "Item stat. AutoPotion, 2026-11-21." }
 E{ id = "stat.resistance", en = "Resistance", uk = "Опір", note = "One resistance to a spell school (many: game.resistances «Опори»). AutoPotion, 2026-11-21." }
+
+-- GearQuest Forever's own features (lead's choices 2026-11-23)
+E{ id = "game.spec", en = { "Spec", "spec" }, uk = "спеціалізація", note = "A talent spec of a class. lead's choice 2026-11-23, GearQuest Forever." }
+E{ id = "gear.guide", en = "Guide", uk = "Гід", note = "GearQuest's talking guide that shows the way (a person: гіда, гіду). Not prof.guide. lead's choice 2026-11-23, GearQuest Forever." }
+E{ id = "gear.hunt", en = { "Hunt", "hunt" }, uk = "Полювання", note = "GearQuest's tracked search for one item. lead's choice 2026-11-23, GearQuest Forever." }
+E{ id = "gear.log", en = "Log", uk = "Журнал", note = "GearQuest's main window (its log of gear). lead's choice 2026-11-23, GearQuest Forever." }
+E{ id = "gear.simulator", en = "Simulator", uk = "Симулятор", note = "GearQuest's tab that tries gear on. lead's choice 2026-11-23, GearQuest Forever." }
+E{ id = "gear.score", en = "Score", uk = "Оцінка", note = "An item's number for your spec in GearQuest. lead's choice 2026-11-23, GearQuest Forever." }

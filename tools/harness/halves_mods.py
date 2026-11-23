@@ -40,6 +40,7 @@ def wtw(check, M, tps, note=""): run(check, "UADD_WhatTheWhisper", tps, M and (l
 def lt(check, M, tps, note=""): run(check, "UADD_LootTriage", tps, M and (lambda tp, t: _t(M.tr(lua_str(t)))), note)  # noqa: E704,E501  LootTriage: each line on its tooltip from its own file (M.tr); tps: flow_lt.templates()
 def wql(check, M, tps, note=""): run(check, "UADD_WowheadQuickLink", tps, M and (lambda tp, t: _t(M.tr(lua_str(t), tp["id"].startswith("Pop.")))), note)  # noqa: E704,E501  Wowhead Quick Link: through its real popup (M.tr); tps: flow_wql.templates()
 def bs(check, c, note=""): run(check, "UADD_BugSack", *__import__("halves_bs").parts(c, note))  # noqa: E704,E501  BugSack: the session label through the module's hook, chat lines and the popup through ns.Translate (halves_bs.py); c None: not installed
+def gq(check, c, note=""): run(check, "UADD_GearQuestForever", *__import__("halves_gq").parts(c, note))  # noqa: E704,E501  GearQuest Forever: its L learns each template, then Screen.Other turns the line (halves_gq.py); c None: not installed
 
 def ap(check, M):
     """Auto Potion: Words.Text and Words.Bare (the flow's M.uk, M.bare); free slots from

@@ -9,7 +9,7 @@ The builders from RareScanner on are in chaos_mods2.py.
 import os
 
 import session
-from chaos_mods2 import _att, _bs, _dci, _gm, _lm, _lt, _pawn, _rs, _rts, _sal, _scrap, _wql, _wtw
+from chaos_mods2 import _att, _bs, _dci, _gm, _gq, _lm, _lt, _pawn, _rs, _rts, _sal, _scrap, _wql, _wtw
 
 SKIPPED = {"UADD_Questie": "needs the real Questie and UALL Forever (flow.py)",
            "UADD_DungeonJournal": "needs the real ForeverDungeonJournal and UALL Forever (flow_dj_module.py)"}
@@ -209,6 +209,7 @@ RECIPES = [
     ("UADD_BugSack", "BugSack", _bs),
     ("UADD_RoadToSixty", "RoadToSixty", _rts),
     ("UADD_OneForAll", "OneForAll", _ofa),
+    ("UADD_GearQuestForever", "GearQuestForever", _gq),
 ]
 
 

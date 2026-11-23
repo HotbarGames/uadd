@@ -8,6 +8,8 @@
   Road to Sixty: новий модуль; його карта подорожі, панель, налаштування, кнопка біля мінікарти і статистика українською. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра.
 - OneForAll: new module; its windows, tabs, settings, tooltips and chat lines are in Ukrainian while OneForAll's own language is English. Names of zones, quests, NPCs, items, spells and players stay as the game gives them.
   OneForAll: новий модуль; його вікна, вкладки, налаштування, підказки і рядки в чаті українською, поки мова самого OneForAll англійська. Назви зон, завдань, НПС, предметів, заклинань і гравців лишаються такими, як їх дає гра.
+- GearQuest Forever: new module; its windows, tabs, settings, filters, dialogs and chat lines are in Ukrainian while its language list says Ukrainian or auto. Names of zones, quests, items and players stay as the game gives them (UALL Forever or ClassicUA).
+  GearQuest Forever: новий модуль; його вікна, вкладки, налаштування, фільтри, діалоги і рядки в чаті українською, поки в списку мов вибрано «Українська» або автовибір. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра (UALL Forever або ClassicUA).
 - Mastercraft: updated for 2.1.1; its new texts are in Ukrainian.
   Mastercraft: оновлено під 2.1.1; його нові тексти українською.
 - OpenMap: updated for v0.8.13; its new texts are in Ukrainian.
