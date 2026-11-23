@@ -39,6 +39,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import hashtext as H  # noqa: E402
 from game_names_src import MODULES, uallf_names  # noqa: E402
+from game_names_allow_mc import MC_ALLOW_2111  # noqa: E402
 
 WORD = re.compile(r"[A-Za-z][A-Za-z'’-]*")
 COLOR = re.compile(r"\|c[0-9a-fA-F]{8}|\|r")
@@ -82,6 +83,7 @@ ALLOW = {
         "48:6fd894f0": "91:f78ef03d",    # a plain verb (Select) on a slash-command help line, no game name
     },
 }
+ALLOW["UADD_Mastercraft"].update(MC_ALLOW_2111)   # reviewed 2026-11-23 (2.1.1)
 
 
 # ── The check ────────────────────────────────────────────────────────────────────────────────────

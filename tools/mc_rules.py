@@ -95,10 +95,12 @@ OVERRIDE = {
     # zone, note (two); count, step title, count, money; profession, count; credits: addon, author, what
     # for; a character; who, recipe, link; a vendor line from the data, favour count.
     "6:66679401": "TT", "16:cbe63335": "VN", "48:2da42a30": "FTFN", "20:6b8bd5b8": "VVBT",
-    "21:d9ebf7b8": "TVT", "15:1e6df1ed": "VNF", "39:d6528a38": "NVT", "18:9436262a": "FT",
+    "21:d9ebf7b8": "TVT", "15:1e6df1ed": "VNF", "39:d6528a38": "NVT", "18:9436262a": "NT",
     "42:c33a0463": "N", "32:27231f3c": "NVNNT", "21:c858716a": "NNNT", "21:c3a7c5ff": "VNTV",
     "16:589231fd": "NV", "13:e0813675": "FFT", "5:10147f1a": "F", "18:1490fe3a": "FNF",
     "71:eb2d9b36": "NV", "23:cd938ab2": "F",
+    # (18:9436262a was "a character; where" (F T). In 2.1.1 no code formats it; the lines of its shape
+    # are a recipe or a cooldown's name, then a count or our words in grey: N T, never free (lesson 7 again).)
     # Found by tools/test_mc_slots.py: a vendor and its zone; a recipe (never a player there).
     "10:166ad36a": "N", "11:5f7c4ced": "N",
     # Texts built in code (IN_CODE below): an icon, a disenchant material, its count, its price; who can

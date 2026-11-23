@@ -11,7 +11,7 @@
 --   6. a template. Each slot is filled by what it holds (rec.sort, tools/mc_rules.py):
 --        v  a value (a number, a time, money, a link): kept when it has no English word, else our text
 --        f  a free name (a player, a version): kept as it is; one name only, so not a wide gap, a line
---           break, " - " or a word in small letters (that is a glued text or a phrase: the line stays English)
+--           break, " - ", ": " or a word in small letters (a glued text or a phrase: the line stays English)
 --        n  a game name (item, zone, NPC), or a list of them with counts: UALL Forever's Ukrainian for
 --           every name, or the whole line stays English
 --        t  our text: translated again (empty stays empty)
@@ -136,12 +136,12 @@ W.Name = Name
 
 local function Slot(k, v, rec)
     local sort = rec.sort and rec.sort[k] or "v"
-    -- A free slot holds one name: a wide gap, a line break or " - " in it means a text glued on (lesson 7);
-    -- a word in small letters ("the", "and") means a phrase, not a name: a longer template fits, or none.
+    -- A free slot holds one name: a wide gap, a line break, " - " or ": " in it means a text glued on
+    -- (lesson 7); a word in small letters ("the") means a phrase: a longer template fits, or none.
     if sort == "f" then
         local bare = v:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")   -- a name in its class colour
         if bare:find("   ", 1, true) or bare:find("\n", 1, true) or bare:find(" - ", 1, true)
-            or bare:find("%f[%a]%l%a") then return false end
+            or bare:find(": ", 1, true) or bare:find("%f[%a]%l%a") then return false end
         return v
     end
     if sort == "b" then return "" end

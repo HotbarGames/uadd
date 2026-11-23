@@ -105,6 +105,11 @@ UNFIT = {
                             "matches its own template",
            "Code.24423d3c": "stays English: two value slots glued with no gap between, which the sample values do not fit",
            "Code.7cd10afd": "stays English: an ability text with five value slots that the sample values do not fit"}),
+    "UADD_Mastercraft": {
+        "21:c3a7c5ff": "a real gap: two slots side by side (a guide step's title, then a crafts count the code "
+                       "glues on, or nothing); Words.lua gives the first nothing, so it fits only with no count, "
+                       "and a line with a count stays whole English",
+    },
 }
 DUI_KINDS = ("name", "quest", "npc", "item", "list", "addon", "player", "key")
 SKIP = "skipped: the addon is not installed"

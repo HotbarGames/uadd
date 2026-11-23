@@ -204,6 +204,23 @@ class Installed(unittest.TestCase):
         bad = problems(addon, shipped())
         self.assertEqual(bad, [], "a game name in a free slot: sort it NAME (n) in tools/mc_rules.py")
 
+    def test_glue_only_template_has_no_free_slot(self):
+        """A template of slots and glue alone (gaps, colour codes, marks: no word) joins texts the code builds:
+        a free slot there takes a recipe name glued to a count (lesson 7), unless its code puts a name there."""
+        addon = M.addon_dir()
+        if not (addon / "Locales").is_dir():
+            self.skipTest("Mastercraft is not installed")
+        import mc_rules
+        temps, bad = shipped(), []
+        for en, kind, *_ in M.L.source(addon):
+            key = H.key(en)
+            if kind != "template" or "f" not in temps.get(key, ()) or key in mc_rules.IN_CODE:
+                continue
+            glue = "".join(x[1] for x in H.tokens(en) if x[0] == "lit")
+            if not re.search(r"[A-Za-z]", re.sub(r"\|c[0-9a-fA-F]{0,8}|\|r", "", glue)):
+                bad.append(key)
+        self.assertEqual(bad, [], "glue only, with a free slot: sort it n or t in tools/mc_rules.py")
+
 
 if __name__ == "__main__":
     unittest.main()

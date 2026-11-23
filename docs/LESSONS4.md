@@ -111,3 +111,14 @@ The review found one more: the sack's Options tab calls the Wipe button's `SetEn
 no Lua `Enable`, `Disable` or `SetFontObject`, so no hook saw the font change and our words would show as boxes.
 Rule: hook every state method a button has, `SetEnabled` too, and make the stand's version native (it uses the raw
 `SetFontObject`, with no hover after it). Check: the same `--prove`, mutant `enabled`.
+
+**Lesson 7 again, in Mastercraft 2.1.1 (2026-11-23).** What went wrong: two new texts made free slots swallow
+English. A locale key of two slots and glue alone (a gap and a grey colour, 18:9436262a) was sorted free, then
+text. No code formats it, but row titles and cooldown chips have its shape (a recipe, then a count in grey), so
+the free slot took the recipe as it was: the row title came out the same as it went in, so `P.Count` never ran, and
+lines with a longer template's slot missing came out half Ukrainian. A short new template ("<word> %s", 14:9a89c630)
+is the start of an older one ("<word> %s: %s"): when the older one's text slot failed, the short one's free slot
+took "<name>: <English>". Rule: a free slot says no to ": " too (Words.lua). A template of glue alone gets no free
+slot unless the code that builds it puts a name there (`IN_CODE`); 18:9436262a is now n, t (`tools/mc_rules.py`).
+Check: `python3 tools/harness/flow_mastercraft.py` (the halves check and the row-title steps);
+`python3 -m unittest tools.test_mc_slots` (`test_glue_only_template_has_no_free_slot`).
