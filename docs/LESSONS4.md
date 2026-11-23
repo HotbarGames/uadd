@@ -170,6 +170,15 @@ no Lua `Enable`, `Disable` or `SetFontObject`, so no hook saw the font change an
 Rule: hook every state method a button has, `SetEnabled` too, and make the stand's version native (it uses the raw
 `SetFontObject`, with no hover after it). Check: the same `--prove`, mutant `enabled`.
 
+**Lesson 18 again, after lesson 44 (2026-11-23).** What went wrong: item and spell tooltips showed boxes (the owner's
+shots). Lesson 44's `U.FontBack` put a file back by path on any line whose Cyrillic file stayed over its object, also
+on the game's tooltip lines after Mastercraft's block; that pinned them to the Latin file. The harness passed: its
+tooltip lines dropped a hand-set file on SetFontObject, so that branch never ran there. Rule: only a label that
+`U.CyrOnOwn` set by hand (`was.byhand`) gets its file back by path. Check: the harness tooltip lines keep a hand-set
+file over SetFontObject, as the client does (`H.tipKeepsFile`, `tools/harness/wow_fontfam.lua`); Mastercraft's "item
+tooltip filled again" uses it. `python3 tools/harness/flow_mastercraft.py --prove`: mutant `byhand` takes the fix out
+and wants that step to fail.
+
 **Lesson 7 again, in Mastercraft 2.1.1 (2026-11-23).** What went wrong: two new texts made free slots swallow
 English. A locale key of two slots and glue alone (a gap and a grey colour, 18:9436262a) was sorted free, then
 text. No code formats it, but row titles and cooldown chips have its shape (a recipe, then a count in grey), so

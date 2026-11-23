@@ -70,9 +70,19 @@ W.SetFont = function(self, path, size, flags)
     if H.setFontClearsObject then rawset(self, "__fontObject", nil) end
     return ok
 end
+-- H.tipKeepsFile: as in the client (lesson 44), a file set by hand on a line stays over SetFontObject; the
+-- object is set, GetFont still gives the file. A Latin file pinned by UADD then still counts as "bad".
 W.SetFontObject = function(self, o)
+    local keep = H.tipKeepsFile and rawget(self, "__tipLine") and rawget(self, "__pinned") and { self:GetFont() }
     setObject(self, o)
     if rawget(self, "__type") ~= "FontString" then return end
+    if keep and keep[1] then
+        setFont(self, keep[1], keep[2], keep[3])
+        if rawget(self, "__ourPin") and OursAt() then report("back") end
+        rawset(self, "__ourPin", nil)
+        rawset(self, "__pinned", "kept")
+        return
+    end
     if rawget(self, "__ourPin") and OursAt() then report("back") end      -- UADD gave the family back
     rawset(self, "__pinned", nil)
     rawset(self, "__ourPin", nil)

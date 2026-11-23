@@ -140,6 +140,7 @@ function U.CyrOnOwn(fs, was)
     if type(was) ~= "table" or U.Locked(fs) then return false end
     local path = U.CyrFontPath()
     if not path then return false end
+    was.byhand = true                             -- only such a label gets its file back by path (FontBack)
     fs:SetFont(path, tonumber(was.size) or 12, was.flags or "")
     return U.IsCyrFont((fs:GetFont()))
 end
@@ -156,8 +157,11 @@ function U.FontBack(fs, was)
     if was.object then
         ObjectOn(fs, was.object)
         -- the object took (or our file is not on): done. A label that keeps a hand-set file over its object
-        -- (U.CyrOnOwn, lesson 44) gets its own file back below.
-        if not was.own and not (U.IsCyrFont((fs:GetFont())) and not U.IsCyrFont(was.path)) then return end
+        -- (U.CyrOnOwn, lesson 44) gets its own file back below. Only such a label: a line that followed its
+        -- object (a game tooltip line) never gets a file by path, which pins the Latin file (lesson 18 again).
+        if not was.own and not (was.byhand and U.IsCyrFont((fs:GetFont())) and not U.IsCyrFont(was.path)) then
+            return
+        end
     end
     if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end
 end

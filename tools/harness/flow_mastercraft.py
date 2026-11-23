@@ -104,8 +104,10 @@ def _feed(M, p):
             M.feed(where, name, lua_str(text), how, size, width)
 
 
-def _game(addons, locale, p=None):
+def _game(addons, locale, p=None, pre=None):
     c = Client(addons, None, locale)
+    if pre:
+        pre(c)                              # mc_prove: a fix cut out before the flow's Lua
     c.lua.execute(read_text(os.path.join(HERE, "flow_mastercraft.lua")))
     M = c.H.mc
     if p:
@@ -220,7 +222,7 @@ def game_c(check, p):
     _errors(c, check, "game C (ruRU)")
 
 
-def run(check, facts):
+def run(check, facts, prove=False):
     if not module_there():
         check("UADD_Mastercraft is there", False, "no UADD_Mastercraft/UADD_Mastercraft.toc")
         return
@@ -243,23 +245,27 @@ def run(check, facts):
     flow_mc_code2.run(check, sys.modules[__name__], src)
     gc.collect()
     game_c(check, p)
+    if prove:
+        gc.collect()
+        import mc_prove                     # one fix cut out of Font.lua: the refill step must fail
+        mc_prove.mutants(sys.modules[__name__], check, p)
 
 
 Check = collections.namedtuple("Check", "name ok detail")
 
 
-def run_checks():
+def run_checks(prove=False):
     """Every check of this file. Returns (checks, facts)."""
     checks, facts = [], {}
 
     def check(name, ok, detail=""):
         checks.append(Check("mc: " + name, bool(ok), str(detail)))
-    run(check, facts)
+    run(check, facts, prove)
     return checks, facts
 
 
-if __name__ == "__main__":       # alone: python3 tools/harness/flow_mastercraft.py
-    cs, fs = run_checks()
+if __name__ == "__main__":       # alone: python3 tools/harness/flow_mastercraft.py [--prove]
+    cs, fs = run_checks("--prove" in sys.argv)
     for x in cs:
         print(("ok    " if x.ok else "FAIL  ") + x.name + (f"  [{x.detail}]" if x.detail else ""))
     print(fs)
