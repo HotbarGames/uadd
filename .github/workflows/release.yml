@@ -36,6 +36,9 @@ jobs:
           fetch-depth: 0          # the packager reads tags and history for the version and changelog
           persist-credentials: false
 
+      - name: No open case of boxes (docs/OPEN-BOXES.md)
+        run: python3 tools/open_boxes.py
+
       - name: CurseForge project
         run: |
           if grep -q '^## X-Curse-Project-ID:' UADD/UADD.toc; then

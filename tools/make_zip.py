@@ -39,6 +39,10 @@ def toc_files(folder):
 
 
 def main():
+    import open_boxes  # no release while a case of boxes is open (owner, 2026-11-26)
+    why = open_boxes.stop()
+    if why:
+        raise SystemExit(why)
     version = None
     entries = []
     for folder in FOLDERS:

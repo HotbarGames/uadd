@@ -11,6 +11,9 @@ with `python3 tools/make_zip.py` and upload `dist/UADD-<version>.zip` on the pro
 
 ## Steps
 
+**No release while one case of boxes instead of letters is not fixed (owner, 2026-11-26; very important).**
+`docs/OPEN-BOXES.md` lists them; `bump_version.py`, `make_zip.py` and the release workflow refuse until it is empty.
+
 0. The owner checks it in the game first (owner, 2026-11-20). Install the build, then give the owner a short
    list of what to look at. Put on it only what no check proves: `check_repo.py`, the unit tests, the harness
    and the review already prove the rest, so leave that off. No upload until the owner says it works. A fix

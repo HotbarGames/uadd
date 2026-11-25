@@ -52,6 +52,11 @@ def main(argv):
     if len(argv) != 2:
         print(__doc__.strip())
         return 1
+    import open_boxes  # no release while a case of boxes is open (owner, 2026-11-26)
+    why = open_boxes.stop()
+    if why:
+        print(f"bump_version: {why}")
+        return 1
     try:
         changes = plan(ROOT, argv[1])
     except ValueError as e:
