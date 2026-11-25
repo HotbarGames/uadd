@@ -147,7 +147,7 @@ session line at the top are Ukrainian, with letters, not boxes, and they fit. Op
 AddOns, or its minimap button) and hover each option: the tooltips are Ukrainian. Press Send: the send popup is
 Ukrainian. Hover the minimap or LDB button: the tooltip is Ukrainian. Its chat lines (a new error, a wiped sack) are
 Ukrainian. The Lua error text itself stays as the game gave it. The Font size menu rows stay English (a game menu).
-Hold the show-original key with the window open: English. `/uadd missed` shows what stayed English. `/uadd bugsack off`:
+Hold the show-original key with the window open: English. `/uadd missed` shows what stayed English. `/uadd bs off`:
 English; `on`: Ukrainian.
 
 ### Road to Sixty
@@ -286,7 +286,8 @@ Then it loads the real Dungeon Journal with UALL Forever and checks the journal 
 menu, names on each page change (boss, tab, dungeon, search result), fonts, Shift, Русский and
 `/uadd dj off`/`on`. It prints how many dungeon, boss, quest and item names are Ukrainian.
 
-How fast it runs (2026-11-22, 8 cores): the whole suite takes about 80 s, `run.py` alone about 40 s.
+`run.py` (8 cores): about 90 s fresh, 12 s with nothing changed. A hand run reuses passed jobs whose inputs are the
+same (`tools/harness/jobcache.py`) and says how many; `--fresh` or `UADD_CACHE=0` runs all, as suite and push check do.
 
 - `run.py` runs its flows side by side, one process per flow (`tools/harness/pool.py`, `jobs.py`). The checks come
   out in the same order as one after another.

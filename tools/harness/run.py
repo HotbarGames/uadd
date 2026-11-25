@@ -50,6 +50,7 @@ Each module's flow also runs the half-translation check (halves.py, halves_mods.
 halves_cover.COVERED whose flow gave no "no half-translated line: <module>" result fails here.
 The flows run side by side, one process each (pool.py, jobs.py), and print in the order above;
 UADD_JOBS=1 runs them one after another in this process (docs/TESTING.md).
+Results of jobs whose inputs did not change are reused (jobcache.py; never in CI or the suite); --fresh runs all.
 Exit code 0 = every check passed, 1 = a check failed, 2 = cannot run here.
 """
 import json
@@ -57,6 +58,7 @@ import os
 import sys
 import time
 
+START = time.time()             # before any input of a check is read (jobcache.py)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -73,8 +75,8 @@ def halves_guard(checks, skipped=()):
             and not any(f"no half-translated line: {mod} " in c.name for c in checks)]
 
 
-def run_all():
-    """Every flow, side by side (jobs.py). Returns (checks, facts, notes)."""
+def run_all(cache=None):
+    """Every flow, side by side (jobs.py, also for `cache`). Returns (checks, facts, notes)."""
     import flow
     import flow_att
     import flow_auc
@@ -132,13 +134,26 @@ def run_all():
         ("lt", flow_lt), ("dci", flow_dci), ("wql", flow_wql), ("bs", flow_bs), ("gq", flow_gq), ("rts", flow_rts),
         ("rtsh", flow_rts_halves), ("ofa", flow_ofa), ("ofah", flow_ofa_halves), ("pops", flow_popups), ("missed", flow_missed), ("hash", flow_hash),
         ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice), ("focus", flow_focus),
-        ("safe", flow_safe), ("chaos", chaos)))
+        ("safe", flow_safe), ("chaos", chaos)), cache)
     skipped = ["UADD_OpenMap"] if missing else []      # its flow runs with the journal's
     checks += [flow.Check(name, False, why) for name, why in halves_guard(checks, skipped)]
     return checks, facts, notes
 
 
-def main():
+def kept_results(argv):
+    """(makes the jobcache.Cache, None), or (None: every job runs and nothing is kept, why)."""
+    import jobcache
+    import jobinputs
+    why = jobcache.off()
+    if why:
+        return None, why
+    base = jobinputs.Inputs()               # what this process reads before it forks the jobs: inputs of each
+    jobinputs.install()
+    jobinputs.to(base)
+    return (lambda: jobcache.Cache(START, base, wants_fresh="--fresh" in argv)), None
+
+
+def main(argv=()):
     if loader.lua_runtime() is None:
         print("cannot run: lupa is not installed (pip install lupa)")
         return 2
@@ -147,7 +162,10 @@ def main():
         print("cannot run: missing addons: " + ", ".join(missing))
         return 2
     t0 = time.time()
-    checks, facts, notes = run_all()
+    cache, why = kept_results(argv)
+    checks, facts, notes = run_all(cache)
+    if why:
+        notes.append(f"results of earlier runs: none reused ({why})")
     bad = [c for c in checks if not c.ok]
     for c in checks:
         print(("ok    " if c.ok else "FAIL  ") + c.name + (f"  [{c.detail}]" if c.detail else ""))
@@ -159,4 +177,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

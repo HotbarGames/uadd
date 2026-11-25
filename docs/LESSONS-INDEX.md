@@ -64,7 +64,7 @@ A new kind of problem: add a lesson (newest file with room), a check, and its li
 - 10 A Checks read untracked files too; local-only files go in .gitignore.
 - 11 A Each record in addon_versions.json has a version (VERSION_FROM). Owner's steps: only what the real client shows.
 - 29 A A new Lua file goes in the TOC in the same change; a test that reads by path also checks the TOC.
-- 41 A Faster check: same checks, same order; a dead job is a FAIL with its repro; keep the old code as reference.
+- 41+ A Faster check: same checks, same order; a dead job is a FAIL with its repro; keep the old code as reference.
 - 42* P --update-versions never hides new texts (--module only for texts left English on purpose). Extractor: every place shown (not news), keys as shown (\n, \\).
 
 ## New addon and release

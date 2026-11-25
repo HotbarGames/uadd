@@ -23,6 +23,8 @@ import traceback
 from multiprocessing.connection import Pipe, wait
 
 import boxes
+import clock
+import jobinputs
 import tipfont
 
 MARK = "\x00job:"           # the name of a place-holder check: MARK + job id
@@ -84,7 +86,12 @@ def _plain_facts(facts):
 
 
 def label(fn, args):
-    shown = ", ".join(a if isinstance(a, str) else getattr(a, "__name__", type(a).__name__) for a in args)
+    def one(a):
+        if isinstance(a, str):
+            return a
+        r = repr(a)                        # the same in every run, or the object's type name (no " at 0x1234")
+        return r if " at 0x" not in r and len(r) <= 80 else getattr(a, "__name__", type(a).__name__)
+    shown = ", ".join(one(a) for a in args)
     return f"{fn.__module__}.{fn.__name__}({shown})"
 
 
@@ -97,8 +104,10 @@ def spawn(fn, *args):
 
 
 class Pool:
-    def __init__(self, check):
+    def __init__(self, check, watch=False):
         self.check = check                 # flow.Check
+        self.watch = watch                 # jobcache.py is on: each job notes what it reads (jobinputs.py)
+        self.inputs = {}                   # id -> its jobinputs.Inputs
         self.jobs = {}                     # id -> (fn, args, label)
         self.queue = []                    # ids not started yet; spawned ones go first
         self.results = {}                  # id -> Result
@@ -111,18 +120,30 @@ class Pool:
         self.queue.append(jid)
         return jid
 
+    def add_done(self, name):
+        """A place for a job spawned in an earlier run (jobcache.py puts its result in), never run here."""
+        jid = len(self.jobs)
+        self.jobs[jid] = (None, (), name)
+        return jid
+
     # ── a job, in the child ────────────────────────────────────────────────────────────────────
     def _child(self, jid, conn):
         _CHILD[0] = conn
         fn, args, _ = self.jobs[jid]
         _take()                            # what the parent had is not this job's
-        t0 = time.time()
+        t0, seen = time.time(), jobinputs.Inputs()
+        if self.watch:
+            clock.DOUBT.clear()
+            jobinputs.to(seen)
         try:
             checks, facts = fn(*args)
             msg = ("done", _plain(checks), _plain_facts(facts), _take(), time.time() - t0, None)
         except BaseException:
             msg = ("done", [], {}, _take(), time.time() - t0, traceback.format_exc()[-1500:])
-        conn.send(msg)
+        jobinputs.to(None)
+        if clock.DOUBT:
+            seen.bad.add(f"a time limit passed only by its stretch under load ({max(clock.DOUBT):.1f} ms)")
+        conn.send(msg + (seen,))
 
     # ── the parent ─────────────────────────────────────────────────────────────────────────────
     def run(self, before_rest=None):
@@ -159,7 +180,7 @@ class Pool:
                 conn.close()
                 status = os.waitpid(pid, 0)[1]
                 if msg and msg[0] == "done":
-                    self.results[jid] = Result(*msg[1:])
+                    self.results[jid], self.inputs[jid] = Result(*msg[1:-1]), msg[-1]
                 else:
                     self.results[jid] = Result([], {}, None, time.time() - t0, f"the job's process ended with no "
                                                f"result ({self._why(status)})")

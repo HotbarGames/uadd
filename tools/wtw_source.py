@@ -126,9 +126,20 @@ def missing(addon, keys):
     return out
 
 
+_STAY = {}      # addon folder -> its stay_texts (4 s to read: every code file, once per group label)
+
+
 def stay_texts(addon):
     """{English: reason} of locale keys its code saves or sends (lesson 14): the name it gives a friend with no
-    BattleTag (saved into its history), and the quick-reply starters (saved once edited, sent as whispers)."""
+    BattleTag (saved into its history), and the quick-reply starters (saved once edited, sent as whispers).
+    Read once per folder in a process; a copy each time."""
+    key = os.path.abspath(addon)
+    if key not in _STAY:
+        _STAY[key] = _stay_texts(addon)
+    return dict(_STAY[key])
+
+
+def _stay_texts(addon):
     out = {}
     p = Path(addon) / FRIEND
     if p.is_file():

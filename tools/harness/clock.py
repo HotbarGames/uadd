@@ -43,6 +43,34 @@ return function(reps)
 end
 """
 _job = None
+DOUBT = []       # times over a bound's base that passed all the same (the load's stretch): jobcache.py keeps no such job
+
+
+class Limit(float):
+    """A bound in ms. Compared as the float it is; notes a time over its base that passes."""
+    base = 0.0
+    __hash__ = float.__hash__
+
+    def _see(self, ms, ok):
+        if ok and isinstance(ms, (int, float)) and ms > self.base:
+            DOUBT.append(float(ms))
+        return ok
+
+    def __ge__(self, ms):                # `ms <= limit` asks this first (Limit is a float's subclass)
+        return self._see(ms, float.__ge__(self, ms))
+
+    def __gt__(self, ms):                # `ms < limit`
+        return self._see(ms, float.__gt__(self, ms))
+
+    def __lt__(self, ms):                # `ms > limit`: too slow
+        bad = float.__lt__(self, ms)
+        self._see(ms, not bad)
+        return bad
+
+    def __le__(self, ms):                # `ms >= limit`: too slow
+        bad = float.__le__(self, ms)
+        self._see(ms, not bad)
+        return bad
 
 
 def sample():
@@ -65,7 +93,9 @@ def bound(base_ms=5.0, ref=None):
     """(bound in ms, reference in ms): base_ms stretched by the load seen now, from 1x to CAP x.
     ref: None (run the job now), a list of samples taken during the check (their median) or a time."""
     ref = reference() if ref is None else statistics.median(ref) if isinstance(ref, list) else ref
-    return base_ms * min(CAP, max(1.0, ref / REF_MS)), ref
+    limit = Limit(base_ms * min(CAP, max(1.0, ref / REF_MS)))
+    limit.base = base_ms
+    return limit, ref
 
 
 def note(b, ref):

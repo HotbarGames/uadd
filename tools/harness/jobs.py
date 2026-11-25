@@ -60,25 +60,28 @@ def warm():
 
 
 def _segment(p, key, mod, jids):
-    """One segment's (checks with its tooltip font check, facts) from its jobs' results."""
+    """One segment's (checks with its tooltip font check, facts, did its jobs pass) from its jobs' results."""
     import flow
     tip = tipfont.merge([p.tip(j) for j in jids])
     tail = tipfont.segment(key, flow.Check, tip) + boxes.segment(key, flow.Check, boxes.merge([p.boxes(j) for j in jids]))
     if not hasattr(mod, "pieces"):
         r = p.results.get(jids[0])
-        return p.expand(jids[0]) + tail, (r.facts if r else {})
+        checks = p.expand(jids[0]) + tail
+        return checks, (r.facts if r else {}), all(c.ok for c in checks)
     got = [(p.expand(j), p.results[j].facts if j in p.results and not p.results[j].error else {}) for j in jids]
     checks, facts = mod.assemble(got)
-    return [flow.Check(*c) for c in checks] + tail, facts
+    checks = [flow.Check(*c) for c in checks] + tail
+    own = {c[0] for c in mod.assemble([([], {})] * len(jids))[0] if not c[1]}     # FAILs with no job's part in them
+    return checks, facts, all(c.ok or c.name in own for c in checks)
 
 
-def run_all(segments):
-    """`segments`: run.py's ((facts key, flow module), ...). Returns (checks, facts, notes, journal's missing
-    addons)."""
+def run_all(segments, cache=None):
+    """`segments`: run.py's ((facts key, flow module), ...). `cache`: None (every job runs), or a function that
+    makes the jobcache.Cache. Returns (checks, facts, notes, journal's missing addons)."""
     import flow
     import flow_dj_module
     loader.fresh()
-    p = pool.Pool(flow.Check)
+    p = pool.Pool(flow.Check, watch=cache is not None)
     main = p.add(main_job)
     missing = flow_dj_module.missing_addons()
     ids, mods = {}, dict(segments)
@@ -90,11 +93,24 @@ def run_all(segments):
             ids[key] = [p.add(fn, *args) for fn, args in mods[key].pieces()]
         else:
             ids[key] = [p.add(segment_job, mods[key])]
-    p.run(before_rest=warm)
+    notes, groups = [], []                 # groups: (job ids, did every check of theirs pass), for the cache
+    tops = [main] + [j for js in ids.values() for j in js]
+    if cache:
+        try:
+            import session
+            session.addons()               # warm() would make them here, unseen: the jobs forked later inherit them
+            cache = cache()
+            cache.restore(p, tops)
+        except Exception as e:             # the cache never aborts a run: go on without it, run what is not done
+            cache = None
+            notes.append(f"results of earlier runs: not used, the cache failed: {e!r}")
+            p.queue += [j for j in tops if j not in p.results and j not in p.queue]
+    if p.queue:
+        p.run(before_rest=warm)
 
-    notes = []
     checks = (p.expand(main) + tipfont.segment("main", flow.Check, p.tip(main))
               + boxes.segment("main", flow.Check, p.boxes(main)))
+    groups.append(([main], all(c.ok for c in checks)))
     facts = {}
     for jid in p.family(main):
         r = p.results.get(jid)
@@ -102,13 +118,22 @@ def run_all(segments):
     if missing:
         notes.append("dj module checks skipped: missing addons: " + ", ".join(missing))
     else:
-        got, facts["dj_module"] = _segment(p, "dj", None, ids["dj"])
+        got, facts["dj_module"], ok = _segment(p, "dj", None, ids["dj"])
+        groups.append((ids["dj"], ok))
         checks += got
     for key, mod in segments:
-        got, facts[key] = _segment(p, key, mod, ids[key])
+        got, facts[key], ok = _segment(p, key, mod, ids[key])
+        groups.append((ids[key], ok))
         checks += got
-    secs = sorted(((r.secs, p.jobs[j][2]) for j, r in p.results.items()), reverse=True)
-    notes.append(f"jobs: {len(p.results)} in {pool.workers()} at a time; slowest: " +
+    if cache:
+        try:
+            cache.store(p, groups)
+        except Exception as e:             # nothing is kept from this run; the checks are what counts
+            notes.append(f"results of earlier runs: none kept, the cache failed: {e!r}")
+    reused = cache.reused if cache else ()
+    secs = sorted(((r.secs, p.jobs[j][2]) for j, r in p.results.items() if j not in reused), reverse=True)
+    notes += cache.notes(len(secs)) if cache else []
+    notes.append(f"jobs: {len(secs)} in {pool.workers()} at a time; slowest: " +
                  ", ".join(f"{label.replace('jobs.segment_job', '')} {s:.0f} s" for s, label in secs[:8]))
     del p
     gc.collect()

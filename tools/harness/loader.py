@@ -31,6 +31,7 @@ def lua_runtime():
 _TEXT = {}       # path -> (pass, (mtime_ns, size), text): a run reads the same ~1000 files 27k times
 _XML = {}        # file text -> parsed root: keyed by the text, so a flow that serves a cut file gets its own parse
 _IS = {}         # path -> (pass, is a file)
+WATCH = None     # jobinputs.py's recorder: told of each file asked for here, also when the memo answers
 _PASS = [None]   # None: stat on every read; else one stat per path per pass (a stat on /mnt/c costs ~1.6 ms)
 
 
@@ -42,6 +43,8 @@ def fresh():
 
 def is_file(path):
     """os.path.isfile, asked once per path per pass (see fresh())."""
+    if WATCH is not None:
+        WATCH("stats", path)
     if _PASS[0] is None:
         return os.path.isfile(path)
     hit = _IS.get(path)
@@ -51,6 +54,8 @@ def is_file(path):
 
 
 def read_text(path):
+    if WATCH is not None:
+        WATCH("files", path)
     hit = _TEXT.get(path)
     if hit and _PASS[0] is not None and hit[0] is _PASS[0]:
         return hit[2]

@@ -227,3 +227,11 @@ took "<name>: <English>". Rule: a free slot says no to ": " too (Words.lua). A t
 slot unless the code that builds it puts a name there (`IN_CODE`); 18:9436262a is now n, t (`tools/mc_rules.py`).
 Check: `python3 tools/harness/flow_mastercraft.py` (the halves check and the row-title steps);
 `python3 -m unittest tools.test_mc_slots` (`test_glue_only_template_has_no_free_slot`).
+
+**Lesson 41 again, kept results (2026-11-25).** Hand runs of `run.py` ran every flow after a one-module edit (163 s).
+Now a job's passed result is reused while its inputs are the same (`tools/harness/jobcache.py`). Rule: a kept result
+is only as good as its list of inputs, so list what the job was seen to read (files, folders, missing paths,
+modules, environment) and, in doubt, more. Never keep a FAIL, a time that passed only by the load's stretch, a job
+that runs a program, or one whose input changed during the run. The push check and CI never reuse. New ways to
+read (Lua `io`, a relative import) need `jobinputs.py` first. Check: `python3 -m unittest tools.test_jobcache` (one
+test per kind of input).
