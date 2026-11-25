@@ -1,0 +1,108 @@
+-- UADD - @TITLE@: its prints, its tooltip lines and its popups, each through a core helper.
+--   * Prints: the shared print handler (U.PrintHook, UADD/Print.lua; off in an instance, lesson 35). A print of one
+--     text that starts with its prefix: the prefix stays, the rest is ours when it is a whole text of ours; else the
+--     line is left as it is. @TODO@ an addon that writes to the chat window: U.ChatLines (UADD_OneForAll/Chat.lua)
+--   * Tooltips: U.TipLines on GameTooltip. A line of the game is tried only when its whole text is a key of ours
+--     (Words.Maybe, a hash: lesson 12), and only when the addon's files wrote it (the stack).
+--   * Popups: U.Popups for its dialogs (the text and the buttons), both ways.
+-- Any error leaves the English as it was.
+
+local _, ns = ...
+local U = UADD
+local sub = string.sub
+
+local C = {}
+ns.Chat = C
+
+local KEY = "@key@"
+local PREFIX = "@PREFIX@"                         -- @TODO@ its real prefix, as it prints it
+local FROM = "AddOns[/\\]@T@[/\\]"
+local POPUPS = {}                                 -- @TODO@ its dialogs: { NAME = true }
+
+local W = ns.Words
+
+-- ── Prints ───────────────────────────────────────────────────────────────────────────────────
+
+local function Line(text)
+    local s = U.Plain(text)                      -- first, before any string op (lesson 35)
+    if not s or not ns.WordsWanted() then return nil end
+    if #s > #PREFIX and sub(s, 1, #PREFIX) == PREFIX then
+        local uk = W.Translate(sub(s, #PREFIX + 1))
+        return uk and (PREFIX .. uk) or nil
+    end
+    return nil
+end
+local prints = U.PrintHook({ line = Line })
+
+-- ── Tooltips ─────────────────────────────────────────────────────────────────────────────────
+
+local tips = U.TipLines({
+    tips = { "GameTooltip" }, from = FROM, words = W, wanted = function() return ns.WordsWanted() end, missed = KEY,
+})
+
+-- ── Popups ───────────────────────────────────────────────────────────────────────────────────
+
+local back, nback = {}, 0                       -- ours -> the English it came from (so a shown popup flips back)
+local function PopText(en)
+    local s = U.Plain(en)
+    if not s then return nil end
+    local uk = W.Field(s) or W.Translate(s)
+    if uk then
+        if nback >= 50 then back, nback = {}, 0 end
+        if back[uk] == nil then nback = nback + 1 end
+        back[uk] = s
+    end
+    return uk
+end
+local function PopEnglish(uk)
+    local s = U.Plain(uk)
+    return s and back[s] or nil
+end
+
+local saved = setmetatable({}, { __mode = "k" })
+local function Fix(fs)
+    if type(fs) ~= "table" then return end
+    local ok, path = pcall(fs.GetFont, fs)
+    if ok and U.IsCyrFont(path) then return end
+    if not saved[fs] then
+        local okS, was = pcall(U.SaveFont, fs)
+        if okS and type(was) == "table" then saved[fs] = was end
+    end
+    pcall(U.CyrOnLocked, fs)
+end
+local function Back(fs)
+    local was = type(fs) == "table" and saved[fs]
+    if not was then return end
+    saved[fs] = nil
+    pcall(U.FontBack, fs, was)
+end
+
+local popupsOk = next(POPUPS) ~= nil and type(U.Popups) == "table" and type(U.Popups.Register) == "function"
+if popupsOk then
+    U.Popups.Register(KEY, {
+        names = POPUPS, text = PopText, english = PopEnglish, wanted = function() return ns.WordsWanted() end,
+        fix = Fix, back = Back,
+    })
+end
+
+-- ── On, off, the hold key ────────────────────────────────────────────────────────────────────
+
+function C.Install()
+    if not ns.On() then return end
+    U.SafeCall(prints.Start)
+    U.SafeCall(tips.Install)
+    if popupsOk then U.SafeCall(U.Popups.Sync, KEY) end
+end
+function C.Sync()
+    if popupsOk then U.SafeCall(U.Popups.Sync, KEY) end
+end
+function C.Remove()
+    U.SafeCall(prints.Stop)
+    U.SafeCall(tips.Restore)
+    if popupsOk then U.SafeCall(U.Popups.Off, KEY) end
+    back, nback = {}, 0
+end
+
+function C.Prints() return prints.Count() end
+function C.Tips() return tips.Count() end
+C.Line, C.PopText, C.PopEnglish = Line, PopText, PopEnglish     -- for the checks

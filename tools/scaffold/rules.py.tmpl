@@ -1,0 +1,106 @@
+"""Which @TITLE@ texts @F@ translates, what each template slot holds, the batches, and the check.
+Used by tools/make_@x@_text.py (through tools/key_text.py) and tools/@x@_source.py. @LIC@
+
+Nothing here names its English: every row is keyed Code.<hash>, UADD.Hash of one string literal (escapes decoded).
+Slot letters (key_text.py), one per %s slot: v a value (number, money, clock, date), f the player's own names, n a
+game name (the line stays English unless a route gives it), t our text glued in, u a duration in English units.
+Plurals are written in Ukrainian as {one|few|many} after a number slot: "%d {квест|квести|квестів}".
+"""
+import re
+
+import key_text as K
+from test_banned_words import BANNED
+
+# @TODO@ the tables below, from the scan (tools/@x@_source.py all): key -> letters, reasons, limits
+SORTS = {}          # key -> one letter per %s slot
+STAY = {}           # key -> why it stays English (lesson 14: a saved or compared word)
+WORDS = set()       # one lower-case word texts that are shown
+NOTES = {}          # key -> where it shows
+BOX = set()         # keys in a fixed box
+LONG = {}           # key -> its own letter limit
+MAXLEN = 34         # a fixed box: the UA at most this long unless in LONG
+MAX_BATCH = 150
+BATCH_FILES = {}    # file -> batch; every other file: batch 1
+BATCHES = [(1, "its texts"), (2, "more"), (3, "more"), (4, "more"), (5, "more"), (6, "more")]
+PLURAL = re.compile(r"\{([^{}|]*)\|([^{}|]*)\|([^{}|]*)\}")
+NUMBER_BEFORE = re.compile(r"(?:%\d*(?:\.\d*)?[df]|%s)\s*$")     # a number slot right before a plural mark
+
+
+def batch_of(file):
+    return BATCH_FILES.get(file, 1)
+
+
+def split(rows):
+    """Rows in batch order; a group of one base batch is cut into batches of at most MAX_BATCH, numbered in turn."""
+    groups, out, n = {}, [], 0
+    for r in rows:
+        groups.setdefault(r[2], []).append(r)
+    for base in sorted(groups):
+        g = groups[base]
+        size = -(-len(g) // -(-len(g) // MAX_BATCH))         # equal parts, none over MAX_BATCH
+        for i in range(0, len(g), size):
+            n += 1
+            out += [[*r[:2], n, *r[3:]] for r in g[i:i + size]]
+    if n > len(BATCHES):
+        raise SystemExit(f"{n} batches, but BATCHES has {len(BATCHES)}: add some")
+    return out
+
+
+def note(key, file, ctx):
+    return NOTES.get(key) or file + (f" ({ctx})" if ctx else "")
+
+
+def keep(key, en, ctx=""):
+    """(kept, reason left out)."""
+    if key in STAY:
+        return False, "stays English"
+    if not en.strip():
+        return False, "empty"
+    plain = K.SPECIAL.sub("", en)
+    if not K.LATIN_WORD.search(plain):
+        return False, "no words"
+    if en.startswith("|cff%") or re.fullmatch(r"[A-Za-z]{1,2}", plain.strip()):
+        return False, "format piece"
+    if re.fullmatch(r"[a-z]+", en) and en not in WORDS:
+        return False, "machine word"
+    if re.fullmatch(r"/\S+|\S*[:=]", en):
+        return False, "command or key"
+    if "n" in sorts(key, en):
+        return False, "game name in a slot"
+    return True, ""
+
+
+def sorts(key, en):
+    return K.sorts_from(SORTS, key, en)
+
+
+def check(key, en, ua):
+    """What makes `ua` unfit as the Ukrainian of `en`."""
+    plain, problems = PLURAL.sub("", ua), []
+    for m in PLURAL.finditer(ua):
+        if not NUMBER_BEFORE.search(ua[:m.start()]):
+            problems.append("a plural {a|b|c} only after a number slot (%d)")
+    if ("{" in plain or "}" in plain) and "{" not in en:
+        problems.append("a stray brace (a plural has three forms: one|few|many)")
+    problems += K.base_check(en, plain, sorts(key, en))
+    if key in STAY:
+        problems.append("not a shown text (STAY)")
+    if "n" in sorts(key, en):
+        problems.append("a game name slot: the line stays English")
+    if en.count("|c") != ua.count("|c") or en.count("|r") != ua.count("|r"):
+        problems.append("colour codes (|c...|r) differ in number")
+    if re.match(r"\|c[0-9a-fA-F]{8}", en) and not ua.startswith(en[:10]):
+        problems.append("the colour code at the start moved")
+    if en.count("\n") != ua.count("\n"):
+        problems.append("line breaks differ in number")
+    for ch, why in (("—", "a long dash"), ("–", "a long dash"), ("·", "a middle dot"), ("•", "a bullet"),
+                    ("«", "angle quotes"), ("»", "angle quotes")):
+        if ch in ua and ch not in en:
+            problems.append(f"no {why} (the Cyrillic font and the owner's rule)")
+    for rx, (use, why) in BANNED.items():
+        if re.search(rx, ua, re.I):
+            problems.append(f"banned word: use {use} ({why})")
+    limit = LONG.get(key, MAXLEN) if key in BOX else None
+    if limit and len(plain.split("\n")[0]) > limit:
+        problems.append(f"too long for its box: {len(plain)} > {limit}")
+    return problems

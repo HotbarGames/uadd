@@ -1,0 +1,74 @@
+"""Reads @TITLE@'s texts for @F@: a thin config over tools/lua_literals.py. @LIC@
+
+Nothing here names its English. Left out: FILES_OUT, EXCLUDE, tools/@x@_rules.py's keep, and news (lesson 43,
+tools/news_texts.py). `python3 tools/@x@_source.py all` prints every literal of its files and why it is left out (for
+a look, never into a tracked file); with no argument it prints the rows.
+"""
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import hashtext as H  # noqa: E402
+import lua_literals as LL  # noqa: E402
+import news_texts as N  # noqa: E402
+import @x@_rules as R  # noqa: E402
+
+FOLDER, TOC = "@T@", "@T@.toc"
+# @TODO@ files that show nothing (libraries, other locales, data) and line ranges (first, last) left out
+FILES_OUT = ("Libs/", "libs/", "Locales/", "locales/")
+EXCLUDE = {}
+
+
+def addon_dir(arg=None):
+    return LL.addon_dir(arg, FOLDER)
+
+
+def version(addon):
+    return LL.toc_version(addon, TOC)
+
+
+def files(addon):
+    return [f for f in LL.toc_files(addon, TOC) if not f.startswith(FILES_OUT)]
+
+
+def wanted(f, line):
+    return not any(a <= line <= b for a, b in EXCLUDE.get(f, []))
+
+
+def source(addon):
+    """(rows, why). rows: (key, English, batch, [(file, line)], note) in batch order; why: {reason: count}."""
+    addon = Path(addon)
+    if not (addon / TOC).is_file():
+        return [], {}
+    found, why = {}, {}
+    for f in files(addon):
+        for en, line, left, ctx in LL.literals(addon / f):
+            key = "Code." + H.djb2(en)
+            kept, reason = False, "line left out"
+            if wanted(f, line):
+                kept, reason = (False, left.split(" ")[0]) if left else R.keep(key, en, ctx)
+            if not kept:
+                why[reason] = why.get(reason, 0) + 1
+            elif key in found:
+                found[key][3].append((f, line))
+            else:
+                found[key] = [key, en, R.batch_of(f), [(f, line)], R.note(key, f, ctx)]
+    rows = N.drop(list(found.values()))
+    if len(rows) < len(found):
+        why["news"] = len(found) - len(rows)
+    return R.split(sorted(rows, key=lambda r: r[2])), why
+
+
+if __name__ == "__main__":
+    a = addon_dir(sys.argv[2] if len(sys.argv) > 2 else None)
+    if len(sys.argv) > 1 and sys.argv[1] == "all":
+        for f in files(a):
+            for en, line, left, ctx in LL.literals(a / f):
+                kept, reason = (False, left) if left else R.keep("Code." + H.djb2(en), en, ctx)
+                print(f, line, H.djb2(en), ("KEEP" if wanted(f, line) else "outside") if kept else reason, ctx, repr(en)[:90])
+    else:
+        rs, w = source(a)
+        for r in rs:
+            print(r[2], r[0], repr(r[1])[:80], r[3][:2], r[4][:40])
+        print(w)

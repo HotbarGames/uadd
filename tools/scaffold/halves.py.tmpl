@@ -1,0 +1,39 @@
+"""@TITLE@'s part of the half-translation check (halves_mods.@x@ runs it): its templates, read from the installed addon
+(@x@_source), what each slot holds from @x@_rules.SORTS, through the module's own Words.Translate. No English of
+@TITLE@ is kept here. @TODO@ fails until its templates have Ukrainian; none with a %s: NO_SLOTS (halves_cover.py)"""
+import re
+
+import hashtext
+import @x@_rules as R
+import @x@_source as S
+from halves import tpl
+from halves_mods import NAME, SKIP, _t
+from loader import lua_str
+
+LINK = "|cff1eff00|Hitem:6948::::::::|h[Quix]|h|r"
+
+
+def templates(addon, ours=()):
+    """[tpl] of each real template. ours: the keys with our Ukrainian (a one-word one fills the t slots)."""
+    rows, _ = S.source(addon)
+    word = next((en for k, en, *_ in rows if k in ours and re.fullmatch(r"[A-Z][a-z]{3,11}", en)), LINK)
+    out = []
+    for k, en, *_ in rows:
+        if hashtext.is_template(en):
+            letters = R.sorts(k, en)
+            out.append(tpl(k, en, {i: NAME for i, x in enumerate(letters, 1) if x == "f"},
+                           {i: word for i, x in enumerate(letters, 1) if x == "t"}))
+    return out
+
+
+def parts(c, note=""):
+    """(templates, translate, note) for halves.run. c None: the addon is not installed (a note)."""
+    if c is None:
+        return [], None, note or SKIP
+    ns = c.H.ns.@F@
+    W = ns.Words
+
+    def tr(tp, t):
+        out = W.Translate(lua_str(t))
+        return t if out is None else _t(out)
+    return templates(S.addon_dir(), {_t(k) for k in ns.@X@.keys()}), tr, note

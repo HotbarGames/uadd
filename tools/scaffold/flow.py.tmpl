@@ -1,0 +1,184 @@
+"""@F@ on a stand-in for @TITLE@ (tools/harness/@x@: made-up English), steps in flow_@x@.lua.
+new_module: @F@ short=@x@ licence=@L@ key=@key@ target=@T@
+
+Steps: 1 the walk is ours, in a Cyrillic font  2 the hold key gives the English, ours on release  3 off: English,
+font and print too; on: ours  4 a window made later  5 a print with its prefix  6 a tooltip line from its files, the
+same line from other code stays English  7 combat: nothing new is walked in a fight  8 5 errors turn the module off,
+the English back. Then up to 5 real texts of the installed addon (read at run time, never written down) and its
+half-translation check (halves_@x@.py). Boxes: boxes.py watches every step.
+mutants(check) cuts one fix out of the module in memory and wants its step to fail; they run with --prove.
+@TODO@ steps for what only this addon has (glued lines, player texts, popups, settings page)
+"""
+import gc
+import os
+import sys
+
+import halves_mods
+import session
+from loader import Addon, Client, lua_str, read_text, txt
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from flow import Check  # noqa: E402
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+MODULE, TARGET = "@F@", "@T@"
+STAND_IN = Addon(TARGET, os.path.join(HERE, "@x@", TARGET), session.FLAVOR)
+LAST = 8
+
+CUT_LUA = r"""
+local H, cut = HARNESS, { wasCut = false }
+H.@x@cut = cut
+local runFile = H.runFile
+function H.runFile(addon, path, code)
+    if addon == "@F@" and cut.file and path:sub(-#cut.file) == cut.file then
+        local a, b = code:find(cut.old, 1, true)
+        if a then code, cut.wasCut = code:sub(1, a - 1) .. cut.new .. code:sub(b + 1), true end
+    end
+    return runFile(addon, path, code)
+end
+"""
+
+# name: (file, old text, new text, the step that must fail)
+MUTANTS = {
+    "font": ("Screen.lua", "font = true,", "font = false,", 1),
+    "remove": ("Module.lua", "    U.SafeCall(Screen.Remove)\n", "", 3),
+    "late": ("Screen.lua", 'prefix = "@T@",', 'prefix = "NoSuchPrefix",', 4),
+    "prints": ("Chat.lua", "    U.SafeCall(prints.Start)\n", "", 5),  #@chat
+    "from": ("Chat.lua", "from = FROM,", "", 6),  #@chat
+}
+
+
+def module_there():
+    return os.path.isfile(os.path.join(session.REPO, MODULE, MODULE + ".toc"))
+
+
+def _addon(name):
+    return Addon(name, os.path.join(session.REPO, name), session.FLAVOR)
+
+
+def game(saved=None, cut=None):
+    """The stand-in, UADD and the module, started; saved: its saved data as Lua. Returns (c, M, cut box)."""
+    c = Client([STAND_IN, _addon("UADD"), _addon(MODULE)], {TARGET: saved} if saved else None, "enUS")
+    c.lua.execute(CUT_LUA)
+    box = c.H.@x@cut
+    if cut:
+        box.file, box.old, box.new = (lua_str(x) for x in cut[:3])
+    c.lua.execute(read_text(os.path.join(HERE, "flow_@x@.lua")))
+    c.start()
+    c.H.pump(20)
+    return c, c.H.@x@, box
+
+
+def shown():
+    """For the chaos recipe: the game with the made-up Ukrainian shown in its windows."""
+    c, M, _ = game()
+    M.inject()
+    M.late()
+    M.wait(0.5)
+    return c
+
+
+def results(M, n):
+    return [(txt(r[1]), r[2], txt(r[3]) if r[3] is not None else "") for r in M.R[n]().values()]
+
+
+def real_keys(check, M):
+    name = "real texts of the addon show our data"
+    try:
+        import @x@_source as S
+        rows, why = S.source(S.addon_dir())
+    except Exception as e:  # noqa: BLE001
+        return check(name, None, f"SKIP: addon not readable ({type(e).__name__})")
+    n, bad = 0, []
+    for row in rows:
+        en = row[1]
+        if any(ch in en for ch in "%|\n") or not en.strip():
+            continue
+        shown_, want = M.real(lua_str(en))
+        if not want:
+            continue
+        n += 1
+        if txt(shown_) != txt(want):
+            bad.append(row[0])
+        if n >= 5:
+            break
+    M.real(None)
+    if not n:
+        return check(name, None, f"SKIP: no plain real text ({why})")
+    check(name, not bad, f"{n} real texts; wrong: {bad}")
+
+
+def steps(check):
+    c, M, _ = game()
+    for n in range(1, LAST + 1):
+        try:
+            res = results(M, n)
+        except Exception as e:  # noqa: BLE001
+            check(f"{n} the step ran", False, str(e)[:300])
+            continue
+        for name, ok, detail in res:
+            check(f"{n} {name}", ok, detail)
+    del c
+    c, M, _ = game()
+    real_keys(check, M)
+    import @x@_source as S
+    halves_mods.@x@(check, c if (S.addon_dir() / S.TOC).is_file() else None)
+
+
+def reach(step, cut=None):
+    """Steps 1..step on a fresh game; returns (all passed, cut applied, failing names)."""
+    c, M, box = game(None, cut)
+    bad = []
+    try:
+        for n in range(1, step + 1):
+            bad += [f"{n} {name}" for name, ok, _ in results(M, n) if ok is False]
+    except Exception as e:  # noqa: BLE001
+        bad.append(str(e)[:120])
+    was = bool(box.wasCut)
+    del c
+    gc.collect()
+    return not bad, was, bad
+
+
+def mutants(check):
+    base = {}
+    for name, (f, old, new, step) in MUTANTS.items():
+        n = read_text(os.path.join(session.REPO, MODULE, f)).count(old)
+        if n != 1:
+            check(f"mutant {name}: its fix is in {f} once", False, f"found {n} times")
+            continue
+        if step not in base:
+            base[step] = reach(step)
+        if not base[step][0]:
+            check(f"mutant {name}: the base passes to step {step}", False, base[step][2][:3])
+            continue
+        ok, was, bad = reach(step, (f, old, new))
+        check(f"mutant {name}: {f} fix cut, step {step} fails", was and not ok, f"cut={was}; failing: {bad[:3]}")
+
+
+def run_checks(prove=False):
+    """Every check of this file. Returns (checks, facts)."""
+    checks = []
+
+    def check(name, ok, detail=""):
+        skip = ok is None
+        checks.append(Check("@x@: " + name, True if skip else bool(ok),
+                            ("SKIP: " if skip and not str(detail).startswith("SKIP") else "") + str(detail)))
+    if not module_there():
+        check("module", None, f"SKIP: {MODULE} folder missing")
+        halves_mods.@x@(check, None, "skipped: " + MODULE + " folder missing")
+        return checks, {"module": False}
+    steps(check)
+    if prove:
+        mutants(check)
+    return checks, {"module": True}
+
+
+if __name__ == "__main__":       # alone: python3 tools/harness/flow_@x@.py [--prove]
+    cs, fs = run_checks("--prove" in sys.argv)
+    for x in cs:
+        tag = "SKIP  " if x.detail.startswith("SKIP") else ("PASS  " if x.ok else "FAIL  ")
+        print(tag + x.name + (f"  [{x.detail[:300]}]" if x.detail and tag != "PASS  " else ""))
+    print(fs)
+    print(f"{sum(x.ok for x in cs)}/{len(cs)} ok")
+    sys.exit(0 if all(x.ok for x in cs) else 1)

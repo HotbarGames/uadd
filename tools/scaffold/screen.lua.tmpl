@@ -1,0 +1,61 @@
+-- UADD - @TITLE@: its windows, walked by the core walker (U.Walk): each text of theirs that is a whole text of ours
+-- shows our Ukrainian, in UADD's Cyrillic font; off and the hold key give the English back where ours still shows
+-- (lesson 23).
+--   * The named windows are roots; a frame the addon makes later under them (or by its name prefix) starts a walk
+--     again (U.Walk's OnNewFrame), so windows made on first open are covered (lesson 2).
+--   * The player's own text is never changed: the walker skips text boxes and any text that already has Cyrillic.
+-- Any error leaves the English as it was (U.Walk runs each hook under a pcall that reports and counts).
+
+local _, ns = ...
+local U = UADD
+
+local S = {}
+ns.Screen = S
+
+-- @TODO@ its global window names (scan_addon.py), its Settings canvas (UADD_RoadToSixty/Screen.lua Canvas)
+local ROOTS = { "@T@Frame", "@T@Late" }
+-- @TODO@ the windows to leave out (lesson 43), and game-name frames (map pins)
+local SKIP = {}
+
+local function Roots()
+    local list = {}
+    for _, name in ipairs(ROOTS) do
+        local f = rawget(_G, name)
+        if type(f) == "table" then list[#list + 1] = f end
+    end
+    return list
+end
+
+-- @TODO@ lesson 13: labels with the player's own text (a profile, a character), told by where they are
+local function PlayerLabel(_) return false end
+
+local W = U.Walk({
+    key = "@key@",
+    title = "@TITLE@",
+    On = function() return ns.On() end,
+    Wanted = function() return ns.WordsWanted() end,
+    roots = Roots,
+    skip = SKIP,
+    Lookup = function(en, fs)
+        if type(fs) == "table" and PlayerLabel(fs) then return nil, false end
+        return ns.Words.Translate(en)
+    end,
+    prefix = "@T@",
+    font = true,
+})
+S.W = W
+
+function S.Install()
+    if not ns.On() then return end
+    W.Install()
+end
+-- On: walk again; off or held: the English back where ours shows.
+function S.Sync() W.Sync() end
+function S.Remove()
+    W.Sync()
+    W.Remove()
+    W.Forget()
+end
+function S.Later() W.Later() end
+function S.Count() return W.Count() end
+function S.Shown() return W.Shown() end

@@ -1,0 +1,93 @@
+"""tools/make_@x@_text.py, tools/@x@_source.py and tools/@x@_rules.py (with tools/key_text.py): which texts are rows, the
+checks, a build from made-up review lines, and what @F@'s files hold. Made-up English only."""
+import re
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+TOOLS = Path(__file__).resolve().parent
+ROOT = TOOLS.parent
+sys.path.insert(0, str(TOOLS))
+import drift_@x@ as D  # noqa: E402
+import hashtext as H  # noqa: E402
+import key_text as K  # noqa: E402
+import make_@x@_text as M  # noqa: E402
+import @x@_rules as R  # noqa: E402
+import @x@_source as S  # noqa: E402
+
+MOD = ROOT / "@F@"
+CODE = '''local f = CreateFrame("Frame", "@T@Gizmo")
+f.title:SetText("Wobbly gizmo")
+f.count:SetText(("%d gizmos plonked"):format(3))
+f.key:SetText("wobbly_key")
+'''
+
+
+def code(en):
+    return "Code." + H.djb2(en)
+
+
+def addon(folder):
+    a = Path(folder) / S.FOLDER
+    for rel, text in ((S.TOC, "## Version: 9.9.9\nCode.lua\nWhatsNew.lua\n"), ("Code.lua", CODE),
+                      ("WhatsNew.lua", 'f:SetText("Newer wobbly gizmo")\n')):
+        (a / rel).parent.mkdir(parents=True, exist_ok=True)
+        (a / rel).write_text(text, encoding="utf-8")
+    return a
+
+
+class Text(unittest.TestCase):
+    def setUp(self):
+        self.dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.dir.cleanup)
+        self.addon = addon(self.dir.name)
+        self.rows, self.why = S.source(self.addon)
+
+    def test_rows(self):
+        en = {r[1] for r in self.rows}
+        self.assertIn("Wobbly gizmo", en)
+        self.assertIn("%d gizmos plonked", en)
+        self.assertNotIn("Newer wobbly gizmo", en, "its news stays English (lesson 43)")
+        self.assertEqual(S.version(self.addon), "9.9.9")
+        for key, text, batch, places, _ in self.rows:
+            self.assertEqual(key, code(text))
+            self.assertIn(batch, [n for n, _ in R.BATCHES])
+            self.assertTrue(places)
+        self.assertEqual([r[1] for r in D.extract(self.addon)], [r[0] for r in self.rows])
+
+    def test_check(self):
+        en = "%d gizmos plonked"
+        self.assertEqual(R.sorts(code(en), en), ["v"])
+        self.assertEqual(R.check(code(en), en, "%d {гаджет|гаджети|гаджетів} плонкнуто"), [])
+        self.assertTrue(R.check(code(en), en, "{гаджет|гаджети|гаджетів} плонкнуто %d"))
+        self.assertTrue(R.check(code(en), en, "гаджети плонкнуто"))
+
+    def test_build(self):
+        local = Path(self.dir.name) / "local"
+        M.review(self.rows, local)
+        text = next(iter(sorted(local.glob("review_*.txt")))).read_text(encoding="utf-8")
+        self.assertIn(code("Wobbly gizmo"), text)
+        K.write_data(M, [K.lua_entry("T", code("Wobbly gizmo"), "Хиткий гаджет")], "9.9.9", Path(self.dir.name) / "out")
+        out = (Path(self.dir.name) / "out" / "text01.lua").read_text(encoding="utf-8")
+        self.assertIn(f'T["{code("Wobbly gizmo")}"] = "Хиткий гаджет"', out)
+
+
+class Files(unittest.TestCase):
+    def test_toc(self):
+        toc = (MOD / "@F@.toc").read_text(encoding="utf-8")
+        self.assertRegex(toc, r"(?m)^## OptionalDeps: UALLF, ClassicUA, @T@$")
+        listed = [x.strip() for x in toc.split("\n") if x.strip().endswith(".lua")]
+        self.assertEqual(sorted(listed), sorted(p.relative_to(MOD).as_posix() for p in MOD.rglob("*.lua")))
+        self.assertEqual([f for f in listed if f.startswith("data/")],
+                         [f"data/text{n:02d}.lua" for n in range(1, M.FILES + 1)])
+
+    def test_data_holds_hashes_only(self):
+        for p in (MOD / "data").glob("*.lua"):
+            for line in p.read_text(encoding="utf-8").split("\n"):
+                if re.match(r"[TS]\[", line):
+                    self.assertRegex(line, r'^[TS]\["Code\.[0-9a-f]{8}"\] = "')
+
+
+if __name__ == "__main__":
+    unittest.main()

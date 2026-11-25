@@ -1,0 +1,121 @@
+-- UADD - @TITLE@: our Ukrainian for one whole English text of @TITLE@. data/text*.lua knows ours by the hash of
+-- each text (T, in ns.@X@) and what each slot of a template holds (S, in ns.SORT: v value, f free name, n game name,
+-- t our text). No English of @TITLE@ is stored here.
+-- A text is tried, in order:
+--   1. whole (U.Shapes' Exact);
+--   2. as a template with its slots filled (U.Shapes: values, dates, links, names through UALL Forever or ClassicUA),
+--      then the plural marks {one|few|many} after its last number (U.Plural);
+--   3. a text of several lines: each line as above; one line with English words left: the whole text stays English.
+-- Anything else: nil, the English stays (no half lines, lesson 27).
+-- @TODO@ texts the addon glues from pieces (lessons 6 and 15), and a free name inside a line (NameSlot in
+-- UADD_RoadToSixty/Words.lua), when the scan finds any.
+
+local _, ns = ...
+local U = UADD
+local find, sub = string.find, string.sub
+
+ns.@X@ = ns.@X@ or {}
+ns.SORT = ns.SORT or {}
+
+local W = {}
+ns.Words = W
+
+local CYR = "[\208-\210]"
+local MAXLEN, MAXLINES, MAXCACHE = 400, 12, 400
+local P
+
+-- A `t` slot: a whole text of ours.
+local function Ours(x)
+    if type(x) ~= "string" or x == "" or #x > 60 then return nil end
+    return P.Exact(x)
+end
+
+P = U.Shapes(ns.@X@, ns.SORT, { key = "@key@", Line = Ours })
+W.P = P
+
+local cache, ncache = {}, 0
+local MISS = false
+
+local function Key(s) return "Code." .. U.Hash(s) end
+
+local function Whole(s)
+    if s == "" then return nil end
+    local uk = P.Exact(s)
+    if uk then return uk end
+    uk = P.Shapes(s)
+    if type(uk) == "string" and uk ~= "" then return U.Plural(uk, true) end
+    return nil
+end
+
+-- 3. Several lines: each one ours, or one with no words at all.
+local function Lines(s)
+    local out, n, any, pos = {}, 0, false, 1
+    while pos <= #s + 1 do
+        local e = find(s, "\n", pos, true) or (#s + 1)
+        local one = sub(s, pos, e - 1)
+        n = n + 1
+        if n > MAXLINES then return nil end
+        if not find(one, "%a") then
+            out[n] = one
+        else
+            local uk = Whole(one)
+            if not uk then return nil end
+            out[n], any = uk, true
+        end
+        pos = e + 1
+    end
+    return any and table.concat(out, "\n") or nil
+end
+
+local function Look(s)
+    local uk = Whole(s)
+    if uk == nil and find(s, "\n", 1, true) then uk = Lines(s) end
+    return uk
+end
+
+-- Our Ukrainian for one whole English text, or nil.
+function W.Translate(en)
+    local s = U.Plain(en)
+    if not s or s == "" or #s > MAXLEN or find(s, CYR) or not find(s, "%a") then return nil end
+    local hit = cache[s]
+    if hit ~= nil then return hit or nil end
+    P.asked = false
+    local ok, uk = pcall(Look, s)
+    if not ok then
+        pcall(U.ReportError, tostring(uk))
+        if U.Fault then pcall(U.Fault, "@key@", tostring(uk)) end
+        return nil
+    end
+    if type(uk) ~= "string" or uk == "" or uk == s then uk = nil end
+    if uk or not P.asked then                     -- a game name not known yet: asked again later, never kept
+        if ncache >= MAXCACHE then cache, ncache = {}, 0 end
+        cache[s], ncache = uk or MISS, ncache + 1
+    end
+    return uk
+end
+
+-- Cheap (lesson 12): may this tooltip line of the game be ours? A whole-text hash only: no fill, no cache growth.
+function W.Maybe(en)
+    local s = U.Plain(en)
+    if not s or s == "" or #s > MAXLEN or find(s, CYR) then return false end
+    return ns.@X@[Key(s)] ~= nil
+end
+
+-- A field the game formats itself (a popup's text with its %s): our template as it is, only when each slot is a
+-- value or a free name and it has no plural mark.
+function W.Field(en)
+    local s = U.Plain(en)
+    if not s or s == "" or #s > MAXLEN or find(s, CYR) then return nil end
+    local k = Key(s)
+    local uk, sorts = ns.@X@[k], ns.SORT[k]
+    if type(uk) ~= "string" then return nil end
+    if sorts == nil then return W.Translate(s) end
+    if type(sorts) ~= "string" or find(sorts, "[^vf]") or find(uk, "{", 1, true) then return nil end
+    return uk
+end
+
+function W.Forget()
+    cache, ncache = {}, 0
+    pcall(P.Forget)
+end
+function W.CacheSize() return ncache end

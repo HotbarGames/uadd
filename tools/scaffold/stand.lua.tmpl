@@ -1,0 +1,63 @@
+-- Harness stand-in for @TITLE@ (not the addon): a few of its global frame names, made-up English.
+-- S.T        the made-up texts by role (the flow reads them; real English is fed at run time by flow_@x@.py)
+-- S.Late()   one of its named windows made after login; S.Tip() GameTooltip lines from this file
+-- S.Say(text) one print with its prefix; S.Redraw() every text set again
+-- @TODO@ its real global names and the shapes the module looks at
+local S = {}
+@T@StandIn = S
+S.PREFIX = "@PREFIX@"
+S.T = { title = "Wobbly gizmo board", tab = "Plonk tab", button = "Plonk the gizmo", late = "Wobbly late gizmo",
+    say = "Gizmo plonked", tip = "Click to plonk a gizmo" }
+
+local function Label(parent, text, y)
+    local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", 10, y)
+    fs:SetText(text)
+    return fs
+end
+
+function S.Build()
+    if S.main then return end
+    local f = CreateFrame("Frame", "@T@Frame", UIParent)
+    f:SetSize(400, 300)
+    f:SetPoint("CENTER")
+    S.main = f
+    S.title = Label(f, S.T.title, -8)
+    local tab = CreateFrame("Button", "@T@FrameTab1", f)
+    tab:SetSize(80, 20)
+    tab:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, 0)
+    tab.fs = Label(tab, S.T.tab, -2)
+    S.tab = tab
+    S.button = Label(f, S.T.button, -40)
+    f:Show()
+end
+
+function S.Redraw()
+    S.title:SetText(S.T.title)
+    S.tab.fs:SetText(S.T.tab)
+    S.button:SetText(S.T.button)
+end
+
+function S.Late()
+    if not S.late then
+        local f = CreateFrame("Frame", "@T@Late", UIParent)
+        f:SetSize(200, 60)
+        f:SetPoint("TOP")
+        S.late = f
+        S.lateText = Label(f, S.T.late, -8)
+    end
+    S.late:Show()
+    return S.lateText
+end
+
+function S.Tip()
+    GameTooltip:SetOwner(UIParent)
+    GameTooltip:AddLine(S.T.tip)
+    GameTooltip:Show()
+end
+
+function S.Say(text) print(S.PREFIX .. text) end
+
+local ev = CreateFrame("Frame")
+ev:RegisterEvent("PLAYER_LOGIN")
+ev:SetScript("OnEvent", function() S.Build() end)
