@@ -14,7 +14,8 @@ with `python3 tools/make_zip.py` and upload `dist/UADD-<version>.zip` on the pro
 0. The owner checks it in the game first (owner, 2026-11-20). Install the build, then give the owner a short
    list of what to look at. Put on it only what no check proves: `check_repo.py`, the unit tests, the harness
    and the review already prove the rest, so leave that off. No upload until the owner says it works. A fix
-   for a reported problem goes the same way: the owner checks the fix.
+   for a reported problem goes the same way: the owner checks the fix. A new addon may ship with some words
+   still in English, but not before at least one owner check of it (owner, 2026-11-26). Give full commands.
 1. If Blizzard changed Forever's interface number (in game: `/dump select(4, GetBuildInfo())`), test the addon on
    the new client and add the number in front in all TOCs: `## Interface: 16002, 16001, 16000`.
 2. `python3 tools/bump_version.py <version>`: it sets `## Version` in all TOCs (`UADD/UADD.toc` and each
