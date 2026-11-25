@@ -110,7 +110,7 @@ in the game their words would have stayed English.
 **Rule.** A new Lua file in a module goes into its TOC in the same change. A test that reads files by path must
 also check that the TOC loads them.
 
-**Check.** `python3 -m unittest tools.test_dj_strings` (`test_every_strings_file_loads`).
+**Check.** `python3 tools/check_repo.py` (`toc_problems`, every module).
 
 ## 30. Another addon's settings pages found by their names
 
@@ -160,11 +160,11 @@ element's text with `SetElementText`, but nothing on screen read it again. Our s
 initializers, so the harness saw our word and passed.
 
 **Rule.** For a client menu, add our own initializer that sets the font string the button draws
-(`button.fontString`, `Drawer` in `UADD_ForeverQuestPins/Menu.lua`). The stand-in draws through the initializers
+(`button.fontString`). The stand-in draws through the initializers
 too (`HARNESS.menuApi` in `tools/harness/wow_frames2.lua`), so a test reads what is drawn, not what is stored.
 
 **Check.** `python3 tools/harness/run.py`, "fqp: 2 World Map menu" (`tools/harness/flow_fqp.lua`, `M.menu()` reads
-the drawn text); its mutant `draw` takes our initializer out and wants that step to fail.
+the drawn text).
 
 **Since Forever Quest Pins 1.1.3 (2026-11-22)** it has no menu entries: its own button on the World Map opens its
 own list, whose labels are copied from L at load (lesson 1). `Drawer` is gone: the list is one of Screen.lua's ROOTS,

@@ -1,13 +1,11 @@
 # UADD
 
-## Lessons (read first)
+## Lessons (index; full lessons by number)
 
-@docs/LESSONS.md
-@docs/LESSONS2.md
-@docs/LESSONS3.md
-@docs/LESSONS4.md
+@docs/LESSONS-INDEX.md
 
-When a new kind of problem is found, add a lesson there and a check in the same commit as the fix.
+Before you write or review module code (Lua of `UADD/` or `UADD_*/`, not only words), read all four
+`docs/LESSONS*.md` files (not the index) in full.
 
 ## Translation skills
 
@@ -100,6 +98,6 @@ free-slot mark points to a real `%s` slot. Free slots are marked here, by Englis
 
 A new module that fills slots gets a function in `halves_mods.py` and a line in `COVERED`. Mark a slot free
 only when the game or the addon puts a name there that has no translation; never one that holds only a
-colour code, a number or a clock. In modules that find whole lines on screen (ForeverXPBar, LayerSwap,
-AutoPotion: `glue=True`), a free slot at a template's start or end is also fed a name glued to made-up English ("   ",
+colour code, a number or a clock. In modules that find whole lines on screen (`glue=True` in
+`halves_mods*.py`), a free slot at a template's start or end is also fed a name glued to made-up English ("   ",
 a line break, " - "), as when the addon glues two texts (`docs/LESSONS.md`, lesson 7).

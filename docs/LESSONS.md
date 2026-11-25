@@ -2,9 +2,9 @@
 
 This file lists mistakes we already made, so we do not make them again.
 
-- Read it before you translate an addon or change any module.
+- The index (`docs/LESSONS-INDEX.md`) loads with CLAUDE.md and says who reads which lessons in full.
 - When you find a new **kind** of problem, add a lesson here. If a script can catch it, add a check too.
-  Put the lesson, the check and the fix in the **same commit**.
+  Put the lesson, its index line, the check and the fix in the **same commit**.
 - Each lesson has: **What went wrong** (one real example), **Rule**, and **Check** (a command or test to
   run, or "manual:" and what to do by hand when no script can catch it yet).
 
@@ -15,7 +15,7 @@ Two rules in `CLAUDE.md` already have their own checks. They are not repeated he
 
 ## Before a new addon
 
-1. Read this whole file.
+1. Read `docs/LESSONS-INDEX.md` and, in full, the lessons it names for your work.
 2. Check the addon's licence (`CLAUDE.md` "Other addons' texts").
 3. Read what UALL Forever already translates in this addon (lesson 3). Leave those parts out.
 4. Look up each game word in the glossary (`UADD/glossary/*.lua`, `docs/GLOSSARY.md`). Do not use a word
@@ -41,8 +41,8 @@ These texts are not in the addon's locale tables: the addon builds them in its c
 **Rule.** Before you call a module done, list every English text that its windows show, not only the
 texts in its locale tables. Translate each one, or write down why it stays English.
 
-**Check.** Manual for now: open every window and tab, in the game or in the harness (`tools/harness/`),
-and look for English. Only Questie has a tool for this (`python3 tools/coverage.py`): a gap, automate it.
+**Check.** `python3 tools/scan_addon.py <AddonFolder>` (its footer names its blind spots), `tools.test_popups`,
+`tools.test_sushi_popups`; Questie: `python3 tools/coverage.py`. Then open every window and tab and look for English.
 
 ## 2. A font change that fails without a sign
 
@@ -136,7 +136,7 @@ LayerSwap's fixed boxes: `python3 -m unittest tools.test_lsw_strings` (`test_box
 Each text of the panel's status box (2 lines) and host line (3 lines) may be at most 10% longer than its
 English (read from the installed addon), or up to 50 / 75 letters. It was added after the help line
 «Хост вимкнено до виходу з гри. Увімкнений хост допомагає гравцям LayerSwap змінити ша...» was cut.
-Other modules' texts are not measured yet. This is a gap.
+DCI, TomTom, BugSack, OneForAll and Road to Sixty have limits in their rules; the rest are not measured: a gap.
 
 ## 6. A name with extra text glued on
 
@@ -189,7 +189,7 @@ with more text after it (Words.lua says no then). When an addon glues two of its
 whole line must be ours: check it, and add a JOINED recipe when a piece carries the gap itself.
 
 **Check.** `python3 tools/harness/run.py`. In the half-translation check of each module that finds whole lines on
-screen (ForeverXPBar, LayerSwap: `glue=True`; `halves.glued` in `tools/harness/halves.py`), every free slot at the
+screen (`glue=True` in `halves_mods*.py`; `halves.glued` in `tools/harness/halves.py`), every free slot at the
 start or end of a template gets a name glued to made-up English with "   ", a line break or " - "; an output that
 changed and still has the made-up English fails. LayerSwap's flow also builds its real glued lines from the
 installed addon (`glued()` in `tools/harness/flow_lsw_mixed.py`) and wants each one all Ukrainian, each half as it
@@ -238,8 +238,8 @@ Ukrainian looked fine, so nobody saw it. The six now stay English, or say the sa
 - Plain game words in the glossary that match UALL Forever (Healthstone «Камінь Здоров'я», Soul Shard)
   are fine.
 
-**Check.** `python3 -m unittest tools.test_game_names` (AutoPotion and LayerSwap). For each text we ship, it reads
-the English from the installed addon. A UALL Forever name in it must be in our Ukrainian as UALL Forever has it. A
+**Check.** `python3 -m unittest tools.test_game_names` (`MODULES` in `tools/game_names_src.py`). For each
+text we ship, it reads the English from the installed addon. A UALL Forever name in it must be in our Ukrainian as UALL Forever has it. A
 word with a capital letter mid-sentence that the addon never writes in small letters, and that our Ukrainian does
 not keep as it is, looks like a name UALL Forever lacks: the test fails. A text a person read and found clean goes
 in `ALLOW` in that file, with the hash of its Ukrainian, so a later change is read again. It would have caught all
@@ -294,7 +294,4 @@ only what the real client can show: a module with a required dependency is not l
 **Check.** `python3 -m unittest tools.test_drift` (`test_every_version_recorded`). Test steps: manual, read
 each "without <addon>" step against the module's TOC.
 
-## 12 and up
-
-Lessons 12 and up (hooks on game-wide paths, the player's own text, saved data, words set after load, widgets
-that take the keyboard) are in `docs/LESSONS2.md`; 28 and up in `docs/LESSONS3.md`; 40 and up in `docs/LESSONS4.md`. Read them all.
+12 and up: `docs/LESSONS2.md`; 28 and up: `docs/LESSONS3.md`; 40 and up: `docs/LESSONS4.md`.
