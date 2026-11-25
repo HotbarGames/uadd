@@ -29,7 +29,6 @@ import new_module_reg as G  # noqa: E402
 
 KEYS = "real gap, found 2026-11-25: "
 KNOWN = {
-    ("UADD_BugSack", "README commands"): KEYS + "README and docs/TESTING.md say /uadd bugsack, its key is bs",
     ("UADD_ForeverXPBar", "README commands"): KEYS + "no /uadd fxpb rows",
     ("UADD_LayerSwap", "README commands"): KEYS + "no /uadd layerswap rows",
     ("UADD_ForeverXPBar", "TESTING"): KEYS + "no section in the test guides",

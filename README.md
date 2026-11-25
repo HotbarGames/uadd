@@ -115,8 +115,8 @@ Questie builds that list only once, when it starts.
 | `/uadd dci on` / `off` | Turns the DeleteCheapestItem Reloaded translation on or off, at once. Off gives DeleteCheapestItem Reloaded back as it is without UADD. Item names come from UALL Forever or ClassicUA; when neither has a name, that line stays in English. Your profile names stay as you typed them. |
 | `/uadd wql` | Shows the Wowhead Quick Link module's status and commands. |
 | `/uadd wql on` / `off` | Turns the Wowhead Quick Link translation on or off, at once. Off gives Wowhead Quick Link back as it is without UADD. The links themselves, and the names Armory and Raider.IO, stay as they are. |
-| `/uadd bugsack` | Shows the BugSack module's status and commands. |
-| `/uadd bugsack on` / `off` | Turns the BugSack translation on or off, at once. Off gives BugSack back as it is without UADD. The texts of the Lua errors themselves stay as they are. |
+| `/uadd bs` | Shows the BugSack module's status and commands. |
+| `/uadd bs on` / `off` | Turns the BugSack translation on or off, at once. Off gives BugSack back as it is without UADD. The texts of the Lua errors themselves stay as they are. |
 | `/uadd rts` | Shows the Road to Sixty module's status and commands. |
 | `/uadd rts on` / `off` | Turns the Road to Sixty translation on or off, at once. Off gives Road to Sixty back as it is without UADD. Names of zones, quests, items and players, and what Road to Sixty saved about your journey, stay as they are. |
 | `/uadd oneforall` | Shows the OneForAll module's status and commands. |
