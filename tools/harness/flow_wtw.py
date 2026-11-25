@@ -16,7 +16,7 @@ window from them. Which keys its built-once texts use is read from the installed
     in, the export labels) gets its own English back; the saved-file export (Export.ToFile) holds its English while
     ours shows. 8 labels its enUS table lacks (the profile panel's rows, also a popout made later and a panel shown
     again; settings captions) and the History page's size line: ours on, English held and off; a size in B, KB, MB
-    ours, any other the whole line English.
+    ours, any other the whole line English. 9 Lines.lua: flow_wtw_lines.py.
   * Mutants (--prove, flow_wtw_steps.py): each step fails with its fix cut out.
 """
 import os
@@ -84,16 +84,21 @@ def feed():
     enus = {e for e, *_ in G.read_enus(root / G.LOCALE)}
     captions = [en for en, f, _ in G.missing(root, enus) if f == "Options.lua"]
     q = '"{}"'.format
+    pick = _src("UI/IconPicker.lua")
+    icon = {f: re.search(r"d\." + f + r":SetText\(L\[" + LIT, pick).group(1) for f in ("title", "hint", "empty", "reset")}
+    export = re.search(r"d\.title:SetText\(L\[" + LIT + r"\] \.\. ", _src("UI/Dialogs.lua")).group(1)
 
     def ql(s):
         return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
     return ("WhatTheWhisperStandInFeed = { stub = { body = %s, button = %s }, bindings = { %s }, dialogs = { %s }, "
-            "emoji = { %s }, profile = { %s }, size = %s, captions = { %s } }" % (
+            "emoji = { %s }, profile = { %s }, size = %s, captions = { %s }, "
+            "icon = { %s }, export = %s }" % (
                 q(body), q(button), ", ".join(f"{n} = {q(k)}" for n, k in binds),
                 ", ".join("{ name = %s, buttons = { %s } }" % (q(n), ", ".join(
                     "{ %s, %s }" % (q(f), q(k)) for f, k in b)) for n, b in dialogs),
                 ", ".join("{ %s, %s }" % (q(i), q(k)) for i, k in [("recent", recent)] + cats),
-                ", ".join(map(ql, profile)), ql(size), ", ".join(map(ql, captions))),
+                ", ".join(map(ql, profile)), ql(size), ", ".join(map(ql, captions)),
+                ", ".join(f"{f} = {ql(t)}" for f, t in icon.items()), ql(export)),
             len(dialogs))
 
 
@@ -119,6 +124,7 @@ def game(module=True, cut=None, cuts=None):
     addons += [Addon(n, os.path.join(session.REPO, n), session.FLAVOR) for n in ("UADD",) + ((MODULE,) if module else ())]
     c = WtwClient(addons, None, "enUS")
     c.lua.execute(read_text(os.path.join(HERE, "flow_wtw.lua")))
+    c.lua.execute(read_text(os.path.join(HERE, "flow_wtw_lines.lua")))
     M = c.H.wtw
     code, n = feed()
     M.feed(lua_str(code))

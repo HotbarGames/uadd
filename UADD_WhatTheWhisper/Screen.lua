@@ -23,6 +23,7 @@ local DIALOGS = {
     WhatTheWhisperConfirmDialog = { "cancel" },
     WhatTheWhisperQuickRepliesDialog = { "save", "cancel", "restore" },
     WhatTheWhisperPromptDialog = { "cancel" },
+    WhatTheWhisperIconDialog = { "reset" },
 }
 local keyFor = {}                   -- a FontString or button -> its English key
 local changed = {}                  -- the same -> true while it shows ours

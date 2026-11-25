@@ -81,6 +81,20 @@ local S = {
     ARROW_PORTAL = "Скористайтеся порталом: %s",
     ARROW_HEARTH = "Повернення додому: %s",
     ARROW_ELEVATOR = "Підніміться ліфтом",
+    ARROW_RP_WAIT = "Зачекайте на сценку",
+    ARROW_RP_WAIT_TIME = "Зачекайте на сценку (%d с)",
+    ARROW_SKIP_NOW = "Поки що пропустити",
+    ARROW_SKIP_NOW_TIP = "Поки що прибрати це завдання з маршруту й перейти до наступного. Щоб повернути його, позначте його в трекері.",
+
+    -- Six statues on a map; %s is a boss name after a colon
+    ST_STATUE = "Статуя %d з 6",
+    ST_STATUE_TIP = "Скористайтеся шістьма статуями в цьому порядку, від 1 до 6. Тоді внизу в ямі з'явиться: %s.",
+
+    -- The quest list, the Forever filter's tooltip
+    OPT_HIDE_CHAIN_GLOW = "Прибрати сяйво завдання на кроці «Підберіть це»",
+    OPT_HIDE_CHAIN_GLOW_TIP = "Завдання, ланцюжок до якого ви пройшли і яке вже можна взяти, сяє золотом у списку завдань. Позначте, щоб прибрати сяйво (напис «Підберіть це» лишається).",
+    FOREVER_ONLY_VIEW = "Лише підземелля Forever",
+    FOREVER_ONLY_RCLICK = "Правий клік — вимкнути",
 }
 if ns then
     local all = ns.uiStrings or {}

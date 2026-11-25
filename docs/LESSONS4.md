@@ -191,7 +191,8 @@ take each fix out).
 was whole before. The match failed quietly, so on the hold key and off these texts stayed Ukrainian. Rule: after an
 addon update, look in its diff for new `..` around L words. `Turn` (`UADD_ForeverQuestPins/Screen.lua`) cuts a
 " (BETA)" tail off as it cuts the level range, and swaps two joined sentences only when both are ours, so a line is
-never half translated. Check: `python3 tools/harness/flow_fqp.py`, "fqp: 3 hold canvas"; its mutants `beta` and
+never half translated. The joined help line exists only in its 1.1.4 to 1.1.6 (1.1.8 dropped the second sentence);
+the flow still proves it. Check: `python3 tools/harness/flow_fqp.py`, "fqp: 3 hold canvas"; its mutants `beta` and
 `join` take each fix out and want that step to fail.
 
 **Lesson 32 again, in BugSack (2026-11-22).** What went wrong: the module saves a label's own font before it puts

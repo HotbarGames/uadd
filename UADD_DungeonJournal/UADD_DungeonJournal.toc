@@ -14,6 +14,7 @@ ui/strings_systems.lua
 ui/strings_rpg.lua
 ui/strings_runlog.lua
 ui/strings_tier.lua
+ui/strings_home.lua
 Names.lua
 data/prose.lua
 Prose.lua
@@ -27,4 +28,5 @@ Whole.lua
 Language.lua
 Search.lua
 Popup.lua
+Buttons.lua
 Module.lua

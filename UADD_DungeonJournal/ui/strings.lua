@@ -343,7 +343,6 @@ local S = {
     CLICK_RESTORE_DUNGEON = "Клацніть, щоб повернути це підземелля.",
     AUTO_HIDDEN_BY = "Сховано налаштуванням: %s",
     CLICK_SHOW_ANYWAY = "Клацніть, щоб усе одно його показати.",
-    ALL_DUNGEONS_HIDDEN = "Усі підземелля сховано. Клацніть «Сховати підземелля», щоб повернути їх.",
 
     -- Quest status
     FACTION_QUESTS = "%s: завдання",

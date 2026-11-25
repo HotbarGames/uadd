@@ -118,10 +118,10 @@ def menu(check, M):
 
 def hold(check, M):
     before, full = counts(M)
-    label0 = txt(M.label())
+    label0, join0 = txt(M.label()), txt(M.joinedText() or "")
     M.hold(True)
     M.wait(1)
-    held, label = counts(M), txt(M.label())
+    held, label, join = counts(M), txt(M.label()), txt(M.joinedText() or "")
     M.hold(False)
     M.wait(1)
     after, label2 = counts(M)[0], txt(M.label())
@@ -130,7 +130,8 @@ def hold(check, M):
           and all(after[k] == before[k] for k in ("menu", "setup", "crumb", "tips", "news", "left")))
     check(STEPS["hold"], ok, (before, held, after))
     okc = bool(label0) and cyr(label0) and not cyr(label) and cyr(label2) and held["canvas"] == 0 \
-        and after["canvas"] == before["canvas"]
+        and after["canvas"] == before["canvas"] and cyr(join0) and not latin(join0.replace("Blizzard", "")) \
+        and latin(join) and not cyr(join) and txt(M.joinedText() or "") == join0
     check(STEPS["hold canvas"], okc, (label0, label, label2, before["canvas"], held["canvas"], after["canvas"]))
     return {"hold": ok, "hold canvas": okc}
 

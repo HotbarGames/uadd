@@ -65,14 +65,29 @@ def code_uses(addon):
 def dynamic_uses(addon):
     """{English key: [(file, line)]} of the string literals inside each DYNAMIC range."""
     uses = {}
-    for rel, first, last in R.DYNAMIC:
-        p = Path(addon) / rel
-        if not p.is_file():
-            continue
-        for kind, value, line in luatok.tokens(luatok.read(p)):
-            if kind == S and first <= line <= last:
-                uses.setdefault(value, []).append((rel, line))
+    for rng in R.DYNAMIC:
+        for value, at in dynamic_range(addon, *rng):
+            uses.setdefault(value, []).append(at)
     return uses
+
+
+def dynamic_range(addon, rel, first, last):
+    """[(string literal, (file, line))] of one DYNAMIC range: every line `first` matches, up to `last`."""
+    p = Path(addon) / rel
+    if not p.is_file():
+        return []
+    text = luatok.read(p)
+    text = text.decode("utf-8", "replace") if isinstance(text, bytes) else text
+    inside, end = set(), None
+    for n, line in enumerate(text.split("\n"), 1):
+        if end is None and re.search(first, line):
+            inside.add(n)
+            end = last
+        elif end is not None:
+            inside.add(n)
+            if re.search(end, line):
+                end = None
+    return [(v, (rel, n)) for kind, v, n in luatok.tokens(luatok.read(p)) if kind == S and n in inside]
 
 
 GUIDE = "PortraitGuide.lua"

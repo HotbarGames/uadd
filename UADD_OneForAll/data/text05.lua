@@ -1,10 +1,21 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.0e5410b7"] = "Значки завдань (! і ?)"
+T["Code.d6508211"] = "Наскільки видно ще не досліджені ділянки: 0 % приховано, 100 % показано повністю."
+T["Code.a38740ff"] = "Клік: значки на карті, значки завдань, Прибрати туман і карта підземелля."
+T["Code.1898a055"] = "Рівень %s"
+S["Code.1898a055"] = "v"
+T["Code.b3bc385e"] = "прийнято"
+T["Code.9d30394d"] = "уже виконано"
+T["Code.44bac593"] = "не підходить"
+T["Code.b27cb260"] = "уже має"
+T["Code.12f0ebdd"] = "відхилено"
+T["Code.1636668c"] = "журнал завдань повний"
 T["Code.03b0efa2"] = "надто далеко"
 T["Code.7c94cda8"] = "зайнятий"
 T["Code.7c959ff3"] = "мертвий"
@@ -166,6 +177,7 @@ T["Code.b8be2e7c"] = "Відплата"
 T["Code.d10c0e4b"] = "Тінь"
 T["Code.3072b141"] = "Скритність"
 T["Code.55e80d01"] = "Виживання"
+T["Code.7647b7c9"] = "Виживання: ближній бій"
 T["Code.acaee5a0"] = "Власний"
 T["Code.1899e03b"] = "Прокачування"
 T["Code.107249a7"] = "звичайні вороги"
@@ -265,15 +277,3 @@ T["Code.966c5836"] = "Поки що немає покращень для цьо�
 T["Code.d9f73cf0"] = "Поки що жоден предмет з наших даних не підходить до цього слота й рівня."
 T["Code.ecf3e226"] = "Тут нічого немає за фільтром джерел \"%s\".\nКнопка фільтра біля вкладки \"Список бажань\"."
 S["Code.ecf3e226"] = "t"
-T["Code.4cd9193b"] = "Предметів не знайдено."
-T["Code.3d66ab9b"] = "Сила атаки дальнього бою"
-T["Code.4fb58d54"] = "Сила атаки у звіриній формі"
-T["Code.8058fcdc"] = "Володіння зброєю (на 1 %)"
-T["Code.be1ee9f8"] = "Влучання (на 1 %)"
-T["Code.e8b27888"] = "Поспіх (на 1 %)"
-T["Code.b7e6b89e"] = "Вправність"
-T["Code.eaec46ee"] = "Проникнення чарів"
-T["Code.05acf9ec"] = "%d з %d"
-S["Code.05acf9ec"] = "vv"
-T["Code.4919da4d"] = "(загалом %s%%)"
-S["Code.4919da4d"] = "v"

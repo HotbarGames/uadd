@@ -3,7 +3,7 @@
  "modules": {
   "UADD_Attune": {
    "addon": "Attune",
-   "version": "16001-44",
+   "version": "16001-45",
    "interface": "16001, 120100, 120105, 120107",
    "files": [
     "Attune.lua",
@@ -24,16 +24,16 @@
     "Locales/zhTW.lua",
     "embeds.xml"
    ],
-   "count": 5242,
+   "count": 5286,
    "tags": {
-    "C": 1341,
-    "L": 3901
+    "C": 1347,
+    "L": 3939
    },
-   "ids": "bb189bd99d8a8ecfd083ccc726d0c46267376949"
+   "ids": "66d8480dfc5aa51c7c5fa0fbcb8762cc1eb25358"
   },
   "UADD_Auctionator": {
    "addon": "Auctionator",
-   "version": "351",
+   "version": "352",
    "interface": "120100, 120105, 16001, 50504, 38000, 20506, 11508, 11509",
    "files": [
     "Assets_LegacyAH.xml",
@@ -701,7 +701,7 @@
   },
   "UADD_AutoPotion": {
    "addon": "AutoPotion",
-   "version": "4.1.1",
+   "version": "4.1.2",
    "interface": "120105, 120107",
    "files": [
     "Bindings.lua",
@@ -1073,7 +1073,7 @@
   },
   "UADD_DungeonJournal": {
    "addon": "ForeverDungeonJournal",
-   "version": "2.1.3",
+   "version": "2.1.5",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1110,6 +1110,7 @@
     "Systems/ForeverFilter.lua",
     "Systems/GamePad.lua",
     "Systems/HomeBottomBand.lua",
+    "Systems/HomeEdit.lua",
     "Systems/ItemCharges.lua",
     "Systems/ItemIdLearner.lua",
     "Systems/ItemSource.lua",
@@ -1131,6 +1132,7 @@
     "Systems/ScarletWing.lua",
     "Systems/SettingsPanel.lua",
     "Systems/SpotLearn.lua",
+    "Systems/Tier05Chain.lua",
     "Systems/TierSets.lua",
     "Systems/TooltipBacking.lua",
     "Systems/VersionCheck.lua",
@@ -1140,17 +1142,17 @@
     "UI/ItemComparisonData.lua",
     "UI/ThemeData.lua"
    ],
-   "count": 1649,
+   "count": 1703,
    "tags": {
-    "L": 338,
-    "P": 1101,
-    "S": 210
+    "L": 357,
+    "P": 1108,
+    "S": 238
    },
-   "ids": "158920d9af5612a1f9a28cf24fb5d6a85365094e"
+   "ids": "98229744d6b65fa8ee321d3bd8c7ac860d078170"
   },
   "UADD_ForeverQuestPins": {
    "addon": "ForeverQuestPins",
-   "version": "v1.1.6",
+   "version": "v1.1.8",
    "interface": "16001",
    "files": [
     "AutoQuests.lua",
@@ -1174,19 +1176,20 @@
     "Setup.lua",
     "Sparkle.lua",
     "Tracker.lua",
+    "TrackerData.lua",
     "WarEffort.lua",
     "Waypoints.lua",
     "WhatsNew.lua"
    ],
-   "count": 224,
+   "count": 226,
    "tags": {
-    "L": 224
+    "L": 226
    },
-   "ids": "ee91e4789c8f6733be9ebe5bcedbe1c9d1eb5139"
+   "ids": "222a2a8ab1a27a209b685cb13c69cd278a33d4f2"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
-   "version": "0.9.6",
+   "version": "0.9.61",
    "interface": "120100, 16001, 20505, 20506, 70006",
    "files": [
     "ForeverXPBar.lua",
@@ -1197,11 +1200,11 @@
     "ForeverXPBarFonts.lua",
     "ForeverXPBarSounds.lua"
    ],
-   "count": 764,
+   "count": 794,
    "tags": {
-    "X": 764
+    "X": 794
    },
-   "ids": "4814f78d0165c5875214b1a0363ced8f61e53b0f"
+   "ids": "b492cf363d0016f21edc4b3effbbac54008c5f32"
   },
   "UADD_GatherMate2": {
    "addon": "GatherMate2",
@@ -1247,7 +1250,7 @@
   },
   "UADD_GearQuestForever": {
    "addon": "GearQuestForever",
-   "version": "1.3.3",
+   "version": "1.3.4",
    "interface": "16001",
    "files": [
     "Catalog.lua",
@@ -1281,6 +1284,7 @@
     "_generated/CraftRecipes.generated.lua",
     "_generated/CraftSkills.generated.lua",
     "_generated/Data.Coordinates.generated.lua",
+    "_generated/Data.DropFaction.generated.lua",
     "_generated/Data.ForeverAudit.generated.lua",
     "_generated/Data.ForeverBis.generated.lua",
     "_generated/Data.ForeverNew.generated.lua",
@@ -1290,29 +1294,30 @@
     "_generated/Data.QuestFaction.generated.lua",
     "_generated/Data.ScoredStats.generated.lua",
     "_generated/Data.Unconfirmed.generated.lua",
+    "_generated/Data.VendorSide.generated.lua",
     "_generated/Data.WorldDropOpenChance.generated.lua",
     "_generated/ScoringWeights.generated.lua",
     "_generated/StatWeights.generated.lua"
    ],
-   "count": 521,
+   "count": 527,
    "tags": {
-    "L": 521
+    "L": 527
    },
-   "ids": "2b4bac3e13f1ae0f00e6a62aad50114702cf1991"
+   "ids": "005e669d235a4ce70c877580b0907a3b6847c7ac"
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
-   "version": "1.14.45",
+   "version": "1.14.52",
    "interface": "11509, 16001, 20506",
    "files": [
     "Bindings.xml",
     "LayerSwap.lua"
    ],
-   "count": 437,
+   "count": 442,
    "tags": {
-    "X": 437
+    "X": 442
    },
-   "ids": "9062781854942dcc81637893e41f3f40af6e4cb6"
+   "ids": "33cb47d6da39d1d29e9ee8d84ec582ca66ab9e32"
   },
   "UADD_LiteMount": {
    "addon": "LiteMount",
@@ -1543,7 +1548,7 @@
   },
   "UADD_OneForAll": {
    "addon": "OneForAll",
-   "version": "6.2.13",
+   "version": "6.2.16",
    "interface": "16001",
    "files": [
     "AHScan.lua",
@@ -1557,11 +1562,13 @@
     "Data/ClassQuests.lua",
     "Data/Disenchant.lua",
     "Data/DungeonDropChance.lua",
+    "Data/DungeonEncounters.lua",
     "Data/DungeonKeys.lua",
     "Data/DungeonLoadscreens.lua",
     "Data/DungeonMapExtras.lua",
     "Data/DungeonMaps.lua",
     "Data/DungeonQuestChains.lua",
+    "Data/DungeonWings.lua",
     "Data/Dungeons/AlcazPrison.lua",
     "Data/Dungeons/BarrowDeeps.lua",
     "Data/Dungeons/BlackfathomDeeps.lua",
@@ -1622,11 +1629,13 @@
     "Data/Professions/Leatherworking.lua",
     "Data/Professions/Tailoring.lua",
     "Data/QuestDrops.lua",
+    "Data/QuestMissable.lua",
     "Data/QuestPins.lua",
     "Data/QuestRewards.lua",
     "Data/RaidAttunements.lua",
     "Data/ReagentSources.lua",
     "Data/SkyborneSpots.lua",
+    "Data/Smelting.lua",
     "Data/SpecialQuests.lua",
     "Data/TrainerSpells.lua",
     "Data/VendorReagents.lua",
@@ -1685,6 +1694,8 @@
     "UI/ProfitUI.lua",
     "UI/QoL.lua",
     "UI/QuestShare.lua",
+    "UI/RunHistory.lua",
+    "UI/RunTracker.lua",
     "UI/Settings.lua",
     "UI/SkillUpUI.lua",
     "UI/TrainerSpells.lua",
@@ -1693,11 +1704,11 @@
     "UI/WhatsNew.lua",
     "UI/Widgets.lua"
    ],
-   "count": 2434,
+   "count": 2490,
    "tags": {
-    "L": 2434
+    "L": 2490
    },
-   "ids": "919e1f2cecd1d6d0cbcfa75c8e84affe3584da4d"
+   "ids": "ebed5ac56180e9919a64f34c71e28e650d4fc833"
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
@@ -1778,11 +1789,11 @@
     "Map/Window.lua",
     "Map/WorldMap.lua"
    ],
-   "count": 522,
+   "count": 524,
    "tags": {
-    "L": 522
+    "L": 524
    },
-   "ids": "424dd1d1f0d1d07a29797b7e75ee2fe28a518023"
+   "ids": "041b65edf0f6ba2ad8ab8c31d8fc6eb21e3f69a7"
   },
   "UADD_Pawn": {
    "addon": "Pawn",
@@ -1827,7 +1838,7 @@
   },
   "UADD_Questie": {
    "addon": "Questie",
-   "version": "12.12.0",
+   "version": "12.13.0",
    "interface": "16001",
    "files": [
     "Bindings.xml",
@@ -1873,13 +1884,6 @@
     "Localization/Translations/Comms.lua",
     "Localization/Translations/DebugMessages.lua",
     "Localization/Translations/Events.lua",
-    "Localization/Translations/ExtraObjectives/CataObjectives.lua",
-    "Localization/Translations/ExtraObjectives/ClassicObjectives.lua",
-    "Localization/Translations/ExtraObjectives/ForeverObjectives.lua",
-    "Localization/Translations/ExtraObjectives/MopObjectives.lua",
-    "Localization/Translations/ExtraObjectives/SeasonObjectives.lua",
-    "Localization/Translations/ExtraObjectives/TbcObjectives.lua",
-    "Localization/Translations/ExtraObjectives/WotlkObjectives.lua",
     "Localization/Translations/Generics.lua",
     "Localization/Translations/Journey/MyJourney.lua",
     "Localization/Translations/Journey/QuestsByFaction.lua",
@@ -2119,15 +2123,15 @@
     "Questie.lua",
     "embeds.xml"
    ],
-   "count": 3545,
+   "count": 2544,
    "tags": {
-    "L": 3545
+    "L": 2544
    },
-   "ids": "a963782fdcdbf9ae7d36fe6a50680333cf74799a"
+   "ids": "4f1bd89326d14fdf37e825645cb005dda9588fbb"
   },
   "UADD_RareScanner": {
    "addon": "RareScanner",
-   "version": "1.60.1.11",
+   "version": "1.60.1.12",
    "interface": "16001",
    "files": [
     "Core/Core.xml",
@@ -2809,6 +2813,7 @@
     "UI/EmojiPicker.lua",
     "UI/Expose.lua",
     "UI/IconAtlas.lua",
+    "UI/IconPicker.lua",
     "UI/Icons.lua",
     "UI/MainWindow.lua",
     "UI/MessageList.lua",
@@ -2831,11 +2836,11 @@
     "UI/Widgets/Widgets.lua",
     "WhatTheWhisper.xml"
    ],
-   "count": 458,
+   "count": 489,
    "tags": {
-    "L": 458
+    "L": 489
    },
-   "ids": "13bf3053f1708570e7f10e676d9728db89225ec5"
+   "ids": "e60bcf4e9ff1b9ccfbff64f552380ae1628f8ef4"
   },
   "UADD_WhatsTraining": {
    "addon": "WhatsTraining",
@@ -2967,11 +2972,11 @@
     "WhatsTraining.lua",
     "WhatsTrainingUI.lua"
    ],
-   "count": 185,
+   "count": 187,
    "tags": {
-    "X": 185
+    "X": 187
    },
-   "ids": "1096593ecbe191e496470bb824656c84c773ab6d"
+   "ids": "86a92ddb2f4778c88e33a602d72ae33170eb598a"
   },
   "UADD_WowheadQuickLink": {
    "addon": "WowheadQuickLink",

@@ -8,9 +8,11 @@ Sorts:
   NAME   a game name (item, zone, NPC, spell, profession rank...): the runtime takes UALL Forever's
          Ukrainian, else the whole line stays English
   TEXT   another Mastercraft text: put through our own texts, else the whole line stays English
+  EXACT  a whole Mastercraft text, looked up as it is: the short credits template also fits "<words> by <npc> -
+         <zone>", and a TEXT slot takes a bare game name too, so the line came out half Ukrainian (lesson 7)
   BLANK  only an English plural ending ("s" or nothing): put in as nothing; our Ukrainian uses {..|..|..}
 %d / %f are always VALUE. A %s is sorted by OVERRIDE (by "<bytes>:<hash>" of the English, one letter
-per slot: V F N T, "-" = %d/%f or use the rules) or else by RULES: regexes over the text around the slot
+per slot: V F N T E, "-" = %d/%f or use the rules) or else by RULES: regexes over the text around the slot
 with that slot as "@", the other slots as "#" and colour codes taken out. The first rule that matches
 wins. Only short word fragments here (at most 3 words in a row), never Mastercraft's sentences.
 """
@@ -18,8 +20,8 @@ import re
 
 import hashtext as H
 
-VALUE, FREE, NAME, TEXT, BLANK = "VALUE", "FREE", "NAME", "TEXT", "BLANK"
-LETTER = {"V": VALUE, "F": FREE, "N": NAME, "T": TEXT, "B": BLANK}
+VALUE, FREE, NAME, TEXT, BLANK, EXACT = "VALUE", "FREE", "NAME", "TEXT", "BLANK", "EXACT"
+LETTER = {"V": VALUE, "F": FREE, "N": NAME, "T": TEXT, "B": BLANK, "E": EXACT}
 CODE = re.compile(r"\|c[0-9A-Fa-f]{8}|\|c(?=@|#)|\|r|\|T[^|]*\|t")
 
 RULES = [
@@ -97,7 +99,7 @@ OVERRIDE = {
     "6:66679401": "TT", "16:cbe63335": "VN", "48:2da42a30": "FTFN", "20:6b8bd5b8": "VVBT",
     "21:d9ebf7b8": "TVT", "15:1e6df1ed": "VNF", "39:d6528a38": "NVT", "18:9436262a": "NT",
     "42:c33a0463": "N", "32:27231f3c": "NVNNT", "21:c858716a": "NNNT", "21:c3a7c5ff": "VNTV",
-    "16:589231fd": "NV", "13:e0813675": "FFT", "5:10147f1a": "F", "18:1490fe3a": "FNF",
+    "16:589231fd": "NV", "13:e0813675": "FFE", "5:10147f1a": "F", "18:1490fe3a": "FNF",
     "71:eb2d9b36": "NV", "23:cd938ab2": "F",
     # (18:9436262a was "a character; where" (F T). In 2.1.1 no code formats it; the lines of its shape
     # are a recipe or a cooldown's name, then a count or our words in grey: N T, never free (lesson 7 again).)

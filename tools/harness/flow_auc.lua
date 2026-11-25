@@ -125,7 +125,7 @@ local function G(k) return rawget(_G, "AUCTIONATOR_L_" .. k) end
 -- The English of a ns.UA_MADE entry, made here on its own (not by Words.lua).
 local function MadeEN(m)
     if m.join then return G(m.join[1]) and G(m.join[2]) and G(m.join[1]) .. " " .. G(m.join[2]) end
-    local v = G(m.key)
+    local v = m.key and G(m.key)                 -- m.lines: templates (flow_auc_craft.py)
     return v and (string.gsub(v, m.from, m.to))
 end
 -- The Ukrainian of an exact English text: the first key (sorted by name) whose AUCTIONATOR_L_ global

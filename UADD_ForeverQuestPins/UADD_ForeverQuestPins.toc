@@ -17,4 +17,5 @@ Breadcrumb.lua
 Screen.lua
 Chat.lua
 Menu.lua
+Tracker.lua
 Module.lua

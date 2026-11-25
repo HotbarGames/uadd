@@ -94,6 +94,16 @@ class GqText(unittest.TestCase):
     def test_data_loads(self):
         self.assertGreater(len(load()), 100)
 
+    def test_dynamic_ranges_found(self):
+        """Each range of words its code asks for through L[var] is still there (a moved or renamed one gives none)."""
+        sys.path.insert(0, str(TOOLS))
+        import gq_rules
+        import gq_source
+        a = gq_source.addon_dir()
+        if not (a / (gq_source.FOLDER + ".toc")).is_file():
+            self.skipTest("GearQuest Forever is not installed")
+        self.assertEqual([r[:2] for r in gq_rules.DYNAMIC if not gq_source.dynamic_range(a, *r)], [])
+
     def test_latin_mutant(self):
         self.assertEqual(latin_words("Поговоріть із «Wobbly Gizmo» біля табору."), ["Gizmo", "Wobbly"])
         self.assertEqual(latin_words('|cffff0000Увага|r: %s, %d%% у G"Old Town" |TInterface\\Icons\\X:0|t, '

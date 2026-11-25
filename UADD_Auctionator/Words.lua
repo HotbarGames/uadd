@@ -126,6 +126,11 @@ local function Made(m)
         local a, b = EN(m.join[1]), EN(m.join[2])
         return a and b and (a .. " " .. b) or nil
     end
+    if m.lines then           -- labels, one per line, each with a value glued on ("<label> %s")
+        local out = {}
+        for i, key in ipairs(m.lines) do out[i] = EN(key) if not out[i] then return nil end end
+        return table.concat(out, " %s\n") .. " %s"
+    end
     local en = m.key and EN(m.key)
     return en and (en:gsub(m.from, m.to)) or nil
 end

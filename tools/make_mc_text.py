@@ -29,7 +29,7 @@ FILES = 32                      # data/text01.lua ... text32.lua, all listed in 
 MAX_LINES, MAX_BYTES = 280, 24000
 ADDON_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns",
               "C:/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns"]
-SHORT = {R.VALUE: "V", R.FREE: "F", R.NAME: "N", R.TEXT: "T", R.BLANK: "B", None: "?"}
+SHORT = {R.VALUE: "V", R.FREE: "F", R.NAME: "N", R.TEXT: "T", R.BLANK: "B", R.EXACT: "E", None: "?"}
 ONE_G = re.compile(r'^G"([a-z][a-z0-9_]*(?:\.[a-z0-9_]+)+)"$')
 
 HEAD = """\

@@ -532,6 +532,14 @@ ns.UA_MADE = {
     -- Forever's duration buttons: AUCTION_DURATION_12 with "12" made "2", AUCTION_DURATION_24 with "24" made "8"
     { key = "AUCTION_DURATION_12", from = "12", to = "2", uk = "2 год" },
     { key = "AUCTION_DURATION_24", from = "24", to = "8", uk = "8 год" },
+    -- Crafting window (Source_Mainline/CraftingInfo): one text of one to three lines, each a label and its price
+    { lines = { "TO_CRAFT_COLON" }, uk = "Виготовлення: %s" },
+    { lines = { "PROFIT_COLON" }, uk = "Прибуток: %s" },
+    { lines = { "CHEAPEST_QUALITY_COST_COLON" }, uk = "Найдешевша якість: %s" },
+    { lines = { "TO_CRAFT_COLON", "PROFIT_COLON" }, uk = "Виготовлення: %s\nПрибуток: %s" },
+    { lines = { "TO_CRAFT_COLON", "CHEAPEST_QUALITY_COST_COLON" }, uk = "Виготовлення: %s\nНайдешевша якість: %s" },
+    { lines = { "PROFIT_COLON", "CHEAPEST_QUALITY_COST_COLON" }, uk = "Прибуток: %s\nНайдешевша якість: %s" },
+    { lines = { "TO_CRAFT_COLON", "PROFIT_COLON", "CHEAPEST_QUALITY_COST_COLON" }, uk = "Виготовлення: %s\nПрибуток: %s\nНайдешевша якість: %s" },
 }
 
 -- Column headers only: a shorter word where the results table's column is narrow (docs/LESSONS.md, lesson 5).

@@ -24,6 +24,9 @@ local BINDINGS = {
     BINDING_NAME_WHATTHEWHISPER_TOGGLE = "L.675ca07c", BINDING_NAME_WHATTHEWHISPER_EXPOSE = "L.ee627ce9",
     BINDING_NAME_WHATTHEWHISPER_REPLY = "L.270fcac7",
 }
+-- Names kept as they are (its own, formats, brands: NAMES in tools/wtw_rules.py): never noted as missed.
+local NAMES = { ["L.675ca07c"] = true, ["L.c8066a48"] = true, ["L.a6a47264"] = true, ["L.0b87daf1"] = true,
+    ["L.76f8717d"] = true, ["L.55f20236"] = true }
 
 local keyOf = {}           -- "L." .. hash -> its English key
 local rev, back = {}, {}   -- English key -> ours, ours -> English key
@@ -56,6 +59,12 @@ function W.Active()
     local ok, code = U.SafeCall(a and a.ActiveLocale)
     return ok and type(code) == "string" and code or "enUS"
 end
+
+-- Its English key for one key of our data, or nil.
+function W.KeyFor(h) return keyOf[h] end
+
+-- True for a text left English on purpose and never noted as missed: also a name.
+function W.Known(h) return NAMES[h] or W.Skip(h) end
 
 -- True for a data key that stays English on purpose.
 function W.Skip(h)
@@ -168,7 +177,7 @@ end
 local function NoteMissed()
     if not U.MissedOn() then return end
     for h, k in pairs(keyOf) do
-        if not rev[k] and not W.Skip(h) then U.Missed("wtw", k) end
+        if not rev[k] and not W.Known(h) then U.Missed("wtw", k) end
     end
 end
 

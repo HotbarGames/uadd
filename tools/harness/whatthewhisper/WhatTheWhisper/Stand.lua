@@ -210,6 +210,40 @@ function S.render()
 end
 S.render()
 
+S.print = ns.Print          -- its own, from before any module
+
+-- The icon picker and the export window: each writes its texts when it opens (keys from the feed), not redrawn.
+local function Opened(name)
+    local f = _G[name] or CreateFrame("Frame", name, UIParent)
+    f.title = f.title or f:CreateFontString(nil, "ARTWORK")
+    f.title:SetFontObject(font)
+    f:Show()
+    return f
+end
+ns.IconPicker = { Open = function(shown)
+    local d, k = Opened("WhatTheWhisperIconDialog"), feed.icon or {}
+    for _, field in ipairs({ "hint", "empty" }) do
+        d[field] = d[field] or d:CreateFontString(nil, "ARTWORK")
+        d[field]:SetFontObject(font)
+    end
+    d.title:SetText(L[k.title])
+    d.hint:SetText(L[k.hint]:format(shown))
+    d.empty:SetText(L[k.empty])
+    d.reset = d.reset or ns.Button.Text(d)
+    d.reset:SetText(L[k.reset])
+end }
+ns.Dialogs = ns.Dialogs or {}
+function ns.Dialogs.ShowExport(conv)
+    local d = Opened("WhatTheWhisperCopyDialog")
+    d.conv = conv
+    d.title:SetText(L[feed.export] .. " \194\183 " .. (conv.name or conv.id))
+end
+ns.GroupChat = ns.GroupChat or {}
+function ns.GroupChat.Target(id)
+    if id:sub(1, 5) == "CH:C:" then return "CHANNEL", id:sub(6) end
+    return id:sub(1, 3) == "CH:" and id:sub(4) or nil
+end
+
 -- The language redraw also relocalizes the profile panels (the main one, each shown popout) and the settings.
 local relocalize = ns.UI.Relocalize
 function ns.UI.Relocalize()

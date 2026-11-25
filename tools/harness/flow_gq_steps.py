@@ -1,5 +1,6 @@
 """The steps of flow_gq.py: each (check, g) -> ok, g a flow_gq.Run (g.E its English, g.A0 / g.A ours before and
 after the retry, g.ref: its chat lines, late window and guide pages). No English of GearQuest here."""
+from flow_gq_menu import copy, menu, notice
 from flow_pawn_game import cyr, diff
 from loader import lua_str, txt
 
@@ -116,7 +117,7 @@ def status(check, g):
     return ok
 
 
-STEPS = [ours, guide, chat, rows, fonts, loop, late, status]
+STEPS = [ours, guide, chat, rows, fonts, loop, late, status, menu, copy, notice]
 
 
 def language(check, g, langs):

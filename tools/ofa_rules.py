@@ -91,7 +91,14 @@ SORTS = {
     "Code.f31989ba": "n",     # the wishlist item's name (GetItemInfo)
 }
 # Fixed-width boxes (OneForAll-design.md): English -> letters. Filled as the review finds them.
-BOX = {}
+# 6.2.16: the dungeon tracker's columns (x 10, 96, 164), its settings popup (196 px wide, its check texts from x 32)
+# and the auction house scan button.
+BOX = {
+    "Time": 6, "Mobs XP": 8, "Gold": 8, "Best %s": 8, "Wing": 8,
+    "Hide time": 22, "Hide XP": 22, "Hide gold": 22, "Hide bosses": 22, "Lock tracker": 22,
+    "Show dungeon picture": 22, "Bosses per row": 20,
+    "Loading items (%d)": 18, "Waiting for server...": 22, "Reading %d%%": 18,
+}
 LONG = {}
 # Data pools and their fixed widths (HunterPets columns, TrainerSpells, LowRank): a note per pool.
 POOL_NOTE = {

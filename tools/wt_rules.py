@@ -44,6 +44,10 @@ SORTS = {
     "%s — %s": "nn",                    # zone - weapon master: WeaponGrouping.lua
     "• %s": "v",                             # the levels view's count, its own font string: Views.lua
 }
+# A price row (Utils.lua priceRowLabel) with its "best price" mark glued on.
+ROWS = ("%s · %s · %d%% off", "%s · no reputation")
+TAILS = (" · Best",)
+SORTS.update({row + tail: SORTS[row] for row in ROWS for tail in TAILS})
 
 # Lines What's Training? builds in code around a game name or its own text, not from its locale table (lesson 6):
 # (English template, where). Our Ukrainian for them is the same template (only the name changes).
@@ -53,7 +57,7 @@ CODE = [
     ("%s • %d", "Forever/Views.lua: a section title of ours, then its count"),
     ("• %s", "Forever/Views.lua: the levels view's count (\" • \" and a count of ours; outer spaces kept)"),
     ("%s • %s", "SECTION_COUNT in RecipeList.lua, SkillsRecipeList.lua, Forever/Ignored.lua: title, count"),
-]
+] + [(row + tail, "Utils.lua: a price row with its marks") for row in ROWS for tail in TAILS]
 
 
 def sorts(en):

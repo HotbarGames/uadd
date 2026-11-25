@@ -142,3 +142,5 @@ def run(check, F, src):
     flow_mc_orders.run(check, F, src)
     import flow_mc_shots                         # the shots of 2026-11-23: lines glued in code
     flow_mc_shots.run(check, F, src)
+    import flow_mc_missed                        # the player's missed lines of 2026-11-23
+    flow_mc_missed.run(check, F, src)

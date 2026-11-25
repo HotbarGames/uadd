@@ -3,6 +3,7 @@ fresh game with one fix of the module cut out (in memory, flow_wtw.lua M.cut).""
 import flow_wtw as F
 from flow_pawn_game import cyr, diff
 from flow_wtw_gaps import gaps
+import flow_wtw_lines as LN
 from loader import lua_str, txt
 
 STEPS = {
@@ -221,7 +222,7 @@ def refaults(check, c, M, E, A):
 
 def steps(check, facts, c, M, E, A):
     F.E_PATHS = facts.get("E_paths")
-    for fn in (loop, locale, once, copies, stay, combat, langcombat, dups, export, gaps):
+    for fn in (loop, locale, once, copies, stay, combat, langcombat, dups, export, gaps, LN.zone, LN.windows):
         fn(check, c, M, E, A)
     font(check, c, M, E, A, facts)
 
@@ -259,6 +260,7 @@ CUTS = {
     "gapsunits": ("Gaps.lua", '{ "^(%d+%.%d) KB$", "%s КБ" }, ', "", gaps),
     "gapssize": ("Gaps.lua", "        SizeRow(spec)\n", "", gaps),
     "gapsnew": ("Gaps.lua", "        P.New = news.fn\n", "", gaps),
+    **LN.CUTS,
 }
 E_PATHS = None
 

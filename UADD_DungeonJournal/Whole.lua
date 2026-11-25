@@ -3,6 +3,8 @@
 -- giver line "Name, Town, Zone" with one name UALL Forever lacks came out half Ukrainian. Wrapped (by
 -- Language.lua's Install): when any part with Latin letters has no Ukrainian, the whole line stays
 -- exactly English. Only while our language is shown; FDJ's own languages are left as they are.
+-- The same for two lines with a name in them: a Tier 0.5 quest's title with its item or boss in brackets,
+-- and Edit Mode's place tip with a dungeon's name.
 
 local _, ns = ...
 local W = {}
@@ -117,7 +119,73 @@ local function LocalizeObjectives(questID, objectives, ...)
 end
 W.LocalizeObjectives = LocalizeObjectives
 
+-- ── Lines with a name in them ─────────────────────────────────────────────────────────────────
+local origField, origL
+
+local function Half(text) return text:find("%a") and text:find("[\208-\210]") and true or false end
+
+-- What FDJ's own function gives in English (while held its GetLanguage gives English), or nil.
+local function InEnglish(fn, ...)
+    local was = ns.held
+    ns.held = true
+    local ok, out = pcall(fn, ...)
+    ns.held = was
+    return ok and type(out) == "string" and out or nil
+end
+
+-- Bodley's quests of one title: FDJ glues " (<item or boss>)" onto it, the item as the game says it.
+-- The title and the name both ours, else the whole line English.
+local Title = UADD.Safe("dj", function(out, questID, ...)
+    local N = ns.Names
+    if not out:find(")", -1, true) or out == N.Quest(questID) or not ns.Lang.Active() then return out end
+    local i = out:find(" (", 1, true)
+    if not (i and Half(out)) then return out end
+    local title, name = out:sub(1, i - 1), out:sub(i + 2, -2)
+    if not title:find("%a") then
+        local uk = N.Item(name) or N.Boss(name) or NameUk(name)
+        if uk and not Half(uk) then return title .. " (" .. uk .. ")" end
+    end
+    return InEnglish(origField, questID, "name", ...)
+end)
+
+local function LocalizeQuestField(questID, field, ...)
+    local out = origField(questID, field, ...)
+    if field ~= "name" or type(out) ~= "string" then return out end
+    local whole = Title(out, questID, ...)
+    return type(whole) == "string" and whole or out
+end
+
+-- "Click to swap with <dungeon>": the name is the card's text when it was picked, so it may be English
+-- (no Ukrainian) or still Ukrainian while the key is held.
+local PLACE = "REORDER_PLACE_TIP"
+
+local function CardEnglish(label)
+    local fdj = rawget(_G, "ForeverDungeonJournal_NS")
+    for _, name in ipairs(type(fdj.HomeOrder) == "function" and fdj.HomeOrder() or {}) do
+        if ns.Names.Dungeon(name) == label then return name end
+    end
+    return InEnglish(origL, "RPG_LOCKED_TIP_TITLE")     -- the one other label a card may have
+end
+
+local Place = UADD.Safe("dj", function(out, label)
+    if type(label) ~= "string" or not Half(out) then return out end
+    if ns.Lang.Active() then return InEnglish(origL, PLACE, label) end
+    if ns.held and ns.Lang.Wants() then return InEnglish(origL, PLACE, CardEnglish(label)) end
+    return out
+end)
+
+local function Text(key, ...)
+    if key ~= PLACE then return origL(key, ...) end
+    local out = origL(key, ...)
+    local whole = Place(out, ...)
+    return type(whole) == "string" and whole or out
+end
+
 function W.Install(fdj)
+    if type(fdj.LocalizeQuestField) == "function" and fdj.LocalizeQuestField ~= LocalizeQuestField then
+        origField, fdj.LocalizeQuestField = fdj.LocalizeQuestField, LocalizeQuestField
+    end
+    if type(fdj.L) == "function" and fdj.L ~= Text then origL, fdj.L = fdj.L, Text end
     if type(fdj.LocalizeFreeText) == "function" and fdj.LocalizeFreeText ~= LocalizeFreeText then
         orig, fdj.LocalizeFreeText = fdj.LocalizeFreeText, LocalizeFreeText
     end
@@ -128,6 +196,8 @@ end
 
 -- Puts FDJ's functions back where nobody wrapped ours since.
 function W.Uninstall(fdj)
+    if origField and fdj.LocalizeQuestField == LocalizeQuestField then fdj.LocalizeQuestField = origField end
+    if origL and fdj.L == Text then fdj.L = origL end
     if orig and fdj.LocalizeFreeText == LocalizeFreeText then fdj.LocalizeFreeText = orig end
     if origObjectives and fdj.LocalizeObjectives == LocalizeObjectives then fdj.LocalizeObjectives = origObjectives end
 end

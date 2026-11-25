@@ -135,9 +135,9 @@ class Checks(unittest.TestCase):
             self.assertFalse(R.keep(key, "Wobbly %s gizmo")[0], key)
             self.assertTrue(R.check(key, "Wobbly %s gizmo", "Хиткий %s гвинтик"), key)
         for key in R.OWN_UNITS:           # a u template whose units the module says: kept with its slot
-            self.assertEqual(R.SORTS.get(key), "u", key)
-            self.assertTrue(R.keep(key, "Wobbly %s gizmo")[0], key)
-            self.assertEqual(R.check(key, "Wobbly %s gizmo", "Хиткий %s гвинтик"), [], key)
+            self.assertTrue(R.SORTS.get(key, "").endswith("u"), key)
+            en, ua = ("Wobbly%s gizmo" % s for s in (" %s" * len(R.SORTS[key]),) * 2)
+            self.assertEqual((R.keep(key, en)[0], R.check(key, en, ua.replace("Wobbly", "Хиткий").replace("gizmo", "гвинтик"))), (True, []), key)
         self.assertTrue(units and R.OWN_UNITS)
 
     def test_batches_and_weekdays(self):

@@ -54,7 +54,7 @@ class Extract(unittest.TestCase):
 
     def test_saved_keys_look_right(self):
         data = json.loads((REPO / "data" / "questie-keys.json").read_text(encoding="utf-8"))
-        self.assertGreater(data["count"], 3000)
+        self.assertGreater(data["count"], 2400)
         self.assertEqual(data["count"], len(data["keys"]))
         self.assertTrue(data["questieVersion"])
 

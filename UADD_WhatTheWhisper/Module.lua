@@ -4,7 +4,8 @@
 -- Swap.lua puts ours in its English table (and in the copies it made at load), then this file asks it to
 -- redraw the way its language list does (Options.Apply of its language setting: theme, layout, every
 -- window, every text). Screen.lua does the few texts it wrote once, Days.lua the weekday names, Gaps.lua the
--- labels its enUS table lacks (the profile panel's rows, settings captions) and the History page's size line.
+-- labels its enUS table lacks (the profile panel's rows, settings captions) and the History page's size line,
+-- Lines.lua the zone alert, the export window's title and the icon picker.
 --   * Only while English is the language in force in it: when the player picks another language in its
 --     list, its English goes back first (its other languages fall back to that table), and ours comes back
 --     when English is picked again. Its saved setting is never changed by us.
@@ -93,10 +94,12 @@ local function Apply(on)
         U.SafeCall(ns.Days.Remove)
         U.SafeCall(ns.Swap.Remove)
         U.SafeCall(ns.Gaps.Remove)
+        U.SafeCall(ns.Lines.Remove)
         U.SafeCall(ns.Groups.Remove)
     end
     Redraw()
     U.SafeCall(on and ns.Screen.Apply or ns.Screen.Restore)
+    U.SafeCall(ns.Lines.Refresh)
 end
 
 -- The state it should be in now; nothing when it is in it already (unless `force`).
@@ -143,6 +146,7 @@ local function Begin()
     U.SafeCall(ns.Swap.Install)
     U.SafeCall(ns.Gaps.Install)
     U.SafeCall(ns.Groups.Install)
+    U.SafeCall(ns.Lines.Install)
     Sync(true)
     U.SafeCall(ns.Groups.Repair)
 end
@@ -153,6 +157,7 @@ local function End()
     U.SafeCall(ns.Days.Remove)
     U.SafeCall(ns.Swap.Remove)
     U.SafeCall(ns.Gaps.Remove)
+    U.SafeCall(ns.Lines.Remove)
     U.SafeCall(ns.Groups.Remove)
     Apply(false)
 end
@@ -161,7 +166,7 @@ ns.Begin, ns.End = Begin, End
 -- Texts it keeps English on purpose, for U.Missed: a line with no small letters, and STAY.
 local function Keep(_, plain)
     if type(plain) ~= "string" then return false end
-    return not plain:find("%l") or ns.Swap.Skip("L." .. U.Hash(plain))
+    return not plain:find("%l") or ns.Swap.Known("L." .. U.Hash(plain))
 end
 
 local function Ready()

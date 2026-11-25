@@ -69,6 +69,9 @@ function M.inject()
     M.wait(0.1)
 end
 
+-- For flow_ofa_tips.lua (step 13).
+M.h = { Tip1 = Tip1, Plain = Plain, Cyr = Cyr, CyrFont = CyrFont, Res = Res, Key = Key, Uadd = Uadd }
+
 function M.real(en)               -- a real text of the addon's (read by Python at run time) put on the title
     if en == nil then S.Redraw() return false, false end
     local want = ns.OFA[Key(en)]

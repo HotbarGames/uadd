@@ -3,6 +3,9 @@
 string " • <n spells>"; Forever/Layout.lua: "<title> • <continued>"; SECTION_COUNT elsewhere). The owner saw
 them English in the game (2026-11-20): the data had no Ukrainian for the glue templates.
 
+The price rows (Utils.lua priceRowLabel: faction, standing, discount, then its marks, in one colour) are
+tested the same way, with made-up names the UALL stub knows.
+
 The titles are read from the installed What's Training? (its locale keys), never written here. Each line is
 made the way the addon makes it, on a font string under its window (the stand-in, tools/harness/whatstraining).
 
@@ -17,6 +20,8 @@ from flow_whatstraining_texts import CYR
 from loader import lua_str, txt
 
 UNKNOWN = "Quix Gloom"           # made up: no text of ours
+FACTION, STANDING = ("Wobbly Tribe", "Хитке плем'я"), ("Wobbled", "Хитання")   # made up; the UALL stub knows them
+GREEN = "|cff1eff00%s|r"
 SEP = " — "                      # our glue: the Cyrillic font may have no "•" (tools/test_font_chars.py)
 STUB = """
 local G = { fs = {} }
@@ -53,6 +58,10 @@ def lines(M, en):
 
     def fill(e, *vals):
         return txt(M.fill(lua_str(hashtext.key(e)), *map(lua_str, vals)) or "") or None
+
+    def row(e, uf, us=None):
+        vals = (uf[0], us[0], 10) if us else (uf[0],)
+        return GREEN % (e % vals), GREEN % fill(e, *(str(v) for v in ((uf[1], us[1], 10) if us else (uf[1],))))
     av, miss, ign = en["AVAILABLE_HEADER"], en["MISSINGREQS_HEADER"], en["IGNORED_HEADER"]
     level = en["LEVEL_FORMAT"] % "10"
     return {
@@ -64,6 +73,11 @@ def lines(M, en):
                   f"{fill(en['LEVEL_FORMAT'], '10')}{SEP}{uk(en['NEXTLEVEL_HEADER'])}"),
         "count": (" • " + en["LEVELS_SPELLS_COUNT"] % 12,                            # Views.lua header.count
                   SEP + str(fill(en["LEVELS_SPELLS_COUNT"], "12"))),
+        "best": row("%s · %s · %d%% off · Best", FACTION, STANDING),                 # Utils.lua priceRowLabel
+        "noRep": row("%s · no reputation · Best", FACTION),
+        "odd6": (GREEN % f"{UNKNOWN} · {STANDING[0]} · 10% off · Best", None),
+        "odd7": (GREEN % f"{FACTION[0]} · {UNKNOWN} · 10% off · Best", None),
+        "odd8": (GREEN % f"{FACTION[0]} · {STANDING[0]} · 10% off · {UNKNOWN}", None),
         "odd1": (f"{UNKNOWN} • 12", None),
         "odd2": (f"{av} • {UNKNOWN}", None),
         "odd3": (f"{UNKNOWN} • {en['CONTINUED']}", None),
@@ -78,6 +92,8 @@ def run(check, facts):
         return check("glue: section headers (skipped: What's Training? not installed)", True, "")
     c, M = fw._game([fw._stand_in(), fw._addon("UADD"), fw._addon(fw.MODULE)], "enUS")
     c.lua.execute(STUB)
+    for pair in (FACTION, STANDING):
+        M.names(*map(lua_str, pair))
     G = c.H.wtGlue
     want = lines(M, en)
     for key, (e, _) in want.items():
@@ -90,7 +106,7 @@ def run(check, facts):
     now = shown()
     bad = {k: (now[k], u) for k, u in ours.items() if now[k] != u or "None" in u or not G.cyr(k)}
     check("glue 1: section headers glued to a count or a tail: all ours, the count kept, in our font",
-          not bad and len(ours) == 6, bad)
+          not bad and len(ours) == 8, bad)
     odd = {k: now[k] for k, (e, u) in want.items() if u is None and now[k] != e}
     check("glue 2: an unknown title or tail glued on: the whole line English", not odd, odd)
     M.uadd("whatstraining off")

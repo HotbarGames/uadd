@@ -35,6 +35,7 @@ FDJ_DEFAULT = ("/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface
 FDJ_LOCALE = Path(os.environ.get("FDJ_LOCALIZATION", FDJ_DEFAULT))
 
 KEY = re.compile(r"^[A-Z][A-Z0-9_]*$")
+BY_PLACE = re.compile(r"((?:[\w.\[\]]+\s*,\s*)*[\w.\[\]]+)\s*=\s*(\w+\[\d+\](?:\s*,\s*\w+\[\d+\])*)")
 # A format spec as string.format reads it, minus the space flag: "20% of" is not a spec.
 SPEC = re.compile(r"%(?:%|(?:\d+\$)?[-+#0]*\d*(?:\.\d+)?[a-zA-Z])")
 ESCAPES = ("|c", "|r", "|T", "|t", "|H", "|h", "|n")
@@ -90,7 +91,8 @@ def side_english():
     for path in sorted(FDJ_LOCALE.parent.parent.rglob("*.lua")):
         if path == FDJ_LOCALE:
             continue
-        toks = list(luatok.tokens(luatok.read(path)))
+        text = luatok.read(path)
+        toks = list(luatok.tokens(text))
         for i in range(len(toks) - 2):
             if toks[i][:2] != (luatok.NAME, "enUS") or toks[i + 1][:2] != (luatok.SYM, "=") \
                     or toks[i + 2][:2] != (luatok.SYM, "{"):
@@ -102,6 +104,23 @@ def side_english():
                 j += 1
             table, _ = read_table(toks[i + 3:j])
             out.update({k: v for k, (kind, v, _) in table.items() if kind == "str"})
+            after = next((t[2] for t in toks[j:] if t[:2] == (luatok.NAME, "enUS")), None)
+            out.update(by_place(toks[i + 3:j - 1], "\n".join(text.split("\n")[toks[j - 1][2] - 1:after])))
+    return out
+
+
+def by_place(table, after):
+    """{KEY: text} of a table with no keys, `enUS = { "a", "b" }`, whose keys the text after it gives by place:
+    `t.KEY = pair[1]`, or two at once, `t.KEY, t.KEY_TIP = pair[1], pair[2]`."""
+    if any(t[0] != luatok.STR and t[:2] != (luatok.SYM, ",") for t in table):
+        return {}
+    texts = [t[1] for t in table if t[0] == luatok.STR]
+    out = {}
+    for left, right in BY_PLACE.findall(after):
+        for name, value in zip(left.split(","), right.split(",")):
+            k, n = name.strip().rpartition(".")[2], int(re.search(r"\[(\d+)\]", value).group(1))
+            if KEY.match(k) and 0 < n <= len(texts):
+                out[k] = texts[n - 1]
     return out
 
 

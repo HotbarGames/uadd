@@ -1,10 +1,22 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.4cd9193b"] = "Предметів не знайдено."
+T["Code.3d66ab9b"] = "Сила атаки дальнього бою"
+T["Code.4fb58d54"] = "Сила атаки у звіриній формі"
+T["Code.8058fcdc"] = "Володіння зброєю (на 1 %)"
+T["Code.be1ee9f8"] = "Влучання (на 1 %)"
+T["Code.e8b27888"] = "Поспіх (на 1 %)"
+T["Code.b7e6b89e"] = "Вправність"
+T["Code.eaec46ee"] = "Проникнення чарів"
+T["Code.05acf9ec"] = "%d з %d"
+S["Code.05acf9ec"] = "vv"
+T["Code.4919da4d"] = "(загалом %s%%)"
+S["Code.4919da4d"] = "v"
 T["Code.f610e09c"] = "Аукціонний дім"
 T["Code.2c8ce38d"] = "Розпорядник битв"
 T["Code.9b41e155"] = "Цінність спорядження показує"
@@ -71,6 +83,7 @@ T["Code.b2e2c3a2"] = "Виконано"
 T["Code.ba01885e"] = "У журналі"
 T["Code.93a54126"] = "Доступне"
 T["Code.20d32949"] = "Недоступне"
+T["Code.69e1c1ca"] = "Більше недоступно"
 T["Code.7dbc23a6"] = "Сервер ще не надсилає подробиць про цей предмет."
 T["Code.58c59232"] = "%s немає у вашому журналі завдань."
 S["Code.58c59232"] = "n"
@@ -264,15 +277,3 @@ T["Code.7ae73372"] = "Витрачено: %d"
 S["Code.7ae73372"] = "v"
 T["Code.5fe0cb82"] = "Залишилось: %d"
 S["Code.5fe0cb82"] = "v"
-T["Code.00afb3c1"] = "Шаблон %d"
-S["Code.00afb3c1"] = "v"
-T["Code.44a03da7"] = "Зберегти шаблон"
-T["Code.181c6902"] = "Зберегти поточні таланти як %sШаблон %d|r для %s?\nЗбережений шаблон буде замінено."
-S["Code.181c6902"] = "vvn"
-T["Code.24a80e5b"] = "Скинути шаблон"
-T["Code.68f9c3c8"] = "Скинути %sШаблон %d|r для %s?\nУсі очки талантів цього шаблону буде видалено."
-S["Code.68f9c3c8"] = "vvn"
-T["Code.dfc3f8ac"] = "Завантажте білд за посиланням talentsforever.com або wowforevertalents.com, або з рядка білда OneForAll."
-T["Code.8bbc10e5"] = "Таланти, показані тут, як короткий текст для копіювання й обміну. Імпорт читає його знову."
-T["Code.409320c8"] = "Талант цього білда не знайдено в деревах талантів гри."
-T["Code.94525c07"] = "Білд пропускає потрібні очки або таланти (створений для іншої версії гри?)."

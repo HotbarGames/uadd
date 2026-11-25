@@ -76,6 +76,11 @@ JOINED = [
     ["%s", "27:d2eb3cf7", "%s."],
     ["%s", "28:9ad6e16a", "%s."],
     ["%s", "22:80b4f84d"],     # minimap tooltip: the layer's name, the wide gap, its host mark (lesson 7)
+    # Chat after a swap: the layer's name, then a tail that starts with the dash itself.
+    ["15:ccb422ab", "%s", "19:a377d412"],
+    ["15:ccb422ab", "%s", "44:de0d3d28"],
+    ["110:fc0998cc", "%s", "19:a377d412"],
+    ["110:fc0998cc", "%s", "44:de0d3d28"],
 ]
 
 

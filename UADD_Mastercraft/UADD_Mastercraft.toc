@@ -41,6 +41,7 @@ data/text30.lua
 data/text31.lua
 data/text32.lua
 Split.lua
+Rows.lua
 Glue.lua
 Words.lua
 Screen.lua

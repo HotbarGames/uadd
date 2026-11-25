@@ -11,6 +11,19 @@
 local _, ns = ...
 local U = UADD
 
+-- Not U.Safe: the title hook gives English back, and all three must work again after an off for errors and "on"
+-- (U.Safe stays dead then, lesson 19). An error is reported and counted the same way; each checks ns.On() or
+-- ns.WordsWanted() itself.
+local function Guard(fn)
+    return function(...)
+        local ok, err = pcall(fn, ...)
+        if ok then return end
+        err = tostring(err)
+        pcall(U.ReportError, err)
+        if type(U.Fault) == "function" then pcall(U.Fault, "tomtom", err) end
+    end
+end
+
 local Title = { busy = false, hooked = false, arrow = false, count = 0, map = nil, en = nil, uk = nil,
     ken = nil, kmap = nil, kuk = false, wen = nil, later = false, tries = 0 }
 ns.Title = Title
@@ -84,7 +97,7 @@ end
 function Title.Later()
     if Title.later or not CanWait() then return end
     Title.later, Title.tries = true, Title.tries + 1
-    C_Timer.After(3, U.Safe("tomtom", function()
+    C_Timer.After(3, Guard(function()
         Title.later, Title.wen = false, nil
         if ns.On() then Title.Redo() end
     end))
@@ -108,11 +121,11 @@ function Title.Install()
     local fs = TitleFs()
     if fs and not Title.hooked then
         Title.hooked = true
-        hooksecurefunc(fs, "SetText", U.Safe("tomtom", Title.OnText))
+        hooksecurefunc(fs, "SetText", Guard(Title.OnText))
     end
     local A = ns.Addon and ns.Addon()
     if A and not Title.arrow and type(rawget(A, "SetCrazyArrow")) == "function" then
         Title.arrow = true
-        hooksecurefunc(A, "SetCrazyArrow", U.Safe("tomtom", OnArrow))
+        hooksecurefunc(A, "SetCrazyArrow", Guard(OnArrow))
     end
 end

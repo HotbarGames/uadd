@@ -1,10 +1,12 @@
--- Made by tools/make_gq_text.py build from GearQuest Forever 1.3.3. Do not edit: change the review files
+-- Made by tools/make_gq_text.py build from GearQuest Forever 1.3.4. Do not edit: change the review files
 -- (local/gearquest/review_NN.txt) and build again. Only hashes and our Ukrainian.
 -- T: key = Ukrainian (L.<hash>: UADD.Hash of a key of its locale table; X.<hash>: UADD.Hash of a text drawn
 -- without it). S: what each slot of a template holds, in order: v value, f free (kept as it is), t our text.
 local _, ns = ...
 local T = ns.AL or {}; ns.AL = T
 local S = ns.SORT or {}; ns.SORT = S
+T["X.bc37312d"] = "Гаразд, тепер вибери будь-яке полювання зі списку.\n\nТоді розділ на |cff000000пергаменті|r покаже подробиці полювання: |cff000000ранг|r речі, де її взяти, що треба зробити спершу або що радять, |cff000000джерело|r речі (за ним теж можна фільтрувати) і, нарешті, |cff000000нагороду|r - саму чудову річ." ..
+	"\n\nІ ще: коли отримуєш одну з найкращих речей на будь-якому рівні, з'являється сповіщення, як за досягнення!"
 T["X.d5665459"] = "Унизу цього розділу є 3 кнопки.\n\n|cff000000Стежити|r додає полювання до трекера GearQuest і ставить значок на карті світу, щоб було видно, куди йти. У трекері можна також натиснути |cff000000Увімкнути посібник|r: над трекером з'явиться стрілка, що веде до мети полювання. Якщо ти на іншому континенті" ..
 	", вона спершу поведе до найближчого корабля або цепеліна.\n\n|cff000000Показати на карті|r не ставить значка, а одразу показує, де мета полювання, і вмикає |cff000000посібник|r.\n\n|cff000000Прибрати|r просто.. прибирає полювання, щоб ти його більше не бачив. Повернути його можна будь-коли на вкладці |c" ..
 	"ff000000Прибрані|r."

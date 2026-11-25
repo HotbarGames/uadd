@@ -13,6 +13,7 @@
 --        n  a game name (item, zone, NPC), or a list of them with counts: UALL Forever's Ukrainian for
 --           every name, or the whole line stays English
 --        t  our text: translated again (empty stays empty);  b  blank (an English plural ending): dropped
+--        e  a whole text of ours, looked up as it is: never a game name, never a line split in parts
 --      Any slot that holds English we have no Ukrainian for keeps the whole line English (no half lines).
 --   7. a text with a percent after it ("<word> 75%"): the text translated, the percent kept;
 --   8. parts joined with " · ", a grey "  ·  " or "  -  ": each part alone, else the whole text English;
@@ -87,7 +88,7 @@ end
 local function Counted(v, routes)
     local ua = One(v, routes)
     if ua then return ua end
-    local n, rest = v:match("^(%d+%-?%d*x? )(.*%S)$")
+    local n, rest = v:match("^(%d+%-?%d* ?x? )(.*%S)$")
     if n then
         ua = One(rest, routes)
         return ua and (n .. ua)
@@ -140,11 +141,10 @@ local function Slot(k, v, rec)
     end
     if sort == "b" then return "" end
     if sort == "n" then return Name(v) end
-    if sort == "t" then
+    if sort == "t" or sort == "e" then
         if v == "" then return v end
-        local t = Translate(v)
-        if t then return t end
-        return not HasLatin(v) and v or false
+        local t = sort == "e" and ix:Exact(v) or sort == "t" and Translate(v)
+        return t or not HasLatin(v) and v or false
     end
     if not HasLatin(v) then return v end
     return Translate(v) or false
@@ -170,8 +170,8 @@ local function Joined(s, sep, back)
     return any and table.concat(out, back) or nil
 end
 
--- Glue.lua: Code runs before a bare name, Late after it.
-local Code, Late = ns.Glue({ One = One, Name = Name, Joined = Joined, HasLatin = HasLatin,
+-- Glue.lua: Owner (a player's name, kept) runs before the templates, Code before a bare name, Late after it.
+local Code, Late, Owner = ns.Glue({ One = One, Name = Name, Joined = Joined, HasLatin = HasLatin,
     Translate = function(t) return Translate(t) end, Upper = function(t) return W.Upper(t) end })
 
 local function Raw(s)
@@ -194,6 +194,8 @@ local function Raw(s)
         local t = Translate(rest)
         if t then return icon .. t end
     end
+    local own = Owner(s)
+    if own then return own end
     local after = 0
     while true do
         local id, caps, rank = ix:Match(s, after)
@@ -203,15 +205,13 @@ local function Raw(s)
         if not rank or rank <= after then break end
         after = rank
     end
-    -- 7. a text and a percent after it ("%s %d%%", a disenchant chance: too short to ship as a template)
-    local head, pct = s:match("^(.-%S)( %d+%%)$")
+    local head, pct = s:match("^(.-%S)( %d+%%)$")   -- 7. a text and a percent (a disenchant chance)
     if head then
         local t = Translate(head)
         if t then return t .. pct end
     end
-    -- 8. parts joined with " · " (the Crafters profile line), a grey "  ·  " (Home's next steps) or "  -  "
-    -- (the cooking card): each part alone, all of them or none. The dot is matched by its bytes; our line
-    -- joins the parts with "—" instead, which the Cyrillic fonts surely draw.
+    -- 8. parts joined with " · " (the Crafters profile line), a grey "  ·  " (Home) or "  -  " (the cooking card):
+    -- all of them or none. The dot is matched by its bytes; ours is "—", which the Cyrillic fonts surely draw.
     if s:find(DOT, 1, true) then return Joined(s, DOT, " — ") end
     local dot = s:match("  |c%x%x%x%x%x%x%x%x\194\183|r  ")
     if dot then return Joined(s, dot, (dot:gsub("\194\183", "\226\128\148"))) end

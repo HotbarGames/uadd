@@ -84,4 +84,7 @@ MC_ALLOW_2111 = {
     # Plain words, no game name: the server's region and ruleset labels.
     "175:677d56f1": "321:54e7b9ba",
     "160:5b47c4bc": "287:4692649d",
+    # The crates said without their name; a vendor neither addon names said without it, places as ClassicUA has them.
+    "52:11e40698": "102:25920fbf",
+    "159:ceddb19d": "316:d160948e",
 }

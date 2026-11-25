@@ -12,6 +12,19 @@ local U = UADD
 local Lc = {}
 ns.Locale = Lc
 
+-- For a hook that gives English back, or must work again after the module was turned off for errors and "on"
+-- again: U.Safe stays dead for the session then, so not U.Safe (lesson 19). An error is reported and counted the
+-- same way (5 turn the module off); the hook checks ns.On() / ns.WordsWanted() itself.
+function Lc.Guard(fn)
+    return function(...)
+        local ok, err = pcall(fn, ...)
+        if ok then return end
+        err = tostring(err)
+        pcall(U.ReportError, err)
+        if type(U.Fault) == "function" then pcall(U.Fault, "foreverquestpins", err) end
+    end
+end
+
 local SPEC = "%%[%d%$%-%+#0]*%.?%d*[%a%%]"
 local ESC = { "|c", "|r", "|T", "|t", "|H", "|h", "|n", "\n" }
 

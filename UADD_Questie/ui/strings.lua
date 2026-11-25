@@ -1035,6 +1035,7 @@ ns.uiStrings = {
     ["Remove from Map"] = "Прибрати з карти",
     ["Found in"] = "Де знайти",
     ["No Match for Search Results: %s"] = "Нічого не знайдено за запитом: %s",
+    ["No matching options"] = "Немає відповідних параметрів",
     ["No Quests found"] = "Завдань не знайдено",
     ["NPC"] = G"game.npc",
     ["NPCs"] = G"game.npc",

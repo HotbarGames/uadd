@@ -119,7 +119,7 @@ function B.Catch()
     local fs = type(p) == "table" and p.body
     if type(fs) ~= "table" or type(fs.SetText) ~= "function" or type(fs.GetText) ~= "function" then return end
     panel, body = p, fs
-    hooksecurefunc(fs, "SetText", U.Safe(KEY, OnBody))
+    hooksecurefunc(fs, "SetText", Lc.Guard(OnBody))      -- gives English back too: not U.Safe (lesson 19)
     OnBody(fs, fs:GetText())
 end
 
@@ -133,10 +133,10 @@ function B.Hook()
     hooked = true
     local function Later()
         U.SafeCall(B.Catch)
-        if not body and C_Timer and C_Timer.After then C_Timer.After(1, U.Safe(KEY, B.Catch)) end
+        if not body and C_Timer and C_Timer.After then C_Timer.After(1, Lc.Guard(B.Catch)) end
     end
     for _, name in ipairs({ "OnQuestAccepted", "ShowPreview" }) do
-        if type(br[name]) == "function" then hooksecurefunc(br, name, U.Safe(KEY, Later)) end
+        if type(br[name]) == "function" then hooksecurefunc(br, name, Lc.Guard(Later)) end
     end
     B.Catch()
 end

@@ -90,18 +90,18 @@ def read_made(path=LOCALE):
         if not line.strip().startswith("{"):
             continue
         rec = {k: M.unquote(v) for k, v in re.findall(r'\b(key|from|to|uk) = ("(?:[^"\\]|\\.)*")', line)}
-        j = re.search(r'join = \{ "([A-Z0-9_]+)", "([A-Z0-9_]+)" \}', line)
-        if j:
-            rec["join"] = [j.group(1), j.group(2)]
+        for name, keys in re.findall(r'\b(join|lines) = \{ ([^}]*) \}', line):
+            rec[name] = re.findall(r'"([A-Z0-9_]+)"', keys)
         out.append(rec)
     return out
 
 
 def made_en(rec, enus):
     """The English Auctionator makes for a UA_MADE entry (as Words.lua makes it), or None."""
-    if "join" in rec:
-        a, b = (enus.get(k, (None,))[0] for k in rec["join"])
-        return a + " " + b if a is not None and b is not None else None
+    keys = rec.get("join") or rec.get("lines")
+    if keys:
+        ens = [enus.get(k, (None,))[0] for k in keys]
+        return None if None in ens else " ".join(ens) if "join" in rec else "\n".join(e + " %s" for e in ens)
     en = enus.get(rec.get("key"), (None,))[0]
     return en.replace(rec["from"], rec["to"]) if en is not None else None
 
@@ -182,16 +182,16 @@ class LocaleAgainstAuctionator(unittest.TestCase):
 
     def test_made_texts(self):
         made = read_made()
-        self.assertEqual(len(made), 3)
+        self.assertEqual(len(made), 10)
         files = code_files()
         self.assertTrue(files)
         for rec in made:
-            with self.subTest(made=rec.get("join") or rec.get("key")):
+            with self.subTest(made=rec.get("join") or rec.get("lines") or rec.get("key")):
                 en = made_en(rec, self.enus)
                 self.assertIsNotNone(en, "a key that enUS.lua no longer has")
-                if "join" in rec:
-                    a, b = ("AUCTIONATOR_L_" + k for k in rec["join"])
-                    self.assertTrue(any(a in t and b in t for t in files.values()), "no longer joined in the code")
+                if "key" not in rec:
+                    ns = ["AUCTIONATOR_L_" + k + (' .. " " .. ' if "lines" in rec else "") for k in rec.get("join") or rec["lines"]]
+                    self.assertTrue(any(all(n in t for n in ns) for t in files.values()), "no longer joined in the code")
                 else:
                     call = f'gsub("{rec["from"]}", "{rec["to"]}")'
                     self.assertTrue(any(call in t for t in files.values()), f"no {call} in the code")

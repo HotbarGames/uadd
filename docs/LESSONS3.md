@@ -56,9 +56,10 @@ save in a small Lua world; its mutants take the wrap out and swallow the error, 
 **Lesson 19 again, in LiteMount (2026-11-21).** Its SetText hooks (the macro count, rows, the mount list, the
 Falling page) ran under `U.Safe`. After 5 errors the module went off, and `U.Safe` stays dead for the session, so
 after "/uadd litemount on" the count was ours once and then English again. Rule: a hook that must work again after
-"on" runs under `Lc.Guard` (pcall, `U.ReportError`, `U.Fault`) and checks `ns.WordsWanted()` itself, not Safe's off
-flag. Check: `CHAOS_ONLY=UADD_LiteMount python3 tools/harness/chaos.py` (off for errors, then on). TomTom's title
-and Forever Quest Pins' breadcrumb hooks have the same shape: not fixed yet.
+"on" runs under `Lc.Guard` (pcall, `U.ReportError`, `U.Fault`), checks `ns.WordsWanted()` itself, not Safe's off
+flag. TomTom, Forever Quest Pins and Waypoint UI had it too: fixed 2026-11-25 (their flows' mutants put Safe back).
+Check: `python3 -m unittest tools.test_hook_guards` (`test_no_text_hook_under_safe`, all modules; it reads a handler
+made in the same file only); `CHAOS_ONLY=UADD_LiteMount python3 tools/harness/chaos.py` (off for errors, then on).
 
 **Lesson 19 again, in WhatTheWhisper (2026-11-22).** What went wrong: the hook on its language list (its
 `Options.Apply` and `ApplyAll`) ran under `U.Safe`. After 5 errors the module went off, and `U.Safe` stays dead for

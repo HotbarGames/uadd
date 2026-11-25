@@ -116,7 +116,9 @@ JOINED = [
     ["6:1c443945", "%s", "35:c2e4f00e"],   # camp buff answers
     ["6:1c443945", "%s", "20:d9b6a1f8"],
     ["35:89560e06", " |cFFFFFFFF•|r ", "26:fbd2ad9f"],   # completed and rested, each in its colour
-]
+] + [["+%s ", k] for k in (          # camp buff tooltip: a bonus and the label of what it adds to
+    "11:0c4f6f60", "9:fe140a4d", "10:b3f4782d", "7:0e909452", "6:d1a17020", "9:82be15c9", "8:07bcb034",
+    "7:87357718", "15:39b72622", "12:093b99ea", "11:5a56c272", "5:0cd79a86", "5:0d4d0dba", "12:2d8f64a8")]
 
 FONT_FLAGS = {"OUTLINE", "THICKOUTLINE", "MONOCHROME", "OUTLINE, MONOCHROME", "OUTLINE,MONOCHROME"}
 IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")

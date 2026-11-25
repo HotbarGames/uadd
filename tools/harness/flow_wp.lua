@@ -12,7 +12,13 @@ H.fontFiles[M.CUSTOM:lower()] = true
 -- cache: lesson 12 (each frame's last answer); busy: our own SetText runs our handler again. place: the
 -- destination line's hook; pinplace: the pinpoint name's map look-up (Words.lua); wait: a "not known yet"
 -- answer kept as if final, so the later ask never comes. quest: the tracked quest's title look-up (Words.lua).
+-- guard: its text hooks under U.Safe, dead after an off for errors; guardshow: its windows' OnShow so;
+-- guardfont: its fonts' SetFont so (lesson 19).
 local CUTS = {
+    guard = { { "local OnChanged = Guard(function", "(function", 'local OnChanged = U.Safe("waypointui", function' },
+              { "local OnFormatted = Guard(function", "(function", 'local OnFormatted = U.Safe("waypointui", function' } },
+    guardshow = { { 'f:HookScript("OnShow", Guard(', "Guard(", 'f:HookScript("OnShow", U.Safe("waypointui", ' } },
+    guardfont = { { "ns.Guard(Refit)", "Refit)", 'U.Safe("waypointui", Refit)', file = "Fonts.lua" } },
     busy = { { "    busy = true\n    local ok, err", "local ok, err", "    local ok, err" } },
     fault = { { "    if not ok then U.Fault(", "return ok or TextOf(f) == text\n", "    return ok\n" },
               { "            if TextOf(f) ~= en then pcall(", "its SetText failed first\n", "" } },
@@ -104,6 +110,14 @@ function M.Text(t) return NS().Text(t) end
 function M.Units(t) return NS().Units(t) end
 function M.Pinpoint(t) return NS().Pinpoint(t) end
 function M.throw(mode) S().throw = mode end
+function M.setf(name, t) S().texts[name]:SetFormattedText("%s", t) return S().texts[name]:GetText() end
+-- Our own hook throws (each text it looks at), as when its code is odd; back on false.
+local canDraw
+function M.trip(on)
+    local F = NS().Fonts
+    canDraw = canDraw or F.CanDraw
+    F.CanDraw = on and function() error("stand-in: our hook fails") end or canDraw
+end
 
 -- Our Ukrainian for a whole text, straight from the module's data.
 function M.want(key)

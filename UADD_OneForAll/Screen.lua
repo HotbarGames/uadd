@@ -24,8 +24,8 @@ local ROOTS = { "OneForAllFrame", "OneForAllAlertTargetButton", "OneForAllBuffRe
     "OneForAllCopyChat", "OneForAllDiscord", "OneForAllFlightTimer", "OneForAllGuildGames",
     "OneForAllGuildGamesInvite", "OneForAllGuildGamesTurn", "OneForAllLibraryInfoPopup", "OneForAllLootFeed",
     "OneForAllLowRank", "OneForAllNearbyAlert", "OneForAllPreviewFrame", "OneForAllProfilePopup",
-    "OneForAllQuestChain", "OneForAllQuestSharePopup", "OneForAllSkillUpGuide", "OneForAllTalentCode",
-    "OneForAllTrainerSpells", "OneForAllWeightEditor", "OneForAllWelcome" }
+    "OneForAllQuestChain", "OneForAllQuestSharePopup", "OneForAllRunTracker", "OneForAllSkillUpGuide",
+    "OneForAllTalentCode", "OneForAllTrainerSpells", "OneForAllWeightEditor", "OneForAllWelcome" }
 -- Frames of its prefix the walker leaves alone: map pins show game names; the scan tooltip is never shown; its
 -- "Noteworthy changes" window and that window's screenshot stay English (lesson 43: never its news).
 local SKIP_PREFIX = { "OneForAllMapPin", "OneForAllTrainerScanTip", "OneForAllWhatsNew", "OneForAllNewsShot" }

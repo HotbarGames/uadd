@@ -168,6 +168,9 @@ T["All tracked quests"] = "Усі відстежувані завдання"
 T["Current zone only"] = "Лише поточна зона"
 T["Instance quests"] = "Завдання в підземеллях"
 T["Completed quests only"] = "Лише виконані завдання"
+T["No tracked quests match this filter."] = "Жодне відстежуване завдання не відповідає фільтру."
+T["The quest tracker is unavailable in gamepad UI."] = "Трекер завдань недоступний в інтерфейсі геймпада."
+T["Bottom spacing: %dpx"] = "Відступ знизу: %d пкс"
 T["Select nearest quest"] = "Вибирати найближче завдання"
 T["Super-track the closest tracked quest and update it as you move."] = "Робити найближче відстежуване завдання пріоритетним і оновлювати вибір, поки ви рухаєтеся."
 
@@ -177,6 +180,7 @@ T["Show quest item sparkles"] = "Показувати блиск предмет�
 T["Keeps the game's quest item sparkle on. The same setting also makes quest givers sparkle. Turning it off requires a full game restart; /reload is not enough."] = "Тримає ввімкненим ігровий блиск предметів завдань. Це саме налаштування додає блиск і тим, хто видає завдання. Щоб вимкнути блиск, потрібен повний перезапуск гри; /reload не досить."
 
 -- Other
+-- Only 1.1.4 to 1.1.6 glue this one after the quest tracker page's help line: kept, so that line stays whole.
 T["Beta feature, off by default."] = "Бета-функція, типово вимкнена."
 T["Hide quest tracker in combat"] = "Ховати трекер завдань у бою"
 T["Makes the default objective tracker transparent while you are in combat and restores its opacity afterward. Keeps your manual collapse setting."] = "Робить стандартний трекер цілей прозорим у бою й повертає непрозорість після нього. Ваше ручне згортання зберігається."

@@ -16,8 +16,20 @@
   Mastercraft: більше рядків, які він складає в коді, українською (картки спеціалізацій, фішки перезарядки, рядки «Випадає з», вік аукціону, кількість у сумках і банку).
 - OpenMap: updated for v0.8.13; its new texts are in Ukrainian.
   OpenMap: оновлено під v0.8.13; його нові тексти українською.
-- Forever Quest Pins: checked with 1.1.6; its only new text is a What's New line, which stays English.
-  Forever Quest Pins: перевірено з 1.1.6; його єдиний новий текст — рядок у «Що нового», він лишається англійською.
+- Forever Quest Pins: updated for 1.1.8; its new texts are in Ukrainian.
+  Forever Quest Pins: оновлено під 1.1.8; його нові тексти українською.
+- Fixed: in TomTom, Forever Quest Pins and Waypoint UI, after several errors in our code some titles stayed as they were, even when the module was turned on again.
+  Виправлено: у TomTom, Forever Quest Pins і Waypoint UI після кількох помилок у нашому коді деякі назви не оновлювалися, навіть коли модуль вмикали знову.
+- Dungeon Journal: updated for 2.1.5; its Edit Mode, reset question and new quest texts are in Ukrainian.
+  Dungeon Journal: оновлено під 2.1.5; його режим редагування, питання про скидання та нові тексти завдань українською.
+- WhatTheWhisper: its zone alerts, export title and icon picker are in Ukrainian.
+  WhatTheWhisper: його сповіщення про зону, заголовок експорту й вибір значка українською.
+- LayerSwap: updated for 1.14.52; its new chat option and the note about a declined invite are in Ukrainian.
+  LayerSwap: оновлено під 1.14.52; нове налаштування чату і рядок про відхилене запрошення українською.
+- Attune: updated for 16001-45; the reset button for a character is in Ukrainian. Questie: updated for 12.13.0.
+  Attune: оновлено під 16001-45; кнопка скидання персонажа українською. Questie: оновлено під 12.13.0.
+- Also in Ukrainian: Auctionator's crafting price lines, camp bonuses in ForeverXP Bar, layer-change messages in LayerSwap, "Best" rows in What's Training?, and more recipe sources, tooltip rows and zone lists in Mastercraft.
+  Тепер теж українською: рядки ціни виготовлення в Auctionator, бонуси табору у ForeverXP Bar, повідомлення про зміну лейера в LayerSwap, рядки «найкраща ціна» у What's Training?, більше джерел рецептів, рядків підказок і списків зон у Mastercraft.
 - What's New, News and changelog windows stay in English in Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty and ForeverXP Bar: players read them before our update comes.
   Вікна «Що нового», новин і змін лишаються англійською у Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty і ForeverXP Bar: гравці читають їх раніше, ніж виходить наше оновлення.
 
@@ -167,23 +179,7 @@
   Новий модуль UADD_SpeedyAutoLoot: рядки в чаті, довідка /sal та рамка показу здобичі Speedy AutoLoot
   українською. Назви предметів і гроші в показі здобичі лишаються такими, як їх дає гра.
 
-## 1.2.0
+## 1.2.0 and older
 
-- New module UADD_Pawn: Pawn's window, settings page, item tooltip lines, upgrade advisors and chat lines in
-  Ukrainian. Names from the game (scale names, spec names) stay English, and a few lines with game names stay English.
-  Новий модуль UADD_Pawn: вікно, сторінка налаштувань, рядки підказок предметів, поради щодо покращень та рядки в
-  чаті Pawn українською. Назви з гри (назви шкал, спеціалізацій) лишаються англійською, як і кілька рядків з назвами з гри.
-- New module UADD_GatherMate2: GatherMate2's settings pages, chat lines, launcher tooltip and map pin menu in
-  Ukrainian. Herb, ore, fish, zone and profession names stay as the game gives them.
-  Новий модуль UADD_GatherMate2: сторінки налаштувань, рядки в чаті, підказка кнопки та меню точки на мапі
-  GatherMate2 українською. Назви трав, руд, риби, зон і професій лишаються такими, як їх дає гра.
-- New module UADD_Scrap: Scrap's settings pages, junk list, vendor button, chat lines, key bindings and tutorial
-  in Ukrainian. Item names stay as the game gives them, and chat lines with an item link stay English.
-  Новий модуль UADD_Scrap: сторінки налаштувань, список мотлоху, кнопка в торговця, рядки в чаті, клавіші та
-  підказки для новачків Scrap українською. Назви предметів лишаються такими, як їх дає гра, а рядки в чаті з
-  посиланням на предмет лишаються англійською.
-
-## 1.1.0 and older
-
-Notes for 1.0.0, 1.0.1 and 1.1.0: docs/CHANGELOG-1.0.0.md and docs/CHANGELOG-1.1.md in the GitHub repo.
-Опис 1.0.0, 1.0.1 і 1.1.0: docs/CHANGELOG-1.0.0.md і docs/CHANGELOG-1.1.md у репозиторії на GitHub.
+Notes for 1.0.0 to 1.2.0: docs/CHANGELOG-1.0.0.md and docs/CHANGELOG-1.1.md in the GitHub repo.
+Опис версій від 1.0.0 до 1.2.0: docs/CHANGELOG-1.0.0.md і docs/CHANGELOG-1.1.md у репозиторії на GitHub.

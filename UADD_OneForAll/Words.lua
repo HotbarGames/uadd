@@ -201,8 +201,9 @@ end
 
 local function Atom(s) return Whole(s) or Moneyed(s) or HeadNum(s) or NameSlot(s) or Glued(s) end
 
--- 5c. Pieces joined in code with a dot or a wide gap: Joined.lua (W.Joined), loaded after this file.
-W.Atom, W.Value = Atom, Value
+-- 5c. Pieces joined in code with a dot or a wide gap, and lines with a head or mark its code glues to names:
+-- Joined.lua (W.Joined, W.Headed), loaded after this file.
+W.Atom, W.Value, W.Dungeon = Atom, Value, Dungeon
 
 local function Line(s) return Atom(s) or (W.Joined and W.Joined(s)) end
 
@@ -258,11 +259,11 @@ function W.Translate(en)
     return uk
 end
 
--- Cheap (lesson 12): may this tooltip or chat line be ours? A whole-text hash only: no fill, no cache growth.
+-- Cheap (lesson 12): may this tooltip or chat line be ours? A whole-text hash or a known head: no fill, no cache growth.
 function W.Maybe(en)
     local s = U.Plain(en)
     if not s or s == "" or #s > MAXLEN or find(s, CYR) then return false end
-    return ns.OFA[Key(s)] ~= nil
+    return ns.OFA[Key(s)] ~= nil or (W.Headed ~= nil and W.Headed(s))
 end
 
 function W.Forget()

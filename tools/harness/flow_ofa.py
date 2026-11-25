@@ -1,4 +1,5 @@
-"""UADD_OneForAll on a stand-in for OneForAll (tools/harness/ofa: made-up English), steps in flow_ofa.lua.
+"""UADD_OneForAll on a stand-in for OneForAll (tools/harness/ofa: made-up English), steps in flow_ofa.lua
+(13 in flow_ofa_tips.lua).
 
 Steps: 1 the walk is ours, in a Cyrillic font  2 the hold key gives the English, ours on release  3 off: English
 (a redraw and a chat line too), on: ours  4 a window made later  5 a chat line with its prefix (OneForAll writes
@@ -7,7 +8,8 @@ to the chat window, not print)  6 a tooltip line from its files, the same line f
 of the installed addon (read at run time, never written down) show the module's own Ukrainian  10 OneForAll set to
 another language: the module is off and says so  11 its Gear Planner and setup end page, made up (lesson 44):
 labels set by hand at its own size, the search box's hint, a body signed "- Name"  12 texts it joins in code
-(dots, money in a paragraph, a zone and coordinates): whole Ukrainian or whole English.
+(dots, money in a paragraph, a zone and coordinates): whole Ukrainian or whole English  13 its tooltip lines with a
+head, a name or its OFA mark, a History row, the dungeon tracker: the same, English from other code and off.
 mutants(check) cuts one fix out of the module in memory (CUT_LUA, as flow_rts_mod.py) and wants its step to fail;
 they run with --prove (run.py runs the steps only).
 """
@@ -55,6 +57,14 @@ MUTANTS = {
     "hints": ("Screen.lua", "    hints = true,", "    hints = false,", 11),
     "signed": ("Words.lua", " or Signed(one) then", " then", 11),
     "joined": ("Words.lua", "return Atom(s) or (W.Joined and W.Joined(s)) end", "return Atom(s) end", 12),
+    "heads": ("Words.lua", " or (W.Headed ~= nil and W.Headed(s))", "", 13),
+    "named": ("Joined.lua", "return Named(s) or Tag(s)", "return Tag(s)", 13),
+    "tag": ("Joined.lua", " or Tag(s) or Slash(s)", " or Slash(s)", 13),
+    "slash": ("Joined.lua", " or Slash(s) or Joined(s)", " or Joined(s)", 13),
+    "clock": ("Joined.lua", " or Clock(s) or Age(s)", " or Age(s)", 13),
+    "age": ("Joined.lua", " or Age(s) or Spot(s) end", " or Spot(s) end", 13),
+    "spot": ("Joined.lua", " or Spot(s) end", " end", 13),
+    "worn": ("Joined.lua", "Atom(last) or Worn(last)", "Atom(last)", 13),
     # core UADD/Font.lua (lesson 44): a label set by hand gets the Cyrillic file by hand
     "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) then return false end', "do return false end", 11),
 }
@@ -77,13 +87,14 @@ def game(saved=None, cut=None):
     if cut:
         box.file, box.old, box.new = (lua_str(x) for x in cut[:3])
     c.lua.execute(read_text(os.path.join(HERE, "flow_ofa.lua")))
+    c.lua.execute(read_text(os.path.join(HERE, "flow_ofa_tips.lua")))
     c.start()
     c.H.pump(20)
     return c, c.H.ofa, box
 
 
 def results(M, n):
-    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R.joined if n == 12 else M.R[n]
+    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R.joined if n == 12 else M.R.tips if n == 13 else M.R[n]
     return [(txt(r[1]), r[2], txt(r[3]) if r[3] is not None else "") for r in f().values()]
 
 
@@ -126,8 +137,9 @@ def steps(check):
     real_keys(check, M)
     for name, ok, detail in results(M, 11):
         check(f"11 {name}", ok, detail)
-    for name, ok, detail in results(M, 12):
-        check(f"12 {name}", ok, detail)
+    for n in (12, 13):
+        for name, ok, detail in results(M, n):
+            check(f"{n} {name}", ok, detail)
     del c
     c, M, _ = game(OTHER)
     for name, ok, detail in results(M, 10):

@@ -4,8 +4,8 @@
 --     starts with OneForAll's coloured prefix: the prefix stays, the rest is ours when it is a whole text of ours;
 --     else the line is left as it is. Only lines with its prefix are read; a link in the rest is kept byte for byte
 --     (a link whose text has no Ukrainian keeps the whole line English). Its addon messages are never touched.
---   * Tooltips: U.TipLines on GameTooltip. A line is tried only when its whole text is a key of ours (Words.Maybe, a
---     hash: lesson 12), and only when OneForAll's files wrote it (the stack).
+--   * Tooltips: U.TipLines on GameTooltip. A line is tried only when its whole text is a key of ours or it starts with
+--     a head W.Headed knows (Words.Maybe: lesson 12), and only when OneForAll's files wrote it (the stack).
 -- It has no StaticPopupDialogs: its own confirm box is a frame of its own, walked by Screen.lua.
 -- Any error leaves the English as it was.
 

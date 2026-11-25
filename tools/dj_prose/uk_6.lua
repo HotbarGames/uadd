@@ -164,4 +164,7 @@ return {
   ["ce665b14"] = "«{npc:Qiaga the Keeper}» і «{npc:Morta'gya the Keeper}» — елітні вороги 50 рівня, а навколо них заклиначі; шлях до верхнього вівтаря повний тролів 45-50 рівня: візьміть групу або підкрадіться. Кожен у групі може забрати предмет «{item:Sacred Mallet}», і його можна використати в бою. Одного предмета «{item:Mallet of Zul'Farrak}» на групу досить, і він викликає боса «{npc:Gahz'rilla}» в усіх наступних проходженнях.",
   ["7f0c47fa"] = "Тут немає завдання, яке можна взяти. Просто вбийте й заберіть здобич.",
   ["0eea46c6"] ="Повторюване, після першого «{item:Medallion of Faith}».",
+  ["570bcc98"] = "Використайте предмет «{item:Divination Scryer}» у центрі підвалу місцевості «{zone:The Great Ossuary}» у підземеллі «{zone:Scholomance}». З’являться духи, з якими треба битися. Здолавши їх, ви викличете боса «{npc:Death Knight Darkreaver}»; здолайте його. Принесіть предмет «{item:Darkreaver's Head}» до НІП «{npc:Eldrun Stormbreaker}» у місті «{zone:Ironforge}».",
+  ["97a5e99d"] = "Поговоріть із НІП «{npc:Mor'zul Bloodbringer}» у локації «{zone:Burning Steppes}».",
+  ["f1cfa740"] = "Якщо хочете допомогти НІП «{npc:Eldrun Stormbreaker}» у місті «{zone:Ironforge}», принесіть йому предмети «{item:Azerothian Diamond}» і «{item:Pristine Black Diamond}».",
 }

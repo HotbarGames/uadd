@@ -136,6 +136,11 @@ E{ id = "game.trash", en = "Trash", uk = "Звичайні вороги", note =
 E{ id = "game.character_logs", en = "Character Logs", uk = "Записи персонажа", note = "Dungeon Journal's page of a character's runs. 2026-11-21." }
 E{ id = "game.death_walk", en = "Death Walk", uk = "Шлях привида", note = "The ghost's run back to the body after death. Dungeon Journal, 2026-11-21." }
 
+E{ id = "ui.edit_mode", en = "Edit Mode", uk = "Режим редагування", note = "Name of the mode where the player moves parts of a window. UALL Forever's word; on a narrow button: 'Редагування'. Dungeon Journal 2.1.5, 2026-11-25." }
+E{ id = "game.wing", en = "Wing", uk = "Крило", note = "One wing of a dungeon, as a column head or label. OneForAll 6.2.16, 2026-11-25." }
+E{ id = "game.solo", en = "Solo", uk = "Соло", note = "A run made alone, without a party. OneForAll 6.2.16, 2026-11-25." }
+E{ id = "ui.history", en = "History", uk = "Історія", note = "Tab or title of a list of past runs. OneForAll 6.2.16, 2026-11-25." }
+
 -- Dungeon wings with no game name of their own. Shown after the dungeon name and a colon,
 -- "<dungeon>: <wing>", so the word stands alone in the nominative and agrees with nothing.
 E{ id = "wing.living", en = "Living", uk = "Живі", note = "Stratholme wing of the living (Scarlet side): 'Стратгольм: Живі'." }

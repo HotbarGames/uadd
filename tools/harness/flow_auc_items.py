@@ -10,6 +10,7 @@ Forever's Auctionator sets them (its colour; the item level inside the colour):
   * UALL "not now": English for now, Ukrainian once it answers;
   * Shift: exact English, Ukrainian again when it is let go; "/uadd auctionator off" (off): English.
 """
+import flow_auc_craft
 from loader import txt
 
 HELD = 0.4
@@ -71,6 +72,7 @@ def run(check, c, M, uall):
     eq("Shift up: sale item Ukrainian", sale(), PURPLE + uall[GIRDLE] + " (35)|r")
     M.buyItem(GREEN + HIDE + "|r")
     M.saleItem(HIDE, GREEN, None)
+    flow_auc_craft.run(check, c, M)                       # the crafting window's price text
 
 
 def off(check, M):

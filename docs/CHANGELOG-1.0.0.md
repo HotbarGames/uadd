@@ -1,6 +1,6 @@
 # Changelog: 1.0.0
 
-The first release. 1.0.1 and 1.1.0 are in docs/CHANGELOG-1.1.md; newer releases are in UADD/CHANGELOG.md.
+The first release. 1.0.1 to 1.2.0 are in docs/CHANGELOG-1.1.md; newer releases are in UADD/CHANGELOG.md.
 
 ## 1.0.0
 

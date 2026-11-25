@@ -12,6 +12,8 @@ the player typed stays as typed. Made-up maps and zone answers (flow_tomtom_plac
   * place 4 wait: a "not known yet" answer leaves English and is asked again; ours about 3 s later.
   * place 5 title font: the title keeps a font with Cyrillic letters (lesson 18).
   * place 6 pin tooltip: TomTom's pin tooltip title, the arrow waypoint's map name, is ours; another stays.
+  * place 7 five errors turn the module off (English title); on again: ours on every set, English held and off
+    (lesson 19: the hook is not under U.Safe).
 
 `python3 tools/harness/flow_tomtom_place.py --prove`: each mutant (flow_tomtom_place.lua CUTS) takes one fix out of
 UADD_TomTom/Module.lua and wants its step to fail.
@@ -32,7 +34,7 @@ ZONES = {"Zorpwood Vale": "Зорпова долина", "Blatter Reach": "Бл�
 NOTE = "My camp spot"
 ELSEWHERE = 9999
 MUTANTS = [("hook", "tt: place 2"), ("map", "tt: place 1"), ("cache", "tt: place 2"), ("wait", "tt: place 4"),
-           ("back", "tt: place 3"), ("tip", "tt: place 6")]
+           ("back", "tt: place 3"), ("tip", "tt: place 6"), ("guard", "tt: place 7")]
 
 _cut = [None]
 
@@ -118,6 +120,26 @@ def _run(check, p):
     check("place 6 pin tooltip: the arrow waypoint's map name is ours, another stays",
           tips == {"vale": ZONES["Zorpwood Vale"], "other": "Glorp Hollow"}, repr(tips))
     flow_tomtom._errors(c, check, "place")
+    # 7
+    arrow(7001, "Zorpwood Vale")
+    seen = [title()]
+    M.wait(4)
+    T.throw(True)
+    for i in range(5):
+        T.again(lua_str(f"Fizzle Marsh {i}"), 1)
+    M.wait(0.3)
+    T.throw(False)
+    T.again(lua_str("Zorpwood Vale"), 1)
+    seen.append(title())
+    said = "вимкнено до кінця сесії" in "\n".join(c.chat()[-8:])
+    M.uadd("tomtom on"); M.wait(0.2); seen.append(title())
+    T.again(lua_str(NOTE), 1); seen.append(title())
+    T.again(lua_str("Zorpwood Vale"), 3); seen.append(title())
+    M.key(True); seen.append(title())
+    M.key(False); seen.append(title())
+    M.uadd("tomtom off"); seen.append(title())
+    check("place 7 five errors turn it off; on again: the title hook works, English held and off",
+          said and seen == [uk, en, uk, NOTE, uk, en, uk, en], f"said {said}: " + " / ".join(seen))
     return T
 
 

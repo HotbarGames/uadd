@@ -1,5 +1,5 @@
 -- UADD - Mastercraft: shapes Mastercraft glues together in code (no key of their own). Words.lua hands in its
--- helpers (ns.Glue(H)) and gets back Code and Late. Each part is ours or a game name (UALL Forever,
+-- helpers (ns.Glue(H)) and gets back Code, Late and Owner. Each part is ours or a game name (UALL Forever,
 -- ClassicUA first); a part with no Ukrainian leaves the whole line English (no half lines).
 -- H: One, Name, Joined, HasLatin, Translate(s), Upper(s).
 
@@ -8,6 +8,7 @@ local _, ns = ...
 function ns.Glue(H)
     local One, Name, Joined, HasLatin, Translate = H.One, H.Name, H.Joined, H.HasLatin, H.Translate
     local SPEC = { Armorsmith = true, Weaponsmith = true }   -- the two specialization cards: spell names
+    local CAPS = { ["MERCHANT'S FAVOR"] = ns.Rows.FAVOR }   -- a heading in its code (the apostrophe)
     local KEYC = "|cff3dc773"                                -- the colour our "N of M recipes" key is bound to
 
     -- the first letter of a Cyrillic word in small letters ("Рівень" -> "рівень")
@@ -25,6 +26,8 @@ function ns.Glue(H)
             p, from = a, a
         end
     end
+
+    local Row, Owner = ns.Rows.New({ One = One, Name = Name, HasLatin = HasLatin, Translate = Translate, Lower1 = Lower1 })
 
     -- a number in another colour than the key's ("|cff......58|r of 104 ..."): the key's colour, then the line's back
     local function Lead(s)
@@ -94,7 +97,7 @@ function ns.Glue(H)
 
     local function Code(s)
         if SPEC[s] then return One(s, { "Spell" }) end
-        return Lead(s) or Ago(s) or About(s) or Level(s) or Suffix(s) or Counts(s)
+        return Lead(s) or Ago(s) or About(s) or Level(s) or Suffix(s) or Counts(s) or Row(s)
     end
 
     -- "<X> to <Y>, <X> to <Y>": the transmutes' names, each as the spell "Transmute: <X> to <Y>"
@@ -109,13 +112,8 @@ function ns.Glue(H)
         return #out > 0 and table.concat(out, ", ") or nil
     end
 
-    -- one part of a chip or row joined with two spaces
+    -- one part of a chip or row joined with two spaces ("Drop: <npc>" is a row of Rows.lua)
     local function Part(p)
-        local npc = p:match("^Drop: (.+)$")
-        if npc then                       -- no key: our "Drops from:" word, then the npc
-            local lab, n = Translate("Drops from:"), One(npc, { "Npc" })
-            return lab and n and (lab .. " " .. n)
-        end
         if not HasLatin(p) then return p end
         return Translate(p) or (#p < 200 and Transmutes(p)) or nil
     end
@@ -134,6 +132,7 @@ function ns.Glue(H)
 
     -- a heading Mastercraft writes in capitals ("NOW"): the word in small letters, then Ukrainian capitals
     local function Caps(s)
+        if CAPS[s] then return H.Upper(CAPS[s]) end
         if #s > 40 or not s:find("^%u%u[%u ]*$") then return nil end
         local t = Translate(s:sub(1, 1) .. s:sub(2):lower())
         return t and H.Upper(t)
@@ -143,5 +142,5 @@ function ns.Glue(H)
         return Caps(s) or Chip(s)
     end
 
-    return Code, Late
+    return Code, Late, Owner
 end

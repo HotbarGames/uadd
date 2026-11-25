@@ -14,6 +14,8 @@ local state = setmetatable({}, { __mode = "k" })    -- frame -> { en, uk, look }
 local busy = false
 local MAX_DEPTH, MAX_FRAMES = 14, 6000
 
+local Guard = ns.Guard                              -- Fonts.lua (lesson 19)
+
 local function TextOf(f)
     local fs = f.__Text
     local ok, t = pcall(fs.GetText, fs)
@@ -37,7 +39,7 @@ local tries, later = 0, false
 local function Later()
     if later or tries >= 10 or not (C_Timer and C_Timer.After) then return end
     later, tries = true, tries + 1
-    C_Timer.After(3, U.Safe("waypointui", function()
+    C_Timer.After(3, Guard(function()
         later = false
         if ns.On() then S.Apply() end
     end))
@@ -68,8 +70,8 @@ local function Changed(f, text)
         U.Missed("waypointui", text, f.__Text)
     end
 end
-local OnChanged = U.Safe("waypointui", function(f, text) Changed(f, text) end)
-local OnFormatted = U.Safe("waypointui", function(f) Changed(f, nil) end)
+local OnChanged = Guard(function(f, text) Changed(f, text) end)
+local OnFormatted = Guard(function(f) Changed(f, nil) end)
 
 local function IsText(f)
     return type(f) == "table" and type(f.__Text) == "table" and type(f.HookEvent) == "function"
@@ -131,7 +133,7 @@ end
 local ticker
 local function SettingsShown()
     if not ticker and C_Timer and C_Timer.NewTicker then
-        ticker = C_Timer.NewTicker(1, U.Safe("waypointui", function()
+        ticker = C_Timer.NewTicker(1, Guard(function()
             local f = _G.WUISettingFrame
             if not (f and f:IsShown()) or not ns.On() then
                 if ticker then ticker:Cancel() ticker = nil end
@@ -140,7 +142,7 @@ local function SettingsShown()
             Walk(f, TextOrUnits)
         end))
     end
-    if C_Timer and C_Timer.After then C_Timer.After(0, U.Safe("waypointui", S.Scan)) end
+    if C_Timer and C_Timer.After then C_Timer.After(0, Guard(S.Scan)) end
 end
 
 function S.Watch()
@@ -148,7 +150,7 @@ function S.Watch()
         local f = _G[name]
         if type(f) == "table" and f.HookScript and not S.roots[name] then
             S.roots[name] = true
-            f:HookScript("OnShow", U.Safe("waypointui", name == "WUISettingFrame" and SettingsShown or S.Scan))
+            f:HookScript("OnShow", Guard(name == "WUISettingFrame" and SettingsShown or S.Scan))
         end
     end
     S.Scan()

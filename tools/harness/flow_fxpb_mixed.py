@@ -15,6 +15,7 @@ from loader import lua_str, txt
 
 CYR = re.compile("[Ѐ-ӿ]")
 LATIN = re.compile("[A-Za-z]")
+BONUS = ("+8% All stats", "+3% Well Rested", "+21 Stamina")   # camp buff tooltip: a bonus and its label
 KEPT = (("Level 12", "12"), ("Active: Bob", "Bob"))     # a value; a name in a free slot
 
 
@@ -30,6 +31,12 @@ def checks(check, eq, M, S):
         ok = bool(got) and bool(CYR.search(got)) and keep in got and \
             not any(w in got for w in en.replace(keep, "").split())
         check(f"... but {en!r} is translated", ok, got)
+    for en in BONUS:
+        got = txt(M.uk(lua_str(en))) or ""
+        check(f"bonus {en!r}: Ukrainian, the value kept",
+              bool(CYR.search(got)) and not LATIN.search(got) and got.startswith(en.split()[0]), got)
+    odd = [M.uk(lua_str(en)) for en in ("+8% Wobbly gizmo", "+Wobbly gizmo All stats")]
+    check("bonus: an unknown label or value: the whole line English", odd == [None, None], odd)
     M.hoverRep(False)
     for i in (1, 2):
         got = txt(M.tipLine(i)) or ""

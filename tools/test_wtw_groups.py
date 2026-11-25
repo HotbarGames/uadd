@@ -117,6 +117,11 @@ class Installed(unittest.TestCase):
         listed = set(re.findall(r'\["(L\.[0-9a-f]{8})"\] = true', src.split("local BINDINGS")[0]))
         self.assertEqual(listed, {"L." + H.djb2(en) for en in S.stay_texts(T.ADDON)})
 
+    def test_names_list_is_the_same_in_the_module(self):
+        lua = T.read_text(T.SWAP)
+        block = re.search(r"^local NAMES = \{(.*?)\}", lua, re.S | re.M).group(1)
+        self.assertEqual(set(re.findall(r'\["(L\.[0-9a-f]+)"\]', block)), set(R.NAMES))
+
     def test_groups_in_toc(self):
         toc = (T.MOD / "UADD_WhatTheWhisper.toc").read_text(encoding="utf-8").split()
         self.assertLess(toc.index("Groups.lua"), toc.index("Module.lua"))

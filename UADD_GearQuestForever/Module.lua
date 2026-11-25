@@ -1,7 +1,8 @@
 -- UADD - GearQuest Forever: start-up, on and off, the hold key, the status line and "/uadd gq ...".
 --
 -- Locale.lua plugs our Ukrainian into GearQuest's locale table and its language list, Fonts.lua gives a Cyrillic
--- face where it pins its own, Screen.lua switches the texts already drawn.
+-- face where it pins its own, Screen.lua switches the texts already drawn, Menu.lua its right-click menu, copy box
+-- and notices.
 --   * Ukrainian is in force while the module is on and its language list says Українська or nothing (auto).
 --     English picked there (or its English interface switch) keeps its English; another language is GearQuest's.
 --     Its saved setting is never changed by us.
@@ -65,6 +66,7 @@ local function Apply(on)
     U.SafeCall(ns.Loc.Set, on)
     U.SafeCall(ns.Screen.Sync, on)
     U.SafeCall(ns.Glued.Sync, on)
+    U.SafeCall(ns.Menu.Sync, on)
 end
 
 -- The state it should be in now; nothing when it is in it already (unless `force`).
@@ -80,6 +82,7 @@ local function Begin()
     if not U.SafeCall(ns.Loc.Install) or not ns.Loc.Installed() then return end
     U.SafeCall(ns.Fonts.Install)
     U.SafeCall(ns.Glued.Install)
+    U.SafeCall(ns.Menu.Install)
     Sync(true)
 end
 

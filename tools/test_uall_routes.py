@@ -48,6 +48,8 @@ SHOWS = {
     "UADD_ForeverQuestPins": {"Quest", "Zone"},        # breadcrumb dialog and abandoned line (Breadcrumb.lua)
     "UADD_WaypointUI": {"Zone", "Quest"},              # a pin named after its map or its quest (Words.lua)
     "UADD_LootTriage": {"Item", "Quest"},              # item and quest links, quest titles (Slots.lua, Words.lua)
+    "UADD_WhatTheWhisper": {"Zone"},                  # zone alert (Lines.lua)
+    "UADD_OneForAll": {"Npc", "Zone"},                 # n slots of tooltip lines (Joined.lua, Words.lua)
     "UADD_DeleteCheapestItem": {"Item"},               # item names and links in its chat lines (CodeText, Words.lua)
 }
 # Still broken the same way (other work): file -> why. Remove the entry once the file is fixed.

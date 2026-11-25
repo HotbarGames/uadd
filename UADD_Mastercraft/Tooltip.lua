@@ -77,6 +77,7 @@ local function Maybe(s, d)
     end
     local text = s:match("^(.-%S) |c%x%x%x%x%x%x%x%x%d+|r$")
     if text and Maybe(text, d + 1) then return true end
+    if ns.Rows.Could(s) then return true end
     local words = P.Quoted(s)
     return words ~= nil and Maybe(words, d + 1)
 end

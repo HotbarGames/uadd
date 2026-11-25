@@ -10,6 +10,7 @@ every text at run time from a feed built here from the installed addon (tools/gq
     4 Orders rows: an item ClassicUA has not settled shows English, then ours on the retry. 5 our font on every
     Cyrillic text and on no other (and no box on screen): on, held, off, on. 6 hold key, off, on (x3): English
     exactly, ours exactly. 7 a window made late: ours, English held and off. 8 /uadd gq says on.
+    9-11 (flow_gq_menu.py) its right-click menu, copy box and notices.
   * Language games: its saved choice ukUA with the Languages addon absent, there and on, there but off.
   * Game C (off at login), then on: ours, the typed name in an Orders header kept. Game B: no GearQuest (no errors).
   * News (lesson 43): no text only its news files show is in our data.
@@ -20,6 +21,7 @@ import os
 import re
 import sys
 
+import flow_gq_menu
 import halves_mods
 import session
 from flow_pawn_game import errors
@@ -85,9 +87,11 @@ def feed(langs=None):
     en, pages = english()
     e = {r: en[k] for r, k in ROLES.items()}
     p = [en[k] for k in PLAIN]
+    mn = flow_gq_menu.feed(en)
     roles = ",".join("%s=%s" % (r, _q(v)) for r, v in e.items())
-    return ("GearQuestStandInFeed = { win = %s, opts = %s, tabs = %s, late = %s, pages = %s, %s%s }"
-            % (_list(p[:5]), _list(p[5:9]), _list(p[9:13]), _list(p[13:17]), _list(pages), roles,
+    return ("GearQuestStandInFeed = { win = %s, opts = %s, tabs = %s, late = %s, pages = %s, menu = %s, copy = %s, %s%s }"
+            % (_list(p[:5]), _list(p[5:9]), _list(p[9:13]), _list(p[13:17]), _list(pages), _list(mn["menu"]),
+               _q(mn["copy"]), roles,
                ", langs = %s" % _q(langs) if langs else ""))
 
 
@@ -101,7 +105,8 @@ def game(target=True, module=True, cut=None, cuts=None, off=False, saved=None, l
     addons += [Addon(n, os.path.join(session.REPO, n), session.FLAVOR) for n in ("UADD",) + ((MODULE,) if module else ())]
     sv = dict(OFF if off else {}, **({TARGET: saved} if saved else {}))
     c = Client(addons, sv or None, "enUS")
-    c.lua.execute(read_text(os.path.join(HERE, "flow_gq.lua")))
+    for f in ("flow_gq.lua", "flow_gq_menu.lua"):
+        c.lua.execute(read_text(os.path.join(HERE, f)))
     M = c.H.gq
     if target:
         M.feed(lua_str(locale_src()))
@@ -199,6 +204,7 @@ CUTS = {
     "guide": ("Glued.lua", '    hooksecurefunc(fs, "SetText", Guard(OnBody))', "", "guide"),
     "chat": ("Glued.lua", "    WrapChat(g)", "", "chat"),
     "rows": ("Rows.lua", '    hooksecurefunc(orders, "Paint", G.Guard(AfterPaint))', "", "rows"),
+    **flow_gq_menu.CUTS,
 }
 
 

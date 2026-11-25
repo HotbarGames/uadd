@@ -1,5 +1,6 @@
 """flow_mastercraft.py --prove: one fix cut out of core UADD/Font.lua in memory; Mastercraft's "item tooltip
-filled again" step must fail then (docs/LESSONS4.md, lesson 18 again)."""
+filled again" step must fail then (docs/LESSONS4.md, lesson 18 again). Then each of flow_mc_missed.py's cuts in the
+module's own files: its step must fail."""
 import gc
 import os
 
@@ -11,7 +12,7 @@ local H, cut = HARNESS, { wasCut = false }
 H.mccut = cut
 local runFile = H.runFile
 function H.runFile(addon, path, code)
-    if addon == "UADD" and cut.file and path:sub(-#cut.file) == cut.file then
+    if addon == (cut.addon or "UADD") and cut.file and path:sub(-#cut.file) == cut.file then
         local a, b = code:find(cut.old, 1, true)
         if a then code, cut.wasCut = code:sub(1, a - 1) .. cut.new .. code:sub(b + 1), true end
     end
@@ -68,3 +69,5 @@ def mutants(F, check, p):
         seen = hits if name == "fontback" else boxes
         check(f"mutant {name}: {f} fix cut, 'item tooltip filled again' fails", not base and not base_hits and was
               and seen, f"base={base!r} {base_hits} hits; cut={was}; boxes={boxes!r}; hits on screen={hits}")
+    import flow_mc_missed
+    flow_mc_missed.mutants(check, F, F.rows())

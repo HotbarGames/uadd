@@ -9,6 +9,7 @@ the joined item's row. Ends on the Razorfen Kraul boss list. The Lua helpers are
 import os
 import re
 
+import flow_dj_home
 import halves_mods
 from flow_dj_screen import triple
 from loader import lua_str, read_text, txt
@@ -73,5 +74,6 @@ def run(s, check, facts):
     check("summon: /uadd dj on gives the Ukrainian again", shown() == uk, shown())
 
     halves_mods.dj(check, s)               # made-up English in each slot: never a half-translated line
+    flow_dj_home.run(s, check, facts)      # Edit Mode on the home page, glued quest titles
     s.open_dungeon("rfk")                  # back where the module flow goes on
     s.set_tab("bosses")

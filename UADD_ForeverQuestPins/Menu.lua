@@ -5,14 +5,12 @@
 -- they are drawn English. The list is one of Screen.lua's ROOTS: on, off and the hold key switch its labels both
 -- ways. Here, each click that shows the list walks it again, after Forever Quest Pins built and refreshed it, and
 -- the button's tooltip goes through Screen.lua's tooltip hook (English back also once the module is off).
--- Any error in the click counts (U.Safe): 5 turn the module off, English as it was.
+-- Any error in the click counts (Lc.Guard): 5 turn the module off, English as it was.
 local _, ns = ...
-local U = UADD
 local Lc = ns.Locale
 local M = {}
 ns.Menu = M
 
-local KEY = "foreverquestpins"
 local BUTTON = "ForeverQuestPinsMapFilterButton"
 local LIST = "ForeverQuestPinsMapFilterList"
 local done, watching = false, false
@@ -30,7 +28,7 @@ local function Hook()
     local b = rawget(_G, BUTTON)
     if type(b) ~= "table" or type(b.HookScript) ~= "function" then return end
     done = true
-    b:HookScript("OnClick", U.Safe(KEY, OnClick))
+    b:HookScript("OnClick", Lc.Guard(OnClick))
     ns.Screen.TipOn(b)
 end
 
@@ -40,5 +38,5 @@ function M.Install()
     local fqp = Lc.Target()
     if not fqp or type(fqp.EnsureWorldMapFilterButton) ~= "function" then return end
     watching = true
-    hooksecurefunc(fqp, "EnsureWorldMapFilterButton", U.Safe(KEY, Hook))
+    hooksecurefunc(fqp, "EnsureWorldMapFilterButton", Lc.Guard(Hook))
 end

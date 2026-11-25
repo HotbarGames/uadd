@@ -15,7 +15,7 @@ local Lc = ns.Locale
 local S = {}
 ns.Screen = S
 
-local KEY = "foreverquestpins"
+local Guard = Lc.Guard                           -- not U.Safe: works again after an off for errors (lesson 19)
 local NAME = "Forever Quest Pins"                -- its settings category and its canvas' .name
 local ROOTS = { "ForeverQuestPinsSetup", "ForeverQuestPinsBreadcrumb", "ForeverQuestPinsMapFilterList" }
 local DEPTH = 5
@@ -37,7 +37,7 @@ local function One(t, want)
 end
 
 -- A text in the words wanted, or nil. A label with a glued bit: the head is swapped and the bit kept. Two of its
--- sentences joined by a space (since 1.1.4 the quest tracker page's help line): each is swapped, only when both
+-- sentences joined by a space (1.1.4 to 1.1.6: the quest tracker page's help line): each is swapped, only when both
 -- are ours or their English, never one alone. So off and the hold key bring these back too (lesson 6).
 local function Turn(t, want)
     local new = One(t, want)
@@ -106,9 +106,9 @@ local function OnTip(self)
 end
 
 -- The checkboxes' OnEnter closures hold the words they were built with, so the hook must also run once the
--- module is off, even after U.Safe turned it off for errors (lesson 19): then it only puts the English back,
--- and an error there is swallowed, never counted or shown.
-local SafeTip = U.Safe(KEY, OnTip)
+-- module is off, for errors too (lesson 19): then it only puts the English back, and an error there is
+-- swallowed, never counted or shown.
+local SafeTip = Guard(OnTip)
 local function TipHook(self)
     local ok, want = pcall(ns.WordsWanted)
     if ok and want then return SafeTip(self) end
@@ -169,6 +169,7 @@ local function Run(want)
         if type(f) == "table" then Walk(f, DEPTH, want, false) end
     end
     U.SafeCall(ns.Breadcrumb.Switch, want)
+    U.SafeCall(ns.Tracker.Switch, want)
     -- The breadcrumb dialog sizes itself to its texts: let it lay out again.
     local p = ns.Breadcrumb.Panel() or rawget(_G, "ForeverQuestPinsBreadcrumb")
     if type(p) == "table" and p.IsShown and p:IsShown() and p.GetScript then
@@ -187,7 +188,7 @@ function S.Count() return seen, ours end
 local function Hook(f)
     if type(f) ~= "table" or shown[f] or type(f.HookScript) ~= "function" then return end
     shown[f] = true
-    f:HookScript("OnShow", U.Safe(KEY, S.Apply))
+    f:HookScript("OnShow", Guard(S.Apply))
 end
 
 local function Frame(cat)
@@ -281,7 +282,7 @@ function S.HookPanel()
         if not waiting then
             waiting = CreateFrame("Frame")
             waiting:RegisterEvent("PLAYER_REGEN_ENABLED")
-            waiting:SetScript("OnEvent", U.Safe(KEY, function(self)
+            waiting:SetScript("OnEvent", Guard(function(self)
                 self:UnregisterAllEvents()
                 S.HookPanel()
             end))
@@ -289,9 +290,9 @@ function S.HookPanel()
         return
     end
     hooked = true
-    P:HookScript("OnShow", U.Safe(KEY, S.Apply))
+    P:HookScript("OnShow", Guard(S.Apply))
     if type(P.SelectCategory) == "function" then
-        hooksecurefunc(P, "SelectCategory", U.Safe(KEY, function(_, cat)
+        hooksecurefunc(P, "SelectCategory", Guard(function(_, cat)
             if FromCategory(cat) then S.Apply() end
         end))
     end

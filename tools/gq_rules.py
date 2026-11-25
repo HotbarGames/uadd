@@ -87,19 +87,20 @@ NAMES = {
 # Notes shown in the review file, by key.
 NOTES = {}
 
-# Texts drawn through L[var] (dynamic keys): (file, first line, last line) ranges whose string literals are keys
-# of its locale table. Each range is checked by hand at stage 4 (only labels, never ids).
+# Texts drawn through L[var] (dynamic keys): (file, pattern of the first line, pattern of the last line) ranges whose
+# string literals are keys of its locale table; no last pattern: that one line. Each line that matches the first
+# pattern starts a range. Found by its code, not by line number: a line number moves at each update, and the words
+# of a moved range looked gone (1.3.4). Only labels, never ids; tools/test_gq_text.py wants each range found.
 DYNAMIC = [
-    ("CustomSpec.lua", 21, 54),
-    ("_generated/ScoringWeights.generated.lua", 1085, 1118),
-    ("Compare.lua", 936, 955),
-    ("Log.lua", 107, 107),
-    ("Log.lua", 14642, 14642),
-    ("Log.lua", 20178, 20178),
-    ("Log.lua", 20482, 20482),
-    ("PortraitGuide.lua", 10, 10),
-    ("Tracker.lua", 13, 13),
-    ("MobDrop.lua", 1041, 1041),
+    ("CustomSpec.lua", r"^local FIELDS = \{", r"^\}"),
+    ("_generated/ScoringWeights.generated.lua", r"^GQ\.ScoringWeightLabels = \{", r"^\}"),
+    ("Compare.lua", r"^    if \(dpsWeight or 0\) > 0 then", r"^    return rows"),
+    ("Log.lua", r"^local LIST_NEW_LABEL = ", None),
+    ("Log.lua", r"^    local donationText = ", None),
+    ("Log.lua", r'^    local order = \{ "[A-Z][a-z]+", "[A-Z][a-z]+", "[A-Z]', None),
+    ("PortraitGuide.lua", r"^local GUIDE_NAME = ", None),
+    ("Tracker.lua", r"^local TITLE_TEXT = ", None),
+    ("MobDrop.lua", r"^    header = header or ", None),
 ]
 
 # Its own folders and files that are data or stay English (lore, generated names, What's New, debug).

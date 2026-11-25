@@ -35,6 +35,38 @@ MenuUtil.CreateContextMenu = function(_, gen)
     return root
 end
 
+-- The quest tracker page's help line as Forever Quest Pins 1.1.4 to 1.1.6 drew it (its two sentences joined by a
+-- space; 1.1.8 draws only the first): drawn once on that page, so the walk still meets a joined text (lesson 15).
+local open, joined = M.openCanvas, nil
+function M.openCanvas()
+    open()
+    local L = ForeverQuestPins.L
+    for _, c in ipairs(M.subs) do
+        if not joined and c.frame and c.frame.name == "Quest tracker" then
+            joined = c.frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+            joined:SetText(L["Group tracked quests by zone and add sort and filter options to Blizzard's tracker."]
+                .. " " .. L["Beta feature, off by default."])
+        end
+    end
+    open()
+end
+function M.joinedText() return joined and joined:GetText() or nil end
+
+-- Its quest tracker's "no quest matches the filter" line (1.1.8, AddFilterEmptyBlock): a stand-in of its module
+-- frame with that block, drawn from L as the addon draws it. M.filterLine(text): another text on it.
+local tracker
+function M.filterLine(text)
+    if not tracker then
+        local f = CreateFrame("Frame", "FQPQuestObjectiveTracker", UIParent)
+        local block = CreateFrame("Frame", nil, f)
+        block.HeaderText = block:CreateFontString(nil, "ARTWORK", "GameTooltipText")
+        f.usedBlocks = { ObjectiveTrackerBlockTemplate = { ["fqp-filter-empty"] = block } }
+        tracker = block
+    end
+    tracker.HeaderText:SetText(text or ForeverQuestPins.L["No tracked quests match this filter."])
+end
+function M.filterText() return tracker and tracker.HeaderText:GetText() or nil end
+
 -- How many pages are under the main one, and how many of them are built.
 function M.pages()
     local built = 0
@@ -106,6 +138,15 @@ function M.menu()
     end
     if list then list:Hide() end
     return table.concat(out, " | "), #out, n
+end
+-- The list's labels drawn English again, as when Forever Quest Pins builds it.
+function M.listEnglish()
+    local Lc, list = H.ns["UADD_ForeverQuestPins"].Locale, rawget(_G, "ForeverQuestPinsMapFilterList")
+    for _, row in ipairs(list and UADD.Children(list) or {}) do
+        local fs = rawget(row, "label")
+        local en = fs and Lc.En(fs:GetText())
+        if en then fs:SetText(en) end
+    end
 end
 -- Our walk after a click throws (only our hook calls it there; its own OnClick runs as before).
 local apply

@@ -35,8 +35,8 @@ SORTS = {
     "L.c455616e": "v",    # the export file's path
     "L.cc8e48a1": "v",    # a chat player link
     "L.6fe136bf": "f", "L.5b49ebd2": "f",    # the context menu's "Whisper/Block <short name>"
-    "L.abf52159": "f",    # the icon picker's hint: the conversation's display name (a player)
-    "L.26a34d4a": "n",    # the zone alert: a name, then the zone's game name (no route for it here: stays English)
+    "L.abf52159": "f",    # the icon picker's hint: a group thread's display name (a nickname, or its thread id)
+    "L.26a34d4a": "fu",   # the zone alert: a name, then the zone's English name (Lines.lua asks the Zone route)
     "L.17d2f1f2": "u",    # Format.Bytes: a size in its own English units (lesson 15): the line stays English
 }
 
@@ -45,6 +45,7 @@ SORTS = {
 OWN_UNITS = {
     "L.17d2f1f2": "the History page's size line: Gaps.lua says its B, KB and MB in Ukrainian; any other unit "
                   "keeps the whole line English",
+    "L.26a34d4a": "the zone alert: Lines.lua asks UADD.UALL.Zone where it is printed; no name: whole English",
 }
 
 # Drawn in a game font (the stub page in the game's AddOns settings), not in its own Inter/Manrope (which have

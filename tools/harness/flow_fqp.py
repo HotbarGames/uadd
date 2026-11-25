@@ -10,6 +10,7 @@ under the main one, its tracker). Steps: flow_fqp_steps.py.
     then 5 errors turn it off and the English comes back, tooltips too (lesson 19). 6 its pages' names in the
     settings tree, its tracker's sort and filter names and its tracker menu: ours, English held and off. 6 no
     half-translated line (halves_mods.fqp).
+    6 its tracker's filter-empty line, 7 its hooks after the off for errors and on (flow_fqp_errors.py).
   * Game B: two spoiled words (a % spec, an escape the English lacks) are not used.
   * Mutants (one fix cut from one module file, in memory only): each named step must fail, so it has teeth.
 """
@@ -18,6 +19,7 @@ import gc
 import os
 import sys
 
+import flow_fqp_errors as E
 import flow_fqp_steps as S
 import halves_mods
 import session
@@ -67,9 +69,11 @@ def game_a(check, K):
     S.untitled(check, c, M, K)
     S.off(check, c, M, K)
     S.pages(check, M)
+    E.tracker(check, M)
     halves_mods.fqp(check, M, S.templates(M, K))
     _errors(c, check, "game A before the errors")
     S.faults(check, c, M)
+    E.guard(check, c, M, K)
     del c, M
 
 
@@ -96,6 +100,9 @@ MUTANTS = {
     "pages": ("tree", {}, lambda q, c, M, K: S.pages(q, M)),
     "rename": ("tree", {}, lambda q, c, M, K: S.pages(q, M)),
     "labels": ("labels", {}, lambda q, c, M, K: S.pages(q, M)),
+    "filter": ("filter", {}, lambda q, c, M, K: E.tracker(q, M)),
+    "guard": ("guard", {}, lambda q, c, M, K: (S.faults(q, c, M), E.guard(q, c, M, K))),
+    "guardlist": ("guard", {}, lambda q, c, M, K: (S.faults(q, c, M), E.guard(q, c, M, K))),
 }
 
 

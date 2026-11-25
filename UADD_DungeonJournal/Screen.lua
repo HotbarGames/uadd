@@ -17,7 +17,9 @@ local Fonts = ns.Fonts
 local ROOTS = { "ForeverDungeonJournalFrame", "ForeverDungeonJournalRunTracker", "ForeverDungeonJournalRunLog",
     "ForeverDungeonJournalFavourites", "ForeverDungeonJournalLootFilterResults",
     "ForeverDungeonJournalOptionsPanel",   -- its page in the game options window
-    "ForeverDungeonJournalModeChooser" }    -- the first-run choice of journal mode
+    "ForeverDungeonJournalModeChooser",     -- the first-run choice of journal mode
+    -- Edit Mode's two menus and its question for a controller
+    "ForeverDungeonJournalOrderMenu", "ForeverDungeonJournalViewMenu", "ForeverDungeonJournalResetUIAsk" }
 S.MIN_GAP = 0.1                    -- seconds between two looks, however often the journal reads
 
 local hookedText = {}     -- FontString -> true once its SetText is hooked
@@ -155,6 +157,7 @@ Walk = function(f)
     if IsFontString(f.name) then Try(HookItem, f) end
     if IsFontString(f.counts) then Try(HookCount, f.counts) end          -- home page cards
     if IsFontString(f.lootTitle) then Try(HookCount, f.lootTitle) end    -- "12 предметів"
+    Try(ns.Buttons.Look, f)                                              -- YES, NO, OKAY (Buttons.lua)
     if f.GetRegions then Regions(f:GetRegions()) end
     if f.GetChildren then Children(f:GetChildren()) end
     local child = f.GetScrollChild and f:GetScrollChild()          -- loot and quest lists
@@ -203,6 +206,7 @@ function S.Scan()
     local wants = L and L.Wants()
     if ns.Prose then ns.Prose.HookNotes() end      -- in case every read came while a look was pending
     if not wants then return Fonts.Restore() end
+    ns.Buttons.Sync()
     wipe(seen)
     failed = nil
     for _, name in ipairs(ROOTS) do

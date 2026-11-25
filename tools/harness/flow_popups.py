@@ -50,7 +50,7 @@ MODS = {
         ("INVITE_ATTUNE_RAID", ("L:Accept", "ui.accept"), ("L:Reject", "ui.reject")),
         ("RENAME_ATTUNE_RAID", ("L:Save", "ui.save"), ("L:Close", "ui.close"))]),
     "dj": ("dj", [(w, ("G:YES", "ui.yes"), ("G:NO", "ui.no")) for w in
-                  ("FOREVERDUNGEONJOURNAL_HIDE_MINIMAP", "FDJ_RUNLOG_DELETE", "FDJ_TRACKER_RESET")]),
+                  ("FOREVERDUNGEONJOURNAL_HIDE_MINIMAP", "FDJ_RUNLOG_DELETE", "FDJ_TRACKER_RESET", "FDJ_RESET_HOME_UI")]),
     "fxpb": ("fxpb", [(w, ("G:YES", "ui.yes"), ("G:NO", "ui.no")) for w in
                       ("FOREVERXP_ENABLE_CHALLENGE", "FOREVERXP_DISABLE_CHALLENGE")]),
 }

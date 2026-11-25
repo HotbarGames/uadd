@@ -1,10 +1,22 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.14. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.00afb3c1"] = "Шаблон %d"
+S["Code.00afb3c1"] = "v"
+T["Code.44a03da7"] = "Зберегти шаблон"
+T["Code.181c6902"] = "Зберегти поточні таланти як %sШаблон %d|r для %s?\nЗбережений шаблон буде замінено."
+S["Code.181c6902"] = "vvn"
+T["Code.24a80e5b"] = "Скинути шаблон"
+T["Code.68f9c3c8"] = "Скинути %sШаблон %d|r для %s?\nУсі очки талантів цього шаблону буде видалено."
+S["Code.68f9c3c8"] = "vvn"
+T["Code.dfc3f8ac"] = "Завантажте білд за посиланням talentsforever.com або wowforevertalents.com, або з рядка білда OneForAll."
+T["Code.8bbc10e5"] = "Таланти, показані тут, як короткий текст для копіювання й обміну. Імпорт читає його знову."
+T["Code.409320c8"] = "Талант цього білда не знайдено в деревах талантів гри."
+T["Code.94525c07"] = "Білд пропускає потрібні очки або таланти (створений для іншої версії гри?)."
 T["Code.d270fb0a"] = "Білд імпортовано для %s. Щоб залишити його, збережіть шаблон."
 S["Code.d270fb0a"] = "n"
 T["Code.5191fa14"] = "Незбережені зміни"
@@ -265,15 +277,3 @@ S["Code.3db4952e"] = "v"
 T["Code.686ac1e6"] = "швидкість атаки %s"
 S["Code.686ac1e6"] = "v"
 T["Code.b240fc07"] = "Родина"
-T["Code.7b8babf3"] = "Вміння"
-T["Code.fc76d2d6"] = "Рідкісний вихованець"
-T["Code.39b7c726"] = "Нічого не знайдено."
-T["Code.cbcea28b"] = "1 збіг у родинах, уміннях і рідкісних звірах."
-T["Code.b883945b"] = "%d {збіг|збіги|збігів} у родинах, уміннях і рідкісних звірах."
-S["Code.b883945b"] = "v"
-T["Code.2dc51f3b"] = "Расове закляття (рівень 10)"
-T["Code.2dc5237c"] = "Расове закляття (рівень 20)"
-T["Code.fcd5b75e"] = "Спершу відкрийте вікно класового тренера, потім знову введіть /ofa trainer."
-T["Code.b52c4743"] = "Прочитано %d {рядок|рядки|рядків} тренера (назва | текст рангу | тип | вартість | рівень | ID закляття):"
-S["Code.b52c4743"] = "v"
-T["Code.be9aa278"] = "Ваш клас: що можна вивчити далі"

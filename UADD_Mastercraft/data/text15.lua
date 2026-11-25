@@ -6,6 +6,7 @@ local G = UADD and UADD.Glossary and UADD.Glossary.Text or function() return nil
 local M = ns.MC or { exact = {}, templates = {} }
 ns.MC = M
 local E, T = M.exact, M.templates
+T[#T + 1] = { id = "20:3a33451b", len = { 17, 1 }, hash = { "5c14bb24", "0002b5e4" }, kinds = { "s" }, uk = { "Привіт! Чи можете виготовити: ", 1, "?" }, sort = { "n" } }
 T[#T + 1] = { id = "20:493168f2", len = { 0, 4, 12 }, hash = { "00001505", "7c70811a", "1e4cf18b" }, kinds = { "d", "d" }, uk = { "Упіймано риб: ", 1, " з ", 2 }, sort = { "v", "v" } }
 T[#T + 1] = { id = "20:519d5e4c", len = { 18, 0 }, hash = { "7e8c0414", "00001505" }, kinds = { "s" }, uk = { "Рецепт для вашої професії: ", 1 }, sort = { "n" } }
 T[#T + 1] = { id = "20:5cc9dead", len = { 7, 11 }, hash = { "477b4de2", "b9037fe7" }, kinds = { "d" }, uk = { "...і ще ", 1, " {зона|зони|зон}" }, sort = { "v" } }
@@ -124,4 +125,3 @@ T[#T + 1] = { id = "28:13d1d3d9", len = { 20, 3, 1 }, hash = { "39409f8a", "0b87
 T[#T + 1] = { id = "28:174987b1", len = { 0, 3, 19, 0 }, hash = { "00001505", "0b874134", "ef3516ba", "00001505" }, kinds = { "s", "s", "s" }, uk = { 1, " / ", 2, " предметів, рівень предмета ", 3 }, sort = { "v", "v", "v" } }
 T[#T + 1] = { id = "28:1fb37cc3", len = { 10, 14, 0 }, hash = { "fa358adc", "da52f6cb", "00001505" }, kinds = { "d", "s" }, uk = { "|cffffb833потрібно ще ", 1, "|r", 2 }, sort = { "v", "t" } }
 T[#T + 1] = { id = "28:6aaeb440", len = { 10, 16 }, hash = { "1e6166f0", "340c392c" }, kinds = { "d" }, uk = { "Сірий від ", 1, ": очок більше немає" }, sort = { "v" } }
-T[#T + 1] = { id = "28:9171892b", len = { 5, 21 }, hash = { "0dd2bcc7", "f98675a0" }, kinds = { "d" }, uk = { "У сагайдаку лишилося лише ", 1, "." }, sort = { "v" } }

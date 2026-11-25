@@ -1,6 +1,22 @@
-# Changelog: 1.0.1 and 1.1.0
+# Changelog: 1.0.1 to 1.2.0
 
 Older notes. 1.0.0 is in docs/CHANGELOG-1.0.0.md; newer releases are in UADD/CHANGELOG.md.
+
+## 1.2.0
+
+- New module UADD_Pawn: Pawn's window, settings page, item tooltip lines, upgrade advisors and chat lines in
+  Ukrainian. Names from the game (scale names, spec names) stay English, and a few lines with game names stay English.
+  Новий модуль UADD_Pawn: вікно, сторінка налаштувань, рядки підказок предметів, поради щодо покращень та рядки в
+  чаті Pawn українською. Назви з гри (назви шкал, спеціалізацій) лишаються англійською, як і кілька рядків з назвами з гри.
+- New module UADD_GatherMate2: GatherMate2's settings pages, chat lines, launcher tooltip and map pin menu in
+  Ukrainian. Herb, ore, fish, zone and profession names stay as the game gives them.
+  Новий модуль UADD_GatherMate2: сторінки налаштувань, рядки в чаті, підказка кнопки та меню точки на мапі
+  GatherMate2 українською. Назви трав, руд, риби, зон і професій лишаються такими, як їх дає гра.
+- New module UADD_Scrap: Scrap's settings pages, junk list, vendor button, chat lines, key bindings and tutorial
+  in Ukrainian. Item names stay as the game gives them, and chat lines with an item link stay English.
+  Новий модуль UADD_Scrap: сторінки налаштувань, список мотлоху, кнопка в торговця, рядки в чаті, клавіші та
+  підказки для новачків Scrap українською. Назви предметів лишаються такими, як їх дає гра, а рядки в чаті з
+  посиланням на предмет лишаються англійською.
 
 ## 1.1.0
 

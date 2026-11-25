@@ -12,6 +12,19 @@ ns.Fonts = F
 local busy = false
 local OWN = { WUIFooterFont = true, WUIPinpointFont = true }
 
+-- Not U.Safe: after an off for errors it stays dead for the session, and these hooks must work again after "on"
+-- and keep the last English while off (lesson 19). An error is reported and counted the same way (5 turn the
+-- module off); each hook checks ns.On() or ns.WordsWanted() itself.
+function ns.Guard(fn)
+    return function(...)
+        local ok, err = pcall(fn, ...)
+        if ok then return end
+        err = tostring(err)
+        pcall(U.ReportError, err)
+        if type(U.Fault) == "function" then pcall(U.Fault, "waypointui", err) end
+    end
+end
+
 -- One of Waypoint UI's own font objects (its ui-font ones are named WaypointUIFont_<n>).
 local function Ours(o)
     if type(o) ~= "table" or type(o.GetName) ~= "function" or type(o.GetFont) ~= "function" then return false end
@@ -99,7 +112,7 @@ function F.Collect(f)
     if not Ours(o) then return end
     if not F.hooked[o] then
         F.hooked[o] = true
-        hooksecurefunc(o, "SetFont", U.Safe("waypointui", Refit))
+        hooksecurefunc(o, "SetFont", ns.Guard(Refit))
     end
     if ns.On() and not F.saved[o] then U.SafeCall(Fix, o) end
 end

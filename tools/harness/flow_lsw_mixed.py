@@ -4,6 +4,7 @@
   * halves_mods.lsw: every template of the installed addon, made-up English in each slot.
   * glued(): the lines LayerSwap glues with a wide gap (mini bar on one line, minimap tooltip) are
     all Ukrainian.
+  * swapped(): the chat lines after a swap (head, layer name, tail) are all Ukrainian.
   * Shift held: the panel, the button label, the lazy menu and the tooltip show the addon's own English
     and fonts; let go, Ukrainian again.
   * Combat: texts set in combat are still translated (only font object changes wait).
@@ -112,10 +113,35 @@ def dashed(check, M):
           (waited and txt(waited), got and txt(got), miss and txt(miss)))
 
 
+SWAPPED_HEADS, SWAPPED_TAILS = ("15:ccb422ab", "110:fc0998cc"), ("19:a377d412", "44:de0d3d28")
+
+
+def swapped(check, M):
+    """The chat lines after a swap: a head, the layer's name and a tail glued on (docs/LESSONS.md, lesson 6)."""
+    import make_lsw_data
+    name = "the chat lines after a swap: whole Ukrainian, an unknown layer name whole English"
+    if not make_lsw_data.have_addon():
+        return check(f"{name} (LayerSwap not installed)", True, "")
+    by_key = {hashtext.key(en): en for _, en in make_lsw_data.texts(make_lsw_data.collect()[0])}
+    label = halves.fill(by_key["8:ebb2717a"], lambda k, _: "D")
+    ua, bad, n = txt(M.uk(lua_str(label)) or "no label"), [], 0
+    for en in by_key.values():
+        parts = en.split("%s")
+        if len(parts) != 2 or hashtext.key(parts[0]) not in SWAPPED_HEADS or hashtext.key(parts[1]) not in SWAPPED_TAILS:
+            continue
+        n += 1
+        got = txt(M.uk(lua_str(label.join(parts))) or "")
+        odd = M.uk(lua_str("Wobbly gizmo".join(parts)))
+        if ua not in got or _english_left(got.replace("LayerSwap", "")) or odd is not None:
+            bad.append((en, got, odd and txt(odd)))
+    check(name, n == 4 and not bad, (n, bad[:2]))
+
+
 def checks(check, eq, M, EN, UK, Cyr, c):
     halves_mods.lsw(check, M)
     glued(check, M)
     dashed(check, M)
+    swapped(check, M)
     M.menu(True, 3)
     M.wait(0.1)
     _same(check, "before Shift: Ukrainian", _all(M, EN, UK, "uk", "D"))

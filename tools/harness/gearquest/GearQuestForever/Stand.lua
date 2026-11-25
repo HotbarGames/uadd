@@ -7,6 +7,8 @@
 -- S.Guide(i)     its guide bubble on page i (as its GUIDE:Refresh)
 -- S.Orders(list) its Orders page painted with list = { { name, skill, who } } (who: the player's name, as typed)
 -- S.NoHunts(slot, preview)   its "no upgrade hunts" chat line for slot ("head" or an unknown one)
+-- GQ.Log:ShowHuntRowMenu, GQ.Log:CopyHuntName, GQ.Orders:ShowNotice: its right-click menu on a hunt (in the game's
+--                dropdown list, flow_gq_menu.lua), its box to copy a name, its short notices
 -- S.Choices()    its language list, as its Log:LanguageChoices (F.langs: nil = pack addon never seen,
 --                "on" = there and on, "off" = there but off); its button and list as Log:CreateLanguageDropdown
 local addonName, GQ = ...
@@ -223,4 +225,47 @@ end
 function S.NoHunts(slot, preview)
     local hint = preview and "" or L[F.hint or ""]
     GQ:Chat("|cff66ccffGearQuest|r: " .. string.format(L[F.none or "%s"], SLOTS[slot] or slot) .. hint)
+end
+
+-- ── Its right-click menu, copy box and notices (as its Log and Orders, 1.3.4) ────────────────────
+function GQ.Log:ShowHuntRowMenu(entry)
+    local menu = GQ.Log.huntRowMenu or CreateFrame("Frame", "GearQuestHuntRowMenu", UIParent)
+    GQ.Log.huntRowMenu = menu
+    UIDropDownMenu_Initialize(menu, function()
+        for i, key in ipairs(F.menu or {}) do
+            local info = UIDropDownMenu_CreateInfo()
+            info.text, info.notCheckable = L[key], true
+            if i == 2 then info.func = function() GQ.Log:CopyHuntName(entry) end end
+            UIDropDownMenu_AddButton(info)
+        end
+    end, "MENU")
+    C_Timer.After(0, function() ToggleDropDownMenu(1, nil, GQ.Log.huntRowMenu, "cursor", 0, 0) end)
+end
+function GQ.Log:CopyHuntName(entry)
+    local box = self.copyNameBox
+    if not box then
+        box = CreateFrame("Frame", "GearQuestCopyName", UIParent)
+        box:SetPoint("CENTER")
+        box.title = box:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        box.title:SetPoint("TOP")
+        box.title:SetText(L[F.copy or "?"])
+        box.edit = CreateFrame("EditBox", nil, box)
+        box.edit:SetAutoFocus(false)
+        self.copyNameBox = box
+    end
+    box.edit:SetText(entry.name)
+    box:Show()
+end
+function Orders:ShowNotice(text)
+    local n = self.notice
+    if not n then
+        n = CreateFrame("Frame", "GearQuestOrderNotice", UIParent)
+        n:SetPoint("CENTER")
+        n.text = n:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        n.text:SetPoint("CENTER")
+        self.notice = n
+    end
+    n.text:SetText(text or "")
+    n:SetSize(math.max(240, math.min(520, (n.text:GetStringWidth() or 180) + 56)), 52)
+    n:Show()
 end

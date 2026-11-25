@@ -1,4 +1,5 @@
-"""Fails when module code hooks a game-wide path itself, past the core guards (docs/LESSONS3.md lesson 35).
+"""Fails when module code hooks a game-wide path itself, past the core guards (docs/LESSONS3.md lesson 35), or puts a
+text hook under U.Safe (lesson 19: tools/hook_scan.py, which also holds the token helpers).
 
 Every chat line, print, CreateFrame and CreateFontString of the game (a BG makes hundreds a second) goes through one
 core hook each: U.ChatHook (UADD/Lines.lua), U.PrintHook (UADD/Print.lua), U.OnNewFrame / U.OnNewFontString
@@ -21,6 +22,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import luatok  # noqa: E402
+from hook_scan import chain_end, function_defs, safe_hits_in_text, top_strings  # noqa: E402
 import test_no_editbox  # noqa: E402
 
 CALLERS = {"pcall", "xpcall", "securecall"}
@@ -31,25 +33,6 @@ WIDE = {"CreateFrame": "hooksecurefunc(\"CreateFrame\"): use U.OnNewFrame",
 def files():
     """Module files (not the core UADD/ folder) that a UADD_*/*.toc loads."""
     return [p for p in test_no_editbox.files() if p.split("/", 1)[0].startswith("UADD_")]
-
-
-def _top_strings(toks, j, most=3):
-    """String literals among the first `most` top-level arguments that start at toks[j]."""
-    out, depth, args = [], 0, 1
-    while j < len(toks) and args <= most:
-        kind, value, _ = toks[j]
-        if kind == luatok.SYM and value in ("(", "{", "["):
-            depth += 1
-        elif kind == luatok.SYM and value in (")", "}", "]"):
-            if depth == 0:
-                break
-            depth -= 1
-        elif kind == luatok.SYM and value == "," and depth == 0:
-            args += 1
-        elif kind == luatok.STR and depth == 0:
-            out.append(value)
-        j += 1
-    return out
 
 
 def hits_in_text(path, text):
@@ -67,7 +50,7 @@ def hits_in_text(path, text):
             continue
         elif value == "AddMessage" and sym(i - 1, ".") and sym(i + 1, "=") and not sym(i + 2, "="):
             found.append((path, line, "AddMessage replaced: use U.ChatHook"))
-        elif value == "rawset" and sym(i + 1, "(") and "AddMessage" in _top_strings(toks, i + 2):
+        elif value == "rawset" and sym(i + 1, "(") and "AddMessage" in top_strings(toks, i + 2):
             found.append((path, line, "AddMessage replaced: use U.ChatHook"))
         elif value == "hooksecurefunc" and not sym(i - 1, ".") and not sym(i - 1, ":"):
             if sym(i + 1, "("):
@@ -76,59 +59,11 @@ def hits_in_text(path, text):
                 start = i + 2
             else:
                 continue
-            for s in _top_strings(toks, start):
+            for s in top_strings(toks, start):
                 if s in WIDE:
                     found.append((path, line, WIDE[s]))
                     break
     return found
-
-
-OPEN, CLOSE = {"function", "if", "do", "repeat"}, {"end", "until"}
-
-
-def _defs(toks):
-    """{token index of `function`: (name or None, params, first body index, end index)}."""
-    out, n = {}, len(toks)
-    for i, (kind, value, _) in enumerate(toks):
-        if kind != luatok.NAME or value != "function":
-            continue
-        j, name, params = i + 1, None, []
-        if i >= 3 and toks[i - 1][1] == "=" and toks[i - 2][0] == luatok.NAME and toks[i - 3][1] not in "=~<>":
-            name = toks[i - 2][1]                          # F = function(...) / x.F = function(...)
-        while j < n and (toks[j][0] == luatok.NAME or toks[j][1] in (".", ":")):
-            if toks[j][1] == ":":
-                params.append("self")
-            elif toks[j][0] == luatok.NAME:
-                name = toks[j][1]
-            j += 1
-        if j >= n or toks[j][1] != "(":
-            continue
-        j += 1
-        while j < n and toks[j][1] != ")":
-            if toks[j][0] == luatok.NAME:
-                params.append(toks[j][1])
-            j += 1
-        k, depth = j + 1, 1
-        while k < n and depth:
-            if toks[k][0] == luatok.NAME and toks[k][1] in OPEN:
-                depth += 1
-            elif toks[k][0] == luatok.NAME and toks[k][1] in CLOSE:
-                depth -= 1
-            k += 1
-        out[i] = (name, params, j + 1, k)
-    return out
-
-
-def _chain_end(toks, j):
-    """toks[j] starts a.b.c: (last name, index after it), or (None, j)."""
-    name = None
-    while j < len(toks) and toks[j][0] == luatok.NAME:
-        name, j = toks[j][1], j + 1
-        if j < len(toks) and toks[j][1] == ".":
-            j += 1
-        else:
-            break
-    return name, j
 
 
 def _targets(path, toks, defs):
@@ -149,7 +84,7 @@ def _targets(path, toks, defs):
                 if depth == 1 and toks[j][1] in ("line", "maybe") and toks[j + 1][1] == "=":
                     out.append((j + 2 if toks[j + 2][1] == "function" else toks[j + 2][1], 0, toks[j][2]))
                 j += 1
-        if not (kind == luatok.NAME and value == "hooksecurefunc" and "SetText" in _top_strings(toks, i + 2)):
+        if not (kind == luatok.NAME and value == "hooksecurefunc" and "SetText" in top_strings(toks, i + 2)):
             continue
         j = i + 2
         while j < n and not (toks[j][0] == luatok.STR and toks[j][1] == "SetText"):
@@ -160,18 +95,18 @@ def _targets(path, toks, defs):
             text = d and len(d[1]) > 1 and d[1][1]
             for k in range((d[2] if d else n), (d[3] if d else n)):
                 if text and toks[k][1] == "SafeCall" and toks[k + 1][1] == "(":
-                    f, after = _chain_end(toks, k + 2)
+                    f, after = chain_end(toks, k + 2)
                     args = [t[1] for t in toks[after:d[3]] if t[0] == luatok.NAME]
                     if f and text in args:
                         out.append((f, args.index(text), line))
                     break
         else:
-            f, after = _chain_end(toks, j)
+            f, after = chain_end(toks, j)
             if f == "Safe" and toks[after][1] == "(":
                 k = after + 1
                 while k < n and toks[k][1] != ",":
                     k += 1
-                f, _ = _chain_end(toks, k + 1)
+                f, _ = chain_end(toks, k + 1)
             if f:
                 out.append((f, 1, line))
     return out
@@ -180,7 +115,7 @@ def _targets(path, toks, defs):
 def plain_hits_in_text(path, text):
     """[(path, line, what)]: a chat handler or SetText hook that uses its text before U.Plain (lesson 35)."""
     toks = list(luatok.tokens(text))
-    defs = _defs(toks)
+    defs = function_defs(toks)
     byname = {d[0]: d for d in defs.values() if d[0]}
     found = []
     for target, at, line in _targets(path, toks, defs):
@@ -233,7 +168,51 @@ def hits():
     return found
 
 
+# Text hooks that may stay under U.Safe: path -> why (none today).
+SAFE_OK = {}
+
+
+def safe_hits():
+    found = []
+    for path in files():
+        with open(os.path.join(REPO, path), encoding="utf-8", errors="replace") as f:
+            found += safe_hits_in_text(path, f.read())
+    return found
+
+
 class HookGuards(unittest.TestCase):
+    def test_no_text_hook_under_safe(self):
+        found = safe_hits()
+        bad = [f"{p}:{n}: {w} (lesson 19)" for p, n, w in found if p not in SAFE_OK]
+        self.assertEqual(bad, [], "\n".join(bad))
+        self.assertEqual(sorted(set(SAFE_OK) - {p for p, _, _ in found}), [], "SAFE_OK entries that hit nothing")
+
+    def test_catches_a_text_hook_under_safe(self):
+        src = ('local Late = U.Safe("x", function(f) Changed(f) end)\n'
+               'ns.Put = UADD.Safe("x", Put)\n'
+               'local function Safe(fn) return U.Safe("x", fn) end\n'
+               'local function Guard(fn) return function(...) local ok = pcall(fn, ...) end end\n'
+               'local function Wrap(fs) if on then Late(fs) end end\n'
+               'local function Good(fs) U.SafeCall(Changed, fs) end\n'
+               'f:HookEvent("OnTextChanged", Late)\n'                                           # 7
+               'f:HookEvent("OnFormattedTextChanged", U.Safe("x", Changed))\n'                  # 8
+               'hooksecurefunc(fs, "SetText", U.Safe("x", Put))\n'                              # 9
+               'hooksecurefunc(fs, "SetFormattedText", ns.Put)\n'                               # 10
+               'pcall(hooksecurefunc, fs, "SetText", Late)\n'                                   # 11
+               'hooksecurefunc(fs, "SetText", function(self, t) if t then Late(self, t) end end)\n'  # 12
+               'hooksecurefunc(fs, "SetText", Wrap)\n'                                          # 13
+               'hooksecurefunc(fs, "SetText", Safe(Put))\n'                                     # 14
+               'for _, m in ipairs({ "Enable", "SetText" }) do hooksecurefunc(b, m, Late) end\n'  # 15
+               'hooksecurefunc(fs, "SetText", Guard(Put))\n'
+               'hooksecurefunc(fs, "SetText", Good)\n'
+               'hooksecurefunc(fs, "SetText", function(f, t) U.SafeCall(Put, f, t) end)\n'
+               'f:HookEvent("OnTextChanged", Guard(Put))\n'
+               'f:HookEvent("OnShow", Late)\n'
+               'hooksecurefunc(o, "SetFont", U.Safe("x", Refit))\n'                              # 21
+               'hooksecurefunc("CloseAll", Late)\n'
+               '-- hooksecurefunc(fs, "SetText", U.Safe("x", Put)) in a comment\n')
+        self.assertEqual([n for _, n, _ in safe_hits_in_text("UADD_X/Screen.lua", src)], [*range(7, 16), 21])
+
     def test_no_module_hooks_a_game_wide_path(self):
         found = hits()
         self.assertEqual(found, [], "\n".join(f"{p}:{n}: {w} (lesson 35)" for p, n, w in found))
@@ -296,5 +275,5 @@ class HookGuards(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    for p, n, w in hits():
+    for p, n, w in hits() + safe_hits():
         print(f"{p}:{n}: {w}")

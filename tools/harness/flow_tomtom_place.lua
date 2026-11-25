@@ -7,9 +7,12 @@ H.ttp = M
 -- The proof that a step has teeth: with M.cut set, UADD_TomTom's Title.lua or Module.lua runs without one fix
 -- (in memory only).
 -- hook: the title's SetText hook; map: the arrow's waypoint map; cache: the last answer kept (lesson 12);
+-- guard: the title's SetText hook under U.Safe, dead after an off for errors (lesson 19);
 -- wait: a "not known yet" answer kept as if final; back: the English back on the hold key; tip: the pin tooltip.
 local CUTS = {
-    hook = { "        hooksecurefunc(fs, \"SetText\", U.Safe(\"tomtom\", Title.OnText))", "\n", "\n" },
+    hook = { "        hooksecurefunc(fs, \"SetText\", Guard(Title.OnText))", "\n", "\n" },
+    guard = { "        hooksecurefunc(fs, \"SetText\", Guard(Title.OnText))", "\n",
+              "        hooksecurefunc(fs, \"SetText\", U.Safe(\"tomtom\", Title.OnText))\n" },
     map = { "    Title.map = type(uid) == \"table\"", "\n", "\n" },
     cache = { "    if en ~= Title.ken or Title.map ~= Title.kmap then", "\n", "    if true then\n" },
     wait = { "        if wait and CanWait() then", "\n", "        if false then\n" },
@@ -72,6 +75,17 @@ function M.again(title, n)                      -- a hijacking addon sets the sa
     local before = M.asks
     for _ = 1, n do T():SetText(title) H.step(0.02) end
     return M.asks - before, T():GetText()
+end
+-- Our look-up throws, as when its data is odd; back on false.
+local place
+function M.throw(on)
+    local ns = H.ns["UADD_TomTom"]
+    if on then
+        place = place or ns.Place
+        ns.Place = function() error("harness: a title look-up fails") end
+    elseif place then
+        ns.Place, place = place, nil
+    end
 end
 function M.title() return T():GetText() end
 function M.tip(title)                           -- TomTom's code shows a pin's tooltip, its title first

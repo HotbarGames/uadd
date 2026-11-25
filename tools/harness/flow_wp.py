@@ -10,14 +10,16 @@ module's own data (ns.WP, read by M.want and M.fill in flow_wp.lua). Steps: flow
     7 off/on and the hold key (lessons 15, 23). 8 fonts (lessons 2, 18).
     9 settings built late, the 1 s walk stops. 10 keyboard free (lesson 16). 11 10 KB speed (lesson 22).
     No half-translated line (halves_mods.wp).
-  * Game B: roots missing. Game E: errors in its SetText (lesson 26). Game C: ruRU client.
-  * Mutants (one fix cut from the module, in memory only): steps 2, 3, 12, 13 and 14 must fail, so they have teeth.
+  * Game B: roots missing. Game E: errors in its SetText (lesson 26). Game C: ruRU client. Game F: 15 five errors
+    in its own hooks, then on again: they work (lesson 19, flow_wp_errors.py).
+  * Mutants (one fix cut from the module, in memory only): steps 2, 3, 12 to 15 must fail, so they have teeth.
 """
 import collections
 import gc
 import os
 import sys
 
+import flow_wp_errors as E
 import flow_wp_steps as S
 import halves_mods
 import session
@@ -86,10 +88,11 @@ def game_b(check, p):
 
 
 def game_e(check, p):
-    c, M = _game(p)
-    S.faults(check, M, p)
-    errs = [e for e in c.errors() if "stand-in" not in e[1]]
-    check("game E: no other Lua errors", not errs, "; ".join(m[:160] for _, m, _ in errs[:3]))
+    for name, step in (("E", S.faults), ("F", E.guard)):
+        c, M = _game(p)
+        step(check, M, p)
+        errs = [e for e in c.errors() if "stand-in" not in e[1]]
+        check(f"game {name}: no other Lua errors", not errs, "; ".join(m[:160] for _, m, _ in errs[:3]))
 
 
 def mutants(check, p):
@@ -97,7 +100,10 @@ def mutants(check, p):
     for cut, step, run in (("busy", "2", lambda M: S.busy(quiet, M, p)), ("cache", "3", lambda M: S.ticks(quiet, M)),
                            ("fault", "12", lambda M: S.faults(quiet, M, p)), ("place", "13", lambda M: S.place(quiet, M)),
                            ("pinplace", "13", lambda M: S.place(quiet, M)), ("wait", "13", lambda M: S.place(quiet, M)),
-                           ("quest", "14", lambda M: S.quest(quiet, M, p))):
+                           ("quest", "14", lambda M: S.quest(quiet, M, p)),
+                           ("guard", "15", lambda M: E.guard(quiet, M, p)),
+                           ("guardshow", "15", lambda M: E.guard(quiet, M, p)),
+                           ("guardfont", "15", lambda M: E.guard(quiet, M, p))):
         out = []
         c, M = _game(p, cut=cut)
         ok = run(M)
