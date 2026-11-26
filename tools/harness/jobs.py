@@ -7,14 +7,17 @@ UADD_JOBS=1 runs them all in this process, in order (pool.py).
 """
 import gc
 import glob
+import json
 import os
 
+import jobinputs
 import loader
 import pool
 import boxes
 import tipfont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+WARM_THREADS = 16          # files read at a time by warm() (2026-11-26: 439 files on /mnt/c in 0.36 s, one by one 5.5 s)
 # The slowest first, so they do not end the run alone (one run on 8 cores, 2026-11-22: qtag 17 s, chaos 62 s in
 # one job, now its modules side by side, the slowest 13 s; lt 11 s). The rest go in run.py's order.
 # Again on 2026-11-26 (8 cores): qtag 28 s, lt 18, dj 17, gq 16, pops 12, ttp 10, wtw 10, litemount 8, dci 7; gq and
@@ -35,6 +38,62 @@ def _slow_first(pieces, serial):
     return sorted(at, key=lambda i: rank.get(pieces[i][1][0] if pieces[i][1] else None, len(rank)))
 
 
+# How long each job took in the last side-by-side runs (label -> wall seconds, the mean of the last record and this
+# run): with it the jobs start slowest first, after the main flow (its spawned parts go first anyway). Wall time, not
+# CPU: a job that waits (TomTom's place flow: 2 s CPU in 9 s) also ends the run alone when it starts last. The
+# record is outside the repo, as the push check runs in a fresh copy of it. It sets only the start order: the checks,
+# their order and verdicts stay the same (pool.py's expand).
+TIMES = os.environ.get("UADD_JOB_TIMES") or os.path.join(
+    os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache"), "uadd", "harness-times.json")
+
+
+def recorded():
+    """The recorded seconds by job label; {} when there is no readable record. Not an input of any job
+    (jobinputs.py does not see it): it changes no check."""
+    was = jobinputs.to(None)
+    try:
+        with open(TIMES, encoding="utf-8") as fh:
+            got = json.load(fh)
+        return {str(k): float(v) for k, v in got.items()}
+    except (OSError, ValueError, TypeError, AttributeError):
+        return {}
+    finally:
+        jobinputs.to(was)
+
+
+def by_time(p, first, times):
+    """Sorts the pool's queue: `first` (the main flow), then the jobs with no record (they may be slow; in the
+    order they were added), then the rest by recorded time, slowest first. No record at all, or UADD_JOBS=1
+    (one after another, the reference): as added."""
+    if times and not p.serial:
+        p.queue.sort(key=lambda j: (j != first, -times.get(p.jobs[j][2], float("inf"))))
+
+
+def keep_times(p, times, reused=()):
+    """Records the time of each job that ran here side by side; a reused one keeps its old record."""
+    if p.serial:
+        return
+    labels = {p.jobs[j][2] for j in p.jobs}
+    new = {k: v for k, v in times.items() if k in labels}
+    for j, r in p.results.items():
+        if j not in reused:
+            label = p.jobs[j][2]
+            new[label] = round((r.secs + new[label]) / 2 if label in new else r.secs, 2)
+    if new == times:
+        return
+    was = jobinputs.to(None)               # nor is writing it something a kept result must know of
+    try:
+        os.makedirs(os.path.dirname(TIMES), exist_ok=True)
+        part = f"{TIMES}.{os.getpid()}"
+        with open(part, "w", encoding="utf-8") as fh:
+            json.dump(new, fh, ensure_ascii=False, sort_keys=True, indent=0)
+        os.replace(part, TIMES)
+    except OSError:                        # only the next run's order needs it
+        pass
+    finally:
+        jobinputs.to(was)
+
+
 def main_job():
     import flow
     f = flow.run(spawn=pool.spawn)          # looked up now: in UADD_JOBS=1 pool.py swaps spawn for its own
@@ -50,28 +109,35 @@ def segment_job(mod):
     return mod.run_checks()
 
 
+def _warm_one(item):
+    """Reads one file of an addon's TOC into loader's memo; returns the files an XML of it includes."""
+    folder, rel = item
+    path = os.path.join(folder, *rel.split("/"))
+    if not loader.is_file(path):
+        return []
+    text = loader.read_text(path)
+    if not rel.lower().endswith(".xml"):
+        return []
+    try:
+        root = loader.parse_xml(text)
+    except Exception:
+        return []
+    base = os.path.dirname(rel)
+    return [(folder, f"{base}/{x}" if base else x) for x in
+            (el.get("file", "").replace("\\", "/") for el in root.iter()) if x]
+
+
 def warm():
     """Reads the files most jobs share (the main flow's addons, the stubs) into loader's memo, so the jobs
-    forked after this have them."""
+    forked after this have them. The same files as one after another, read WARM_THREADS at a time: a file on
+    /mnt/c costs 3-10 ms of waiting over 9P, so 16 in flight take a fraction of the time."""
     import session
-    for path in glob.glob(os.path.join(HERE, "*.lua")):
-        loader.read_text(path)
-    for a in session.addons():
-        todo = [r.replace("\\", "/") for r in a.files]
-        while todo:
-            rel = todo.pop()
-            path = os.path.join(a.folder, *rel.split("/"))
-            if not loader.is_file(path):
-                continue
-            text = loader.read_text(path)
-            if rel.lower().endswith(".xml"):
-                try:
-                    root = loader.parse_xml(text)
-                except Exception:
-                    continue
-                base = os.path.dirname(rel)
-                todo += [f"{base}/{x}" if base else x for x in
-                         (el.get("file", "").replace("\\", "/") for el in root.iter()) if x]
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(WARM_THREADS) as ex:
+        list(ex.map(loader.read_text, glob.glob(os.path.join(HERE, "*.lua"))))
+        todo = [(a.folder, r.replace("\\", "/")) for a in session.addons() for r in a.files]
+        while todo:                        # one level of XML includes at a time
+            todo = [x for got in ex.map(_warm_one, todo) for x in got]
 
 
 def _segment(p, key, mod, jids):
@@ -122,8 +188,14 @@ def run_all(segments, cache=None):
             cache = None
             notes.append(f"results of earlier runs: not used, the cache failed: {e!r}")
             p.queue += [j for j in tops if j not in p.results and j not in p.queue]
-    if p.queue:
+    times = recorded()
+    if p.queue and p.serial:
         p.run(before_rest=warm)
+    elif p.queue:                          # side by side: every job, the main flow too, forks with the files read
+        by_time(p, main, times)
+        warm()
+        p.run()
+    keep_times(p, times, cache.reused if cache else ())
 
     checks = (p.expand(main) + tipfont.segment("main", flow.Check, p.tip(main))
               + boxes.segment("main", flow.Check, p.boxes(main)))
