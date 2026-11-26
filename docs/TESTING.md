@@ -286,16 +286,11 @@ Then it loads the real Dungeon Journal with UALL Forever and checks the journal 
 menu, names on each page change (boss, tab, dungeon, search result), fonts, Shift, Русский and
 `/uadd dj off`/`on`. It prints how many dungeon, boss, quest and item names are Ukrainian.
 
-`run.py` (8 cores): about 65-70 s fresh under other load, 12 s with nothing changed. A hand run reuses passed jobs whose inputs are the
+`run.py` (8 cores): about 70 s fresh, 12 s with nothing changed. A hand run reuses passed jobs whose inputs are the
 same (`tools/harness/jobcache.py`) and says how many; `--fresh` or `UADD_CACHE=0` runs all, as suite and push check do.
 
 - `run.py` runs its flows side by side, one process per flow (`tools/harness/pool.py`, `jobs.py`). The checks come
-  out in the same order as one after another.
-- Before the first flow starts, `run.py` reads the files most flows share (the stubs, every addon file of the main
-  flow) into memory, 16 at a time (`jobs.warm`); each flow starts with them. The flows then start slowest first,
-  after the main flow, by the times of the last runs side by side (`~/.cache/uadd/harness-times.json`, outside the
-  repo; `UADD_JOB_TIMES` sets another path). With no record they start in the order they are added. The record sets
-  only the start order: the checks, their order and their results stay the same.
+  out in the same order as one after another. They start slowest first (times of past runs, `jobs.py`).
 - A flow that fails, dies or runs past its time gives a FAIL line with a repro line. The run then ends with code 1.
 - `UADD_JOBS=1` runs every flow in one process, one after another, as before (`UADD_JOBS=4`: 4 at a time).
   `UADD_JOB_TIMEOUT` is the seconds one flow may take (default 900).
