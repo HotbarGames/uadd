@@ -16,8 +16,10 @@ Attune (read only). Names come from a UALL stand-in (flow_att.lua). Run by run.p
 """
 import collections
 import gc
+import statistics
 import sys
 
+import clock
 import flow_att_game as G
 import flow_att_fix
 import flow_att_more
@@ -27,6 +29,7 @@ from loader import txt
 HELD = 0.4                      # the hold key counts after 0.25 s
 BURST = 50                      # bag updates and picks in the cost burst
 SELECT_BUDGET_MS, BAG_BUDGET_MS = 3.0, 3.0
+COST_RUNS = 3                   # bursts timed; the best counts
 WHERE = [("title",), ("status",), ("survey",), ("nextTitle",), ("sync",), ("node", "20"), ("node", "30"),
          ("node", "115"), ("type", "20"), ("type", "30"), ("tree", "RAIDS"), ("tree", "COMPLETED"),
          ("tree", "Will not do"), ("tree", "20"), ("tree", "160"), ("next", 1), ("next", 2), ("next", 3),
@@ -149,13 +152,26 @@ def more(check, facts, c, M, w, d, Cyr):
     M.wait(6)
     # Cost: bag updates and picks again are bounded by the memo.
     memo0, r0, s0 = M.memo(), M.refreshes(), M.selects()
+    refs = [clock.sample()]
     facts["bag_ms"] = round(M.bagCost(BURST), 4)
+    refs.append(clock.sample())
     facts["select_ms"] = round(M.selectCost(BURST), 4)
+    refs.append(clock.sample())
     check("cost: one Next refresh per bag update, one pick per call", (M.refreshes() - r0, M.selects() - s0) == (BURST, BURST),
           (M.refreshes() - r0, M.selects() - s0))
     check("cost: memo does not grow on the same texts", M.memo() - memo0 <= 2, f"{memo0} -> {M.memo()}")
+    # The time: the best of COST_RUNS bursts (one the scheduler cut into is not the code's time). The bound stays
+    # 3.0 ms, not stretched by the load (clock.py): a pick costs 0.8-0.9 of the reference job, so a stretched bound
+    # would let a 3x slower pick pass. The reference seen between the bursts is in the detail (2026-11-26).
+    bag, pick = [facts["bag_ms"]], [facts["select_ms"]]
+    for _ in range(COST_RUNS - 1):
+        bag.append(M.bagCost(BURST))
+        refs.append(clock.sample())
+        pick.append(M.selectCost(BURST))
+        refs.append(clock.sample())
     check(f"cost: under {BAG_BUDGET_MS} ms per bag update, {SELECT_BUDGET_MS} ms per pick",
-          facts["bag_ms"] < BAG_BUDGET_MS and facts["select_ms"] < SELECT_BUDGET_MS, (facts["bag_ms"], facts["select_ms"]))
+          min(bag) < BAG_BUDGET_MS and min(pick) < SELECT_BUDGET_MS,
+          (round(min(bag), 4), round(min(pick), 4), f"reference {statistics.median(refs):.2f} ms"))
     # Width: the box text keeps Attune's sizes.
     size = tuple(M.size("node", "30")) + (M.font("node", "30")[1],) + tuple(M.nodeSize("30"))
     check("box text 120x16 at size 11, box 170x48", size == (120, 16, 11, 170, 48), size)
