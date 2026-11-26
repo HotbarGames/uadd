@@ -13,6 +13,9 @@ is released.** Any module, any window, also when it shows only for a moment (the
 
 ## Cases
 
-None open. The last five (BugSack tab on hover, Forever Quest Pins Ignore button, Dungeon Journal buttons,
+- OPEN 2026-11-26 BugSack: the game crashes (stack overflow inside SetFontObject, crash log 14:23:55). Open
+  BugSack from the minimap icon while it holds an error. Not fixed yet. Until then: `/uadd bs off`.
+
+Closed: the last five (BugSack tab on hover, Forever Quest Pins Ignore button, Dungeon Journal buttons,
 LayerSwap swap button, OpenMap dungeon view) closed 2026-11-26: fixed in fec8fdf (lesson 46), checks
 `flow_button.py` and the boxes.lua state rule, the owner saw them gone in the game.
