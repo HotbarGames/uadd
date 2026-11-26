@@ -294,6 +294,7 @@ Check: `python3 tools/harness/flow_mastercraft.py` (the halves check and the row
 Now a job's passed result is reused while its inputs are the same (`tools/harness/jobcache.py`). Rule: a kept result
 is only as good as its list of inputs, so list what the job was seen to read (files, folders, missing paths,
 modules, environment) and, in doubt, more. Never keep a FAIL, a time that passed only by the load's stretch, a job
-that runs a program, or one whose input changed during the run. The push check and CI never reuse. New ways to
+that runs a program, or one whose input changed during the run. The push check and CI never reuse (2026-11-26 look:
+they are the only full run on a clean export and catch installed-addon updates; docs-only pushes too, as tests read docs). New ways to
 read (Lua `io`, a relative import) need `jobinputs.py` first. Check: `python3 -m unittest tools.test_jobcache` (one
 test per kind of input).
