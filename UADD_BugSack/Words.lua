@@ -9,7 +9,7 @@
 local _, ns = ...
 local U = UADD
 ns.KEY, ns.TARGET, ns.TITLE = "bs", "BugSack", "BugSack"
-ns.FRAME, ns.TEXT, ns.POPUP = "BugSackFrame", "BugSackScrollText", "BugSackSendBugs"
+ns.FRAME, ns.TEXT, ns.POPUP, ns.TAB = "BugSackFrame", "BugSackScrollText", "BugSackSendBugs", "BugSackTab"
 local CYR = "[\208-\211][\128-\191]"
 ns.CYR = CYR
 local MAXLEN = 300

@@ -101,7 +101,13 @@ function A.Set(fs, app, widget)
         if UADD.GuardWatch then UADD.GuardWatch(fs) end   -- the guard sees a Latin pin left on it later
     end
     local p = fs:GetFont()
-    if not p or UADD.IsCyrFont(p) then return end    -- ours already, or a font with our letters
+    if not p or UADD.CyrHolds(fs) then return end    -- ours already, or a font with our letters
+    if rec[fs] and UADD.IsCyrFont(p) then            -- ours on the label, not in every state of its button (lesson 46)
+        busy = true
+        pcall(UADD.CyrOnLocked, fs)
+        busy = false
+        return
+    end
     local was = UADD.SaveFont(fs)                    -- path, size, flags, object (and own): lesson 18
     was.app, was.widget = app, widget
     if locked then was.own, was.locked = false, true end

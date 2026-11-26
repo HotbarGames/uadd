@@ -13,6 +13,7 @@ Locale.lua
 Fonts.lua
 Parts.lua
 Words.lua
+Steps.lua
 Screen.lua
 Born.lua
 Tooltip.lua

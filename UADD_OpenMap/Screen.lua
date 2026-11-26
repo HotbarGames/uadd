@@ -131,7 +131,7 @@ local function AnyShown()
 end
 S.AnyShown = AnyShown
 
-local CYR = "[\208\209]"
+local Steps, Try, FixText = ns.Steps, ns.Steps.Try, ns.Steps.FixText   -- each step guarded on its own (Steps.lua)
 
 -- `every`: shown or not, words only (S.Sweep).
 local function Walk(f, r, every)
@@ -139,20 +139,16 @@ local function Walk(f, r, every)
     seen[f] = true
     if not every and not known[f] then known[f], fresh = true, true end
     if f.IsProtected and f:IsProtected() then return end   -- secure frames (a gamepad's button): never ours
-    if r.words and not every and f.GetObjectType and f:GetObjectType() == "Button" then ns.Words.HookButton(f) end
+    if r.words and not every and f.GetObjectType and f:GetObjectType() == "Button" then Try(ns.Words.HookButton, f) end
     if f.GetRegions then
         for _, g in ipairs({ f:GetRegions() }) do
             if g.GetObjectType and g:GetObjectType() == "FontString" and (every or g:IsVisible()) then
                 if not every and not known[g] then known[g], fresh = true, true end
                 if every then
-                    if r.words then ns.Words.Apply(g) end
+                    if r.words then Try(ns.Words.Apply, g) end
                 else
-                    if r.words then
-                        ns.Words.Hook(g)
-                        ns.Words.Apply(g)
-                    end
-                    local t = UADD.Plain(g:GetText())
-                    if r.all or (type(t) == "string" and t:find(CYR)) then ns.Fonts.Fix(g, false) end
+                    if r.words then Try(ns.Words.Hook, g) Try(ns.Words.Apply, g) end
+                    Try(FixText, g, r)
                 end
             end
         end
@@ -169,11 +165,12 @@ function S.Sweep()
     if S.WaitCombat() then return end                     -- after combat (waiter above)
     Collect()
     wipe(seen)
+    Steps.Begin()
     local ok, err = pcall(function()
         for _, r in ipairs(roots) do Walk(r.f, r, true) end
     end)
     wipe(seen)
-    if not ok then error(err, 0) end
+    Steps.Raise(ok, err)
 end
 
 -- Runs now: fonts and words on every shown text of OpenMap's windows.
@@ -181,6 +178,7 @@ function S.Scan()
     if not ns.On() or S.WaitCombat() then return end
     Collect()
     wipe(seen)
+    Steps.Begin()
     local ok, err = pcall(function()
         for _, r in ipairs(roots) do
             WatchShow(r)
@@ -188,7 +186,7 @@ function S.Scan()
         end
     end)
     wipe(seen)
-    if not ok then error(err, 0) end
+    Steps.Raise(ok, err)
 end
 
 local function Run()

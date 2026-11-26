@@ -117,12 +117,16 @@ local function Build()
     end)
     W.buttons.wipe:HookScript("OnLeave", Leave)
 
-    for i, name in ipairs({ "All", "Session", "Last" }) do
-        local t = CreateFrame("Button", "BugSackTab" .. name, w)
+    -- Its bottom tabs, from the game's tab template (the label is the button's own, its states the game's
+    -- objects); the first one selected (disabled), the last one with the game's word.
+    for i, name in ipairs({ "All", "Session", "Last", "Options" }) do
+        local t = CreateFrame("Button", "BugSackTab" .. name, w, "PanelTabButtonTemplate")
         t:SetPoint("BOTTOMLEFT")
-        t.Text = t:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-        t.Text:SetText(L[F.win.tabs[i]])
+        t.Text:SetText(i == 4 and OPTIONS or L[F.win.tabs[i]])
         W.tabs[i] = t
+    end
+    for i, t in ipairs(W.tabs) do
+        if i == 1 then PanelTemplates_SelectTab(t) else PanelTemplates_DeselectTab(t) end
     end
 
     local sf = CreateFrame("ScrollFrame", "BugSackScroll", w)

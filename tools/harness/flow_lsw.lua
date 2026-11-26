@@ -1,28 +1,13 @@
 -- Lua helpers for flow_lsw.py, on the LayerSwap stand-in (tools/harness/layerswap).
--- Reached from Python as HARNESS.lsw. Run before the game starts: a button's SetNormalFontObject (or
--- SetDisabledFontObject while it is disabled) puts that font object on its label (as in the client; it
--- does not call the label's own SetFontObject), and
--- GameTooltip's lines get text and a font (the harness only counts lines).
+-- Reached from Python as HARNESS.lsw. Run before the game starts: GameTooltip's lines get text and a font
+-- (the harness only counts lines). A button's state font objects are the shared stand-in's (wow_button.lua:
+-- the getters return the object, and its state puts it on the label natively, as in the client).
 local H = HARNESS
 local M = {}
 H.lsw = M
 
 local function S() return rawget(_G, "LayerSwapStandIn") end
 local function NS() return H.ns.UADD_LayerSwap end
-
-local W = H.Widget
-local setObject = W.SetFontObject
--- As in the client: the label shows the normal font object, or the disabled one while the button is
--- disabled (the highlight one only under the mouse, never here).
-local function Label(self)
-    local fs = self.GetFontString and self:GetFontString()
-    local o = rawget(self, self.__disabled and "__fontDisabled" or "__fontNormal")
-    if fs and o then setObject(fs, o) end
-end
-W.SetNormalFontObject = function(self, o) rawset(self, "__fontNormal", o) Label(self) end
-W.SetDisabledFontObject = function(self, o) rawset(self, "__fontDisabled", o) Label(self) end
-W.SetHighlightFontObject = function(self, o) rawset(self, "__fontHighlight", o) end
-W.SetEnabled = function(self, v) self.__disabled = not v Label(self) end
 
 -- GameTooltip's lines get their text.
 local tip = GameTooltip

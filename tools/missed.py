@@ -6,7 +6,9 @@ once (UADD/Missed.lua) in its SavedVariables. After you log out (the game writes
 It reads WTF/Account/*/SavedVariables/UADD.lua under the WoW _forever_ folder ($UADD_WTF_DIR: another WTF
 folder; or give the UADD.lua path as an argument), prints per module the missed texts (most shown first)
 and writes all of them to local/missed/<module>.txt (git-ignored: it holds the addons' English).
-First it prints, loudly, what UADD's guard had to repair in the game (tools/health_report.py).
+First it prints, loudly, what UADD's guard had to repair in the game (tools/health_report.py): each kind (boxes
+fixed or not, a shared font, the keyboard) with when it last happened, in which UADD version, and a sample. A kind
+last seen in an older UADD than the installed one is printed quietly and is no repair for the exit code.
 Exit code: 1 when it lists missed texts or guard repairs, 0 with "nothing missed." when there are none, 2
 when no file could be read.
   * Kept quiet here: a module's STAY texts (English on purpose), for every module in STAY_LISTS. A STAY
@@ -273,7 +275,9 @@ def main(argv):
         print(p)
     if len(problems) == len(files):
         return 2
-    repairs = health_report.report(*health_report.collect(_parsed(files)))
+    import copy_scan
+    repairs = health_report.report(*health_report.collect(_parsed(files)),
+                                   current=health_report.installed_version(copy_scan.addons_dir()))
     if report(mods, stay_sets(), OUT) == 0:
         print("nothing missed.")
         return 1 if repairs else 0

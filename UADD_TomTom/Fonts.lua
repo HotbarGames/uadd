@@ -68,8 +68,8 @@ end
 local function HookButton(b)
     if hooked[b] then return end
     hooked[b] = true
-    for _, m in ipairs({ "SetText", "SetFormattedText", "SetNormalFontObject", "SetHighlightFontObject",
-        "SetDisabledFontObject" }) do
+    -- a button draws its new label without the label's SetText; its states' fonts are the core's (ButtonFont.lua)
+    for _, m in ipairs({ "SetText", "SetFormattedText" }) do
         if b[m] then hooksecurefunc(b, m, OnButton) end
     end
 end

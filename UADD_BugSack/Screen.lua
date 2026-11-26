@@ -15,19 +15,10 @@ local DEPTH = 8
 -- Lessons 18, 32, 44: its own font saved first, never while ours is on; a Cyrillic font OBJECT of ours put on (no
 -- file pinned); only where that does not take, the file by hand (U.CyrOnOwn). U.FontBack with that same record
 -- gives its object, and a hand-set file, back.
+-- A button's states are the core's (ButtonFont.lua, lesson 46): the tab under the mouse had shown boxes.
 local saved = {}
 local function IsCyr(fs) local ok, p = pcall(fs.GetFont, fs) return ok and U.IsCyrFont(p) end
-local function CyrOn(fs)
-    if IsCyr(fs) then return true end            -- ours on already (saved), or a font with our letters
-    local okS, was = pcall(U.SaveFont, fs)
-    if not okS or type(was) ~= "table" then return false end
-    saved[fs] = nil
-    local ok, took = pcall(U.CyrOnLocked, fs)
-    if not (ok and took) and not U.Locked(fs) then ok, took = pcall(U.CyrOnOwn, fs, was) end
-    if ok and took and IsCyr(fs) then saved[fs] = was return true end
-    pcall(U.FontBack, fs, was)                   -- whole English, never half a font
-    return false
-end
+local function CyrOn(fs) return U.CyrFix(fs, saved) end
 local function FontBack(fs)
     local o = saved[fs]
     saved[fs] = nil
@@ -37,7 +28,7 @@ local function FontBack(fs)
 end
 ns.saved, ns.CyrOn, ns.FontBack = saved, CyrOn, FontBack
 
--- A button sets its label's font object again on a state change: ours again then (lesson 32).
+-- It sets a text's font object again: ours again then (lesson 32).
 local fhooked = setmetatable({}, { __mode = "k" })
 local fixing = false
 -- It set a font object while ours may be on. Ours gone: its own font is saved again (a hover that left ours on
@@ -66,21 +57,21 @@ local function Refix(fs)
     fixing = false
 end
 ns.Refix = Refix
-local BUTTON_FONT = { "SetNormalFontObject", "SetHighlightFontObject", "SetDisabledFontObject", "Enable", "Disable",
-    "SetEnabled", "LockHighlight", "UnlockHighlight" }
-local function HookFont(fs, btn)
+local function HookFont(fs)
     if fhooked[fs] then return end
     fhooked[fs] = true
-    local fix = Guard(function() ns.Refix(fs) end)
-    pcall(hooksecurefunc, fs, "SetFontObject", fix)
-    if not btn then return end
-    for _, m in ipairs(BUTTON_FONT) do
-        if type(btn[m]) == "function" then pcall(hooksecurefunc, btn, m, fix) end
-    end
-    if btn.HookScript then
-        pcall(btn.HookScript, btn, "OnEnter", fix)
-        pcall(btn.HookScript, btn, "OnLeave", fix)
-    end
+    pcall(hooksecurefunc, fs, "SetFontObject", Guard(function() ns.Refix(fs) end))
+end
+
+-- A bottom tab keeps the width it had for the English word until it is shown again: fitted to the word it shows now,
+-- by the game's own function its template uses when shown.
+local function FitTab(btn)
+    local name = btn and U.Plain(btn.GetName and btn:GetName())
+    local fit = rawget(_G, "PanelTemplates_TabResize")
+    if not name or name:sub(1, #ns.TAB) ~= ns.TAB or type(fit) ~= "function" then return end
+    local p = btn:GetParent()
+    if type(p) ~= "table" then return end
+    pcall(fit, btn, p.tabPadding, nil, p.minTabWidth, p.maxTabWidth)
 end
 
 -- ── The session label ────────────────────────────────────────────────────────────────────────
@@ -221,13 +212,17 @@ function ns.Apply(want)
             local set = btn or fs
             if want then
                 local uk = now and EN[now]
-                if uk and CyrOn(fs) then set:SetText(uk) HookFont(fs, btn) n = n + 1
-                elseif now and UK[now] and CyrOn(fs) then HookFont(fs, btn) n = n + 1 end
+                if uk and CyrOn(fs) then set:SetText(uk) HookFont(fs) n = n + 1
+                elseif now and UK[now] then
+                    if CyrOn(fs) then HookFont(fs) n = n + 1
+                    else set:SetText(UK[now]) FontBack(fs) end      -- no font draws it now: the English, no boxes
+                end
             else
                 local en = now and UK[now]
                 if en then set:SetText(en) end
                 FontBack(fs)
             end
+            if now ~= U.Plain(fs:GetText()) then FitTab(owner) end
         end
     end
     shown = n

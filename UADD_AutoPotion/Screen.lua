@@ -109,11 +109,12 @@ function S.Refit(fs, from, to)
     end
 end
 
--- Every text and font back as Auto Potion had it (module off). Fonts first; the boxes are fitted
--- from the widths Texts.lua kept when the words were put, so the order does not change them.
+-- Every text and font back as Auto Potion had it (module off). The English first, then the font: the core puts
+-- no font without Cyrillic under shown Cyrillic (lesson 45). The boxes are fitted from the widths Texts.lua kept
+-- when the words were put, so the order does not change them.
 function S.Restore()
-    U.SafeCall(ns.Fonts.Restore)
     U.SafeCall(ns.Texts.Restore)
+    U.SafeCall(ns.Fonts.Restore)
     U.SafeCall(ns.Tooltip.Sync, true)
     U.SafeCall(ns.Tooltip.Stop)
 end

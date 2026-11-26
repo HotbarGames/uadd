@@ -66,7 +66,8 @@ MUTANTS = {
     "spot": ("Joined.lua", " or Spot(s) end", " end", 13),
     "worn": ("Joined.lua", "Atom(last) or Worn(last)", "Atom(last)", 13),
     # core UADD/Font.lua (lesson 44): a label set by hand gets the Cyrillic file by hand
-    "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) then return false end', "do return false end", 11),
+    "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) or (U.BoxBad and U.BoxBad(fs)) then return false end',
+            "do return false end", 11),
 }
 CORE_CUTS = {"Font.lua"}                     # files cut in the core UADD folder, not the module's
 

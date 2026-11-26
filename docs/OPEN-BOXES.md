@@ -14,3 +14,7 @@ is released.** Any module, any window, also when it shows only for a moment (the
 ## Cases
 
 - OPEN 2026-11-26 BugSack: a bottom tab shows boxes while the mouse is over it (the second tab, "this session").
+- OPEN 2026-11-26 Forever Quest Pins: the breadcrumb dialog's Ignore button (found by the harness, not seen in the game yet). Fix in, not yet checked in the game.
+- OPEN 2026-11-26 Dungeon Journal: two button labels, on the mode chooser and on the main window (found by the harness, not seen in the game yet).
+- OPEN 2026-11-26 LayerSwap: the panel's swap button, after a button state change when our font copy could not be made (found by the chaos test, not seen in the game yet).
+- OPEN 2026-11-26 OpenMap: the dungeon view, a Latin font set by hand under our Ukrainian (found by the chaos test, not seen in the game yet).

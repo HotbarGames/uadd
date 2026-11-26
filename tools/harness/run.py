@@ -42,6 +42,8 @@ ClassicUA's real options and glossary) runs next, then Questie's level letter (f
 another addon's Ukrainian for Questie first), then the key notice (flow_keynotice.py).
 The keyboard check (flow_focus.py: every stand-in and the modules that load with them; after login no text
 box has the keyboard, docs/LESSONS2.md lesson 16) runs next.
+The core's button fonts and box guard alone (flow_button.py: a button's state objects get our Cyrillic copies and
+back, the box guard finds and repairs boxes by width, lesson 46; `--prove` cuts each fix) run next.
 The safeguards (flow_safe.py: a failing module falls back to English, the guard puts game-wide breakage
 right, lesson 19) run last; `python3 tools/harness/flow_safe.py --prove` shows each step fail without its fix.
 After each of these, "tooltip font object back after clear: <key>" (tipfont.py, wow_fontfam.lua, lesson 18):
@@ -104,6 +106,7 @@ def run_all(cache=None):
     import flow_dci
     import flow_wql
     import flow_bs
+    import flow_button
     import flow_gq
     import flow_rts
     import flow_rts_halves
@@ -134,7 +137,7 @@ def run_all(cache=None):
         ("lt", flow_lt), ("dci", flow_dci), ("wql", flow_wql), ("bs", flow_bs), ("gq", flow_gq), ("rts", flow_rts),
         ("rtsh", flow_rts_halves), ("ofa", flow_ofa), ("ofah", flow_ofa_halves), ("pops", flow_popups), ("missed", flow_missed), ("hash", flow_hash),
         ("cua", flow_classicua), ("qtag", flow_qtag), ("keynotice", flow_keynotice), ("focus", flow_focus),
-        ("safe", flow_safe), ("chaos", chaos)), cache)
+        ("button", flow_button), ("safe", flow_safe), ("chaos", chaos)), cache)
     skipped = ["UADD_OpenMap"] if missing else []      # its flow runs with the journal's
     checks += [flow.Check(name, False, why) for name, why in halves_guard(checks, skipped)]
     return checks, facts, notes

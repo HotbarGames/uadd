@@ -7,6 +7,9 @@
 --     FRIZQT__.TTF; wow_fontfam.lua; an addon's CreateFontFamily with a Cyrillic member), nor a FontString
 --     whose font nobody named (no object, no SetFont), nor an addon's own font file with Cyrillic (boxes.py
 --     file_cyr), nor a text that is not UADD's (Theirs below: by the code that set it).
+--   * a Button's own label (lesson 46): each object of the button's states must have a Cyrillic file of its own (the
+--     client puts them on natively, and there a family draws its Latin member), and so must the label's own.
+--   * the in-game box guard's repairs (UADD/BoxGuard.lua) are hits too.
 --   * UADD_BOXTRACE=1 names each hit's whole call chain.
 --   * at each HARNESS.step a suspect that is still one, shown and placed is a HIT: kept in H.boxHits and
 --     sent to H.boxReport (boxes.py, one check per run.py segment) with its name or parent chain, its font
@@ -94,12 +97,33 @@ local function Family(o)
     return false
 end
 
+H.boxFamily = Family
+
+-- A Button's own label with no hand-set file (lesson 46): the client puts each state's object on it by itself
+-- (wow_button.lua), and there a family draws its Latin member (BugSack's tab under the mouse). So each object of
+-- its states, and the label's own, must have a Cyrillic file of its own; else a hit ("state Highlight").
+local STATES = { "Normal", "Highlight", "Disabled" }
+local function OwnCyr(o, isCyr)
+    local f = type(o) == "table" and rawget(o, "__font")
+    return type(f) == "table" and (isCyr(f[1]) or AddonFileCyr(f[1]))
+end
+local function Label(fs, f, isCyr)
+    for _, s in ipairs(STATES) do
+        local so = rawget(rawget(fs, "__parent"), "__font" .. s)
+        if so ~= nil and not OwnCyr(so, isCyr) then return "state " .. s end
+    end
+    if isCyr(f[1]) or AddonFileCyr(f[1]) or rawget(fs, "__fontObject") == nil then return false end
+    return "label"
+end
+
 local function Suspect(fs)
     local t, f = rawget(fs, "__text"), rawget(fs, "__font")
     if type(t) ~= "string" or not t:find("[\208\209][\128-\191]") or type(f) ~= "table" then return false end
     local isCyr = rawget(_G, "UADD") and UADD.IsCyrFont
-    if not isCyr or isCyr(f[1]) or AddonFileCyr(f[1]) or theirs[fs] then return false end
-    local hand, o = rawget(fs, "__hand"), rawget(fs, "__fontObject")
+    if not isCyr or theirs[fs] then return false end
+    local hand, o, p = rawget(fs, "__hand"), rawget(fs, "__fontObject"), rawget(fs, "__parent")
+    if not hand and type(p) == "table" and rawget(p, "__fs") == fs then return Label(fs, f, isCyr) end
+    if isCyr(f[1]) or AddonFileCyr(f[1]) then return false end
     if not hand and (o == nil or Family(o)) then return false end
     return true
 end
@@ -137,6 +161,9 @@ local function Mark(self, method)
     suspects[fs] = at
 end
 
+-- A button's state object changed (wow_button.lua): its label is looked at again.
+function H.boxMark(b) pcall(Mark, b, "SetFontObject") end
+
 for _, m in ipairs({ "SetText", "SetFont", "SetFontObject" }) do
     local was = W[m]
     W[m] = function(self, ...)
@@ -161,9 +188,27 @@ local function Name(fs)
     return tostring(name or "?")
 end
 
+-- The in-game box guard (UADD/BoxGuard.lua) found boxes and repaired them: a box was on screen, so a hit too.
+local repairs = 0
+local function Guarded()
+    local n = rawget(_G, "UADD") and UADD.BoxRepairs and UADD.BoxRepairs() or 0
+    if n <= repairs then return end
+    repairs = n
+    local last = UADD.DB and UADD.DB().health
+    last = type(last) == "table" and type(last.guardLast) == "table" and last.guardLast or {}
+    local s = last.boxfail or last.box
+    local hit = { name = "UADD box guard", path = "repairs " .. n, sample = tostring(s and s.sample) }
+    if #H.boxHits < 50 then H.boxHits[#H.boxHits + 1] = hit end
+    if not H.boxQuiet and (type(H.boxReport) == "function" or type(H.boxReport) == "userdata") then
+        H.boxReport(hit.name, hit.path, hit.sample)
+    end
+end
+
 local function Look()
+    pcall(Guarded)
     for fs in pairs(suspects) do
-        if not Suspect(fs) then
+        local why = Suspect(fs)
+        if not why then
             suspects[fs] = nil
         elseif fs:IsVisible() and (fs.__alpha or 1) > 0 and Placed(fs) then
             local path, t = fs.__font[1], fs.__text
@@ -176,6 +221,7 @@ local function Look()
                     on = rawget(o, "__name") o = rawget(o, "__fontObject")
                 end
                 local how = (rawget(fs, "__hand") and "hand," or "") .. tostring(on or "-")
+                if type(why) == "string" then how = how .. "," .. why end
                 if type(suspects[fs]) == "string" then how = how .. "," .. suspects[fs] end
                 local hit = { name = Name(fs), path = tostring(path) .. "<" .. how .. ">", sample = t:sub(1, 40) }
                 if #H.boxHits < 50 then H.boxHits[#H.boxHits + 1] = hit end

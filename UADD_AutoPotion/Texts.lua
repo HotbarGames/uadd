@@ -41,6 +41,18 @@ local function Note(fs, en)
     U.Missed("autopotion", en, fs)
 end
 
+-- No Cyrillic font took on our words (Fonts.Fix false; also from its font hook, Fonts.lua): Auto Potion's English
+-- back first, its box fitted again when it was fitted to ours, then its font (lesson 45). A failed fix is never
+-- watched by the box guard, so this is the only way back from boxes.
+function T.English(fs)
+    if mine[fs] and U.Plain(fs:GetText()) == mine[fs] then
+        Put(fs, orig[fs])
+        if ukWidth[fs] then U.SafeCall(ns.Screen.Refit, fs, ukWidth[fs], enWidth[fs]) end
+    end
+    mine[fs], ukWidth[fs] = nil, nil
+    ns.Fonts.Back(fs)
+end
+
 -- One FontString as it should be now: our words while they are wanted, Auto Potion's otherwise.
 -- quick (the hold key): the font is fixed only when our words were just put in.
 function T.Apply(fs, quick)
@@ -58,11 +70,11 @@ function T.Apply(fs, quick)
             end
             local w = Put(fs, uk)
             mine[fs], enWidth[fs] = uk, w
-            ns.Fonts.Fix(fs)
+            if not ns.Fonts.Fix(fs) then return T.English(fs) end   -- no Cyrillic font took (lesson 45)
             ukWidth[fs] = fs:GetStringWidth()
             return ns.Screen.Refit(fs, w, ukWidth[fs])
         elseif quick then return end
-        ns.Fonts.Fix(fs)
+        if not ns.Fonts.Fix(fs) then T.English(fs) end
     elseif mine[fs] then
         if orig[fs] ~= now then
             local w = Put(fs, orig[fs])
@@ -99,8 +111,7 @@ end
 function T.HookButton(b)
     if hooked[b] or not b.GetFontString then return end
     hooked[b] = true
-    hooksecurefunc(b, "SetText", OnButton)
-    ns.Fonts.HookButton(b)
+    hooksecurefunc(b, "SetText", OnButton)              -- its states' fonts: the core's (UADD/ButtonFont.lua)
 end
 
 -- Every shown text we know, as it should be now (after the hold key). A hidden one is marked:

@@ -13,7 +13,8 @@ import tipfont
 HERE = os.path.dirname(os.path.abspath(__file__))
 STUBS = ["wow_core.lua", "wow_lua.lua", "wow_widgets.lua", "wow_api.lua", "wow_widgets2.lua", "wow_focus.lua",
          "wow_frames.lua",
-         "wow_api2.lua", "wow_frames2.lua", "wow_fontfam.lua", "wow_api3.lua", "wow_load.lua"]
+         "wow_api2.lua", "wow_frames2.lua", "wow_fontfam.lua", "wow_api3.lua", "wow_load.lua",
+         "wow_button.lua"]
 FRAME_TAGS = {"Frame", "Button", "CheckButton", "EditBox", "ScrollFrame", "Slider", "StatusBar",
               "GameTooltip", "MessageFrame", "ScrollingMessageFrame", "Cooldown", "Model",
               "PlayerModel", "ColorSelect", "SimpleHTML"}

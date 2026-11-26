@@ -2,9 +2,9 @@
 --   * Bagnon's texts use the game's font objects (Latin letters only on an English client). A
 --     FontString that shows Cyrillic gets UADD's Cyrillic font file at the size and with the flags it
 --     has now, on that one FontString (UADD/AceFont.lua). Shared font objects are never changed.
---   * Each FontString is hooked once (SetText, SetFormattedText; a button's own text and font object
---     setters too) and decides again on each new text: Cyrillic gets ours, anything else gets its own
---     font back, exactly as it was.
+--   * Each FontString is hooked once (SetText, SetFormattedText; a button's own text setters too; the
+--     fonts of its states are the core's, ButtonFont.lua) and decides again on each new text: Cyrillic
+--     gets ours, anything else gets its own font back, exactly as it was.
 --   * Where: Bagnon's windows (bags, bank, guild bank: found in its Frames registry, hooked when one is
 --     made), its settings pages (Bagnon_Config), its Sushi pop-ups, the menus it opens (right-click
 --     menus: the first level), and GameTooltip lines while the tooltip's owner is inside a Bagnon window
@@ -64,8 +64,8 @@ local function OnButtonSet(b) U.SafeCall(OnButton, b) end
 local function HookButton(b)
     if hooked[b] then return end
     hooked[b] = true
-    for _, m in ipairs({ "SetText", "SetFormattedText", "SetNormalFontObject", "SetHighlightFontObject",
-        "SetDisabledFontObject" }) do
+    -- a button draws its new label without the label's SetText; its states' fonts are the core's (ButtonFont.lua)
+    for _, m in ipairs({ "SetText", "SetFormattedText" }) do
         if b[m] then hooksecurefunc(b, m, OnButtonSet) end
     end
 end

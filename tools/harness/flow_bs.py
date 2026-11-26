@@ -161,13 +161,16 @@ def textarea(check, c, M, E, A):
 
 def boxes(check, c, M, E, A):
     bad = [("on", txt(x)) for x in M.fonts().values()]
+    bad += [("tabs on", txt(x)) for x in M.hoverTabs().values()]
     M.key(True)
     bad += [("held", txt(x)) for x in M.fonts().values()]
+    bad += [("tabs held", txt(x)) for x in M.hoverTabs().values()]
     M.key(False)
     M.press()
     bad += [("pressed", txt(x)) for x in M.fonts().values()]
-    check("5 our font on every Cyrillic text and on no other: on, held, after each button's state change",
-          not bad, bad[:4])
+    bad += [("tabs pressed", txt(x)) for x in M.hoverTabs().values()]
+    check("5 our font on every Cyrillic text and on no other: on, held, after each button's state change, the "
+          "mouse over each tab (the client's own font switch); each tab fitted to ours", not bad, bad[:4])
     return not bad
 
 
@@ -248,8 +251,14 @@ CUTS = {
     "tip": ("Screen.lua", "        if want then HookTip(f) end\n", "", ours, False),
     "refix": ("Screen.lua", "    if ns.WordsWanted() and t and UK[t] then Fresh(fs) pcall(CyrOn, fs) end", "",
               boxes, False),
-    "fresh": ("Screen.lua", "then Fresh(fs) pcall(CyrOn, fs)", "then saved[fs] = nil pcall(CyrOn, fs)", boxes, False),
-    "enabled": ("Screen.lua", '    "SetEnabled", "LockHighlight"', '    "LockHighlight"', boxes, False),
+    # No "fresh" any more (lesson 32 again): on a button's label the core never saves our copy as its own font
+    # (U.FontBase in U.SaveFont and U.FontBack, ButtonFont.lua), so the cut changed nothing here; that proof is
+    # the core's (flow_button.py).
+    # The core's button helper (lesson 46): a button's state objects left as they were, so the client's own
+    # switch under the mouse puts the game's Latin object back on our text.
+    "states": ("UADD:ButtonFont.lua", "local ok, yes = pcall(Put, btn, look)", "local ok, yes = true, true", boxes,
+               False),
+    "fit": ("Screen.lua", "then FitTab(owner) end", "then end", boxes, False),
 }
 
 

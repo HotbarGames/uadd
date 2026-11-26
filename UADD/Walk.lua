@@ -3,7 +3,7 @@
 -- its texts in code and keeps them private (one walker per module; the module gives the roots and the words).
 --   * Each FontString met gets SetText and SetFormattedText hooks once (and SetFontObject, for the font). They do
 --     nothing while off or held unless ours shows on it now. A Button gets SetText hooks too (it draws into its
---     label without the label's SetText) and its font state methods (lesson 32, SetEnabled too).
+--     label without the label's SetText). The fonts of its states are the core's (ButtonFont.lua, lesson 46).
 --   * Each FontString keeps its last English and our answer for it: the same text asks no lookup (lesson 12).
 --   * Off and the hold key put the English back only where ours still shows (lesson 23), then the font.
 --   * Hooks go on only while the module is on (lesson 37): off only gives things back.
@@ -27,7 +27,7 @@
 local U = UADD
 local find = string.find
 local F = U.WalkFrames                       -- WalkFrames.lua: the frame questions, each under a pcall
-local CYR, BUTTON_FONT, Forbidden, Label, Name, Kind = F.CYR, F.BUTTON_FONT, F.Forbidden, F.Label, F.Name, F.Kind
+local CYR, Forbidden, Label, Name, Kind = F.CYR, F.Forbidden, F.Label, F.Name, F.Kind
 
 function U.Walk(spec)
     local W = {}
@@ -60,28 +60,34 @@ function U.Walk(spec)
         return ok and U.IsCyrFont(path)
     end
 
-    -- Our font on fs, read back; true when it can draw Cyrillic now.
+    local English
+    local function Took(fs, ok, on)
+        if not (ok and on and Cyr(fs)) then return false end
+        fonted[fs] = true
+        U.BoxWatch(fs, English)
+        return true
+    end
+    -- Our font on fs, read back; true when it can draw Cyrillic now (and in every state of its button).
     local function Font(fs)
         if not spec.font then return true end
-        if Cyr(fs) then
+        local okH, holds = pcall(U.CyrHolds, fs)
+        if okH and holds then
             if saved[fs] then fonted[fs] = true end   -- ours, still on (or put on again by a hover)
             return true
         end
-        local ok, was = pcall(U.SaveFont, fs)          -- fresh: the label's font now is not ours (lesson 32)
-        if ok and type(was) == "table" then saved[fs] = was end
-        fixing = true
-        local okOn, on = pcall(U.CyrOnLocked, fs)
-        fixing = false
-        if okOn and on and Cyr(fs) then fonted[fs] = true return true end
-        if saved[fs] then                              -- a file set by hand keeps over the object: ours by hand (44)
-            fixing = true
-            local okOwn, own = pcall(U.CyrOnOwn, fs, saved[fs])
-            if okOwn and own and Cyr(fs) then fixing = false fonted[fs] = true return true end
-            pcall(U.FontBack, fs, saved[fs])
-            fixing = false
+        if not (saved[fs] and Cyr(fs)) then            -- fresh: the label's font now is not ours (lesson 32)
+            local ok, was = pcall(U.SaveFont, fs)
+            if ok and type(was) == "table" then saved[fs] = was end
         end
-        saved[fs], fonted[fs] = nil, nil
-        return false
+        fixing = true
+        local yes = Took(fs, pcall(U.CyrOnLocked, fs))
+        if not yes and saved[fs] then                  -- a file set by hand keeps over the object: ours by hand (44)
+            yes = Took(fs, pcall(U.CyrOnOwn, fs, saved[fs]))
+            if not yes then pcall(U.FontBack, fs, saved[fs]) end
+        end
+        fixing = false
+        if not yes then saved[fs], fonted[fs] = nil, nil end
+        return yes
     end
     local function Unfont(fs)
         if not fonted[fs] then return end
@@ -105,6 +111,13 @@ function U.Walk(spec)
         busy = false
         if not ok then Fault(err) end
         return Text(fs) == t
+    end
+    -- The core's box guard found boxes our font could not put right (BoxGuard.lua): the English again.
+    English = function(fs)
+        local r = rec[fs]
+        rec[fs] = nil
+        if r and Text(fs) == r.uk then Put(fs, r.en) end
+        Unfont(fs)
     end
 
     local function Look(fs, t)
@@ -179,24 +192,11 @@ function U.Walk(spec)
         if not fs then return end
         if On() then Hook(fs) elseif hooked[fs] then Apply(fs) end
     end)
-    local OnButtonFont = Guard(function(b)
-        local fs = Label(b)
-        if fs then Refix(fs) end
-    end)
     local function HookButton(b)
         if buttons[b] or not On() or type(b.GetFontString) ~= "function" then return end
         buttons[b] = true
         hooksecurefunc(b, "SetText", OnButton)
         if b.SetFormattedText then hooksecurefunc(b, "SetFormattedText", OnButton) end
-        if spec.font then
-            for _, m in ipairs(BUTTON_FONT) do
-                if type(b[m]) == "function" then hooksecurefunc(b, m, OnButtonFont) end
-            end
-            if b.HookScript then
-                pcall(b.HookScript, b, "OnEnter", OnButtonFont)
-                pcall(b.HookScript, b, "OnLeave", OnButtonFont)
-            end
-        end
     end
 
     local function Walk(f, depth, seen)

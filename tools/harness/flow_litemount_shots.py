@@ -22,6 +22,8 @@ STEPS = {
     "snames": "9 mount, spell and item names from UALL Forever in the Mounts and Falling lists (unknown ones and a "
               "slot row English, a row used again), English while held and off",
     "slater": "9 a name UALL Forever cannot give yet stays English and is asked again later",
+    "sgiveup": "9 a text no Cyrillic font can take (a secure button's label, a name the box guard gave up on) shows "
+               "its whole English, also when LiteMount sets ours again, held and off",
 }
 S.STEPS.update(STEPS)
 
@@ -104,9 +106,18 @@ def later(check, M):
     return ok
 
 
+def giveup(check, M):
+    named, _, first = S.tx(M.shotGiveUp()).partition(" ## ")
+    want = S.tx(M.shotGiveUpExpect())
+    got = [first] + S._ways(M, lambda: S.tx(M.shotGiveUpNow()))[1:]
+    ok = S.cyr(named) and got == [want] * 5
+    check(S.STEPS["sgiveup"], ok, {"named": named, "got": got, "want": want})
+    return ok
+
+
 def steps(check, M):
     setup(M)
-    for f in (boxes, pages, counts, prio, rows, names, later, boxes):
+    for f in (boxes, pages, counts, prio, rows, names, later, giveup, boxes):
         f(check, M)
 
 
@@ -117,6 +128,7 @@ def _reach(f):
 # cut -> (the sub-check it must break, how to build its game, how to reach it on a fresh game).
 MUTANTS = {
     "sfont": ("sboxes", {}, _reach(boxes)),
+    "sgiveup": ("sgiveup", {}, _reach(giveup)),
     "spages": ("spages", {}, _reach(pages)),
     "shint": ("spages", {}, _reach(pages)),
     "scounts": ("scounts", {}, _reach(counts)),

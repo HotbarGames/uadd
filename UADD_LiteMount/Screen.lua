@@ -90,6 +90,15 @@ local function Swap(fs, want)
 end
 S.Swap = Swap
 
+-- The English again on a text that shows our word, as the walk sets it (Fonts.lua: no Cyrillic font took on it).
+function S.English(fs)
+    local t = U.Plain(fs:GetText())
+    local en = type(t) == "string" and (Turn(t, false) or Lc.Back(t) or Lc.GlobalBack(t))
+    if not en or en == t then return false end
+    fs:SetText(en)
+    return true
+end
+
 -- Scroll lists (group, mount, profile and class names) and edit boxes (the player's text) are left alone.
 local function Skip(c)
     if type(c.GetObjectType) == "function" and c:GetObjectType() == "EditBox" then return true end

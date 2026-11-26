@@ -13,6 +13,7 @@ The mutant tests take each gate out (in memory) and want the check to fail.
 python3 -m unittest tools.test_combat_defer
 """
 import os
+import re
 import sys
 import unittest
 
@@ -25,6 +26,7 @@ LUA = lua_runtime()
 ORIGINAL = os.path.join(REPO, "UADD", "Original.lua")
 POPUPS = os.path.join(REPO, "UADD", "Popups.lua")
 SCREEN = os.path.join(REPO, "UADD_OpenMap", "Screen.lua")
+TOC = os.path.join(REPO, "UADD_OpenMap", "UADD_OpenMap.toc")
 
 WORLD = r'''
 COMBAT, SHIFT, ERRORS = false, false, 0
@@ -240,6 +242,13 @@ HIDDEN = COLLECTS
 
 def map_problems(source):
     L = world(MAPWORLD)
+    load = L.eval("function(src, name, key) if NS[key] == nil then assert(loadstring(src, '@' .. name))('UADD_OpenMap', NS) end end")
+    head = read(TOC).split("\nScreen.lua")[0].splitlines()
+    for name in (n.strip() for n in head if n.strip() and not n.startswith("#")):   # TOC order (lesson 29)
+        src = read(os.path.join(REPO, "UADD_OpenMap", *name.split("/")))
+        for key in re.findall(r"^ns\.(\w+) = ", src, re.M):   # a table Screen.lua reads and MAPWORLD lacks: loaded
+            if re.search(r"\bns\.%s\b" % key, source):
+                load(src, name, key)
     L.eval("function(src) local f = assert(loadstring(src, '@Screen.lua')) f('UADD_OpenMap', NS) end")(source)
     L.execute(MAPFLOW)
     g, out = L.globals(), []

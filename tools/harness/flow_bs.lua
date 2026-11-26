@@ -12,13 +12,14 @@ local function NS() return H.ns[MOD] end
 local function S() return BugSackStandIn end
 
 -- The proof that a step has teeth: with M.cut set, one module file runs without one fix (in memory only).
+-- A file of another addon is named "Addon:path" (UADD:ButtonFont.lua, the core's).
 local CUTS = {}
 M.cut, M.wasCut = nil, false
 function M.addCut(name, file, old, new) CUTS[name] = { file, old, new } end
 local runFile = H.runFile
 function H.runFile(addon, path, code)
     local c = M.cut and CUTS[M.cut]
-    if addon == MOD and c and path == c[1] then
+    if c and ((addon == MOD and path == c[1]) or addon .. ":" .. path == c[1]) then
         local a, b = code:find(c[2], 1, true)
         if a then code, M.wasCut = code:sub(1, a - 1) .. c[3] .. code:sub(b + 1), true end
     end
@@ -157,6 +158,21 @@ function M.fonts()
 end
 
 function M.press() S().Press() end
+-- The mouse over each bottom tab and away, the client switching its label's font by itself (wow_button.lua), each
+-- text looked at while the mouse is over it; and each tab showing ours fitted to it (nothing cut).
+function M.hoverTabs()
+    local bad = {}
+    for i, t in ipairs(S().W.tabs) do
+        H.hover(t)
+        for _, x in ipairs(M.fonts()) do bad[#bad + 1] = "over tab" .. i .. ": " .. x end
+        H.unhover(t)
+        local now = t.Text:GetText()
+        if now and now:find(CYR) and rawget(t, "__fitText") ~= now then
+            bad[#bad + 1] = "tab" .. i .. " not fitted to " .. now
+        end
+    end
+    return bad
+end
 function M.fontSize(name) S().FontSize(_G[name]) end
 function M.bugs(n) S().Bugs(n) return S().W.text:GetText(), S().ERR end
 function M.typed()                  -- the player types the filter label's own text in the filter box

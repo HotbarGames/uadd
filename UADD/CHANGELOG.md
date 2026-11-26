@@ -2,51 +2,53 @@
 
 ## Unreleased
 
-- BugSack: new module; its windows, options, popup and chat lines are in Ukrainian. The error texts stay as they are.
-  BugSack: новий модуль; його вікна, налаштування, спливне вікно і рядки в чаті українською. Тексти самих помилок лишаються як є.
-- Road to Sixty: new module; its journey map, panel, settings, minimap button and stats are in Ukrainian. Names of zones, quests, items and players stay as the game gives them.
-  Road to Sixty: новий модуль; його карта подорожі, панель, налаштування, кнопка біля мінікарти і статистика українською. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра.
-- OneForAll: new module; its windows, tabs, settings, tooltips and chat lines are in Ukrainian while OneForAll's own language is English. Names of zones, quests, NPCs, items, spells and players stay as the game gives them.
-  OneForAll: новий модуль; його вікна, вкладки, налаштування, підказки і рядки в чаті українською, поки мова самого OneForAll англійська. Назви зон, завдань, НПС, предметів, заклинань і гравців лишаються такими, як їх дає гра.
-- GearQuest Forever: new module; its windows, tabs, settings, filters, dialogs and chat lines are in Ukrainian while its language list says Ukrainian or auto. Names of zones, quests, items and players stay as the game gives them (UALL Forever or ClassicUA).
-  GearQuest Forever: новий модуль; його вікна, вкладки, налаштування, фільтри, діалоги і рядки в чаті українською, поки в списку мов вибрано «Українська» або автовибір. Назви зон, завдань, предметів і гравців лишаються такими, як їх дає гра (UALL Forever або ClassicUA).
-- Mastercraft: updated for 2.1.1; its new texts are in Ukrainian.
-  Mastercraft: оновлено під 2.1.1; його нові тексти українською.
-- Mastercraft: more lines it builds in code are in Ukrainian (spec cards, cooldown chips, drop rows, auction age, bag and bank counts).
-  Mastercraft: більше рядків, які він складає в коді, українською (картки спеціалізацій, фішки перезарядки, рядки «Випадає з», вік аукціону, кількість у сумках і банку).
-- OpenMap: updated for v0.8.13; its new texts are in Ukrainian.
-  OpenMap: оновлено під v0.8.13; його нові тексти українською.
-- Forever Quest Pins: updated for 1.1.8; its new texts are in Ukrainian.
-  Forever Quest Pins: оновлено під 1.1.8; його нові тексти українською.
-- Fixed: in TomTom, Forever Quest Pins and Waypoint UI, after several errors in our code some titles stayed as they were, even when the module was turned on again.
-  Виправлено: у TomTom, Forever Quest Pins і Waypoint UI після кількох помилок у нашому коді деякі назви не оновлювалися, навіть коли модуль вмикали знову.
-- Dungeon Journal: updated for 2.1.5; its Edit Mode, reset question and new quest texts are in Ukrainian.
-  Dungeon Journal: оновлено під 2.1.5; його режим редагування, питання про скидання та нові тексти завдань українською.
-- WhatTheWhisper: its zone alerts, export title and icon picker are in Ukrainian.
-  WhatTheWhisper: його сповіщення про зону, заголовок експорту й вибір значка українською.
-- LayerSwap: updated for 1.14.52; its new chat option and the note about a declined invite are in Ukrainian.
-  LayerSwap: оновлено під 1.14.52; нове налаштування чату і рядок про відхилене запрошення українською.
-- Attune: updated for 16001-45; the reset button for a character is in Ukrainian. Questie: updated for 12.13.0.
-  Attune: оновлено під 16001-45; кнопка скидання персонажа українською. Questie: оновлено під 12.13.0.
-- Also in Ukrainian: Auctionator's crafting price lines, camp bonuses in ForeverXP Bar, layer-change messages in LayerSwap, "Best" rows in What's Training?, and more recipe sources, tooltip rows and zone lists in Mastercraft.
-  Тепер теж українською: рядки ціни виготовлення в Auctionator, бонуси табору у ForeverXP Bar, повідомлення про зміну лейера в LayerSwap, рядки «найкраща ціна» у What's Training?, більше джерел рецептів, рядків підказок і списків зон у Mastercraft.
-- What's New, News and changelog windows stay in English in Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty and ForeverXP Bar: players read them before our update comes.
-  Вікна «Що нового», новин і змін лишаються англійською у Forever Quest Pins, OpenMap, LootTriage, OneForAll, Road to Sixty і ForeverXP Bar: гравці читають їх раніше, ніж виходить наше оновлення.
+**П'ять аддонів вивчили українську. Ще тринадцять підтягнули вимову.**
 
-## 1.2.4
+Нові:
 
-- New module UADD_WowheadQuickLink: Wowhead Quick Link's link window (its header and Close button), its `/wql` settings window and its two key binding names are in Ukrainian. The links stay as they are.
-  Новий модуль UADD_WowheadQuickLink: вікно посилання Wowhead Quick Link (заголовок і кнопка «Закрити»), його вікно налаштувань `/wql` і назви двох його клавіш українською. Самі посилання лишаються як є.
-- Waypoint UI: the quest title over a quest's pin and in the waypoint's footer is in Ukrainian when UALL Forever or ClassicUA has it.
-  Waypoint UI: назва завдання над міткою завдання і внизу точки маршруту українською, коли її має UALL Forever або ClassicUA.
-- Fixed: in the Dungeon Journal's quest list, some quest titles stayed English or used UALL Forever's word where ClassicUA has one, and objective lines ("0/6 <item>") stayed English.
-  Виправлено: у списку завдань Dungeon Journal деякі назви лишались англійськими або брали слово UALL Forever там, де є слово ClassicUA, а рядки цілей («0/6 <предмет>») лишались англійськими.
-- WhatTheWhisper: updated; its new texts (reactions, message requests, blocked players, group chats, typing and read notes) are in Ukrainian. Group chat names it saves stay English.
-  WhatTheWhisper: оновлено; його нові тексти (реакції, запити на повідомлення, заблоковані гравці, групові чати, «пише...» і «Переглянуто») українською. Назви групових чатів, які він зберігає, лишаються англійськими.
-- Forever Quest Pins: updated for 1.1.5; its new quest tracker page and What's New line are in Ukrainian, and go back to English on the hold key and when off.
-  Forever Quest Pins: оновлено для 1.1.5; його нова сторінка трекера завдань і рядок «Що нового» українською, а з клавішею оригіналу й вимкненим модулем повертаються англійською.
-- RareScanner: updated for 1.60.1.11; its new text is in Ukrainian. ForeverXP Bar: checked with 0.9.6, no new texts.
-  RareScanner: оновлено для 1.60.1.11; його новий текст українською. ForeverXP Bar: перевірено з 0.9.6, нових текстів немає.
+- **BugSack**: вікно помилок українською. Тексти самих помилок лишаються англійською, щоб їх можна було надіслати автору аддона.
+- **Road to Sixty**: ваш шлях до 60-го на карті.
+- **OneForAll**: професії, підземелля, спорядження й таланти в одному вікні. Аддон розміром з рейд, тож англійська там ще жива. Добиваємо.
+- **GearQuest Forever**: підкаже, яке спорядження шукати далі.
+- **Wowhead Quick Link**: вікно з посиланням на Wowhead.
+
+Свіжі версії:
+
+- Mastercraft, Questie, Dungeon Journal, OpenMap, Forever Quest Pins, LayerSwap, WhatTheWhisper, Attune, RareScanner.
+- Auctionator, ForeverXP Bar, What's Training?: менше англійської.
+- Waypoint UI показує назву завдання над міткою українською, якщо її знає UALL Forever або ClassicUA.
+
+Полагодили:
+
+- Квадратики замість літер: влаштували на них полювання. Побачите хоч один, скажіть нам.
+- Dungeon Journal: назви завдань і рядки «0/6 ...» більше не лишаються англійською.
+- TomTom, Forever Quest Pins, Waypoint UI: назви більше не застрягають після помилки.
+- «Що нового» в аддонах лишаємо англійською: поки ми перекладемо, воно вже старе.
+
+---
+
+**Five addons learned Ukrainian. Thirteen more polished their accent.**
+
+New:
+
+- **BugSack**: the error window is in Ukrainian. The errors themselves stay English, so you can send them to the addon's author.
+- **Road to Sixty**: your way to 60 on a map.
+- **OneForAll**: professions, dungeons, gear and talents in one window. It is the size of a raid, so some English is still alive in there. We are finishing it off.
+- **GearQuest Forever**: tells you which gear to go for next.
+- **Wowhead Quick Link**: the window with a Wowhead link.
+
+Fresh versions:
+
+- Mastercraft, Questie, Dungeon Journal, OpenMap, Forever Quest Pins, LayerSwap, WhatTheWhisper, Attune, RareScanner.
+- Auctionator, ForeverXP Bar, What's Training?: less English.
+- Waypoint UI shows the quest's name over its pin in Ukrainian when UALL Forever or ClassicUA knows it.
+
+Fixed:
+
+- Boxes instead of letters: we went hunting. If you see one, tell us.
+- Dungeon Journal: quest names and "0/6 ..." lines no longer stay English.
+- TomTom, Forever Quest Pins, Waypoint UI: names no longer get stuck after an error.
+- What's New windows stay English: by the time we translate them, they are old news.
 
 ## 1.2.3
 

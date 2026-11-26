@@ -91,6 +91,7 @@ function L.Install()
     fdj.GetLanguage = GetLanguage
     -- An older journal without SetLanguage: nothing to wrap, and then nothing can save a language.
     if type(orig.SetLanguage) == "function" then fdj.SetLanguage = SetLanguage end
+    ns.Fonts.HookMaker(fdj)             -- each new button's states (Fonts.lua, lesson 46)
     ns.Head.Install(fdj)                -- the header's level line (Head.lua)
     ns.Whole.Install(fdj)               -- free-text lines whole (Whole.lua)
     fdj.Locales[L.LOCALE] = ns.Content.Strings()
@@ -209,7 +210,7 @@ end
 
 -- Everything, labels included, through FDJ's own English option with saving switched off.
 function L.Redraw()
-    if not L.Active() then ns.Prose.Restore() end
+    if not L.Active() then ns.Prose.Restore() else ns.Fonts.Buttons() end   -- ours: button states first (Fonts.lua)
     local f = Frame()
     local menu = f and f.languageMenu
     local english = menu and EnglishOption(menu)

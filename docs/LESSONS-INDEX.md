@@ -1,7 +1,7 @@
 # Lessons index
 
 Only this index loads by itself. Full lessons (bug, rule, check): 1-11 and "Before a new addon" in
-`docs/LESSONS.md`, 12-27 in `LESSONS2.md`, 28-39 in `LESSONS3.md`, 40-45 in `LESSONS4.md`.
+`docs/LESSONS.md`, 12-27 in `LESSONS2.md`, 28-39 in `LESSONS3.md`, 40-46 in `LESSONS4.md`.
 Read lesson 18: `awk '/^## /{p=/^## 18\./}p' docs/LESSONS*.md`. A `+` means more cases in LESSONS3 or 4:
 `grep -n -A14 'Lesson 18 again' docs/LESSONS*.md`.
 
@@ -17,11 +17,12 @@ A new kind of problem: add a lesson (newest file with room), a check, and its li
 - 2* P Read a font back from the text; SetFont's return says nothing. Also cover windows made later (scan on first open), nameless option pages (by what they hold), and tables that copied `L.` words at load.
 - 5 P Text in a button, column or shared row: no longer than the English; shorten words, never the font or its scale. Measured only in Auctionator headers, LayerSwap, DCI, TomTom, BugSack: measure yours.
 - 18*+ A Put an old font back only with U.SaveFont/U.FontBack (the object). By path only for a label U.CyrOnOwn set by hand, never a game tooltip line.
-- 32*+ A Our text on an addon's label or button (it inherits its template's font): UADD's font on, kept over SetFont, SetFontObject, Enable, Disable, SetEnabled (native: no Enable hook sees it). Never save a font while ours is on; give it back off and held.
+- 32*+ A Our text on an addon's label (it inherits its template's font): UADD's font on, kept over SetFont, SetFontObject. A button: U.ButtonCyr (UADD/ButtonFont.lua, lesson 46). Never save a font while ours is on; give it back off and held.
 - 33* P Game menu checkbox, dropdown: add our initializer that sets button.fontString. Test what is drawn, not what is stored.
 - 38* P Game menu row (MenuUtil): reading SetFont or CreateFontString on it throws. U.Locked, U.CyrOnLocked, read back; else its own object and English.
 - 44* P Label whose font the addon set by hand: our font object first; when it did not take, U.CyrOnOwn (its own size), read back. Text box: its hint only, never typed text. Line "- Name": keep.
 - 45* A Cyrillic is always in a Cyrillic font. Going back: English first, then the old font (U.CyrFix/CyrUnfix), through the setter the addon uses. The check sees only what flows show. Mutant clients set H.boxQuiet.
+- 46* A On hover, press or greyed out the client puts the state's font object on a button's label: our Cyrillic in every state (U.ButtonCyr/U.ButtonBack), whole or nothing; protected buttons stay English. U.CyrFix false: English first. BoxGuard gives up to whole English (U.BoxGiveUp). Checks: boxes.lua state rule, flow_button.py.
 
 ## Hooks and game-wide state
 - 12* A Hook on all chat, tooltips or frames: leave first by the cheapest test, before Translate or debugstack. Each-frame hook: each frame keeps its own last English and Ukrainian.

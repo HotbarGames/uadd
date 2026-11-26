@@ -56,12 +56,14 @@ local function SamePath(a, b)
 end
 
 -- What U.FontBack needs later: { object, path, size, flags, own }. `own`: the font differed from its
--- object's (set by hand before us), so the file, size and flags go back too.
+-- object's (set by hand before us), so the file, size and flags go back too. Never on a button's label: its
+-- client changes the object with the state, so the two differing proves nothing there, and a Latin file put
+-- back on it would stay (lesson 46). Only U.CyrOnOwn can prove a label's font was set by hand (`byhand`).
 function U.SaveFont(fs)
     local p, s, f = fs:GetFont()
-    local o = fs.GetFontObject and fs:GetFontObject() or nil
+    local o = U.FontBase(fs.GetFontObject and fs:GetFontObject() or nil)
     local was = { object = o, path = p, size = s, flags = f }
-    if type(o) == "table" and o.GetFont then
+    if type(o) == "table" and o.GetFont and not U.LabelButton(fs) then
         local op, osize, oflags = o:GetFont()
         was.own = not (SamePath(op, p) and type(osize) == "number" and type(s) == "number"
             and math.abs(osize - s) < 0.5 and (oflags or "") == (f or ""))
@@ -73,6 +75,8 @@ end
 local LOOKS = { { "GetTextColor", "SetTextColor" }, { "GetJustifyH", "SetJustifyH" },
     { "GetJustifyV", "SetJustifyV" }, { "GetShadowColor", "SetShadowColor" },
     { "GetShadowOffset", "SetShadowOffset" }, { "GetSpacing", "SetSpacing" } }
+
+U.FontLooks = LOOKS                              -- ButtonFont.lua: the same looks on our copies
 
 local function ObjectOn(fs, o)
     local keep = {}
@@ -100,8 +104,8 @@ function U.Locked(fs)
     return okN and type(ni) == "table"
 end
 
--- Our own font objects (UADD_CyrFontN): a copy of the region's object with the Cyrillic file, one
--- per object, size and flags. Never a shared font object of the game's.
+-- Our own font objects (UADD_CyrFontN): the Cyrillic file alone, one per size and flags. Never a shared font
+-- object of the game's, nor a copy of one: a copied family keeps its members (lesson 46).
 local cyrObjects, cyrMade = {}, 0
 
 local function CyrObject(fs)
@@ -109,7 +113,6 @@ local function CyrObject(fs)
     if not path or type(CreateFont) ~= "function" then return nil end
     local _, size, flags = fs:GetFont()
     size, flags = tonumber(size) or 12, flags or ""
-    local base = fs.GetFontObject and fs:GetFontObject() or nil
     -- One object per file, size and flags (lesson 44): ObjectOn keeps the FontString's own colour, justify,
     -- shadow and spacing, so the base object adds nothing. Keyed by the base too, one module's many sizes and
     -- templates used up the 64 and every later label stayed English.
@@ -118,19 +121,35 @@ local function CyrObject(fs)
     if cyrMade >= 64 then return nil end                   -- never a heap of font objects
     cyrMade = cyrMade + 1
     local o = CreateFont("UADD_CyrFont" .. cyrMade)
-    if type(base) == "table" and o.CopyFontObject then pcall(o.CopyFontObject, o, base) end
     o:SetFont(path, size, flags)
     if not U.IsCyrFont((o:GetFont())) then return nil end  -- read back (lesson 2): no font, no change
     cyrObjects[key] = o
     return o
 end
 
--- Our font on a menu region (U.Locked) through SetFontObject only; true when it really took.
+-- Our font on fs through font objects only (also a menu region, U.Locked); true when it really took. A button's
+-- label: its states' own objects first (ButtonFont.lua), so no state puts another font on; a label that keeps a file
+-- set by hand gets ours like any other text. A text the width check found boxes on twice (BoxGuard.lua) gets none.
 function U.CyrOnLocked(fs)
-    local o = CyrObject(fs)
-    if not o then return false end
-    ObjectOn(fs, o)
-    return U.IsCyrFont((fs:GetFont()))
+    if U.BoxBad and U.BoxBad(fs) then return false end
+    local btn = U.LabelButton(fs)
+    local yes = btn and U.LabelCyr(btn, fs)
+    if btn and yes == nil then return false end             -- a button we may not change: English
+    if not yes then
+        local o = CyrObject(fs)
+        if not o then return false end
+        ObjectOn(fs, o)
+        yes = U.IsCyrFont((fs:GetFont()))
+    end
+    if yes and U.BoxWatch then U.BoxWatch(fs) end
+    return yes
+end
+
+-- fs draws Cyrillic now (our font, or one of its own), and so do all the states of its button (a label only).
+function U.CyrHolds(fs)
+    if not U.IsCyrFont((fs:GetFont())) or (U.BoxBad and U.BoxBad(fs)) then return false end
+    local btn = U.LabelButton(fs)
+    return not btn or U.ButtonCyr(btn, true)
 end
 
 -- A label whose font was set by hand (SetFont, as OneForAll's buttons and nav do) can keep that file over any font
@@ -138,9 +157,11 @@ end
 -- object did not take: the Cyrillic file goes on by hand, at the label's own size and flags, and U.FontBack puts the
 -- addon's file back when its object does not. Never on a menu region (lesson 38). True when it took (read back).
 function U.CyrOnOwn(fs, was)
-    if type(was) ~= "table" or U.Locked(fs) then return false end
+    if type(was) ~= "table" or U.Locked(fs) or (U.BoxBad and U.BoxBad(fs)) then return false end
     local path = U.CyrFontPath()
     if not path then return false end
+    local btn = U.LabelButton(fs)
+    if btn and not U.ButtonCyr(btn) then return false end
     -- A hand-set file only with proof the label keeps one: the addon set it (`own`), or our object was put on
     -- and did not take. No object at all (the 64 cap, CreateFont failed) proves nothing: a line that follows its
     -- font family stays English, never gets a file by hand that U.FontBack would later pin back.
@@ -152,7 +173,9 @@ function U.CyrOnOwn(fs, was)
     end
     was.byhand = true                             -- only such a label gets its file back by path (FontBack)
     fs:SetFont(path, tonumber(was.size) or 12, was.flags or "")
-    return U.IsCyrFont((fs:GetFont()))
+    local yes = U.IsCyrFont((fs:GetFont()))
+    if yes and U.BoxWatch then U.BoxWatch(fs) end
+    return yes
 end
 
 -- The font `was` (U.SaveFont) back on fs: its font object again, so the family's Cyrillic member is
@@ -180,6 +203,14 @@ function U.FontBack(fs, was)
         if was.object then ObjectOn(fs, was.object) end
         return
     end
+    local btn = U.LabelButton(fs)
+    if btn then
+        U.ButtonBack(btn)                         -- its states' own objects: the label follows them again
+        local o = fs:GetFontObject()
+        local own = U.FontBase(o)
+        if own ~= o then U.LabelOn(fs, own) end   -- our copy still on: the object it stands for
+        if not OursOn(fs) then return end
+    end
     if was.object then
         ObjectOn(fs, was.object)
         -- the object took (or our file is not on): done. A label that keeps a hand-set file over its object
@@ -194,8 +225,13 @@ end
 
 -- Our font on a line that is to show Ukrainian, its own saved first in `kept` (weak: fs -> U.SaveFont): our object,
 -- by hand only with proof (U.CyrOnOwn), read back (lesson 2). No take: its own font back, false (the English stays).
+-- Ours gone from the line since (the addon set its font again): that font is its own now, ours goes on over it.
 function U.CyrFix(fs, kept)
-    if kept[fs] then return U.IsCyrFont((fs:GetFont())) end
+    if kept[fs] and U.CyrHolds(fs) then return true end
+    if kept[fs] and U.IsCyrFont((fs:GetFont())) then    -- ours on the label, not in every state of its button
+        return U.CyrOnLocked(fs) == true
+    end
+    kept[fs] = nil
     local was = U.SaveFont(fs)
     local ok, took = pcall(U.CyrOnLocked, fs)
     if ok and not took then ok, took = pcall(U.CyrOnOwn, fs, was) end

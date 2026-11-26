@@ -103,6 +103,14 @@ local function Back(fs)
     last[fs] = nil
 end
 
+-- The English again on a line that shows ours (Fonts.lua: no Cyrillic font took on it); true when it went back.
+function R.English(fs)
+    local l = last[fs]
+    if not (l and fs:GetText() == l[2]) then return false end
+    Back(fs)
+    return true
+end
+
 -- A game name, asked of UALL Forever / ClassicUA by its English (lesson 20). Only a Cyrillic answer counts; "not
 -- now" and an error are not kept, so the next call asks again. Odd text (a code, a link, a long line) is not asked.
 local function Game(route)

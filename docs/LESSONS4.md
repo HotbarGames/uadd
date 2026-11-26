@@ -177,6 +177,44 @@ run they found more boxes, in core and in 16 modules:
   once and log out, so the probe can write its facts.
 - `python3 -m unittest tools.test_shared_state`: frame walks only through `U.Regions` and `U.Children`.
 
+## 46. Button states that put a Latin font back
+
+**What went wrong.** On hover, on a press or when greyed out, the client itself puts the font object of the
+button's state on its label. No Lua hook sees it. We put our font on the label only, so the state's own object
+came back and our words showed as boxes: BugSack's tab under the mouse, the Dungeon Journal's mode chooser and back
+buttons from the moment the journal set them until our next look (the harness, 2026-11-26, once its button stand-in
+switched states as the client does: `tools/harness/wow_button.lua`). Two more gaps came out with it:
+
+- LiteMount, Auto Potion and LayerSwap went on when `U.CyrFix` said false (no Cyrillic font took) on a text that
+  already showed Ukrainian. A failed fix is never watched by the box guard (`U.BoxWatch`), so nothing saw it.
+- LayerSwap's flow kept its own older state setters, so it did not test the client's switch.
+
+**Rule.**
+
+- Our Cyrillic goes in every state object of a button, not only on its label: `U.ButtonCyr` gives each state our
+  copy of its object (its file, size and colour), and `U.ButtonBack` puts the button's own objects back
+  (`UADD/ButtonFont.lua`). Whole or nothing: when one state cannot get a copy (the cap of 64), all stay its own.
+- The core's state hooks give an object the addon sets later our copy too. A module needs no hooks for it.
+- A protected or forbidden button is never touched; its label stays English.
+- The width guard (`UADD/BoxGuard.lua`) finds what still slips through and gives up to whole English
+  (`U.BoxGiveUp`), never boxes.
+- `U.CyrFix` false on a text that shows Ukrainian: the addon's English back first, then its font (lesson 45),
+  through the setter the addon uses (`Fixed` in `UADD_LiteMount/Fonts.lua`; `T.English` in Auto Potion's and
+  LayerSwap's `Texts.lua`).
+
+**Check.**
+
+- `python3 tools/harness/run.py`: the box check's state rule (`tools/harness/boxes.lua`). A button's label that
+  shows Cyrillic, and each of its state objects, must have a Cyrillic file of its own, else a hit ("state
+  Highlight"). No flow has to hover for it.
+- `python3 tools/harness/flow_button.py --prove`: the core alone (every state, protected buttons, the client's own
+  switches, the cap, a state set while the label was empty, `U.BoxGiveUp`); each mutant cuts one fix and wants its
+  step to fail.
+- `python3 tools/harness/flow_litemount.py --prove`, "litemount: 9 a text no Cyrillic font can take": a secure
+  button's label and a name the guard gave up on show whole English; mutant `sgiveup` keeps the Ukrainian.
+- Manual, in the game: a real protected button, the real cap, the switch on hover and press, the width guard on
+  real fonts.
+
 ## More cases of older lessons
 
 **Lesson 14 again, in WhatTheWhisper's group chats (2026-11-22).** It names a group thread (each kind of group) with its
@@ -200,12 +238,15 @@ UADD's Cyrillic font on, and puts the saved one back on the hold key and off. It
 and on a font object change) cleared that saved font on every run. A hover that ran it twice saved our own Cyrillic
 font as the "original", so held and off then put our font back on the English (the Wipe button). The harness found
 it. Rule: forget a saved font only when ours is not on the label now (`Fresh` in `UADD_BugSack/Screen.lua`); never
-save a font while ours is on. Check: `python3 tools/harness/flow_bs.py --prove`; its mutant `fresh` puts the old
-line back and wants step 5 to fail.
+save a font while ours is on. Since lesson 46 the core keeps this for every button's label: `U.SaveFont` and
+`U.FontBack` take the button's own object, never our copy (`U.FontBase`, `UADD/Font.lua`). Check:
+`python3 tools/harness/flow_button.py --prove`; its mutant `fontbase` cuts `U.FontBase` and wants step 6 to fail
+(BugSack's old mutant `fresh` changed nothing once the core did this, so it is gone).
 The review found one more: the sack's Options tab calls the Wipe button's `SetEnabled`, a native method that runs
 no Lua `Enable`, `Disable` or `SetFontObject`, so no hook saw the font change and our words would show as boxes.
-Rule: hook every state method a button has, `SetEnabled` too, and make the stand's version native (it uses the raw
-`SetFontObject`, with no hover after it). Check: the same `--prove`, mutant `enabled`.
+Rule: every state of a button carries our copy (lesson 46), so a native switch has nothing Latin to put on. Check:
+`flow_button.py --prove` step 4 (hover, `Disable`, `Enable`, `SetEnabled`, `LockHighlight`) and mutant `states`,
+there and in `flow_bs.py`.
 
 **Lesson 18 again, after lesson 44 (2026-11-23).** What went wrong: item and spell tooltips showed boxes (the owner's
 shots). Lesson 44's `U.FontBack` put a file back by path on any line whose Cyrillic file stayed over its object, also

@@ -16,6 +16,7 @@ local mt = {}
 mt.__index = function(self, k)
     local m = Widget[k]
     if m ~= nil then return m end
+    if k == "AddDoubleLine" then return rawget(self, "__type") == "GameTooltip" and H.tipDouble or nil end -- client: tips only
     if type(k) ~= "string" or not k:match("^%u") then return nil end
     -- Unknown key: nil, like a field nobody set. Record who asked (a missing method then errors).
     local key = tostring(rawget(self, "__type")) .. ":" .. k
@@ -157,6 +158,7 @@ function Widget:GetText() return textTarget(self).__text end
 function Widget:ClearText() self:SetText(nil) end
 function Widget:SetFormattedText(f, ...) self:SetText(string.format(f, ...)) end
 function Widget:SetTextColor(r, g, b, a) textTarget(self).__color = { r, g, b, a or 1 } end
+function Widget:SetTextScale(s) textTarget(self).__scale = s end function Widget:GetTextScale() return textTarget(self).__scale or 1 end
 function Widget:GetTextColor() return unpack(textTarget(self).__color or { 1, 1, 1, 1 }) end
 function Widget:SetVertexColor(r, g, b, a) self.__vcolor = { r, g, b, a or 1 } end
 function Widget:GetVertexColor() return unpack(self.__vcolor or { 1, 1, 1, 1 }) end
@@ -225,7 +227,7 @@ function Widget:SetOwner(owner) self.__owner = owner self.__lines = 0 end
 function Widget:GetOwner() return self.__owner end
 function Widget:ClearLines() self.__lines = 0 end
 function Widget:AddLine() self.__lines = (self.__lines or 0) + 1 end
-function Widget:AddDoubleLine() self.__lines = (self.__lines or 0) + 1 end
+function H.tipDouble(self) self.__lines = (self.__lines or 0) + 1 end  -- GameTooltip:AddDoubleLine (U.BoxWatch's test)
 function Widget:IsOwned(f) return self.__owner == f end
 -- Questie catches errors in its own coroutines and only prints them (Questie.Error, ThreadLib.lua:120):
 -- such a line counts as a Lua error too, or a broken Questie build would pass unseen.

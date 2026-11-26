@@ -29,6 +29,8 @@ local SAY = {
     line = "напис показував квадрати замість літер: його шрифт виправлено.",
     tipfail = "підказка може показувати квадрати замість літер: шрифт з українськими літерами не вдалося поставити.",
     linefail = "напис може показувати квадрати замість літер: шрифт з українськими літерами не вдалося поставити.",
+    box = "напис показував квадрати замість літер: його шрифт виправлено.",
+    boxfail = "напис показував квадрати замість літер: шрифт не допоміг, напис лишено англійською.",
     font = "код UADD змінив спільний шрифт гри: його повернуто.",
     focus = "клавіатуру тримало невидиме поле вводу: її звільнено, Enter знову відкриває чат.",
 }
@@ -44,13 +46,17 @@ local function SamePath(a, b)
     return type(a) == "string" and type(b) == "string" and (a:gsub("/", "\\"):lower()) == (b:gsub("/", "\\"):lower())
 end
 
-local function Note(kind)
+-- health.guard counts over all sessions, so a count alone never says whether a kind still happens: guardLast keeps
+-- when it last did, in which UADD version, and one sample (which line or text, U.BoxSample).
+local function Note(kind, sample)
     fixed[kind] = (fixed[kind] or 0) + 1
     if type(UADD_DB) == "table" then
         local h = U.DB().health
         if type(h) ~= "table" then h = {} U.DB().health = h end
         h.guard = type(h.guard) == "table" and h.guard or {}
         h.guard[kind] = (tonumber(h.guard[kind]) or 0) + 1
+        h.guardLast = type(h.guardLast) == "table" and h.guardLast or {}
+        h.guardLast[kind] = { at = type(time) == "function" and time() or nil, version = U.version, sample = sample }
     end
     if said[kind] then return end
     said[kind] = true
@@ -105,7 +111,7 @@ local function Line(fs, kind)
     end
     pin[fs] = nil
     if not took then failed[fs] = true end
-    Note((kind or "tip") .. (took and "" or "fail"))
+    Note((kind or "tip") .. (took and "" or "fail"), U.BoxSample(fs))
 end
 
 -- A FontString UADD gave its font: its pins are seen from now on (hooked before ours is set).
@@ -173,7 +179,7 @@ local function OnObjectFont(name)
         pcall(function()
             local o, copy = rawget(_G, name), keep[name]
             o:CopyFontObject(copy)
-            Note("font")
+            Note("font", name)
         end)
     end)
 end
@@ -222,5 +228,9 @@ frame:SetScript("OnEvent", function()
         if not Forbidden(tip) and tip.HookScript then pcall(tip.HookScript, tip, "OnTooltipCleared", OnCleared) end
     end
     SafeLines()                                   -- hooks the lines there are now
-    if C_Timer and C_Timer.NewTicker then C_Timer.NewTicker(1, function() pcall(Keyboard) pcall(Watched) end) end
+    if C_Timer and C_Timer.NewTicker then C_Timer.NewTicker(1, function()
+        pcall(Keyboard)
+        pcall(Watched)
+        pcall(U.BoxTick)
+    end) end
 end)

@@ -121,6 +121,9 @@ function B.Catch()
     panel, body = p, fs
     hooksecurefunc(fs, "SetText", Lc.Guard(OnBody))      -- gives English back too: not U.Safe (lesson 19)
     OnBody(fs, fs:GetText())
+    -- Its buttons show L's words from the moment it is made: our font on them now, not at the next walk (lesson 46:
+    -- a button's label draws boxes in the game's font objects).
+    if ns.Screen and ns.Screen.Apply then U.SafeCall(ns.Screen.Apply) end
 end
 
 -- Its dialog is made on the first notice: hook the two ways one comes (a quest taken, /fqp breadcrumbtest).
@@ -133,7 +136,12 @@ function B.Hook()
     hooked = true
     local function Later()
         U.SafeCall(B.Catch)
-        if not body and C_Timer and C_Timer.After then C_Timer.After(1, Lc.Guard(B.Catch)) end
+        if body or not (C_Timer and C_Timer.After) then return end
+        -- A quest taken: it makes the dialog on its next frame. Ours runs right after that, then once more later.
+        C_Timer.After(0, Lc.Guard(function()
+            B.Catch()
+            if not body then C_Timer.After(1, Lc.Guard(B.Catch)) end
+        end))
     end
     for _, name in ipairs({ "OnQuestAccepted", "ShowPreview" }) do
         if type(br[name]) == "function" then hooksecurefunc(br, name, Lc.Guard(Later)) end

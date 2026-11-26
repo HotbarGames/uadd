@@ -41,6 +41,8 @@ HELPERS = {
     "UADD/Font.lua": "U.SaveFont / U.FontBack: a line's font object back, never a pinned file",
     "UADD/Widgets.lua": "U.WidgetMethods: a widget kind's methods, never a new EditBox",
     "UADD/Guard.lua": "the runtime guard: puts broken shared state back",
+    "UADD/ButtonFont.lua": "U.ButtonCyr / U.ButtonBack: a button's state objects, our copies on and its own back",
+    "UADD/BoxGuard.lua": "the box guard: a text drawn as boxes gets our font again, then the file, else its English",
 }
 
 FONT_FIX = "module font helper: Cyrillic file on one FontString, back with its font object"
@@ -53,15 +55,13 @@ ALLOW = {
     ("UADD/Core.lua", "global write"): (1, "SLASH_UADD1: the /uadd command"),
     ("UADD/Core.lua", "game field"): (1, "SlashCmdList.UADD: the /uadd command"),
     ("UADD_Auctionator/Fonts.lua", "set font"): (3, FONT_FIX),
-    ("UADD_AutoPotion/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
     ("UADD_AutoPotion/Bindings.lua", "global write"): (2, SWAP), ("UADD_Bagnon/Locale.lua", "global write"): (1, SWAP),
-    ("UADD_LiteMount/Tables.lua", "global write"): (2, SWAP), ("UADD_LiteMount/Fonts.lua", "set font"): (3, FONT_FIX),
+    ("UADD_LiteMount/Tables.lua", "global write"): (2, SWAP),
     ("UADD_DialogueUI/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
     ("UADD_DungeonJournal/Fonts.lua", "set font"): (2, FONT_FIX + "; " + TODO),
     ("UADD_DungeonJournal/Fonts.lua", "new font"): (1, OWN_FONT),
     ("UADD_ForeverXPBar/Fonts.lua", "set font"): (3, FONT_FIX),
     ("UADD_GatherMate2/Swap.lua", "global write"): (2, SWAP),
-    ("UADD_LayerSwap/Fonts.lua", "set font"): (3, FONT_FIX),
     ("UADD_Pawn/Swap.lua", "global write"): (2, SWAP),
     ("UADD_Questie/HeaderFont.lua", "new font"): (1, OWN_FONT),
     ("UADD_Questie/HeaderFont.lua", "set font"): (1, "our own font object UADD_QuestieHeaderFont"),

@@ -158,6 +158,7 @@ Walk = function(f)
     if IsFontString(f.counts) then Try(HookCount, f.counts) end          -- home page cards
     if IsFontString(f.lootTitle) then Try(HookCount, f.lootTitle) end    -- "12 предметів"
     Try(ns.Buttons.Look, f)                                              -- YES, NO, OKAY (Buttons.lua)
+    Try(Fonts.Button, f)                                                 -- a button's states (Fonts.lua)
     if f.GetRegions then Regions(f:GetRegions()) end
     if f.GetChildren then Children(f:GetChildren()) end
     local child = f.GetScrollChild and f:GetScrollChild()          -- loot and quest lists
@@ -209,6 +210,7 @@ function S.Scan()
     ns.Buttons.Sync()
     wipe(seen)
     failed = nil
+    Try(Fonts.Buttons)
     for _, name in ipairs(ROOTS) do
         local root = rawget(_G, name)
         if Shown(root) then Walk(root) end

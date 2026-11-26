@@ -176,6 +176,14 @@ local function Run(show)
     end
 end
 
+-- The listeners told again what the windows show: English, then ours (BoxGuard.lua: a text our font cannot draw
+-- stays English then). Nothing while the English shows, or in combat lockdown.
+function U.TellAgain()
+    if U.originalShown or Locked() then return end
+    Run(true)
+    Run(false)
+end
+
 -- In combat lockdown no listener runs (they redraw addon windows, some with secure buttons, and write
 -- globals): the state asked for waits in `waiting` and runs once when the fight ends (Flush), with the
 -- last state asked. A state that ends where the listeners were last told runs nothing.

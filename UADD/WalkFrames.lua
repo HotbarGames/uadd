@@ -7,9 +7,6 @@ local F = {}
 U.WalkFrames = F
 
 F.CYR = "[\208-\210]"
--- A Button's methods that change the font its label draws in (lesson 32, SetEnabled too).
-F.BUTTON_FONT = { "SetNormalFontObject", "SetHighlightFontObject", "SetDisabledFontObject", "Enable", "Disable",
-    "SetEnabled", "LockHighlight", "UnlockHighlight" }
 
 function F.Forbidden(f)
     if type(f) ~= "table" then return true end

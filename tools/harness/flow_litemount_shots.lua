@@ -9,8 +9,8 @@ local function T() return rawget(_G, "LiteMountStandIn").shots end
 
 -- One more fix cut out per mutant, as in flow_litemount.lua (in memory only).
 local CUTS = {
-    sfont = { "Fonts.lua", '    local ok, err = pcall(fs.SetFont, fs, path, size or 12, flags or "")',
-        "    local ok, err = true, nil" },
+    sfont = { "Fonts.lua", "    local ok, took = pcall(UADD.CyrFix, fs, changed)", "    local ok, took = true, true" },
+    sgiveup = { "Fonts.lua", "if type(put) == \"function\" and select(2, pcall(put, fs)) == true then break end", "" },
     spages = { "Screen.lua", '"MOUNTS", "MACROS", "GROUP", ', "" },
     shint = { "Screen.lua", 'Swap(rawget(c, "Instructions"), want)', "false" },
     scounts = { "Rows.lua", 'Line(rawget(m, "Counts"), Counts)', "" },
@@ -143,4 +143,35 @@ function M.shotNamesExpect(want)
     return table.concat(out, " | ")
 end
 function M.shotMount(name, collected) return T().mount(name, collected) end
+
+-- Texts no Cyrillic font can take (lessons 45, 46): a secure Profiles button whose states stay Latin, and a new
+-- Falling row's name the box guard gave up on (U.BoxGiveUp). A failed fix is never watched, so each must show its
+-- whole English. made(): both made, the walk run, LiteMount's own SetText with our word, the row named again.
+-- now(): the button's text | the row's name | the box hits.
+local giveUp = {}
+function M.shotGiveUpNow()
+    return tostring(giveUp.b:GetText()) .. " | " .. tostring(giveUp.r.Name:GetText()) .. " | " .. M.shotBoxes()
+end
+function M.shotGiveUp()
+    local b = CreateFrame("Button", nil, rawget(_G, "LiteMountProfilesPanel"))
+    b:SetNormalFontObject(GameFontNormal)
+    b:SetHighlightFontObject(GameFontHighlight)
+    b:SetDisabledFontObject(GameFontDisable)
+    rawset(b, "IsProtected", function() return true end)
+    b:SetText(Lc().En("LM_NEW_PROFILE"))
+    local r = T().row("spell:130")
+    T().flush()
+    giveUp.b, giveUp.r = b, r
+    H.ns[MOD].Screen.Apply()                          -- the walk: ours on, no font takes
+    b:SetText(Lc().Word("LM_NEW_PROFILE"))            -- LiteMount's own SetText, with its L word (ours)
+    local named = tostring(r.Name:GetText())
+    UADD.BoxGiveUp(r.Name)                            -- the guard found boxes on it twice
+    H.pump(2)
+    r:Initialize("spell:130")
+    T().flush()
+    return named .. " ## " .. M.shotGiveUpNow()
+end
+function M.shotGiveUpExpect()
+    return Lc().En("LM_NEW_PROFILE") .. " | " .. T().NAME["spell:130"] .. " | "
+end
 function M.shotReuse(i, data) T().rows[i]:Initialize(data) T().flush() end

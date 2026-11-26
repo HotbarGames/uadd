@@ -40,6 +40,14 @@ local function Remember(fs, uk, en)
     end
 end
 
+-- No Cyrillic font took on our words (Fonts.Fix false; also from its font hook, Fonts.lua): LayerSwap's English
+-- back first, then its font (lesson 45). A failed fix is never watched by the box guard.
+function T.English(fs)
+    if mine[fs] and UADD.Plain(fs:GetText()) == mine[fs] then Put(fs, orig[fs]) end
+    mine[fs] = nil
+    ns.Fonts.Back(fs)
+end
+
 -- One FontString as it should be now: our words while they are wanted, LayerSwap's otherwise.
 -- quick (the hold key): the font is fixed only when our words were just put in.
 -- combat: a cheap look only (Words.Quick: memo, exact, hint), so known texts stay Ukrainian.
@@ -62,7 +70,7 @@ function T.Apply(fs, quick, combat)
             mine[fs] = uk
             Remember(fs, uk, orig[fs])
         elseif quick then return end
-        ns.Fonts.Fix(fs)
+        if not ns.Fonts.Fix(fs) and mine[fs] then T.English(fs) end   -- no Cyrillic font took (lesson 45)
     elseif mine[fs] then
         if orig[fs] ~= now then Put(fs, orig[fs]) end
         mine[fs] = nil
@@ -101,7 +109,7 @@ function T.HookButton(b)
     hooked[b] = true
     hooksecurefunc(b, "SetText", OnButton)
     if b.SetFormattedText then hooksecurefunc(b, "SetFormattedText", OnButton) end
-    ns.Fonts.HookButton(b)
+    -- its states' fonts: the core's (UADD/ButtonFont.lua, lesson 46)
 end
 
 -- Every shown text we know, as it should be now (after the hold key or combat). A hidden one is

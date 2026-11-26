@@ -253,16 +253,17 @@ local function OnText(fs)
     if type(t) == "string" and t:find(CYR) then U.SafeCall(ns.Fonts.Fix, fs) end
 end
 
+-- Marked only once the hook took: a refused hook is tried again at the next look.
 function W.Hook(fs)
     if hooked[fs] then return end
-    hooked[fs] = true
     hooksecurefunc(fs, "SetText", OnText)
+    hooked[fs] = true
 end
 
 function W.HookButton(b)
     if hooked[b] then return end
-    hooked[b] = true
     hooksecurefunc(b, "SetText", function(self) OnText(self:GetFontString()) end)
+    hooked[b] = true
 end
 
 -- Every text we know, as it should be now (after the hold key, "on" or "off"). While the module is
