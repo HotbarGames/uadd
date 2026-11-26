@@ -38,7 +38,7 @@ local function Fresh(fs)
     local was = saved[fs]
     if not was then return end
     if not IsCyr(fs) then saved[fs] = nil return end
-    local o = fs.GetFontObject and fs:GetFontObject()
+    local o = U.SafeFontObject(fs)        -- never the text area's own nameless record (lesson 47)
     if o == nil or o == was.object then return end
     local okc, op = pcall(function() return o:GetFont() end)
     if okc and U.IsCyrFont(op) then return end   -- our own Cyrillic object: never saved as its own

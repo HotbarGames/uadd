@@ -174,8 +174,24 @@ end
 
 -- ── hooksecurefunc ────────────────────────────────────────────────────────────────────────────
 
+-- A crash of the real client (docs/LESSONS4.md lesson 47): a font object made to inherit from itself
+-- (wow_widgets2.lua), a hooked setter re-entered through its own hook. The game dies there and no pcall
+-- catches it; here the run fails: H.crashes keeps it (boxes.py: "no client crash"), the call errors and
+-- changes nothing. A mutant client (H.boxQuiet) keeps it in H.crashes only.
+H.crashes = {}
+function H.Crash(why)
+    why = tostring(why)
+    if #H.crashes < 20 then H.crashes[#H.crashes + 1] = why end
+    local rep = H.crashReport
+    if not H.boxQuiet and (type(rep) == "function" or type(rep) == "userdata") then pcall(rep, why) end
+    error("client crash: " .. why, 0)
+end
+
 -- Like the client: the original runs first and its results are returned; the hook then gets the
 -- same arguments. A hook's error goes to the error handler and does not reach the caller.
+-- A setter that runs again inside its own hook, on the same object, more than HOOK_DEEP deep: the client's
+-- stack runs out (a crash, lesson 47).
+local HOOK_DEEP = 8
 function hooksecurefunc(a, b, c)
     local t, name, hook
     if type(a) == "string" then t, name, hook = _G, a, b else t, name, hook = a, b, c end
@@ -183,11 +199,19 @@ function hooksecurefunc(a, b, c)
     if type(hook) ~= "function" then error("Usage: hooksecurefunc([table,] \"functionName\", hookfunc)", 2) end
     local orig = t[name]
     if type(orig) ~= "function" then error("hooksecurefunc(): " .. tostring(name) .. " is not a function", 2) end
+    local depth, NONE = setmetatable({}, { __mode = "k" }), {}
     t[name] = function(...)
-        local res = { orig(...) }
+        local self = ...
+        local key = type(self) == "table" and self or NONE
+        local d = (depth[key] or 0) + 1
+        if d > HOOK_DEEP then H.Crash("hook re-entered " .. tostring(name) .. " " .. HOOK_DEEP .. " deep") end
+        depth[key] = d
+        local res = { pcall(orig, ...) }
+        if not res[1] then depth[key] = d > 1 and d - 1 or nil error(res[2], 0) end
         local ok, err = pcall(hook, ...)
+        depth[key] = d > 1 and d - 1 or nil
         if not ok then geterrorhandler()(err) end
-        return unpack(res, 1, table.maxn(res))
+        return unpack(res, 2, table.maxn(res))
     end
 end
 

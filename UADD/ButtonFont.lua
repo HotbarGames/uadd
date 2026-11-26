@@ -110,7 +110,7 @@ local function Put(btn, look)
             if not ok then break end
         end
         if not ok then                                      -- whole or nothing: the button's own objects again
-            for s, o in pairs(was) do pcall(Set, btn, s, o) end
+            for s, o in pairs(was) do if U.FontObjectOK(nil, o) then pcall(Set, btn, s, o) end end
             return false
         end
     end
@@ -139,7 +139,9 @@ function U.ButtonBack(btn)
     local was = putting
     putting = true
     for s, c in pairs(r) do
-        pcall(function() if Get(btn, s) == c then Set(btn, s, base[c]) end end)
+        pcall(function()                                    -- lesson 47: only an object that may go back
+            if Get(btn, s) == c and U.FontObjectOK(nil, base[c]) then Set(btn, s, base[c]) end
+        end)
     end
     putting = was
 end
@@ -147,6 +149,7 @@ end
 -- A font object on a label. Only looks the addon gave the label itself are kept over it: a colour set again on a
 -- label would stay over the colours of all its later states (the gold text under the mouse, 2026-11-26).
 function U.LabelOn(fs, o)
+    if not U.FontObjectOK(fs, o) then return false end      -- lesson 47: nothing set
     local from, keep = fs.GetFontObject and fs:GetFontObject() or nil, {}
     for i, m in ipairs(U.FontLooks) do
         if fs[m[1]] and fs[m[2]] then
@@ -158,8 +161,9 @@ function U.LabelOn(fs, o)
             end
         end
     end
-    fs:SetFontObject(o)
+    if not U.SetFontObject(fs, o) then return false end
     for i, a in pairs(keep) do fs[U.FontLooks[i][2]](fs, unpack(a)) end
+    return true
 end
 
 -- Our font on the label of `btn`, as its state has it: true when the label draws Cyrillic now and in every state.

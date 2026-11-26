@@ -1,7 +1,7 @@
 # Lessons index
 
 Only this index loads by itself. Full lessons (bug, rule, check): 1-11 and "Before a new addon" in
-`docs/LESSONS.md`, 12-27 in `LESSONS2.md`, 28-39 in `LESSONS3.md`, 40-46 in `LESSONS4.md`.
+`docs/LESSONS.md`, 12-27 in `LESSONS2.md`, 28-39 in `LESSONS3.md`, 40-47 in `LESSONS4.md`.
 Read lesson 18: `awk '/^## /{p=/^## 18\./}p' docs/LESSONS*.md`. A `+` means more cases in LESSONS3 or 4:
 `grep -n -A14 'Lesson 18 again' docs/LESSONS*.md`.
 
@@ -23,6 +23,7 @@ A new kind of problem: add a lesson (newest file with room), a check, and its li
 - 44* P Label whose font the addon set by hand: our font object first; when it did not take, U.CyrOnOwn (its own size), read back. Text box: its hint only, never typed text. Line "- Name": keep.
 - 45* A Cyrillic is always in a Cyrillic font. Going back: English first, then the old font (U.CyrFix/CyrUnfix), through the setter the addon uses. The check sees only what flows show. Mutant clients set H.boxQuiet.
 - 46* A On hover, press or greyed out the client puts the state's font object on a button's label: our Cyrillic in every state (U.ButtonCyr/U.ButtonBack), whole or nothing; protected buttons stay English. U.CyrFix false: English first. BoxGuard gives up to whole English (U.BoxGiveUp). Checks: boxes.lua state rule, flow_button.py.
+- 47* A A saved font object goes back only by U.SetFontObject (U.SafeFontObject): an edit box's own record loops.
 
 ## Hooks and game-wide state
 - 12* A Hook on all chat, tooltips or frames: leave first by the cheapest test, before Translate or debugstack. Each-frame hook: each frame keeps its own last English and Ukrainian.

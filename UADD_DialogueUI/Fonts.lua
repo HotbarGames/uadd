@@ -64,7 +64,7 @@ Fix = function(fs, byDUI)
         size, flags = osize, oflags
     else
         local op, osize, oflags = ObjectFont(fs)
-        changed[fs] = { path = p, size = size, flags = flags, object = fs:GetFontObject(),
+        changed[fs] = { path = p, size = size, flags = flags, object = UADD.SafeFontObject(fs),
             follows = SamePath(op, p) and osize == size and oflags == (flags or "") }
     end
     guard = true
@@ -85,7 +85,7 @@ F.Fix = Fix
 local function Put(fs, old)
     if old.object then
         local r, g, b, a = fs:GetTextColor()
-        fs:SetFontObject(old.object)
+        UADD.SetFontObject(fs, old.object)        -- lesson 47: only an object that may go back
         if r then fs:SetTextColor(r, g, b, a) end
         if old.follows then
             local p, size, flags = fs:GetFont()

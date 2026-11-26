@@ -175,6 +175,35 @@ function M.hoverTabs()
 end
 function M.fontSize(name) S().FontSize(_G[name]) end
 function M.bugs(n) S().Bugs(n) return S().W.text:GetText(), S().ERR end
+-- The text area's font now: ours or not, and the object it draws with (lesson 47).
+function M.textFont()
+    local ta = S().W.text
+    local o = rawget(ta, "__fontObject")
+    return UADD.IsCyrFont((ta:GetFont())) and true or false, type(o) == "table" and (o:GetName() or "nameless") or tostring(o)
+end
+function M.crashes() return H.crashes end
+-- For the chaos case (chaos_more.py): an odd font object on the text area, as an addon might set one: none, a name,
+-- a nameless one, one in a chain of named ones; and what it shows now (its text, our font on it or not).
+local odd = 0
+function M.oddFont(kind)
+    local o
+    if kind == "name" then o = "GameFontNormal"
+    elseif kind == "nameless" then
+        o = CreateFont()
+        o:SetFont("Fonts\\FRIZQT__.TTF", 11, "")
+    elseif kind == "chain" then
+        odd = odd + 1
+        local a, b = CreateFont("UADDChaosChainA" .. odd), CreateFont("UADDChaosChainB" .. odd)
+        a:SetFontObject(GameFontHighlight)
+        b:SetFontObject(a)
+        o = b
+    end
+    S().W.text:SetFontObject(o)
+end
+function M.area()
+    local ta = S().W.text
+    return ta:GetText(), UADD.IsCyrFont((ta:GetFont())) and true or false
+end
 function M.typed()                  -- the player types the filter label's own text in the filter box
     local W = S().W
     W.filter:SetText(W.filterLabel:GetText())

@@ -87,7 +87,7 @@ local function OnFont(fs)
     local was = rec[fs]
     if was then
         if Ours(fs) then
-            local o = fs.GetFontObject and fs:GetFontObject() or nil
+            local o = UADD.SafeFontObject(fs)      -- one that may go back (lesson 47)
             if o and not IsOurObject(o) then was.object = o end
         else
             rec[fs] = nil

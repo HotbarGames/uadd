@@ -27,6 +27,7 @@ glossary/journal.lua
 glossary/map.lua
 glossary/rares.lua
 glossary/gear.lua
+FontObject.lua
 Font.lua
 ButtonFont.lua
 Probe.lua

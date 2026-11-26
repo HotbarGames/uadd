@@ -59,10 +59,12 @@ end
 -- object's (set by hand before us), so the file, size and flags go back too. Never on a button's label: its
 -- client changes the object with the state, so the two differing proves nothing there, and a Latin file put
 -- back on it would stay (lesson 46). Only U.CyrOnOwn can prove a label's font was set by hand (`byhand`).
+-- `unsafe`: no object of its chain may go back (lesson 47), so U.FontBack leaves the font as it is.
 function U.SaveFont(fs)
     local p, s, f = fs:GetFont()
-    local o = U.FontBase(fs.GetFontObject and fs:GetFontObject() or nil)
-    local was = { object = o, path = p, size = s, flags = f }
+    local o, unsafe = U.SafeFontObject(fs)
+    o = U.FontBase(o)
+    local was = { object = o, path = p, size = s, flags = f, unsafe = unsafe or nil }
     if type(o) == "table" and o.GetFont and not U.LabelButton(fs) then
         local op, osize, oflags = o:GetFont()
         was.own = not (SamePath(op, p) and type(osize) == "number" and type(s) == "number"
@@ -79,16 +81,18 @@ local LOOKS = { { "GetTextColor", "SetTextColor" }, { "GetJustifyH", "SetJustify
 U.FontLooks = LOOKS                              -- ButtonFont.lua: the same looks on our copies
 
 local function ObjectOn(fs, o)
+    if not U.FontObjectOK(fs, o) then return false end   -- lesson 47 (FontObject.lua): nothing set
     local keep = {}
     for i, m in ipairs(LOOKS) do
         if fs[m[1]] and fs[m[2]] then keep[i] = { fs[m[1]](fs) } end
     end
-    fs:SetFontObject(o)
+    local set = U.SetFontObject(fs, o)
     for i, m in ipairs(LOOKS) do
         if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
     end
+    return set
 end
-U.ObjectOn = ObjectOn                            -- the guard's repair (Guard.lua): an object as is, no checks
+U.ObjectOn = ObjectOn                            -- the guard's repair (Guard.lua): an object as is (U.FontObjectOK)
 
 -- ── Menu regions (docs/LESSONS3.md lesson 38) ─────────────────────────────────────────────────────
 -- The game's menus (MenuUtil.CreateContextMenu, the new dropdowns: Blizzard_Menu) lend their
@@ -220,6 +224,7 @@ function U.FontBack(fs, was)
             return
         end
     end
+    if was.unsafe and not was.own and not was.byhand then return end   -- lesson 47: no object may go back
     if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end
 end
 

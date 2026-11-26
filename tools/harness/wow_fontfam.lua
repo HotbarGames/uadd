@@ -154,5 +154,6 @@ local py = rawget(_G, "python")
 if type(py) == "table" or type(py) == "userdata" then
     local mod = py.eval("__import__('boxes')")
     H.boxReport = mod.report
+    H.crashReport = mod.crash                -- a crash the client would have (wow_core.lua H.Crash)
     assert((loadstring or load)(mod.lua_source(), "@harness/boxes.lua"))()
 end

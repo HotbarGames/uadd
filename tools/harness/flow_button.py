@@ -111,13 +111,13 @@ def run_checks():
 # ── Mutants: each cuts one fix out of the core; its step must fail ───────────────────────────────
 
 CUTS = {
-    "back": ("UADD:ButtonFont.lua", "if Get(btn, s) == c then Set(btn, s, base[c]) end", "Set(btn, s, base[c])", kept),
+    "back": ("UADD:ButtonFont.lua", "if Get(btn, s) == c and U.FontObjectOK(nil, base[c]) then Set(btn, s, base[c]) end",
+             "Set(btn, s, base[c])", kept),
     "free": ("UADD:ButtonFont.lua", "local free = Free(btn)", "local free = true", locked),
     "states": ("UADD:ButtonFont.lua", "local ok, yes = pcall(Put, btn, look)", "local ok, yes = true, true", states),
     "savefont": ("UADD:Font.lua", " and not U.LabelButton(fs) then", " then", save_font),
     # The core's side of BugSack's old Fresh() (flow_bs.py, lesson 32 again): never save our copy as its own.
-    "fontbase": ("UADD:Font.lua", "local o = U.FontBase(fs.GetFontObject and fs:GetFontObject() or nil)",
-                 "local o = fs.GetFontObject and fs:GetFontObject() or nil", font_base),
+    "fontbase": ("UADD:Font.lua", "    o = U.FontBase(o)\n", "", font_base),
     "name": ("UADD:BoxGuard.lua", "    local gap = math.abs(box - good)\n"
              "    return gap >= 0.12 * good and math.abs(w - box) <= 0.25 * gap",
              "    return not U.IsCyrFont(path)", box_fine),

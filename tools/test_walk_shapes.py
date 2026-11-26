@@ -1,4 +1,4 @@
-"""UADD/Walk.lua (with WalkFrames.lua, ButtonFont.lua): the real files in a small Lua world with made-up words.
+"""UADD/Walk.lua (with WalkFrames.lua, ButtonFont.lua, FontObject.lua): the real files in a small Lua world with made-up words.
 UADD/Shapes.lua: tools/test_shapes.py (it uses run and caught from here).
 
 Walk: install, a text the font cannot draw, text boxes and skipped frames, a button label whose states the client
@@ -63,13 +63,18 @@ function U.Locked() return false end
 local timers = {}
 C_Timer = { After = function(_, fn) timers[#timers + 1] = fn end }
 function TICK() local list = timers timers = {} for _, fn in ipairs(list) do fn() end end   -- the next frame
-function FontObj(path)
-    local o = { path = path }
+-- Font objects as the client's: each known by its global name, so U.SetFontObject (FontObject.lua) may put it back.
+local fonts = 0
+function FontObj(path, name)
+    fonts = fonts + 1
+    local o = { path = path, name = name or ("WorldFont" .. fonts) }
     function o:GetFont() return self.path, 12, "" end
     function o:SetFont(p) self.path = p end
+    function o:GetName() return self.name end
+    _G[o.name] = o
     return o
 end
-function CreateFont(name) local o = FontObj(nil) o.name = name return o end
+function CreateFont(name) return FontObj(nil, name) end
 function U.Regions(f) return f.regions or {} end
 function U.Children(f) return f.children or {} end
 function U.OnNewFrame(fn) STATS.newframe = fn return true end
@@ -234,7 +239,8 @@ def run(world, files, scenario, srcs=None):
 
 
 def walk(srcs=None):
-    return run(WALK_WORLD, ["ButtonFont.lua", "WalkFrames.lua", "Walk.lua"], WALK_SCENARIO, srcs)   # TOC order
+    return run(WALK_WORLD, ["FontObject.lua", "ButtonFont.lua", "WalkFrames.lua", "Walk.lua"], WALK_SCENARIO,
+               srcs)   # TOC order
 
 
 def caught(fn, name, old, new):

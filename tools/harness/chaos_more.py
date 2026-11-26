@@ -5,7 +5,9 @@
   * the addon missing, and loaded late (modules whose addon is only an OptionalDep);
   * an addon update that compares a locale string we swap (a static scan of the installed addons);
   * U.SafeCall flooded with 1000 errors of changing text and 1000 places: the report table stays bounded;
-  * the UALL Forever probe: another addon's spy on the game's zone text never sees the probe as the game's.
+  * the UALL Forever probe: another addon's spy on the game's zone text never sees the probe as the game's;
+  * BugSack's text area (an edit box) shaken with odd font objects, off/on and the hold key: no client crash
+    (a font object that inherits from itself, LESSONS4.md lesson 47).
 """
 import os
 import re
@@ -169,11 +171,57 @@ def uallf_probe(check):
           f"{txt(now)!r} (another self: {int(other)})")
 
 
+def bugsack_fonts(check, seed, only):
+    """The game crash of 2026-11-26 (docs/LESSONS4.md lesson 47), shaken: BugSack's text area (an edit box) shows the
+    no-bugs line in Ukrainian, then a real error text, in a random order with off, on, the hold key and odd font
+    objects set on it (none, a name, a nameless one, a chain). No client crash, no Lua error, each text whole and
+    Cyrillic only ever in our font."""
+    import random
+    import flow_bs
+    if (only and only != flow_bs.MODULE) or not flow_bs.module_there() or not flow_bs.installed():
+        return
+    rnd = random.Random(seed)
+    c, M = flow_bs.game()
+    acts = ["no", "error", "error", "off", "on", "hold", "release"] + ["font"] * 3
+    fonts = ["GameFontHighlightSmall", "GameFontHighlight", "GameFontNormal", None, "name", "nameless", "chain"]
+    bad, held = [], False
+    for i in range(120):
+        a = rnd.choice(acts)
+        if a in ("no", "error"):
+            M.bugs(1 if a == "error" else 0)
+        elif a in ("off", "on"):
+            M.uadd("bs " + a)
+        elif a in ("hold", "release"):
+            if held != (a == "hold"):
+                held = a == "hold"
+                M.key(held)
+        else:
+            f = rnd.choice(fonts)
+            if f in (None, "name", "nameless", "chain"):
+                M.oddFont(lua_str(f) if f else None)
+            else:
+                M.fontSize(lua_str(f))
+        t, ours = M.area()
+        t = txt(t)
+        if re.search("[Ѐ-ӿ]", t) and not ours:
+            bad.append(f"{i} {a}: Cyrillic without our font")
+        if t and re.search("[Ѐ-ӿ]", t) and re.search("[A-Za-z]{3}", t):
+            bad.append(f"{i} {a}: half a line")
+    crashes = [txt(x) for x in M.crashes().values()]
+    e = [m[:100] for w, m, tb in c.errors()]
+    check("chaos: BugSack text area, 120 random no-bugs / error / font / off / on / hold: no client crash",
+          not crashes, "; ".join(crashes[:3]) + f" | seed {seed}")
+    check("chaos: BugSack text area: no Lua error", not e, "; ".join(e[:2]) + f" | seed {seed}")
+    check("chaos: BugSack text area: each text whole, Cyrillic only in our font", not bad,
+          "; ".join(bad[:3]) + f" | seed {seed}")
+
+
 def run(check, notes, spied, seed, only, hooks=None):
     """The cases above. hooks=None: all but install part-way, which chaos.part runs per module (partway())."""
     cases = [("SafeCall flood", lambda: safecall_flood(check)), ("UALLF probe", lambda: uallf_probe(check)),
              ("locale compares", lambda: locale_compares(check)),
-             ("addon missing or late", lambda: missing_and_late(check, seed, only))]
+             ("addon missing or late", lambda: missing_and_late(check, seed, only)),
+             ("BugSack font records", lambda: bugsack_fonts(check, seed, only))]
     for name, fn in cases:
         _case(check, name, fn, seed)
     if hooks is not None:

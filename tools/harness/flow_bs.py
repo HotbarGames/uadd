@@ -10,7 +10,9 @@ reads each key). Keys only in this file; the English never.
     a name (kept), an unknown word and a bare count (whole English). 3 the popup: text and both buttons ours.
     4 the text area: an error text untouched; the no-bugs line ours on the player's font size choice too.
     5 our font on every Cyrillic text and on no other: on, held, after each button's state change.
-    6 hold key, off and on, three times: English exactly, then ours exactly, no font kept. 7 /uadd bs says on.
+    6 hold key, off and on, three times: English exactly, then ours exactly, no font kept. 8 the text area (an edit
+    box: its own nameless font record) never gets that record back, so no client crash (lesson 47).
+    7 /uadd bs says on.
   * Game C (off at login): the player typed the filter label's text in the filter box; then on: kept (lesson 13).
   * Game B: no BugSack (the module's TOC needs it: no errors, nothing more).
   * Mutants (--prove): each step fails with its fix cut out.
@@ -20,6 +22,7 @@ import sys
 
 import halves_mods
 import session
+from flow_bs_crash import crash
 from flow_pawn_game import cyr, diff, errors
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -213,7 +216,7 @@ def run(check, facts):
 
     c, M = game()
     A = snap(M)
-    for step in (ours, sessions, popup, textarea, boxes, loop):
+    for step in (ours, sessions, popup, textarea, boxes, loop, crash):
         step(check, c, M, E, A)
     M.uadd("bs")
     status = [x for x in c.chat()[-5:] if "увімкнено" in x]
@@ -259,6 +262,10 @@ CUTS = {
     "states": ("UADD:ButtonFont.lua", "local ok, yes = pcall(Put, btn, look)", "local ok, yes = true, true", boxes,
                False),
     "fit": ("Screen.lua", "then FitTab(owner) end", "then end", boxes, False),
+    # Lesson 47: the core takes any object (the text area's own nameless record too): it goes back, the client dies.
+    "record": ("UADD:FontObject.lua",'if type(o) ~= "table" or o == fs or type(o.GetFont) ~= "function" or not Named(o) '
+               "then return false end", 'if type(o) ~= "table" or type(o.GetFont) ~= "function" then return false end',
+               crash, False),
 }
 
 

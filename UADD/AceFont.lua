@@ -70,7 +70,7 @@ local function OnFont(fs)
     if r and UADD.IsCyrFont((fs:GetFont())) then
         -- Our hand-set file stays over their new object (the client keeps it): the record stays, and their
         -- object is what goes back. A label that followed its object gets that object's file, never ours.
-        local o = fs.GetFontObject and fs:GetFontObject() or nil
+        local o = UADD.SafeFontObject(fs)          -- one that may go back (lesson 47)
         local n = type(o) == "table" and o.GetName and o:GetName()
         if type(o) == "table" and not (type(n) == "string" and n:find("^UADD_")) then
             r.object = o

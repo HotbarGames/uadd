@@ -215,6 +215,27 @@ switched states as the client does: `tools/harness/wow_button.lua`). Two more ga
 - Manual, in the game: a real protected button, the real cap, the switch on hover and press, the width guard on
   real fonts.
 
+## 47. A font object put back on itself crashed the game
+
+**What went wrong.** The game died (a stack overflow inside the client's SetFontObject, 2026-11-26) after BugSack
+showed our no-bugs line, then an error. An edit box's GetFontObject gives its own nameless font record, not a game
+font. `U.SaveFont` saved that record for BugSack's text area and `U.FontBack` put it back on the box: the record now
+inherited from itself, and the client looped in its own code until the game died. No pcall catches that. The button
+helpers and six modules put saved objects back the same way, and the harness's SetFontObject took any object.
+
+**Rule.** A saved font object goes back only through `U.SetFontObject` (`UADD/FontObject.lua`): an object the client
+knows by name (its global is this object), whose chain ends within 10 steps, never the text or its own nameless
+record, one set at a time per text. Save with `U.SafeFontObject` (the first such object in the chain). None in the
+chain: the font stays as it is (a Cyrillic file draws English too), never a file by path (lesson 18).
+
+**Check.**
+
+- `python3 -m unittest tools.test_shared_state`: "put object", a SetFontObject with a saved object outside the core.
+- `python3 tools/harness/run.py`: the harness's SetFontObject fails the run (`H.Crash`) on a font chain that loops, and
+  so does a hook re-entered 8 deep on one object. "bs: 8 text area" (mutant `record` in `flow_bs.py --prove`) and
+  the chaos case "BugSack font records".
+- Manual, in the game: the real edit box record, and no crash.
+
 ## More cases of older lessons
 
 **Lesson 14 again, in WhatTheWhisper's group chats (2026-11-22).** It names a group thread (each kind of group) with its

@@ -65,8 +65,8 @@ local function Restore(fs)
     local was = fonted[fs]
     if not was then return end
     fonted[fs] = nil
-    if was[1] then fs:SetFontObject(was[1])
-    elseif was[2] and was[3] then fs:SetFont(was[2], was[3], was[4] or "") end
+    if was[1] then U.SetFontObject(fs, was[1])    -- lesson 47: only an object that may go back
+    elseif was[2] and was[3] and not was[5] then fs:SetFont(was[2], was[3], was[4] or "") end
 end
 
 -- UADD's Cyrillic font at the size the font string has (or `was`: the font What's Training? just gave
@@ -78,7 +78,8 @@ local function Cyr(fs, was)
         was = fonted[fs]
         if not was then
             local p, s, f = fs:GetFont()
-            was = { fs.GetFontObject and fs:GetFontObject() or nil, p, s, f }
+            local o, unsafe = U.SafeFontObject(fs)
+            was = { o, p, s, f, unsafe }
         end
     end
     if not was[3] then return false end
@@ -135,7 +136,7 @@ local function OnFont(fs, byObject)
     if busy or not mine[fs] or not fonted[fs] then return end
     local p, s, f = fs:GetFont()
     busy = true
-    pcall(Cyr, fs, { byObject and fs:GetFontObject() or nil, p, s, f })
+    pcall(Cyr, fs, { byObject and U.SafeFontObject(fs) or nil, p, s, f })
     busy = false
 end
 

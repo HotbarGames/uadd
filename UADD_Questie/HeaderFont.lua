@@ -85,7 +85,7 @@ local function GiveBack(fs)
     local ok, t = pcall(function() return UADD.Plain(fs:GetText()) end)
     if ok and type(t) == "string" and t:find(CYR) then return end
     changed[fs] = nil
-    pcall(fs.SetFontObject, fs, old[1])
+    pcall(UADD.SetFontObject, fs, old[1])         -- lesson 47: only an object that may go back
     pcall(fs.SetTextColor, fs, old[2], old[3], old[4], old[5])
 end
 
@@ -101,7 +101,7 @@ local function Apply(canvas)
             found = true
         elseif IsHeaderText(r, base) then
             local red, green, blue, alpha = r:GetTextColor()
-            changed[r] = { r:GetFontObject() or base, red, green, blue, alpha }
+            changed[r] = { UADD.SafeFontObject(r) or base, red, green, blue, alpha }
             if not hookedHeader[r] then
                 hookedHeader[r] = true
                 hooksecurefunc(r, "SetText", function(self) pcall(GiveBack, self) end)

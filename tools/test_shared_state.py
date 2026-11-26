@@ -7,6 +7,10 @@ module file. This check reads every .lua file a UADD*/*.toc loads and lists each
 - set font      SetFont on anything (it pins one file; a game line loses its font family)
 - font object   a method that changes a font object (SetFont, SetTextColor, ...) on a global *Font* name:
                 GameFontNormal, GameTooltipText, ... are shared by the whole game. Never allowed.
+- put object    SetFontObject with an object that is not a game global by its name, nil or a string (a saved one,
+                a local, a field): only U.SetFontObject (UADD/FontObject.lua) checks it may go back. An edit box's
+                GetFontObject is its own nameless record; put back, it inherits from itself and the game dies
+                (docs/LESSONS4.md lesson 47)
 - new font      CreateFont: a new global font object
 - frame kind    CreateFrame("EditBox") or a kind that is not a string (tools/test_no_editbox.py)
 - keyboard      SetFocus, ClearFocus, EnableKeyboard, SetPropagateKeyboardInput, SetAutoFocus
@@ -19,8 +23,8 @@ module file. This check reads every .lua file a UADD*/*.toc loads and lists each
 - walk          :GetRegions() / :GetChildren() with no "Forbidden" test in the 15 lines above (a forbidden frame
                 throws, and a walk over the game's frames can reach one)
 
-HELPERS may use them freely: the core helpers made for this. Any other use is in ALLOW: (file, kind) -> (how many,
-why). More uses than that fails (a new one: use a helper), fewer fails too (lower the number). "TODO: move to
+HELPERS may use them freely: the core helpers made for this. Any other use is in ALLOW (tools/shared_state_allow.py):
+(file, kind) -> (how many, why). More uses than that fails (a new one: use a helper), fewer fails too (lower the number). "TODO: move to
 helper" marks old uses that should go through a core helper.
 
 python3 -m unittest discover -s tools -p 'test_*.py'
@@ -39,49 +43,14 @@ import test_no_editbox  # noqa: E402
 
 HELPERS = {
     "UADD/Font.lua": "U.SaveFont / U.FontBack: a line's font object back, never a pinned file",
+    "UADD/FontObject.lua": "U.SetFontObject: only an object that may go back (no loop, lesson 47)",
     "UADD/Widgets.lua": "U.WidgetMethods: a widget kind's methods, never a new EditBox",
     "UADD/Guard.lua": "the runtime guard: puts broken shared state back",
     "UADD/ButtonFont.lua": "U.ButtonCyr / U.ButtonBack: a button's state objects, our copies on and its own back",
     "UADD/BoxGuard.lua": "the box guard: a text drawn as boxes gets our font again, then the file, else its English",
 }
 
-FONT_FIX = "module font helper: Cyrillic file on one FontString, back with its font object"
-TODO = "TODO: move to helper (U.SaveFont / U.FontBack in UADD/Font.lua)"; CYRON = "CyrOn: after U.SaveFont, read back; U.FontBack"
-OWN_FONT = "our own named font object (UADD_...), a copy with the Cyrillic file"
-SWAP = "the addon's global strings (key binding names), swapped both ways on on/off"
-PROBE = "the font probe (lesson 44): only FontStrings of its own hidden frame and its own UADD_ProbeFont"
-ALLOW = {
-    ("UADD/Probe.lua", "set font"): (2, PROBE), ("UADD/Probe.lua", "new font"): (1, PROBE),
-    ("UADD/Core.lua", "global write"): (1, "SLASH_UADD1: the /uadd command"),
-    ("UADD/Core.lua", "game field"): (1, "SlashCmdList.UADD: the /uadd command"),
-    ("UADD_Auctionator/Fonts.lua", "set font"): (3, FONT_FIX),
-    ("UADD_AutoPotion/Bindings.lua", "global write"): (2, SWAP), ("UADD_Bagnon/Locale.lua", "global write"): (1, SWAP),
-    ("UADD_LiteMount/Tables.lua", "global write"): (2, SWAP),
-    ("UADD_DialogueUI/Fonts.lua", "set font"): (3, FONT_FIX + "; " + TODO),
-    ("UADD_DungeonJournal/Fonts.lua", "set font"): (2, FONT_FIX + "; " + TODO),
-    ("UADD_DungeonJournal/Fonts.lua", "new font"): (1, OWN_FONT),
-    ("UADD_ForeverXPBar/Fonts.lua", "set font"): (3, FONT_FIX),
-    ("UADD_GatherMate2/Swap.lua", "global write"): (2, SWAP),
-    ("UADD_Pawn/Swap.lua", "global write"): (2, SWAP),
-    ("UADD_Questie/HeaderFont.lua", "new font"): (1, OWN_FONT),
-    ("UADD_Questie/HeaderFont.lua", "set font"): (1, "our own font object UADD_QuestieHeaderFont"),
-    ("UADD_Questie/Locale.lua", "global write"): (1, "QUESTIE_LOCALES_OVERRIDE: Questie's own documented locale switch"),
-    ("UADD_WaypointUI/Fonts.lua", "set font"): (1, "Cyrillic file on Waypoint UI's own font objects after "
-                                                   "U.SaveFont, read back; back with U.FontBack"),
-    ("UADD_WhatsTraining/Screen.lua", "set font"): (2, FONT_FIX + "; " + TODO),
-    ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP), ("UADD_WhatTheWhisper/Swap.lua", "global write"): (1, SWAP),
-    ("UADD_WowheadQuickLink/Module.lua", "global write"): (1, SWAP),
-    ("UADD/Lines.lua", "chat replace"): (2, "core chat bus (U.ChatHook): one wrap for all modules, lesson 35"),
-}
-WALK_TODO = "a frame walk with no IsForbidden test; TODO: use U.Regions / U.Children (UADD/Guard.lua)"
-for _f, _n in {"Attune/Claim": 4, "Attune/Screen": 6, "Auctionator/Menu": 2, "Auctionator/Rows": 1,
-               "Auctionator/Screen": 2, "AutoPotion/Screen": 2, "Bagnon/Fonts": 2, "DialogueUI/Screen": 3,
-               "DungeonJournal/Language": 2, "DungeonJournal/Map": 1, "DungeonJournal/Screen": 2,
-               "DungeonJournal/Search": 1, "ForeverXPBar/Screen": 2, "GatherMate2/Fonts": 2, "LayerSwap/Screen": 2,
-               "OpenMap/Screen": 3, "Pawn/Fonts": 2, "Pawn/Swap": 2,
-               "Questie/ControlFont": 2, "Questie/HeaderFont": 2, "RareScanner/Fonts": 2, "Scrap/Fonts": 2,
-               "SpeedyAutoLoot/Module": 2, "TomTom/Fonts": 2}.items():
-    ALLOW[(f"UADD_{_f}.lua", "walk")] = (_n, WALK_TODO)
+from shared_state_allow import ALLOW  # noqa: E402  (file, kind) -> (how many, why)
 
 FONT_METHODS = {"SetFont", "SetFontObject", "SetTextColor", "SetShadowColor", "SetShadowOffset", "SetSpacing",
                 "SetJustifyH", "SetJustifyV", "CopyFontObject", "SetFontHeight", "SetIndentedWordWrap"}
@@ -167,6 +136,13 @@ def hits_in_text(path, text):
             found.append((path, line, "font object"))
         elif method and value == "SetFont":
             found.append((path, line, "set font"))
+        if method and value == "SetFontObject" and t(recv)[1] not in ("UADD", "U"):
+            a = i + 2 if is_sym(i + 1, "(") else i + 4      # fs:SetFontObject(x) / pcall(fs.SetFontObject, fs, x)
+            k, v, _ = t(a)
+            named = k == luatok.STR or (k == luatok.NAME and (v == "nil" or (
+                v[:1].isupper() and global_name(a) and not is_sym(a + 1, ".", ":", "["))))
+            if not named:
+                found.append((path, line, "put object"))
         if method and value in KEYBOARD:
             found.append((path, line, "keyboard"))
         if method and value == "SetScript" and not (t(recv)[1] in made and t(recv)[0] == luatok.NAME
@@ -265,6 +241,8 @@ class SharedState(unittest.TestCase):
                'local t = { a = 1, b = 2 }\n'                            # a table: fine
                'hooksecurefunc(fs, "SetFont", F) local ok = type(gui.SetFocus)\n'  # not calls
                'fs:SetFontObject(GameFontNormal)\n'                      # a FontString's own font: fine
+               'pcall(fs.SetFontObject, fs, saved[fs])\n'                # 22 put object
+               'fs:SetFontObject(was.object) UADD.SetFontObject(fs, was.object)\n'  # 23 put object; the helper: fine
                '-- GameFontNormal:SetFont() in a comment\n')
         got = [(n, k) for _, n, k in hits_in_text("UADD_X/Screen.lua", src)]
         self.assertEqual(sorted(got), sorted([(1, "set font"), (2, "font object"), (3, "font object"),
@@ -272,7 +250,7 @@ class SharedState(unittest.TestCase):
                                               (7, "global write"), (8, "game field"), (9, "settings"),
                                               (10, "run code"), (11, "new font"), (12, "global write"),
                                               (13, "global write"), (14, "chat replace"), (14, "game field"),
-                                              (15, "walk")]))
+                                              (15, "walk"), (22, "put object"), (23, "put object")]))
         self.assertEqual(hits_in_text("UADD/Guard.lua", src), [])
 
     def test_a_planted_line_fails(self):

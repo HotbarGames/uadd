@@ -4,11 +4,13 @@ Each Client loads boxes.lua (from wow_fontfam.lua), which sends here every hit: 
 HARNESS.step with Cyrillic text in a font that has none (a box in the game). Built like tipfont.py: take() hands over
 what came in and starts again, merge() joins the parts of one segment that ran in other processes (pool.py), and
 segment() turns them into one check. A client loaded with a cut (a mutant) sets H.boxQuiet and reports nothing.
+A crash of the real client the harness acts out (H.Crash in wow_core.lua: a font object that inherits from itself,
+a setter re-entered through its own hook; LESSONS4.md lesson 47) comes in through crash() and fails the same way.
 """
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-STATE = {"hits": []}
+STATE = {"hits": [], "crash": []}
 MAX = 20
 
 
@@ -50,23 +52,34 @@ def report(name, path, sample):
         STATE["hits"].append(hit)
 
 
+def crash(why):
+    why = _text(why)
+    got = STATE.setdefault("crash", [])
+    if why not in got and len(got) < MAX:
+        got.append(why)
+
+
 def take():
-    got = {"hits": list(STATE["hits"])}
-    STATE["hits"] = []
+    got = {"hits": list(STATE["hits"]), "crash": list(STATE.get("crash", []))}
+    STATE["hits"], STATE["crash"] = [], []
     return got
 
 
 def merge(takes):
-    out = {"hits": []}
+    out = {"hits": [], "crash": []}
     for got in takes:
         out["hits"] += [h for h in got["hits"] if h not in out["hits"]]
+        out["crash"] += [h for h in got.get("crash", []) if h not in out["crash"]]
     return out
 
 
 def segment(key, check, got=None):
-    """[check] for what came in since the last call (or for `got`); [] when nothing showed a box."""
+    """[checks] for what came in since the last call (or for `got`); [] when nothing showed a box or crashed."""
     got = take() if got is None else got
-    if not got["hits"]:
-        return []
+    out = []
+    if got.get("crash"):
+        out.append(check(f"no client crash: {key}", False, "; ".join(got["crash"][:8])))
     hits = got["hits"]
-    return [check(f"no boxes on screen: {key}", False, "; ".join(hits[:8]) + f" ({len(hits)} texts)")]
+    if hits:
+        out.append(check(f"no boxes on screen: {key}", False, "; ".join(hits[:8]) + f" ({len(hits)} texts)"))
+    return out

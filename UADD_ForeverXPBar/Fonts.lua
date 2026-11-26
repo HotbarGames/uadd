@@ -59,7 +59,7 @@ Fix = function(fs, byAddon)
         size, flags = osize, oflags
     else
         local op, osize, oflags = ObjectFont(fs)
-        changed[fs] = { path = p, size = size, flags = flags, object = fs.GetFontObject and fs:GetFontObject(),
+        changed[fs] = { path = p, size = size, flags = flags, object = UADD.SafeFontObject(fs),
             follows = SamePath(op, p) and osize == size and oflags == (flags or "") }
     end
     guard = true
@@ -87,7 +87,7 @@ local function Put(fs, old)
         for i, m in ipairs(LOOKS) do
             if fs[m[1]] and fs[m[2]] then keep[i] = { fs[m[1]](fs) } end
         end
-        fs:SetFontObject(old.object)
+        UADD.SetFontObject(fs, old.object)        -- lesson 47: only an object that may go back
         for i, m in ipairs(LOOKS) do
             if keep[i] and keep[i][1] ~= nil then fs[m[2]](fs, unpack(keep[i])) end
         end

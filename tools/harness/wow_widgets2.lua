@@ -142,9 +142,72 @@ end
 -- As in the client: a font object's new font (SetFont) reaches every line drawn in it now, except a line with
 -- a file set by hand (__hand, wow_widgets.lua). Natively: no Lua hook on the line runs; the box check, which
 -- wraps Widget's own methods, still looks.
+-- As in the client (docs/LESSONS4.md lesson 47): an edit box's GetFontObject gives its own font record, a
+-- nameless Font ("Font <UnknownFile:0>" in a crash log) whose GetFontObject is the object set on the box;
+-- its getters and setters are the box's. A font object set so that it inherits from itself (the box's own
+-- record on the box, or any loop) makes the client recurse in C until the game dies: here H.Crash, and
+-- nothing changes.
+do
+    local getObject = Widget.GetFontObject
+    local function Record(box)
+        local r = rawget(box, "__record")
+        if not r then
+            r = H.newWidget("Font")
+            r.__fs, r.__boxOf = box, box                 -- its text methods reach the box (textTarget)
+            rawset(box, "__record", r)
+        end
+        return r
+    end
+    function Widget:GetFontObject()
+        if rawget(self, "__type") == "EditBox" then return Record(self) end
+        return getObject(self)
+    end
+    -- The font record a widget draws with: an edit box's record, a button's font string, else the widget.
+    local function Node(w)
+        if type(w) == "string" then w = rawget(_G, w) end
+        if type(w) ~= "table" then return nil end
+        if rawget(w, "__type") == "EditBox" then return Record(w) end
+        if rawget(w, "__boxOf") then return w end
+        return rawget(w, "__fs") or w
+    end
+    H.fontNode = Node
+    -- What it inherits from. CopyFontObject only copies (no link, __copied), though the harness keeps the
+    -- object it copied in __fontObject for boxes.lua's families.
+    local function Parent(n)
+        local t = rawget(n, "__boxOf") or n
+        if rawget(t, "__copied") then return nil end
+        return Node(rawget(t, "__fontObject"))
+    end
+    function H.fontLoop(w, o)
+        local node, p, seen = Node(w), Node(o), {}
+        for _ = 1, 1000 do
+            if p == nil then return false end
+            if p == node or seen[p] then return true end
+            seen[p], p = true, Parent(p)
+        end
+        return true
+    end
+end
+
 do
     local setFont, setObject = Widget.SetFont, Widget.SetFontObject
+    local copying = false
+    function Widget:CopyFontObject(o)
+        copying = true
+        local ok, err = pcall(self.SetFontObject, self, o)
+        copying = false
+        if not ok then error(err, 0) end
+        local t = rawget(self, "__boxOf") or rawget(self, "__fs") or self
+        rawset(t, "__copied", true)
+    end
     function Widget:SetFontObject(o)
+        if not copying and H.fontLoop(self, o) then
+            H.Crash("font object inherits from itself: " .. tostring(self))
+        end
+        if not copying then
+            local t = rawget(self, "__boxOf") or rawget(self, "__fs") or self
+            if rawget(t, "__copied") then rawset(t, "__copied", nil) end
+        end
         local r = setObject(self, o)
         if type(o) == "string" then o = rawget(_G, o) end
         local fs = rawget(self, "__fs") or self
