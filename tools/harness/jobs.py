@@ -17,7 +17,22 @@ import tipfont
 HERE = os.path.dirname(os.path.abspath(__file__))
 # The slowest first, so they do not end the run alone (one run on 8 cores, 2026-11-22: qtag 17 s, chaos 62 s in
 # one job, now its modules side by side, the slowest 13 s; lt 11 s). The rest go in run.py's order.
-SLOW = ("qtag", "chaos", "lt", "dj", "pops", "mc", "lsw", "wtw", "fqp", "litemount", "safe", "wp")
+# Again on 2026-11-26 (8 cores): qtag 28 s, lt 18, dj 17, gq 16, pops 12, ttp 10, wtw 10, litemount 8, dci 7; gq and
+# ttp started last and ended the run alone.
+SLOW = ("qtag", "chaos", "lt", "dj", "gq", "pops", "ttp", "wtw", "litemount", "dci", "mc", "fqp", "cua", "lsw",
+        "safe", "wp")
+# Chaos pieces that take longest (same run: 28, 24, 21, 13, 11, 10 s) start first; their checks keep pieces() order.
+SLOW_CHAOS = ("UADD_OneForAll", "UADD_Mastercraft", "UADD_DeleteCheapestItem", "UADD_RoadToSixty",
+              "UADD_WhatsTraining", "UADD_GearQuestForever")
+
+
+def _slow_first(pieces, serial):
+    """The indexes of `pieces` in the order to start them: SLOW_CHAOS first when side by side, else as given."""
+    rank = {f: i for i, f in enumerate(SLOW_CHAOS)}
+    at = range(len(pieces))
+    if serial:
+        return list(at)
+    return sorted(at, key=lambda i: rank.get(pieces[i][1][0] if pieces[i][1] else None, len(rank)))
 
 
 def main_job():
@@ -90,7 +105,9 @@ def run_all(segments, cache=None):
             if not missing:
                 ids["dj"] = [p.add(dj_job)]
         elif hasattr(mods[key], "pieces"):
-            ids[key] = [p.add(fn, *args) for fn, args in mods[key].pieces()]
+            ps = mods[key].pieces()
+            got = {i: p.add(ps[i][0], *ps[i][1]) for i in _slow_first(ps, p.serial)}
+            ids[key] = [got[i] for i in range(len(ps))]          # results in pieces() order (assemble)
         else:
             ids[key] = [p.add(segment_job, mods[key])]
     notes, groups = [], []                 # groups: (job ids, did every check of theirs pass), for the cache

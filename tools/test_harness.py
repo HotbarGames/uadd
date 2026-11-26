@@ -101,7 +101,10 @@ def _result():
         conn.close()
         pid = _EARLY.pop("pid", None)
         if pid is not None:
-            os.waitpid(pid, 0)
+            try:
+                os.waitpid(pid, 0)
+            except ChildProcessError:      # this file runs in a process of its own (testpool.py): the parent reaps it
+                pass
     if msg[0] != "ok":
         raise RuntimeError("the harness failed to run:\n" + msg[1])
     return [Check(*c) for c in msg[1]], msg[2]

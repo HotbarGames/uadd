@@ -292,9 +292,9 @@ same (`tools/harness/jobcache.py`) and says how many; `--fresh` or `UADD_CACHE=0
 - `run.py` runs its flows side by side, one process per flow (`tools/harness/pool.py`, `jobs.py`). The checks come
   out in the same order as one after another.
 - A flow that fails, dies or runs past its time gives a FAIL line with a repro line. The run then ends with code 1.
-- `UADD_JOBS=1` runs every flow in one process, one after another, as before. Use it to look at one failure
-  closely. `UADD_JOBS=4` runs 4 at a time.
-- `UADD_JOB_TIMEOUT` is the seconds one flow may take (default 900).
-- In the suite, `tools/test_harness.py` starts the harness as soon as it is imported, so it runs while the other
-  tests run. `UADD_HARNESS_EARLY=0` runs it at its own turn instead.
+- `UADD_JOBS=1` runs every flow in one process, one after another, as before (`UADD_JOBS=4`: 4 at a time).
+  `UADD_JOB_TIMEOUT` is the seconds one flow may take (default 900).
+- The suite (push check about 80 s): `tools/test_harness.py` starts the harness at import; each other test file runs
+  in a process of its own, CPU count - 2 at a time (`tools/testpool.py`), reported in order, as one after another.
+  `UADD_TEST_JOBS=1` runs them all in one process, as before; `UADD_HARNESS_EARLY=0` runs the harness at its turn.
 `python3 tools/coverage.py` shows how much of Questie's text is translated.
