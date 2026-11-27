@@ -1,5 +1,5 @@
 """UADD_OneForAll on a stand-in for OneForAll (tools/harness/ofa: made-up English), steps in flow_ofa.lua
-(13 in flow_ofa_tips.lua).
+(13 in flow_ofa_tips.lua, 14 in flow_ofa_pages.lua).
 
 Steps: 1 the walk is ours, in a Cyrillic font  2 the hold key gives the English, ours on release  3 off: English
 (a redraw and a chat line too), on: ours  4 a window made later  5 a chat line with its prefix (OneForAll writes
@@ -9,7 +9,9 @@ of the installed addon (read at run time, never written down) show the module's 
 another language: the module is off and says so  11 its Gear Planner and setup end page, made up (lesson 44):
 labels set by hand at its own size, the search box's hint, a body signed "- Name"  12 texts it joins in code
 (dots, money in a paragraph, a zone and coordinates): whole Ukrainian or whole English  13 its tooltip lines with a
-head, a name or its OFA mark, a History row, the dungeon tracker: the same, English from other code and off.
+head, a name or its OFA mark, a History row, the dungeon tracker: the same, English from other code and off
+14 its kept hidden pages over the walker's 4000 frames, labels with a colon or in one colour, its tab bar laid
+out again for our names (lesson 48).
 mutants(check) cuts one fix out of the module in memory (CUT_LUA, as flow_rts_mod.py) and wants its step to fail;
 they run with --prove (run.py runs the steps only).
 """
@@ -69,6 +71,13 @@ MUTANTS = {
     "age": ("Joined.lua", " or Age(s) or Spot(s) end", " or Spot(s) end", 13),
     "spot": ("Joined.lua", " or Spot(s) end", " end", 13),
     "worn": ("Joined.lua", "Atom(last) or Worn(last)", "Atom(last)", 13),
+    "hidden": ("Screen.lua", "    return Hidden(f)\n", "    return false\n", 14),
+    "showwalk": ("Screen.lua", "if f:IsShown() then pcall(S.W.Walk, f) end", "if f:IsShown() then pcall(S.W.Later) end", 14),
+    "rehook": ("Screen.lua", 'if seen == nil or (seen and f:GetScript("OnShow") ~= seen) then', "if seen == nil then", 14),
+    "typed": ("Screen.lua", "        if Typed(s) then return nil, false end\n", "", 14),
+    "tabhold": ("Screen.lua", 'U.OnOriginal(function() if ns.On() then Queue() end end, "OneForAll tabs")', "local _ = 0", 14),
+    "dressed": ("Words.lua", "P.Exact(s) or Dressed(s)", "P.Exact(s)", 14),
+    "tabs": ("Screen.lua", "        if uk then TabName(fs) end\n", "", 14),
     # core UADD/Font.lua (lesson 44): a label set by hand gets the Cyrillic file by hand
     "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) or (U.BoxBad and U.BoxBad(fs)) then return false end',
             "do return false end", 11),
@@ -93,13 +102,15 @@ def game(saved=None, cut=None):
         box.file, box.old, box.new = (lua_str(x) for x in cut[:3])
     c.lua.execute(read_text(os.path.join(HERE, "flow_ofa.lua")))
     c.lua.execute(read_text(os.path.join(HERE, "flow_ofa_tips.lua")))
+    c.lua.execute(read_text(os.path.join(HERE, "flow_ofa_pages.lua")))
     c.start()
     c.H.pump(20)
     return c, c.H.ofa, box
 
 
 def results(M, n):
-    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R.joined if n == 12 else M.R.tips if n == 13 else M.R[n]
+    f = M.R.lang if n == 10 else M.R.gear if n == 11 else M.R.joined if n == 12 else M.R.tips if n == 13 \
+        else M.R.pages if n == 14 else M.R[n]
     return [(txt(r[1]), r[2], txt(r[3]) if r[3] is not None else "") for r in f().values()]
 
 
@@ -142,7 +153,7 @@ def steps(check):
     real_keys(check, M)
     for name, ok, detail in results(M, 11):
         check(f"11 {name}", ok, detail)
-    for n in (12, 13):
+    for n in (12, 13, 14):
         for name, ok, detail in results(M, n):
             check(f"{n} {name}", ok, detail)
     del c

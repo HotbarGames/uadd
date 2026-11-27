@@ -205,11 +205,20 @@ local function Atom(s) return Whole(s) or Moneyed(s) or HeadNum(s) or NameSlot(s
 -- Joined.lua (W.Joined, W.Headed), loaded after this file.
 W.Atom, W.Value, W.Dungeon = Atom, Value, Dungeon
 
+-- 1b. A whole text of ours dressed by its code (lesson 48): a label with a colon after it ("Diet:"), or a text in
+-- one colour ("|cff9d9d9dNone|r"). The inside must be ours whole; the colon and the colour codes stay as they are.
+local function Dressed(s)
+    if #s > 64 then return nil end
+    if byte(s, #s) == 58 then local uk = #s > 2 and P.Exact(sub(s, 1, -2)) return uk and uk .. ":" or nil end
+    local inner = s:match("^|c%x%x%x%x%x%x%x%x([^|]+)|r$")
+    local uk = inner and (P.Exact(inner) or Dressed(inner))
+    return uk and sub(s, 1, 10) .. uk .. "|r" or nil
+end
 -- A line whose game name needs its own route (W.Routed: a spell, a vendor, a class, a recipe item) is tried after a
 -- whole text of ours and before Shapes, which asks the Item route for any `n` slot. Its false (a name no source
 -- knows) ends the line English.
 local function Line(s)
-    local uk = P.Exact(s)
+    local uk = P.Exact(s) or Dressed(s)
     if uk then return uk end
     if W.Routed then
         uk = W.Routed(s)

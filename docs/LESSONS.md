@@ -294,4 +294,4 @@ only what the real client can show: a module with a required dependency is not l
 **Check.** `python3 -m unittest tools.test_drift` (`test_every_version_recorded`). Test steps: manual, read
 each "without <addon>" step against the module's TOC.
 
-12 and up: `docs/LESSONS2.md`; 28 and up: `docs/LESSONS3.md`; 40 and up: `docs/LESSONS4.md`.
+12 and up: `docs/LESSONS2.md`; 28 and up: `docs/LESSONS3.md`; 40 and up: `docs/LESSONS4.md`; 48 and up: `docs/LESSONS5.md`.

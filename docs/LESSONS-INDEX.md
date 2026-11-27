@@ -1,20 +1,19 @@
 # Lessons index
 
 Only this index loads by itself. Full lessons (bug, rule, check): 1-11 and "Before a new addon" in
-`docs/LESSONS.md`, 12-27 in `LESSONS2.md`, 28-39 in `LESSONS3.md`, 40-47 in `LESSONS4.md`.
-Read lesson 18: `awk '/^## /{p=/^## 18\./}p' docs/LESSONS*.md`. A `+` means more cases in LESSONS3 or 4:
+`docs/LESSONS.md`, 12-27 in `LESSONS2.md`, 28-39 in `LESSONS3.md`, 40-47 in `LESSONS4.md`, 48 in `LESSONS5.md`.
+Read lesson 18: `awk '/^## /{p=/^## 18\./}p' docs/LESSONS*.md`. A `+`: more cases in later files:
 `grep -n -A14 'Lesson 18 again' docs/LESSONS*.md`.
 
-**Must read.** You write or review module code (Lua of `UADD/` or `UADD_*/`, not only words): first read all four
-files in full, file by file (again after a compaction). This index is not enough for that (test of 2026-11-25: reviews that read
-parts missed faults). Harness and flows: lessons 2, 18, 21, 32, 45. Words: 4, 5, 7, 9. Anything else: the `*`
+**Must read.** You write or review module code (Lua of `UADD/` or `UADD_*/`, not only words): first read all five
+files in full, file by file (again after a compaction); this index is not enough (2026-11-25: partial reads missed faults). Harness and flows: lessons 2, 18, 21, 32, 45. Words: 4, 5, 7, 9. Anything else: the `*`
 lessons of its group, with their `+` cases.
-A: a check catches it in any module. P: only in some modules, or once you register yours. N: no check, only you.
+A: checked in any module. P: in some, or once you register yours. N: no check.
 
-A new kind of problem: add a lesson (newest file with room), a check, and its line here, in the same commit as the fix.
+A new kind of problem: a lesson (newest file with room), a check and its line here, in the fix's commit.
 
 ## Fonts and drawing
-- 2* P Read a font back from the text; SetFont's return says nothing. Also cover windows made later (scan on first open), nameless option pages (by what they hold), and tables that copied `L.` words at load.
+- 2* P Read a font back from the text; SetFont's return says nothing. Cover windows made later (scan on first open), nameless option pages (by content), tables that copied `L.` words at load.
 - 5 P Text in a button, column or shared row: no longer than the English; shorten words, never the font or its scale. Measured only in Auctionator headers, LayerSwap, DCI, TomTom, BugSack: measure yours.
 - 18*+ A Put an old font back only with U.SaveFont/U.FontBack (the object). By path only for a label U.CyrOnOwn set by hand, never a game tooltip line.
 - 32*+ A Our text on an addon's label (it inherits its template's font): UADD's font on, kept over SetFont, SetFontObject. A button: U.ButtonCyr (UADD/ButtonFont.lua, lesson 46). Never save a font while ours is on; give it back off and held.
@@ -38,6 +37,7 @@ A new kind of problem: add a lesson (newest file with room), a check, and its li
 - 36 P Redraw, walk, popup work: never in combat; core Tell or U.AfterCombat, once, with the final state.
 - 37 P Code that installs and undoes: install only while ns.On(). Test that after off the addon's own function is back (same function).
 - 39 P A guard against boxes or dead keys goes in always, on or off; its error gives the addon's own output. Beware code taking the first byte of a Cyrillic name.
+- 48 P Kept hidden pages fill the 4000-frame walk: skip hidden ones, walk on OnShow.
 
 ## Finding and matching texts
 - 1*+ P List every English text shown, also code-built and game globals (ADD, YES): start with scan_addon.py. Never write a global; swap only English, on the addon's own frames. Popups and their buttons: U.Popups.Register; Sushi's: SushiPopups.

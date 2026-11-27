@@ -4,7 +4,7 @@
 
 @docs/LESSONS-INDEX.md
 
-Before you write or review module code (Lua of `UADD/` or `UADD_*/`, not only words), read all four
+Before you write or review module code (Lua of `UADD/` or `UADD_*/`, not only words), read all five
 `docs/LESSONS*.md` files (not the index) in full.
 
 ## Translation skills

@@ -16,6 +16,7 @@
 Полагодили:
 
 - Mastercraft: «Що нового» лишаємо англійською. Новини старіють швидше, ніж ми їх перекладаємо.
+- OneForAll: сторінки, які відкриваєш не одразу (професії, підземелля), тепер теж українською, а назви вкладок не залазять на сусідні.
 
 ---
 
@@ -33,6 +34,7 @@ Fresh versions:
 Fixed:
 
 - Mastercraft: its What's New stays English. News gets old faster than we can translate it.
+- OneForAll: pages you open later (professions, dungeons) are Ukrainian too, and tab names no longer run into each other.
 
 ## 1.3.0
 

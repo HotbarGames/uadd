@@ -8,7 +8,7 @@ the middle of a collection ends that kind at once too, and writes none of its na
 from loader import txt, lua_str
 
 KIND = {"world.zones": "zones", "interface.storage": "Quest", "interface.loot": "Item", "gossip": "Npc"}
-FAST = 1000            # frames; a full collection takes about 350, waiting for an off route took ~2550
+FAST = 100             # frames, with the budget lifted (_budget): an off route takes 1; waiting for it took ~2550
 READY = "назви готові"
 OFF_LINE = "лишаються англійською, бо в налаштуваннях UALL Forever"
 SLOW = "довго не відповідав"
@@ -31,8 +31,16 @@ def _zones_written(c):
     return int(c.ev(ZONES_WRITTEN)(c.H.ns.UADD_Questie))
 
 
+def _budget(c, ms):
+    """The collector does BUDGET_MS of real-clock work per frame, so on a busy PC a frame does less and
+    the frame count grows with CPU load. A huge budget makes a frame do all work that does not wait:
+    the frames left are the waits (Schedule(1) on a "not now"), which is what FAST measures."""
+    c.ev("function(ms) UADD.Collector.BUDGET_MS = ms end")(ms)
+
+
 def _collect(f, c):
     """Collects, then waits for Questie's rebuild, after which the 'ready' line comes."""
+    _budget(c, 1e9)
     out = f.collect(c)
     c.F.settle()
     return out
@@ -112,6 +120,7 @@ def route_off(f, key, quest, counts):
         asked = _pump_until_asked(c4, 30)
     else:
         c4 = c3
+        _budget(c4, 6)             # the shipped budget: the job must still be running when it is switched off
         c4.slash("questie rebuild")
         asked = _pump_until_asked(c4, 1)
     c4.F.uallOff(lua_str(key))
