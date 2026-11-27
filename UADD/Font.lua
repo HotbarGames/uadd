@@ -56,7 +56,8 @@ local function SamePath(a, b)
 end
 
 -- What U.FontBack needs later: { object, path, size, flags, own }. `own`: the font differed from its
--- object's (set by hand before us), so the file, size and flags go back too. Never on a button's label: its
+-- object's (set by hand before us), so the file, size and flags go back too (with `byhand`: the size and flags of
+-- the addon's SetFont of our file read back since, FontReadBack.lua). Never on a button's label: its
 -- client changes the object with the state, so the two differing proves nothing there, and a Latin file put
 -- back on it would stay (lesson 46). Only U.CyrOnOwn can prove a label's font was set by hand (`byhand`).
 -- `unsafe`: no object of its chain may go back (lesson 47), so U.FontBack leaves the font as it is.
@@ -70,6 +71,7 @@ function U.SaveFont(fs)
         was.own = not (SamePath(op, p) and type(osize) == "number" and type(s) == "number"
             and math.abs(osize - s) < 0.5 and (oflags or "") == (f or ""))
     end
+    U.FontRemember(fs, was)                          -- an addon's SetFont of our file later: its new size here
     return was
 end
 
@@ -145,6 +147,7 @@ function U.CyrOnLocked(fs)
         ObjectOn(fs, o)
         yes = U.IsCyrFont((fs:GetFont()))
     end
+    if yes then U.FontWatch(fs) end
     if yes and U.BoxWatch then U.BoxWatch(fs) end
     return yes
 end
@@ -173,11 +176,12 @@ function U.CyrOnOwn(fs, was)
         local o = CyrObject(fs)
         if not o then return false end
         ObjectOn(fs, o)
-        if U.IsCyrFont((fs:GetFont())) then return true end
+        if U.IsCyrFont((fs:GetFont())) then U.FontWatch(fs) return true end
     end
     was.byhand = true                             -- only such a label gets its file back by path (FontBack)
-    fs:SetFont(path, tonumber(was.size) or 12, was.flags or "")
+    U.SetFontSelf(fs, path, tonumber(was.size) or 12, was.flags or "")
     local yes = U.IsCyrFont((fs:GetFont()))
+    if yes then U.FontWatch(fs) end
     if yes and U.BoxWatch then U.BoxWatch(fs) end
     return yes
 end
@@ -200,7 +204,7 @@ local function OursOn(fs)
     return type(n) == "string" and n:find("^UADD_CyrFont") ~= nil or U.IsCyrFont((fs:GetFont()))
 end
 
-function U.FontBack(fs, was)
+local function Back(fs, was)
     if type(was) ~= "table" then return end
     if not U.IsCyrFont(was.path) and ShowsCyr(fs) and OursOn(fs) then return end
     if U.Locked(fs) then
@@ -225,7 +229,12 @@ function U.FontBack(fs, was)
         end
     end
     if was.unsafe and not was.own and not was.byhand then return end   -- lesson 47: no object may go back
-    if was.path and was.size then fs:SetFont(was.path, was.size, was.flags or "") end
+    if was.path and was.size then U.SetFontSelf(fs, was.path, was.size, was.flags or "") end
+end
+
+function U.FontBack(fs, was)
+    Back(fs, was)
+    U.FontUnwatch(fs, OursOn)                     -- ours off: their SetFont is theirs again (FontReadBack.lua)
 end
 
 -- Our font on a line that is to show Ukrainian, its own saved first in `kept` (weak: fs -> U.SaveFont): our object,

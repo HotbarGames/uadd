@@ -66,6 +66,9 @@ MUTANTS = {
     "levelhead": ("Routed.lua", "    return LevelHead(s)\n", "    return false\n", 13),
     "heads": ("Words.lua", " or (W.Headed ~= nil and W.Headed(s))", "", 13),
     "named": ("Joined.lua", "return Named(s) or Tag(s)", "return Tag(s)", 13),
+    # a "not now" from the name sources is never kept (step 13 "target: an NPC that must wait")
+    "npcwait": ("Joined.lua", 'find(p, "%s$") then return nil end\n    P.asked = true',
+                'find(p, "%s$") then return nil end\n    local _ = true', 13),
     "tag": ("Joined.lua", " or Tag(s) or Slash(s)", " or Slash(s)", 13),
     "slash": ("Joined.lua", " or Slash(s) or Joined(s)", " or Joined(s)", 13),
     "age": ("Joined.lua", " or Age(s) or Spot(s) end", " or Spot(s) end", 13),
@@ -81,8 +84,11 @@ MUTANTS = {
     # core UADD/Font.lua (lesson 44): a label set by hand gets the Cyrillic file by hand
     "own": ("Font.lua", 'if type(was) ~= "table" or U.Locked(fs) or (U.BoxBad and U.BoxBad(fs)) then return false end',
             "do return false end", 11),
+    # core UADD/FontReadBack.lua (lesson 48): its LayoutTabs set our file read back; off and held still give its own
+    "readback": ("FontReadBack.lua", "    for _, was in ipairs(take) do was.size, was.flags = size, flags end\n",
+                 "", 14),
 }
-CORE_CUTS = {"Font.lua"}                     # files cut in the core UADD folder, not the module's
+CORE_CUTS = {"Font.lua", "FontReadBack.lua"}  # files cut in the core UADD folder, not the module's
 
 
 def module_there():

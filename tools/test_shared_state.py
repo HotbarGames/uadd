@@ -44,6 +44,7 @@ import test_no_editbox  # noqa: E402
 HELPERS = {
     "UADD/Font.lua": "U.SaveFont / U.FontBack: a line's font object back, never a pinned file",
     "UADD/FontObject.lua": "U.SetFontObject: only an object that may go back (no loop, lesson 47)",
+    "UADD/FontReadBack.lua": "U.SetFontSelf: the core's own SetFont, told from an addon's of our file read back (lesson 48)",
     "UADD/Widgets.lua": "U.WidgetMethods: a widget kind's methods, never a new EditBox",
     "UADD/Guard.lua": "the runtime guard: puts broken shared state back",
     "UADD/ButtonFont.lua": "U.ButtonCyr / U.ButtonBack: a button's state objects, our copies on and its own back",

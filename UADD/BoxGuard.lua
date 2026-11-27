@@ -127,7 +127,7 @@ local function Repair(fs)
     pcall(U.CyrOnLocked, fs)
     if not Good() and not U.Locked(fs) then
         local path, _, size, flags = U.CyrFontPath(), fs:GetFont()
-        if path then pcall(fs.SetFont, fs, path, tonumber(size) or 12, flags or "") end
+        if path then pcall(U.SetFontSelf, fs, path, tonumber(size) or 12, flags or "") end
     end
     if Good() then return U.GuardNote("box", sample) end
     U.BoxGiveUp(fs, sample)

@@ -38,19 +38,31 @@ R.pages = function()
     local oldDB = rawget(_G, "OneForAllDB")
     OneForAllDB = { profiles = { [EN2] = {} } }
     local prof, profColon = Label("|cff00ff00" .. EN2 .. "|r"), Label(EN2 .. ":")
-    -- a tab of its bar (_label, _place) and its LayoutTabs as OneForAll's: each label down 13..10 by SetFont
+    -- a tab of its bar (_label, _place) and its LayoutTabs as OneForAll's: each label down 13..10 by SetFont of the
+    -- font it reads back. Run from a chunk in its folder: the core tells the addon's own call from UADD's by the stack
     local F = OneForAll
-    local oldUI, laid = rawget(F, "UI"), 0
+    local oldUI, laid, read = rawget(F, "UI"), 0, {}
     local tab = CreateFrame("Button", nil, OneForAllFrame)
     local name = tab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    do local p, _, fl = name:GetFont() name:SetFont(p, 13, fl) end      -- as its own: the label set to 13 by hand
     tab._label, tab._place = name, function() end
-    F.UI = { LayoutTabs = function()
-        laid = laid + 1
-        for _, size in ipairs({ 13, 12, 11, 10 }) do
-            local font, _, flags = tab._label:GetFont()
-            if font then tab._label:SetFont(font, size, flags) tab._place(0, 0) end
-        end
-    end }
+    F.UI = { LayoutTabs = assert(loadstring([[
+        local tab, count = ...
+        return function()
+            count(tab._label:GetFont())
+            for _, size in ipairs({ 13, 12, 11, 10 }) do
+                local font, _, flags = tab._label:GetFont()
+                if font then tab._label:SetFont(font, size, flags) tab._place(0, 0) end
+            end
+        end]], "@AddOns/OneForAll/UI/MainFrame.lua"))(tab, function(p, s) laid, read = laid + 1, { p, s } end) }
+    -- its English in its own file again, at the size its layout set last (10), never in ours (lesson 48): as its
+    -- layout reads it back when it starts, and after
+    local function Own(fs)
+        local p, s = fs:GetFont()
+        return p ~= nil and not UADD.IsCyrFont(p) and s == 10 and read[1] == p and read[2] == 10
+    end
+    local function FontOf(fs) local p, s = fs:GetFont() return tostring(p) .. " " .. tostring(s) .. ", read "
+        .. tostring(read[1]) .. " " .. tostring(read[2]) end
     name:SetText(EN)
     M.wait(0.3)
     ns.Screen.Sync() M.wait(0.2)
@@ -86,12 +98,12 @@ R.pages = function()
     M.wait(0.2)
     Res(out, "a kept page whose OnShow it set again after our hook: ours when shown", third:GetText() == UK,
         tostring(third:GetText()))
-    -- the hold key and its release: the English, then ours, each time the bar laid out again. The English keeps the
-    -- Cyrillic file here: its LayoutTabs read ours back and set it as its own (a core matter, not checked here)
+    -- the hold key and its release: the English, then ours, each time the bar laid out again. Its LayoutTabs read
+    -- ours back and set it by SetFont: the English still gets its own file back, at its latest size (UADD/FontReadBack.lua)
     local before = laid
     M.key(true)
-    Res(out, "hold: the tab's English, the bar laid out again",
-        name:GetText() == EN and laid > before, tostring(laid) .. " " .. tostring(name:GetFont()))
+    Res(out, "hold: the tab's English in its own file at its latest size, the bar laid out again",
+        name:GetText() == EN and laid > before and Own(name), tostring(laid) .. " " .. FontOf(name))
     before = laid
     M.key(false)
     Res(out, "release: ours in a Cyrillic font, the bar laid out again", name:GetText() == UK and CyrFont(name)
@@ -101,6 +113,7 @@ R.pages = function()
     Res(out, "off: English back on the pages", label:GetText() == EN and first:GetText() == EN
         and colon:GetText() == EN .. ":" and name:GetText() == EN, tostring(label:GetText()))
     Res(out, "off: the tab bar laid out again for the English", laid > before, laid)
+    Res(out, "off: the tab's English in its own file at its latest size", Own(name), FontOf(name))
     Uadd("on")
     ns.Screen.Sync() M.wait(0.2)
     Res(out, "on again: ours", label:GetText() == UK and Cyr(first:GetText()) and CyrFont(name), tostring(label:GetText()))

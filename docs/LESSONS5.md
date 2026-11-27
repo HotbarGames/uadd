@@ -27,15 +27,30 @@ the width of its name when it lays the tabs out, so our longer names ran over th
   English (a tab name of ours, on, off, the hold key and its release) calls the addon's own layout function once,
   on the next frame, after combat (Screen.lua `TabName`, `Queue`). Never set the widths or sizes ourselves; the
   addon's own layout may take all its tab names down a size (13 to 10), as it does for its own long names.
-- Open (core): that layout reads our Cyrillic file back and sets it with SetFont, so the label's own font becomes
-  the Cyrillic file; the English on hold and off then shows in it (Latin draws fine, no boxes).
+- An addon's SetFont that reads our file back (that layout sets each size with the font GetFont gives) pins our
+  Cyrillic file. A U.SaveFont record whose file goes back by path anyway (set by hand before us, `own`, as
+  OneForAll's tab label at 13; or by U.CyrOnOwn, `byhand`) takes the new size and flags, so off and held give
+  back its own file at its latest size (UADD/FontReadBack.lua, for every module that puts our font on through the
+  core). Never any other record: a line that follows its font object (a game tooltip line) gets its object back and
+  keeps the file the addon pinned, English in our font, never a Latin file by path (lessons 18, 45). UADD's own
+  SetFont (U.SetFontSelf for the core, the first addon file on the stack for a module) leaves the record; the
+  stack is read once per size; no stack counts as the addon's (the file stays its own either way); a hook that
+  fails 5 times goes quiet.
 
 **Check.** `python3 tools/harness/flow_ofa.py --prove`, step 14 (`tools/harness/flow_ofa_pages.lua`): 50 kept
 hidden pages of 90 frames, then a page made later; a kept page shown, hidden and shown again walks only itself; a
 kept page whose OnShow it set again after our hook; "X:" and a grey "X"; a grey text with English left stays
 English; a profile name in a colour or with a colon stays; a tab button whose layout sets each size 13 to 10 by
-SetFont keeps our Cyrillic font and counts its layout calls on, on hold, on release and off. Mutants `hidden`,
-`showwalk`, `rehook`, `typed`, `tabhold`, `dressed` and `tabs` cut each fix and want step 14 to fail.
+SetFont keeps our Cyrillic font and counts its layout calls on, on hold, on release and off, and on hold and off
+its English is in its own file at size 10, as its layout reads it back (its label set to 13 by hand, its layout
+run from a chunk in OneForAll's folder). Mutants `hidden`, `showwalk`, `rehook`, `typed`, `tabhold`, `dressed`,
+`tabs` and `readback` cut each fix and want step 14 to fail. The core alone: `python3 tools/harness/flow_button.py
+--prove`, step 14 (`flow_button_read.lua`): a label set by hand (`byhand`, then `own`; once called from a module,
+as our Relayout calls OneForAll's layout) gets back its own file at its latest size and flags; a game tooltip line
+gets its object back and no Latin file, and a later Ukrainian on it draws letters; UADD's own call three times
+leaves the record and reads the stack once; a failing debugstack counts as the addon's; a hook whose GetFont throws
+reports 5 errors of 10. Mutants `readback`, `objectrec` (the old hook: every record took the size as set by hand),
+`byuadd`, `stackonce`, `stackfail` and `faults`.
 
 **Lesson 22 again, a frame count under load (2026-11-27).** The route check "off: collection finishes fast"
 (under 1000 frames) failed twice on the pre-push run of fine code: 1092 and 1018 frames, while another session's

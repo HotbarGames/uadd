@@ -58,6 +58,16 @@ R.tips = function()
     Want("target: an NPC the sources know", "Target: Old Wobbler", target .. " Старий хитун")
     Want("target: a player's name kept", "Target: |cff0070ddZorp|r", target .. " |cff0070ddZorp|r")
     Want("target: you", "Target: |cffff4040>> You <<|r", target .. " |cffff4040>> " .. ns.OFA[Key("You")] .. " <<|r")
+    -- 2026-11-27 missed log ("Target: <NPC>"): the sources may answer "not now" (combat, the hold key, ClassicUA
+    -- not ready). The line is whole English then, and never kept: the next fill asks again and is ours.
+    local npcNow = A.Npc
+    A.Npc = function(n) if n == "Old Wobbler" then return nil, true end return npcNow(n) end
+    ns.Words.Forget()
+    local waitLine = Mine("Target: Old Wobbler")
+    A.Npc = npcNow
+    local nextLine = Mine("Target: Old Wobbler")
+    Res(out, "target: an NPC that must wait: whole English, ours on the next fill",
+        waitLine == "Target: Old Wobbler" and nextLine == target .. " Старий хитун", waitLine .. " / " .. nextLine)
     -- 6.2.17 missed lines: a spell (the Spell route, not Item), an item mid-line, a vendor or its quartermaster word,
     -- a class from the glossary, a recipe item whole, players' names kept (a class after a twink's name ours).
     local function F(en, ...) return string.format(ns.OFA[Key(en)], ...) end

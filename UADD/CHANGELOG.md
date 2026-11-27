@@ -17,6 +17,8 @@
 
 - Mastercraft: «Що нового» лишаємо англійською. Новини старіють швидше, ніж ми їх перекладаємо.
 - OneForAll: сторінки, які відкриваєш не одразу (професії, підземелля), тепер теж українською, а назви вкладок не залазять на сусідні.
+- OneForAll: рядок «Ціль:» не лишається англійським, поки ім'я НІПа ще в дорозі, а англійська під клавішею оригіналу знову у своєму шрифті.
+- Mastercraft: рядок підказки про те, з чиїх кишень можна дістати предмет, тепер українською. Спритність рук не постраждала.
 
 ---
 
@@ -35,6 +37,8 @@ Fixed:
 
 - Mastercraft: its What's New stays English. News gets old faster than we can translate it.
 - OneForAll: pages you open later (professions, dungeons) are Ukrainian too, and tab names no longer run into each other.
+- OneForAll: the target line no longer stays English while the NPC's name is on its way, and the English under the original-text key is back in its own font.
+- Mastercraft: the tooltip line on whose pockets hold the item is Ukrainian now. Sleight of hand unharmed.
 
 ## 1.3.0
 

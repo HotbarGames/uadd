@@ -29,6 +29,7 @@ glossary/rares.lua
 glossary/gear.lua
 FontObject.lua
 Font.lua
+FontReadBack.lua
 ButtonFont.lua
 Probe.lua
 Guard.lua

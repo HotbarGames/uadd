@@ -49,6 +49,19 @@ local function Put(tip, fs, uk)
     fs:SetText(uk)
     said[fs] = uk
     count = count + 1
+    return true
+end
+
+-- One side of a row that must stay whole English: while it still shows the Ukrainian we put, its English goes
+-- back first, then its own font (lesson 45).
+local function Back(tip, fs, uk, en)
+    if not fs then return end
+    local ok, t = pcall(fs.GetText, fs)
+    if not ok or t ~= uk then return end
+    pcall(fs.SetText, fs, en or "")
+    local list = changed[tip]
+    if list and list[fs] then U.CyrUnfix(fs, list) end
+    if not (list and list[fs]) then said[fs] = nil end
 end
 
 -- Could s be one of Mastercraft's texts? Every line of every game tooltip passes here, so this cheap test
@@ -83,12 +96,61 @@ local function Maybe(s, d)
 end
 T.Maybe = function(s) return Maybe(s, 0) end
 
+-- A game name through one UADD.UALL route (lesson 20; ClassicUA first, lesson 25: no [ ( | or edge spaces
+-- asked): the Ukrainian, or nil and whether the source said "not now".
+local function Ask(en, route)
+    if en == "" or en:find("[|%[%(\n]") or en:find("^%s") or en:find("%s$") then return nil, false end
+    local A = U.UALL
+    local look = type(A) == "table" and A[route]
+    if type(look) ~= "function" then return nil, false end
+    local ok, ua, wait = pcall(look, en)
+    if ok and type(ua) == "string" and ua ~= en and ua:find(CYR) then return ua end
+    return nil, ok and wait and true or false
+end
+
+-- Its pickpocket source row: the label is a spell, a game name (lesson 9: the Spell route only); the right side
+-- is "<NPC> <percent>", the NPC through the Npc route. nil for any other label; both sides; or false and whether
+-- a source said "not now". Never one side alone (lesson 6), never kept: a wait is asked again on the next fill.
+-- One table look first: every line of every tooltip passes here.
+local SPELL_ROW = { ["Pick Pocket"] = true }
+local function SpellRow(label, text)
+    if not SPELL_ROW[label] then return nil end
+    if type(text) ~= "string" or text == "" then return nil end    -- the label alone: the words, as any line
+    if #text > 120 then return false, false end
+    local l, wait = Ask(label, "Spell")
+    if not l then return false, wait end
+    local who, pct = text:match("^(.-%S)( [%d%.]+%%)$")    -- one lazy run, anchored at both ends
+    if not who then who, pct = text, "" end
+    local r
+    r, wait = Ask(who, "Npc")
+    if not r then return false, wait end
+    return l, r .. pct
+end
+
 -- The line just added: each side alone; nothing unless both checks pass. Cheapest first: could it be
 -- Mastercraft's at all, then our words, then the stack (only for a line we have Ukrainian for).
 local function Redo(tip, left, right)
     if not ns.WordsWanted() then return end
     left, right = U.Plain(left), U.Plain(right)     -- nil for a secret text: left as it is
     local missed = left and U.MissedOn() and left:find("%a%a%a")
+    -- its pickpocket source row (a spell for a label): both sides, or the whole row English (Words.lua)
+    local sl, sr = SpellRow(left, right)
+    if sl ~= nil then
+        if sl and FromMastercraft() then
+            -- both sides take our font, or neither: a side that did not (or a throw) gives the left its English
+            local i = tip:NumLines()
+            local lf, rf = Line(tip, "Left", i), Line(tip, "Right", i)
+            local ok, both = pcall(function() return Put(tip, lf, sl) and Put(tip, rf, sr) end)
+            if not (ok and both) then
+                Back(tip, lf, sl, left)
+                Back(tip, rf, sr, right)
+                if not ok then error(both, 0) end     -- counted by U.SafeCall, as before
+            end
+        elseif not sl and not sr and missed and FromMastercraft() then
+            U.Missed("mastercraft", left)       -- not on a "wait": it may be ours on the next fill
+        end
+        return
+    end
     local maybeL, maybeR = left and Maybe(left, 0), right and Maybe(right, 0)
     if not missed and not maybeL and not maybeR then return end
     local l = maybeL and W.Translate(left) or nil

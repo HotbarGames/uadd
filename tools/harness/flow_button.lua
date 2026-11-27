@@ -278,6 +278,6 @@ function M.labelBack()
     return bad
 end
 
--- Steps 7-10 (the box guard and the cap): flow_button_guard.lua, with these helpers.
+-- Steps 7-10 (the box guard and the cap): flow_button_guard.lua, with these helpers; step 14: flow_button_read.lua.
 M.h = { Bad = Bad, Name = Name, Objects = Objects, Same = Same, Pump = Pump, Quiet = Quiet, FRIZ = FRIZ,
         OWNCYR = OWNCYR }

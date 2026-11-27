@@ -16,6 +16,9 @@
  11. A state object the addon set while the label was empty is our copy before our text goes on (no later look).
  12. Back on a label the addon gave a new object while ours was on: the addon's newer object (U.FontBase).
  13. The cap reached while ours is on, the addon sets a new state object: English (U.BoxGiveUp), never boxes.
+ 14. An addon's SetFont of our file read back (lesson 48): a label set by hand gets back its own file at its latest
+     size and flags; a game tooltip line its object, never a Latin file by path; UADD's own call leaves the record,
+     the stack read once per size; no stack counts as the addon's; a hook that keeps failing goes quiet after 5.
   * Mutants (--prove): each step fails with its fix cut out of the core.
 
 Run alone: python3 tools/harness/flow_button.py [--prove]
@@ -37,7 +40,7 @@ def game(cut=None, cuts=None, quiet=False):
     c.H.glyphWidths = True              # before the start: the box guard measures each file once
     if quiet:
         c.H.boxQuiet = True             # a mutant's boxes are its point, not a finding
-    for f in ("flow_button.lua", "flow_button_guard.lua"):
+    for f in ("flow_button.lua", "flow_button_guard.lua", "flow_button_read.lua"):
         c.lua.execute(read_text(os.path.join(HERE, f)))
     M = c.H.btn
     for name, (file, old, new) in (cuts or {}).items():
@@ -71,6 +74,7 @@ empty_then = _step("11 a state object set while the label is empty is ours befor
 label_back = _step("12 back on a label: the addon's newer object, not the saved one", "labelBack")
 late_before = _step("13 before the cap: our text on a button", "lateBefore")
 late = _step("13 the cap reached, a new state object: English, never boxes", "late")
+read_back = _step("14 an addon's SetFont of our file: back gives its own file at its latest size", "readBack")
 
 
 def late_game(check, c, M):
@@ -83,7 +87,7 @@ def late_game(check, c, M):
 def run(check, facts):
     c, M = game()
     for step in (on_back, kept, locked, states, save_font, font_base, box_fine, box_find, box_fail, empty_then,
-                 label_back):
+                 label_back, read_back):
         step(check, c, M)
     say = [x for x in c.chat() if "вартовий" in x]
     fixed, english = [x for x in say if "виправлено" in x], [x for x in say if "англійською" in x]
@@ -130,6 +134,18 @@ CUTS = {
               "    local states = U.ButtonCyr(btn)\n", empty_then),
     "labelback": ("UADD:Font.lua", "if own ~= o then U.LabelOn(fs, own) end", "", label_back),
     "giveup": ("UADD:ButtonFont.lua", "if not states then return U.BoxGiveUp and U.BoxGiveUp(fs) end", "", late_game),
+    # Lesson 48: a record that goes back by path takes the addon's new size; never for UADD's own call.
+    "readback": ("UADD:FontReadBack.lua", "    for _, was in ipairs(take) do was.size, was.flags = size, flags end\n",
+                 "", read_back),
+    "byuadd": ("UADD:FontReadBack.lua", "    if ByUADD() then uaddAt[fs] = key return end\n", "", read_back),
+    # the old hook: every record of the label took the size as set by hand, so a game tooltip line got a Latin file
+    "objectrec": ("UADD:FontReadBack.lua",
+                  "local function ByPath(was) return (was.own or was.byhand) and not U.IsCyrFont(was.path) end",
+                  "local function ByPath(was) was.own = true return not U.IsCyrFont(was.path) end", read_back),
+    "stackonce": ("UADD:FontReadBack.lua", "    if uaddAt[fs] == key then return end\n", "", read_back),
+    "stackfail": ("UADD:FontReadBack.lua", 'if not ok or type(st) ~= "string" then return false end',
+                  'if not ok or type(st) ~= "string" then return true end', read_back),
+    "faults": ("UADD:FontReadBack.lua", "        if faults >= FAULTS then return end\n", "", read_back),
 }
 
 

@@ -30,7 +30,7 @@ SLOW = (("sold by", "Sold by " + "a - " * 2560), ("vendor", "Vendor: " + "Aa / "
         ("marks", "> " * 5120 + "a"), ("numbers", "Aa " * 3400 + ":  |cff"))
 # name -> (file, the fix, what it was before, the step that must fail then)
 MUTANTS = {
-    "credits slot": ("data/text13.lua", 'sort = { "f", "f", "e" }', 'sort = { "f", "f", "t" }', "a vendor UALL Forever lacks"),
+    "credits slot": ("data/text11.lua", 'sort = { "f", "f", "e" }', 'sort = { "f", "f", "t" }', "a vendor UALL Forever lacks"),
     "unknown zone": ("Rows.lua", "One(SHORT[z], ZONE) or nil", "One(SHORT[z], ZONE) or z", "a zone UALL Forever lacks"),
     "short zone": ("Rows.lua", "One(z, ZONE) or SHORT[z] and One(SHORT[z], ZONE)", "One(z, ZONE)", "a zone written short"),
     "unknown vendor": ("Rows.lua", "if not npc then return nil end\n", "npc = npc or part\n", "two vendors, one unknown"),
@@ -42,7 +42,88 @@ MUTANTS = {
     "count": ("Words.lua", "(%d+%-?%d* ?x? )", "(%d+%-?%d*x? )", "<count> x <item>"),
     "tooltip gate": ("Tooltip.lua", "if ns.Rows.Could(s) then return true end", "", "tooltip: a starred recipe"),
     "capitals": ("Glue.lua", "if CAPS[s] then return H.Upper(CAPS[s]) end", "", "the favour heading"),
+    "pickpocket": ("Tooltip.lua", "local sl, sr = SpellRow(left, right)", "local sl, sr", "the pickpocket row: ours"),
+    "pickpocket route": ("Tooltip.lua", 'Ask(label, "Spell")', 'Ask(label, "Item")', "the pickpocket row: ours"),
+    "pickpocket wait": ("Tooltip.lua", "if not r then return false, wait end", "if not r then return false, false end",
+                        "the pickpocket row: no missed note"),
+    "pickpocket both": ("Tooltip.lua", "if not (ok and both) then", "if false then", "no Cyrillic font on the right"),
+    "pickpocket alone": ("Tooltip.lua", 'text == "" then return nil end', 'text == "" then return false, false end',
+                         "the pickpocket label alone"),
 }
+PICK, PICK_UK = "Pick Pocket", "Кишеньковий тест"   # its label (a spell); the Ukrainian a made-up Spell route answer
+
+
+def pick_row(check, c, C):
+    """Mastercraft's pickpocket source row (2026-11-27 missed log, 28 times): a double line whose label is a spell
+    (a game name, lesson 9: the Spell route only) and "<NPC> <percent>" on the right. Both ours, or both English."""
+    M = c.H.mc
+
+    def row(what, right, ok):
+        got = M.tip(lua_str(PICK), lua_str(right))
+        l, r, cyr = txt(got[0] or ""), txt(got[1] or ""), bool(got[2])
+        good = (l, r) == ok and (cyr if ok[0] else True)
+        check(f"missed: tooltip: the pickpocket row: {what}", good, f"{l} | {r} / wanted {ok[0]} | {ok[1]}")
+
+    english = ("", "")                     # the harness draws no text itself: "" is the row left as it was
+    row("whole English while the spell has no Ukrainian", f"{NPC} 31%", english)
+    C.names(lua_str(PICK), lua_str(PICK_UK), lua_str("Spell"))
+    row("ours, a whole percent", f"{NPC} 31%", (PICK_UK, NPC_UK + " 31%"))
+    row("ours, a percent with a dot", f"{NPC2} 1.3%", (PICK_UK, NPC2_UK + " 1.3%"))
+    row("ours, no percent", NPC, (PICK_UK, NPC_UK))
+    row("an NPC the sources lack: whole English", f"{NO_NPC} 9.7%", english)
+    row("English after the NPC: whole English", f"{NPC} and wobbles 2%", english)
+    C.hold(lua_str(NPC), True)
+    row("an NPC that must wait: whole English", f"{NPC} 31%", english)
+    C.hold(lua_str(NPC), False)
+    row("ours on the next fill after the wait", f"{NPC} 31%", (PICK_UK, NPC_UK + " 31%"))
+    C.hold(lua_str(PICK), True)
+    row("a spell that must wait: whole English", f"{NPC} 31%", english)
+    C.hold(lua_str(PICK), False)
+    row("ours again after the spell's wait", f"{NPC} 31%", (PICK_UK, NPC_UK + " 31%"))
+    other = txt(M.tipOther(lua_str(PICK)))
+    check("missed: tooltip: the pickpocket label from other code stays English", other == "", other)
+    # /uadd missed on: a "not now" is no missed text (it may be ours on the next fill); a name the sources lack is
+    c.lua.execute("""
+local U, H = UADD, HARNESS
+H.pickNotes, H.pickWas = {}, { U.MissedOn, U.Missed }
+U.MissedOn = function() return true end
+U.Missed = function(key, text) if key == "mastercraft" then H.pickNotes[#H.pickNotes + 1] = text end end
+H.pickNpc = U.UALL.Npc            -- no source has it: no answer and no "not now"
+U.UALL.Npc = function(s, ...) if s == "%s" then return nil end return H.pickNpc(s, ...) end
+""" % NO_NPC)
+    C.hold(lua_str(NPC), True)
+    M.tip(lua_str(PICK), lua_str(f"{NPC} 31%"))
+    C.hold(lua_str(NPC), False)
+    waits = len(c.H.pickNotes)
+    M.tip(lua_str(PICK), lua_str(f"{NO_NPC} 31%"))
+    notes = [txt(x) for x in c.H.pickNotes.values()]
+    c.lua.execute("UADD.MissedOn, UADD.Missed, UADD.UALL.Npc = HARNESS.pickWas[1], HARNESS.pickWas[2], HARNESS.pickNpc")
+    check("missed: tooltip: the pickpocket row: no missed note on a wait, one for an NPC the sources lack",
+          waits == 0 and notes == [PICK], f"{waits} on a wait; notes {notes}")
+    # the right side takes no Cyrillic font (a Latin file, both font helpers fail): the left gets its English back
+    c.lua.execute("""
+local U, H, R = UADD, HARNESS, GameTooltipTextRight1
+H.pickFont = { U.CyrOnLocked, U.CyrOnOwn, rawget(R, "GetFont") }
+R.GetFont = function() return "Fonts\\\\FRIZQT__.TTF", 12, "" end
+U.CyrOnLocked = function(fs, ...) if fs == R then return false end return H.pickFont[1](fs, ...) end
+U.CyrOnOwn = function(fs, ...) if fs == R then return false end return H.pickFont[2](fs, ...) end
+""")
+    got = M.tip(lua_str(PICK), lua_str(f"{NPC} 31%"))
+    c.lua.execute("local F = HARNESS.pickFont GameTooltipTextRight1.GetFont = F[3] "
+                  "UADD.CyrOnLocked, UADD.CyrOnOwn = F[1], F[2]")
+    l, r, cyr = txt(got[0] or ""), txt(got[1] or ""), bool(got[2])
+    check("missed: tooltip: the pickpocket row: no Cyrillic font on the right: whole English",
+          (l, r, cyr) == (PICK, "", False), f"{l} | {r} | left Cyrillic font {cyr}")
+    # the label alone on a line (no right side) goes to the words like any line (a made-up word of ours)
+    c.lua.execute("""
+local ix = HARNESS.ns.UADD_Mastercraft.Words.Index()
+HARNESS.pickExact = rawget(ix, "Exact")
+local real = ix.Exact
+ix.Exact = function(self, s, ...) if s == "%s" then return "%s" end return real(self, s, ...) end
+""" % (PICK, lua_str("Мітка-тест")))
+    alone = txt(M.tip(lua_str(PICK))[0] or "")
+    c.lua.execute("HARNESS.ns.UADD_Mastercraft.Words.Index().Exact = HARNESS.pickExact")
+    check("missed: tooltip: the pickpocket label alone goes to the words", alone == "Мітка-тест", alone)
 
 
 def _game(F, cut=None):
@@ -181,6 +262,7 @@ def steps(check, F, src, cut=None):
     tip("a node's skills", "Herbalism:  " + NODE, put("Herbalism") + ":  " + NODE)
     tip("a creature, levels, zone", f"{NPC}, level 21-22 - {ZONE}: 0.31%", f"{NPC_UK}, {low}21-22 - {ZONE_UK}: 0.31%")
     tip("a creature UALL Forever lacks", f"{NO_NPC}, level 21-22 - {ZONE}: 0.31%", "")
+    pick_row(check, c, C)
     if not cut:
         times = [(name, C.slow(lua_str(text))) for name, text in SLOW]
         limit, ref = clock.bound(5)                 # 5 ms stretched by the load seen now (clock.py)
