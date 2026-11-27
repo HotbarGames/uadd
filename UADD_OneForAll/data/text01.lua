@@ -1,4 +1,4 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.17. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
@@ -215,6 +215,11 @@ T["Code.eaf38ffa"] = "Досвід за завдання на смузі дос�
 T["Code.d412d563"] = "Показує досвід за ваші виконані завдання."
 T["Code.6fc9f1ba"] = "Блиск здобичі завдань"
 T["Code.926299d9"] = "Предмети завдань у світі знову блищать."
+T["Code.782e5135"] = "Емоція подяки"
+T["Code.37d550e8"] = "Порожньо = /thank. Або інша емоція (/hello), або ваш власний текст (/emote дякує, %n!)."
+T["Code.f0c64656"] = "Команда емоції, як-от /hello, /bow чи /cheer, виконується щодо гравця. /emote, /e, /me або текст без скісної риски стає рядком емоції в чаті; %n - ім'я гравця."
+T["Code.ebe093f6"] = "Невідома емоція: %s - замість неї буде /thank."
+S["Code.ebe093f6"] = "f"
 T["Code.9f8b0b89"] = "Дякувати гравцям, які посилюють вас"
 T["Code.d528a320"] = "Надсилає /thank гравцям поза вашою групою, які вас посилюють."
 T["Code.4dc0b01c"] = "Позначки завдань на табличках імен"
@@ -268,12 +273,3 @@ T["Code.3e950406"] = "Білування"
 T["Code.9b35260f"] = "Усі рецепти з джерелами й реагентами, хто їх знає, Прихильність Крамаря та об'єкти табору."
 T["Code.d3466e3c"] = "Огляд"
 T["Code.520cb79c"] = "Виберіть професію, щоб переглянути всі її рецепти (де їх вивчити, реагенти, хто в гільдії їх знає), або рецепти за Прихильність Крамаря. \"Бонуси табору\" показує об'єкти табору кожної професії."
-T["Code.9021f24f"] = "Ваші професії"
-T["Code.b5f03eec"] = "Професій ще не знайдено - вивчіть одну в учителя або один раз відкрийте вікно професії."
-T["Code.e4af8219"] = "Усі професії"
-T["Code.c8946d1a"] = "Інше"
-T["Code.890692ff"] = "Найближчі вчителі"
-T["Code.99bc95d2"] = "Вчитель: %s"
-S["Code.99bc95d2"] = "t"
-T["Code.89fc1d7e"] = "Приблизно %d {ярд|ярди|ярдів} звідси"
-S["Code.89fc1d7e"] = "v"

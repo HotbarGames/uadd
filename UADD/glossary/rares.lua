@@ -35,3 +35,6 @@ E{ id = "ui.unknown", en = "Unknown", uk = "Невідомо", note = "A value t
 E{ id = "ui.ambience", en = "Ambience", uk = "Атмосфера", note = "The game's ambient sound channel (a sound setting)." }
 E{ id = "map.transport", en = "Transport", uk = "Транспорт", note = "Boats, zeppelins and portals as a map filter." }
 E{ id = "map.inside", en = "Inside", uk = "Усередині", note = "A rare or treasure inside a cave or a building (not on the open map). Attune uses the same word." }
+E{ id = "rare.wanted", en = "Wanted", uk = "Розшукуваний", note = "A rare NPC the player marked as wanted (RareScanner 1.60.1.13). Agrees as needed (розшукувані НІПи)." }
+E{ id = "rare.host", en = "Host", uk = "Господар", note = "The player who found a wanted rare and invites others to it (RareScanner)." }
+E{ id = "rare.mobs", en = "Rare mobs", uk = "Рідкісні монстри", note = "Rare creatures as a group (OpenMap and Road to Sixty use it)." }

@@ -155,5 +155,56 @@ class IsNews(unittest.TestCase):
         self.assertTrue(N.news_row("UADD_X", ("L", None, "Gizmo", "UI/WhatsNew.lua")))
 
 
+MC = Path(os.environ.get("UADD_ADDONS_DIR") or WOW) / "Mastercraft"
+
+
+class MastercraftNews(unittest.TestCase):
+    """Mastercraft's What's New texts sit in its locale tables under headings, and its window in Help.lua."""
+
+    def test_mc_news_finds_only_the_window(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "Locales").mkdir()
+            (Path(d) / "Help.lua").write_text('f:SetText("Gizmo footer line here")\n', encoding="utf-8")
+            (Path(d) / "Settings.lua").write_text('Row("Wobbly switch that opens the gizmo")\nB("Go")\n',
+                                                  encoding="utf-8")
+            (Path(d) / "Locales" / "ru.lua").write_text('["Wobbly switch that opens the gizmo"] = "x"\n',
+                                                        encoding="utf-8")
+            mixed = "Settings, What's new, error report, confirm"
+            rows = [("Only the news shows this gizmo line", "exact", "patch-1: What's New in 9.9", "", "ru.lua"),
+                    ("Wobbly switch that opens the gizmo", "exact", "patch-1: What's New in 9.9", "", "ru.lua"),
+                    ("Gizmo footer line here", "exact", mixed, "What's new", "ru.lua"),
+                    ("Go", "exact", "patch-2: What's New in 9.9", "", "ru.lua"),
+                    ("A settings page line about gizmos", "exact", mixed, "", "ru.lua"),
+                    ("Another news-only line of gizmos", "exact", mixed, "What's new in 1.2", "ru.lua"),
+                    ("A tooltip line of gizmos", "exact", "patch-3: tooltips", "", "ru.lua")]
+            got = N.mc_news(rows, d)
+        self.assertEqual(got, {"Only the news shows this gizmo line", "Gizmo footer line here",
+                               "Another news-only line of gizmos"})
+
+    def test_news_row_by_key(self):
+        import hashtext
+        en = "A made-up Gizmo news line"
+        self.assertFalse(N.news_row("UADD_Mastercraft", ("X", None, en, "exact ru.lua")))
+        N.TEXTS["UADD_Mastercraft"].add(hashtext.key(en))
+        try:
+            self.assertTrue(N.news_row("UADD_Mastercraft", ("X", None, en, "exact ru.lua")))
+            self.assertFalse(N.news_row("UADD_Other", ("X", None, en, "exact ru.lua")))
+        finally:
+            N.TEXTS["UADD_Mastercraft"].discard(hashtext.key(en))
+
+    @unittest.skipUnless((MC / "Locales" / "ru.lua").is_file(), "Mastercraft not installed")
+    def test_installed_news_listed_and_not_shipped(self):
+        import hashtext
+        import mc_text_lib as L
+        news = {hashtext.key(e) for e in N.mc_news(L.source(MC), MC)}
+        self.assertGreater(len(news), 50, "no What's New texts found (Locales/ru.lua changed shape?)")
+        self.assertEqual(sorted(news - N.TEXTS["UADD_Mastercraft"]), [],
+                         "new What's New texts: python3 tools/news_texts.py mc-keys, update MC_KEYS")
+        shipped = "".join(p.read_text(encoding="utf-8") for p in (ROOT / "UADD_Mastercraft" / "data").glob("*.lua"))
+        self.assertEqual([k for k in sorted(news) if f'"{k}"' in shipped], [],
+                         "UADD_Mastercraft ships Ukrainian for a What's New text (lesson 43)")
+
+
 if __name__ == "__main__":
     unittest.main()

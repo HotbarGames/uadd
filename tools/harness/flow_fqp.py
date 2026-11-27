@@ -92,7 +92,9 @@ MUTANTS = {
     "range": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
     "beta": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
     "join": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
+    "lines": ("hold canvas", {}, lambda q, c, M, K: S.hold(q, M)),
     "names": ("names", {}, lambda q, c, M, K: S.names(q, c, M, K)),
+    "tail": ("names", {}, lambda q, c, M, K: S.names(q, c, M, K)),
     "plain": ("untitled", {}, lambda q, c, M, K: S.untitled(q, c, M, K)),
     "restore": ("off", {}, lambda q, c, M, K: S.off(q, c, M, K)),
     "fault": ("faults", {}, lambda q, c, M, K: S.faults(q, c, M)),
@@ -127,8 +129,8 @@ def run(check, facts):
         check("Forever Quest Pins checks (skipped: Forever Quest Pins is not installed)", True, "")
         return halves_mods.fqp(check, None, [], halves_mods.SKIP)
     K = S.keys()
-    check("its breadcrumb and abandoned-quest keys found by hash", S.CRUMB in K and S.GONE in K, len(K))
-    if S.CRUMB not in K or S.GONE not in K:
+    check("its breadcrumb body's two keys found by hash", S.CRUMB in K and S.HINT in K, len(K))
+    if S.CRUMB not in K or S.HINT not in K:
         return halves_mods.fqp(check, None, [], "skipped: its keys changed (update-translations)")
     for game in (lambda: game_a(check, K), lambda: game_b(check), lambda: mutants(check, K)):
         game()

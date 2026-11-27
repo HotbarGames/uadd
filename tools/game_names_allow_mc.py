@@ -12,7 +12,6 @@ MC_ALLOW_2111 = {
     # Випалена ущелина, Бруднолипка трясовина, Зачумлені землі, Пристроблях; Брікк Майструвач, Балая Лок'Вейн,
     # Дранг, Нет Пеґл, Морок'рел, Смикль Жерлиця, Трентон Світломолот, «Експерт ... - я і окунь».
     "92:423d9e48": "162:c057024e",
-    "230:f6872c14": "468:b31ebd15",
     "37:4423a644": "57:8e54f7a4",
     "55:c46cec9b": "121:40e01659",
     "47:d27dadb9": "100:341da4aa",
@@ -48,8 +47,6 @@ MC_ALLOW_2111 = {
     "107:4638fd93": "209:22eec0f4",
     "195:fe6dcbd9": "368:18cf3d34",
     "71:eb2d9b36": "142:9b71bf45",
-    "186:2d6eb06d": "336:ff0ec1c1",
-    "291:1342644c": "579:e4996b4d",
     # Item suffixes (ClassicUA «з чарами зцілення», «з мавпи»), the fishing bot (ClassicUA and UALL Forever
     # agree), a rogue spell and class (ClassicUA, class.lua).
     "151:7981bad7": "257:ffd214b6",
@@ -67,11 +64,7 @@ MC_ALLOW_2111 = {
     "36:f3e5524d": "73:c49def9c",
     "269:adbb7c06": "432:444e74ff",
     "41:edbe5a88": "58:bba11738",
-    "23:f45b08fa": "38:0124a759",
-    "147:0f60827f": "255:8c2a8196",
-    "256:84ee82a3": "496:57cf0f48",
     "16:834baebe": "42:fe2add23",
-    "157:e40f2c97": "288:01118a28",
     "16:6462ad0c": "43:16c15bbf",
     "9:ce6ea5ea": "80:169c2828",
     "27:0f57aa52": "116:ba6bc4de",
@@ -79,12 +72,10 @@ MC_ALLOW_2111 = {
     "62:d500384f": "113:85a4b5cf",
     "8:02c5c6cc": "79:21f146ca",
     "25:36493773": "61:1a3fba8f",
-    "116:5667a53c": "266:2180fd71",
-    "162:00e44cd6": "304:381cd5b7",
     # Plain words, no game name: the server's region and ruleset labels.
     "175:677d56f1": "321:54e7b9ba",
-    "160:5b47c4bc": "287:4692649d",
     # The crates said without their name; a vendor neither addon names said without it, places as ClassicUA has them.
     "52:11e40698": "102:25920fbf",
     "159:ceddb19d": "316:d160948e",
+    "42:86a30975": "93:64567ecc",  # Mooncloth: ClassicUA's «місячне полотно» (owner rule 2026-11-20)
 }

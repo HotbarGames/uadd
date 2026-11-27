@@ -249,7 +249,7 @@ def main(argv):
     if argv[1] == "review":
         addon = addon_dir(argv[2] if len(argv) > 2 else None)
         if not (addon / "Locales" / "enUS.lua").is_file():
-            print(f"Auctionator not found in {addon} (give its folder, or set AUCTIONATOR_DIR)")
+            print(f"No Auctionator locale file in {addon} (give its folder, or set AUCTIONATOR_DIR)")
             return 1
         text, bad = review_text(addon)
         REVIEW.parent.mkdir(parents=True, exist_ok=True)

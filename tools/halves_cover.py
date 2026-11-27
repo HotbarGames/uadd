@@ -85,7 +85,7 @@ UNFIT = {
     "UADD_ForeverQuestPins": dict(
         {k: "debug line, kept English on purpose (Lc.NAMES): never written into its L"
          for k in ("59:a05b813a", "32:7421be4c", "19:716b8f42")},
-        **{k: "/fqp debug or status output, kept English on purpose (data/uk_config.lua): no Ukrainian for it"
+        **{k: "/fqp debug or status output, kept English on purpose (data/uk_chat.lua): no Ukrainian for it"
            for k in ("34:a889335a", "37:a5d0a754", "34:cc8dc0a3")}),
     "UADD_RoadToSixty": dict(
         {k: "stays English on purpose: a slot holds a duration in the addon's English units (sort u in ns.SORT)"
@@ -95,11 +95,11 @@ UNFIT = {
         {"Code." + k: "a real gap: its t slot holds a capitalised text of ours (a profession, a filter), and Words.lua "
                       "Ours takes only small letters there, so the whole line stays English"
          for k in ("7d7ef18e 62fba321 93f737ea abccb153 268cf87e 0c54d8fb 1617a860 "
-                   "699ab1d9 ecf3e226 efb22e55 9b269860 b5bd0e78 d8e9ae47 e39f3245 2e174645 dedd2926 "
+                   "699ab1d9 ecf3e226 efb22e55 9b269860 d8e9ae47 e39f3245 2e174645 dedd2926 "
                    "cb43a0f6 be5ed555 d25947f0 3e777cab").split()},
         **{"Code." + k: "a real gap: a free name with a value in one line; Words.lua fills a free name only in a "
                         "template of one slot (NameSlot), so the whole line stays English"
-           for k in "805fca38 dba8f5a8 2a894688 dbee665a ca2a7b8b 71894578 31774ba8 9d8cd6f1 ef33a4f0 b40742bd "
+           for k in "805fca38 dba8f5a8 6a448f9b dbee665a ca2a7b8b 71894578 31774ba8 9d8cd6f1 ef33a4f0 b40742bd "
                     "3299f542 27c6530f".split()},
         **{"Code." + k: "no Ukrainian for it on purpose: a hunter pet note full of game names (spells, places) "
                         "we never write (lesson 9)"
@@ -191,7 +191,8 @@ def _fxpb():
         return None
     kept, _ = make_fxpb_data.collect()
     fmt = {hashtext.key(en): en for kind, en in make_fxpb_data.texts(kept) if kind == "format"}
-    marks = list(fxpb_words.FREE.items()) + list(fxpb_words.BLANK.items())
+    marks = (list(fxpb_words.FREE.items()) + list(fxpb_words.BLANK.items())
+             + list(getattr(fxpb_words, "COLOUR", {}).items()))
     return [(k, i) for k, ii in marks for i in ii if not s_slot(fmt.get(k), i)]
 
 

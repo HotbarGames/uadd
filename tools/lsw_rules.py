@@ -25,7 +25,8 @@ KEYWORDS = F.KEYWORDS
 PATH, CODES, SPEC, IDENT, FONT_FLAGS = F.PATH, F.CODES, F.SPEC, F.IDENT, F.FONT_FLAGS
 DEBUG_STARTS = [r'if (cmd|sub|msg) == "(debug|dump|trace)" then', r"^function (Who\.phase|Near\.probe)\("]
 # elseif branches of the slash command that are measurements for the author (to the next elseif/else/end)
-DEBUG_BRANCHES = [r'elseif msg == "(loot|phase|spot)"']
+# (1.14.59: "watch" turns the group log on and off; it is in no help line)
+DEBUG_BRANCHES = [r'elseif msg == "(loot|phase|spot|watch)"']
 # calls whose whole argument list is a SavedVariables trace: every non-text string inside them is code
 LOG_CALLS = {"log", "logEviction"}
 STAY_ENGLISH = {"LayerSwap", "LS"}
@@ -50,7 +51,11 @@ CODE_KEYS = {"18:61e92f0c", "31:ac9f1aa4", "10:24e3843b", "10:709c04e0", "11:27d
              "16:f7f0f2ee", "17:6ae9a69f", "17:b26450fd", "19:319d252f", "19:ad72ae5c", "24:f9fac8b6",
              "25:156dbaef", "33:9291c290", "4:7c887790", "5:0e063143", "6:1062517c", "6:c320d7b4",
              "7:50bf5a03", "7:da158e07", "8:462701f3", "8:bd515302", "9:4356a313", "9:667e3f5f",
-             "9:9d1db0de", "9:dff36733", "11:dedf4143", "8:bd4d9cc1"}
+             "9:9d1db0de", "9:dff36733", "11:dedf4143", "8:bd4d9cc1",
+             # 1.14.59, log words only: a party unit id, the group log's fight and phase words, the invite
+             # window's state, the hour's reason in the limit log, the zone word of the same-layer log
+             "7:9bcf242d", "11:39029c8d", "10:f09dc4cf", "8:b29349b4", "7:3aee27b5", "13:54b9829c",
+             "19:eee0f0bd", "23:216aa1ae", "33:1b61178b", "14:8df3e1cd", "9:56aa4319"}
 TEXT_CALLS = F.TEXT_CALLS | {"say", "setNotice", "setButtonText", "addText", "makeButton", "addCheckbox", "check"}
 TEXT_FIELDS = F.TEXT_FIELDS
 # Whole texts glued at run time from pieces (see tools/fxpb_rules.py JOINED): "<bytes>:<hash>" keys of
@@ -81,6 +86,10 @@ JOINED = [
     ["15:ccb422ab", "%s", "44:de0d3d28"],
     ["110:fc0998cc", "%s", "19:a377d412"],
     ["110:fc0998cc", "%s", "44:de0d3d28"],
+    # The panel's event card: its body, then a tail that starts with a space (paintEvent, e.leaving).
+    ["%s", "43:4d06ef5c"],
+    ["%s", "36:a2b0867d"],
+    ["%s", "44:b652a6a3"],
 ]
 
 

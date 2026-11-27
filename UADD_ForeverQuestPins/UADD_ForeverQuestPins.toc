@@ -10,11 +10,13 @@
 ## X-License: GPL-3.0
 
 # Our Ukrainian only (keyed by its locale keys), then the code.
+data/uk_chat.lua
 data/uk_config.lua
 data/uk_other.lua
 Locale.lua
 Breadcrumb.lua
 Screen.lua
+Pages.lua
 Chat.lua
 Menu.lua
 Tracker.lua

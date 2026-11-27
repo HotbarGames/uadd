@@ -1,10 +1,19 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.17. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.2a845248"] = "Виграно-Програно"
+T["Code.6587f77f"] = "Виграно золота"
+T["Code.1680e04d"] = "Програно золота"
+T["Code.d1570050"] = "Різниця"
+T["Code.d6fd3453"] = "Скинути статистику"
+T["Code.53d6b631"] = "Натисніть ще раз для скидання"
+T["Code.e9402d88"] = "Відкрити виплати"
+T["Code.2c0fd0d0"] = "Новий господар: %s."
+S["Code.2c0fd0d0"] = "f"
 T["Code.07e7db7c"] = "Тестовий стіл: боти не створюють столів, нічого не станеться."
 T["Code.05f82372"] = "Відкриті столи"
 T["Code.7c8789b5"] = "Приєднатися"
@@ -267,13 +276,3 @@ T["Code.56de627a"] = "Тренер"
 T["Code.d39d3aaf"] = "Ви вже маєте цю навичку. Задайте вищу ціль."
 T["Code.64ec9717"] = "Немає рецептів для плану вище за навичку %d. Дозвольте рецепти від торговців або з аукціону вище."
 S["Code.64ec9717"] = "v"
-T["Code.3e777cab"] = "Відкрийте один раз вікно (%s), щоб OneForAll знав вашу навичку та рецепти."
-S["Code.3e777cab"] = "t"
-T["Code.bc71ecfc"] = "План неможливий."
-T["Code.726756ef"] = "Останнє сканування аукціону: ніколи"
-T["Code.34fde393"] = "Останнє сканування аукціону: %d хв тому"
-S["Code.34fde393"] = "v"
-T["Code.68620a57"] = "Останнє сканування аукціону: %d год тому"
-S["Code.68620a57"] = "v"
-T["Code.3dfae600"] = "Останнє сканування аукціону: %d {день|дні|днів} тому"
-S["Code.3dfae600"] = "v"

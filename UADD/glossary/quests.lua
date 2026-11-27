@@ -63,3 +63,4 @@ E{ id = "id.npc", en = "NPC ID", uk = "ID НІП", note = "Label before an NPC's
 E{ id = "id.item", en = "Item ID", uk = "ID предмета", note = "Label before an item's number id." }
 E{ id = "id.object", en = "Object ID", uk = "ID об'єкта", note = "Label before a world object's number id." }
 E{ id = "id.spell", en = "Spell ID", uk = "ID заклинання", note = "Label before a spell's number id." }
+E{ id = "quest.collectible_book", en = "collectible book quest", uk = "завдання колекційних книг", note = "Quests that hand in a found book (Forever Quest Pins: «значки колекційних книг» for their map pins). lead's choice 2026-11-27." }

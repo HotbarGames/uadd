@@ -276,8 +276,10 @@ def main(argv):
     if len(problems) == len(files):
         return 2
     import copy_scan
+    addons = copy_scan.addons_dir()
     repairs = health_report.report(*health_report.collect(_parsed(files)),
-                                   current=health_report.installed_version(copy_scan.addons_dir()))
+                                   current=health_report.installed_version(addons),
+                                   dated=health_report.installed_dates(addons))
     if report(mods, stay_sets(), OUT) == 0:
         print("nothing missed.")
         return 1 if repairs else 0

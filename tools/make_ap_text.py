@@ -29,7 +29,7 @@ DATA = REPO / "UADD_AutoPotion" / "data" / "words.lua"
 REVIEW = REPO / "local" / "autopotion.txt"
 ADDON_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns",
               "C:/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns"]
-MACROS = ("AutoPotion", "AutoBandage", "AutoFood", "AutoDrink", "AutoManaPotion")
+MACROS = ("AutoPotion", "AutoBandage", "AutoFood", "AutoDrink", "AutoManaPotion", "AutoManaGem")
 # By hash: keys the addon never shows (an item name it no longer uses, an old header).
 UNUSED = {"21:e749cbee", "19:b42bf369"}
 # By hash: slots that hold a name as it is (the author, a key name, a macro name).

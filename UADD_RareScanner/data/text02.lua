@@ -1,4 +1,4 @@
--- Made by tools/make_rs_text.py build from RareScanner 1.60.1.11. Do not edit: change the review files
+-- Made by tools/make_rs_text.py build from RareScanner 1.60.1.13. Do not edit: change the review files
 -- (local/rs/review_NN.txt) and build again. Only AceLocale keys of RareScanner and our Ukrainian.
 -- T: AL[key] = Ukrainian. S: what each slot of a template holds, in order: v value, f free (kept as
 -- typed), n game name (UALL Forever's, else the whole line stays English), t our text (another key).
@@ -141,10 +141,7 @@ T["ENABLE_SCAN_MACRO_GLOW"] = "Підсвічувати макрос, коли �
 T["ENABLE_SCAN_MACRO_GLOW_DESC"] = "Якщо увімкнено, кнопка макросу на панелях дій світитиметься, коли в межах дії цілі може бути рідкісний НІП."
 T["ENABLE_SCAN_MACRO_PER_CHAR"] = "Створити макрос лише для поточного персонажа"
 T["ENABLE_SCAN_MACRO_PER_CHAR_DESC"] = "Якщо увімкнено, макрос створюється для поточного персонажа, а не спільно для всіх персонажів облікового запису."
-T["INGAME_WAYPOINTS"] = "Ігрові точки маршруту"
-T["ENABLE_WAYPOINTS_SUPPORT"] = "Увімкнути підтримку ігрових точок маршруту"
-T["ENABLE_WAYPOINTS_SUPPORT_DESC"] = "Якщо увімкнено, у координатах знайденого об'єкта додається ігрова точка маршруту. Важливо! Гра додає над об'єктом іншу позначку, тож ви не побачите рожеву кнопку, а шукайте квадратну позначку."
-T["ENABLE_AUTO_WAYPOINTS"] = "Автозаміна точок маршруту"
-T["ENABLE_AUTO_WAYPOINTS_DESC"] = "Якщо увімкнено, щойно ви знайдете об'єкт, аддон замінить вашу ігрову точку маршруту новою, що вказує на щойно знайдений об'єкт. Якщо вимкнено, точка додається лише після кліку по головній кнопці."
-T["TOMTOM_WAYPOINTS"] = "Точки маршруту Tomtom"
-T["ENABLE_TOMTOM_SUPPORT"] = "Увімкнути підтримку Tomtom"
+T["EXPLORER_WANTED_TITLE"] = "Система відстеження розшукуваних рідкісних НІП"
+T["EXPLORER_WANTED_ENABLE"] = "Увімкнути відстеження розшукуваних рідкісних НІП"
+T["EXPLORER_WANTED_ENABLE_DESC"] = "Коли систему увімкнено, рідкісні НІП, яких ви позначили як розшукувані, бачать ваша гільдія, ваша група та гравці, з якими вони грають, а інші гравці сповістять вас, коли знайдуть когось із них.\n\nВи також стаєте господарем: коли ви знаходите рідкісного НІП, якого шукають інші гравці, вони автоматичн" ..
+	"о отримують сповіщення, щоб приєднатися до вашої групи й убити його.\n\nЯкщо ви не позначили жодного розшукуваного рідкісного НІП, ви все одно залишаєтеся господарем. Ви нічого не просите, а лише допомагаєте іншим гравцям знаходити їхніх."

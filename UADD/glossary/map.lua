@@ -34,3 +34,5 @@ E{ id = "map.paste_window", en = "Paste window", uk = "Вікно вставки
 E{ id = "quest.super_tracked", en = "Super-tracked quest", uk = "Пріоритетне завдання", note = "the one quest the game's own quest arrow follows" }
 E{ id = "map.find_me", en = "Find me", uk = "Знайти мене", note = "button: move the map to the player" }
 E{ id = "map.classic_map", en = "Classic", uk = "Класична", note = "welcome-page choice of map look: the classic full map (карта, feminine). Not a style name (ui.classic_look)" }
+E{ id = "map.teleports", en = "Teleports", uk = "Телепорти", note = "Teleports as a history filter (Road to Sixty, 2026-11-27)." }
+E{ id = "map.flight_paths", en = "Flight paths", uk = "Шляхи польоту", note = "plural of map.flight_path (Road to Sixty filter, 2026-11-27)" }

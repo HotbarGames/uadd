@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased
+
+**Тридцять два аддони оновилися разом. Ми встигли за ними.**
+
+Свіжі версії:
+
+- ForeverXP Bar, OneForAll, Road to Sixty, Mastercraft, RareScanner, LayerSwap, WhatTheWhisper, GearQuest Forever, Dungeon Journal, Questie, Forever Quest Pins, Attune, AutoPotion, Auctionator, What's Training?, Bagnon, Scrap.
+- RareScanner: розшукувані рідкісні НІПи і господарі, що кличуть на них, тепер українською. Полювання стало спільним.
+- OneForAll: підказки про заклинання, предмети, торговців і рецепти. Англійської в рейді поменшало.
+- Road to Sixty: фільтри історії й підказка, як показати подорож.
+- LayerSwap: автовихід і картка події.
+- ForeverXP Bar: рядок про найкращу здобич, з кольором предмета як був.
+
+Полагодили:
+
+- Mastercraft: «Що нового» лишаємо англійською. Новини старіють швидше, ніж ми їх перекладаємо.
+
+---
+
+**Thirty-two addons updated at once. We kept up.**
+
+Fresh versions:
+
+- ForeverXP Bar, OneForAll, Road to Sixty, Mastercraft, RareScanner, LayerSwap, WhatTheWhisper, GearQuest Forever, Dungeon Journal, Questie, Forever Quest Pins, Attune, AutoPotion, Auctionator, What's Training?, Bagnon, Scrap.
+- RareScanner: wanted rares and the hosts who call you to them are now in Ukrainian. The hunt is a team sport now.
+- OneForAll: tooltips about spells, items, vendors and recipes. Less English left in the raid.
+- Road to Sixty: the history filters and the hint on how to show a journey.
+- LayerSwap: auto leave and the event card.
+- ForeverXP Bar: the best drop line, with the item's colour kept.
+
+Fixed:
+
+- Mastercraft: its What's New stays English. News gets old faster than we can translate it.
+
 ## 1.3.0
 
 **П'ять аддонів вивчили українську. Ще тринадцять підтягнули вимову.**

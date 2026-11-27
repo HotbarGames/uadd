@@ -4,7 +4,8 @@ The file holds no English. tools/hashtext.py makes the keys and UADD/Hash.lua ma
   exact      a whole text: "<bytes>:<hash>" -> our Ukrainian ("text" or G"glossary.id")
   templates  a text with slots: the length and hash of each literal piece, the slot kinds, our Ukrainian
              as pieces (a number k is slot k); blank: slots our Ukrainian leaves empty; free: slots that
-             hold a name and may stay English; g: the glossary id the Ukrainian came from
+             hold a name and may stay English; colour: slots that hold only a colour code (Words.lua
+             keeps them only when they are one); g: the glossary id the Ukrainian came from
   known      the keys of all the addon's whole texts, translated or not (Words.Known)
   long       all its templates with 12+ bytes of literal text, translated or not (Words.Distinct)
 One record per line with uk last, so read() needs no Lua parser. Used by tools/make_fxpb_data.py.
@@ -32,7 +33,11 @@ FREE = {
     "34:ea5c92e7": [1, 2], "35:8eeefe7c": [1, 2], "46:4eb614f3": [1, 2], "50:85aa874c": [1],
     "23:00d86a45": [1], "35:0bae7f36": [1, 2], "23:e2f95839": [1], "91:d9cc2802": [1], "58:83460d43": [1],
     "52:21d77602": [1],
+    "21:f41e5078": [2], "70:446238c1": [1],
 }
+# Slots that hold only an item quality colour code, glued to the free name after them (the "best drop" line):
+# not free (lesson 7), so Words.lua must keep them as they are; the halves check feeds them a real colour code.
+COLOUR = {"21:f41e5078": [1]}
 LONG_LIT = 12
 PER_LINE = 8          # keys per line in `known`
 
@@ -100,6 +105,14 @@ def signature(rec):
     return tuple(rec["len"]), tuple(rec["hash"]), tuple(rec["kinds"])
 
 
+def _marks(rec, key):
+    """The FREE and COLOUR slots of the template with English key `key` onto its record."""
+    if key in FREE:
+        rec["free"] = FREE[key]
+    if key in COLOUR:
+        rec["colour"] = COLOUR[key]
+
+
 def build(texts, uk, glossary):
     """The data for `texts` ([(kind, English)]) and `uk` ({English: value}): (data, problems)."""
     data = {"exact": {}, "templates": [], "known": set(), "long": []}
@@ -126,8 +139,8 @@ def build(texts, uk, glossary):
             extra["g"] = unlua(value[1:])
         try:
             rec = H.template(en, text, **extra)
-            if rec is not None and H.key(en) in FREE:
-                rec["free"] = FREE[H.key(en)]
+            if rec is not None:
+                _marks(rec, H.key(en))
         except ValueError as e:
             problems.append(str(e))
             continue
@@ -149,6 +162,8 @@ def _rec(rec, uk=True):
         parts.append("blank = %s" % H.lua_value(rec["blank"]))
     if rec.get("free"):
         parts.append("free = %s" % H.lua_value(rec["free"]))
+    if rec.get("colour"):
+        parts.append("colour = %s" % H.lua_value(rec["colour"]))
     if rec.get("g"):
         parts.append("g = %s" % H.lua_str(rec["g"]))
     parts.append("uk = %s" % (H.lua_value(rec["uk"]) if uk else "{}"))
@@ -178,7 +193,8 @@ def write(data, version):
 
 
 LINE = re.compile(r"^\s*\{ len = \{ ([^}]*) \}, hash = \{ ([^}]*) \}, kinds = \{ ([^}]*) \}"
-                  r"(?:, blank = \{ ([^}]*) \})?(?:, free = \{ [^}]* \})?(?:, g = (" + STR + r"))?"
+                  r"(?:, blank = \{ ([^}]*) \})?(?:, free = \{ [^}]* \})?(?:, colour = \{ [^}]* \})?"
+                  r"(?:, g = (" + STR + r"))?"
                   r", uk = \{ ?(.*?) ?\} \},$")
 EXACT = re.compile(r'^\s*\["(\d+:[0-9a-f]{8})"\] = (G?' + STR + r"),$")
 
@@ -239,7 +255,6 @@ def overlay(seed, text, glossary):
         want[en] = uk
         blank = BLANK.get(H.key(en))
         rec = H.template(en, uk, min_lit=0, **({"blank": blank} if blank else {}))
-        if H.key(en) in FREE:
-            rec["free"] = FREE[H.key(en)]
+        _marks(rec, H.key(en))
         recs.append({k: v for k, v in rec.items() if k not in ("id", "lit")})
     return "return { exact = { %s }, templates = %s }" % (", ".join(keyed), H.lua_value(recs)), want

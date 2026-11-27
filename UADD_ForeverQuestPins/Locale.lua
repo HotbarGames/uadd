@@ -32,6 +32,7 @@ local ESC = { "|c", "|r", "|T", "|t", "|H", "|h", "|n", "\n" }
 -- version) or our own words (L's "on"/"off"). Key -> what its slots hold; never written into L.
 Lc.NAMES = {
     ["You accepted %s without completing its breadcrumb quest %s."] = "two quest titles, one with its zone",
+    ["Abandon it from the quest log to set a waypoint to the breadcrumb."] = "no slot: glued after the line above",
     ["Abandoned %s."] = "a quest title",
     ["Skipped breadcrumb notice for %s: the dialog queue is full."] = "a quest title (debug)",
     ["Quest %d skipped breadcrumbs: %s"] = "quest IDs (debug)",

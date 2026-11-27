@@ -29,7 +29,8 @@ def _words(M, p):
     for k, en in ((hashtext.key(en), en) for kind, en in D.texts(D.collect()[0]) if kind == "format"):
         free = {i: NAME for i in W.FREE.get(k, [])}
         free.update({i: "s" for i in W.BLANK.get(k, [])})
-        tps.append(tpl(k, en, free, blank=set(W.BLANK.get(k, []))))
+        good = {i: "|cffa335ee" for i in getattr(W, "COLOUR", {}).get(k, [])}  # colour-code slots (fxpb_words.COLOUR)
+        tps.append(tpl(k, en, free, good, blank=set(W.BLANK.get(k, []))))
     return tps, lambda tp, t: _t(M.uk(lua_str(t))), ""
 
 

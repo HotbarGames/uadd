@@ -41,7 +41,8 @@ STAY = {"10:b5edbda6", "12:5308eb38", "12:a591ba3b", "12:b382e5d0", "13:57b5d71b
         "8:7dc6d75e"}
 # Some texts that must be found: three labels and three templates (race code, flight time, error line).
 MUST_HAVE = {("exact", "13:31708c51"), ("exact", "21:e6303353"), ("exact", "8:ee507a83"),
-             ("format", "22:1cb05d92"), ("format", "35:8eeefe7c"), ("format", "57:e6ae55c5")}
+             ("format", "22:1cb05d92"), ("format", "35:8eeefe7c"), ("format", "57:e6ae55c5"),
+             ("format", "34:4aa60a0e"), ("format", "54:f5d93950"), ("exact", "25:74d6d2b7")}   # Gold Farm bottom-right line, glued from a local variable (JOINED)
 
 
 @unittest.skipUnless(HAVE_ADDON, f"ForeverXP Bar not found in {M.addon_dir()} (set FXPB_DIR)")
@@ -98,15 +99,20 @@ class Data(unittest.TestCase):
         self.assertEqual(no_slot, [])
 
     def test_free_and_blank_slots_are_the_addons(self):
-        """Each FREE / BLANK key is one of the addon's templates and names %s slots it has, and
-        data/words.lua carries them (a stale key would make a name slot strict again)."""
+        """Each FREE / BLANK / COLOUR key is one of the addon's templates and names %s slots it has, and
+        data/words.lua carries the FREE and COLOUR marks (a stale key would make a name slot strict again,
+        or let a colour-code slot take English); no slot is both COLOUR and FREE."""
         kinds = {H.key(en): W.own(en)["kinds"] for kind, en in self.texts if kind == "format"}
-        for name, table in (("FREE", W.FREE), ("BLANK", W.BLANK)):
+        for name, table in (("FREE", W.FREE), ("BLANK", W.BLANK), ("COLOUR", W.COLOUR)):
             for key, slots in table.items():
                 with self.subTest(table=name, key=key):
                     self.assertIn(key, kinds)
                     self.assertTrue(all(1 <= k <= len(kinds[key]) and kinds[key][k - 1] == "s" for k in slots))
         self.assertEqual(self.data.count(" free = { "), len(W.FREE))
+        self.assertEqual(self.data.count(" colour = { "), len(W.COLOUR))
+        for key, slots in W.COLOUR.items():     # a colour-code slot is never free (lesson 7)
+            with self.subTest(colour_not_free=key):
+                self.assertFalse(set(slots) & set(W.FREE.get(key, [])))
 
     def test_ukrainian_keeps_slots_codes_and_spaces(self):
         g = glossary.Glossary()

@@ -33,7 +33,7 @@
   },
   "UADD_Auctionator": {
    "addon": "Auctionator",
-   "version": "352",
+   "version": "354",
    "interface": "120100, 120105, 16001, 50504, 38000, 20506, 11508, 11509",
    "files": [
     "Assets_LegacyAH.xml",
@@ -791,7 +791,7 @@
   },
   "UADD_Bagnon": {
    "addon": "BagBrother",
-   "version": "12.1.12",
+   "version": "12.1.13",
    "interface": "120105, 50504, 40402, 30404, 20506, 16001, 11509",
    "files": [
     "config/classes/optionsPanel.lua",
@@ -1152,13 +1152,14 @@
   },
   "UADD_ForeverQuestPins": {
    "addon": "ForeverQuestPins",
-   "version": "v1.1.8",
+   "version": "v1.1.11",
    "interface": "16001",
    "files": [
     "AutoQuests.lua",
     "Breadcrumbs.lua",
     "Config.lua",
     "Core.lua",
+    "Database/BookQuests.lua",
     "Database/EventPolicy.lua",
     "Database/ExcludedQuests.lua",
     "Database/ForeverQuests.lua",
@@ -1175,17 +1176,18 @@
     "QuestLinks.lua",
     "Setup.lua",
     "Sparkle.lua",
+    "SpokenTracker.lua",
     "Tracker.lua",
     "TrackerData.lua",
     "WarEffort.lua",
     "Waypoints.lua",
     "WhatsNew.lua"
    ],
-   "count": 226,
+   "count": 230,
    "tags": {
-    "L": 226
+    "L": 230
    },
-   "ids": "222a2a8ab1a27a209b685cb13c69cd278a33d4f2"
+   "ids": "6b1752387ae217374ca7b8aef7ee3dc71f132ccf"
   },
   "UADD_ForeverXPBar": {
    "addon": "ForeverXPbar",
@@ -1250,7 +1252,7 @@
   },
   "UADD_GearQuestForever": {
    "addon": "GearQuestForever",
-   "version": "1.3.4",
+   "version": "1.4.1",
    "interface": "16001",
    "files": [
     "Catalog.lua",
@@ -1299,11 +1301,11 @@
     "_generated/ScoringWeights.generated.lua",
     "_generated/StatWeights.generated.lua"
    ],
-   "count": 527,
+   "count": 539,
    "tags": {
-    "L": 527
+    "L": 539
    },
-   "ids": "005e669d235a4ce70c877580b0907a3b6847c7ac"
+   "ids": "5381fd88f97919ff5d5de6beb5debb27ded4a86a"
   },
   "UADD_LayerSwap": {
    "addon": "LayerSwap",
@@ -1548,7 +1550,7 @@
   },
   "UADD_OneForAll": {
    "addon": "OneForAll",
-   "version": "6.2.16",
+   "version": "6.2.17",
    "interface": "16001",
    "files": [
     "AHScan.lua",
@@ -1659,6 +1661,7 @@
     "MinimapCollector.lua",
     "ProfessionData.lua",
     "ProfessionRuntime.lua",
+    "Profiler.lua",
     "Proximity.lua",
     "QoL.lua",
     "QuestMarks.lua",
@@ -1682,6 +1685,7 @@
     "UI/HunterPets.lua",
     "UI/InfoBar.lua",
     "UI/KeyBindings.lua",
+    "UI/LootRolls.lua",
     "UI/LowRank.lua",
     "UI/MainFrame.lua",
     "UI/MapButton.lua",
@@ -1704,11 +1708,11 @@
     "UI/WhatsNew.lua",
     "UI/Widgets.lua"
    ],
-   "count": 2490,
+   "count": 2523,
    "tags": {
-    "L": 2490
+    "L": 2523
    },
-   "ids": "ebed5ac56180e9919a64f34c71e28e650d4fc833"
+   "ids": "a21164c8f050210725d4f4faa185cd6d50bfa4ba"
   },
   "UADD_OpenMap": {
    "addon": "OpenMap",
@@ -2361,7 +2365,7 @@
   },
   "UADD_RoadToSixty": {
    "addon": "RoadToSixty",
-   "version": "1.20.12",
+   "version": "1.20.13",
    "interface": "16001, 11509, 20506",
    "files": [
     "Battlegrounds.lua",
@@ -2430,15 +2434,15 @@
     "ZoneOverlaysAnniversary.lua",
     "ZoneOverlaysEra.lua"
    ],
-   "count": 293,
+   "count": 323,
    "tags": {
-    "L": 293
+    "L": 323
    },
-   "ids": "08f2065862cb7f755b81a189835a7123fc0e3c6f"
+   "ids": "d3c03f1ca46cae0a3709d3e03f94226dbf2c782f"
   },
   "UADD_Scrap": {
    "addon": "Scrap",
-   "version": "12.1.10",
+   "version": "12.1.11",
    "interface": "120105, 50504, 40402, 30404, 20506, 16001, 11509",
    "files": [
     "Bindings.xml",
@@ -2836,15 +2840,15 @@
     "UI/Widgets/Widgets.lua",
     "WhatTheWhisper.xml"
    ],
-   "count": 489,
+   "count": 519,
    "tags": {
-    "L": 489
+    "L": 519
    },
-   "ids": "e60bcf4e9ff1b9ccfbff64f552380ae1628f8ef4"
+   "ids": "7f54fcff910865c98d008caebc70d01a04837dc3"
   },
   "UADD_WhatsTraining": {
    "addon": "WhatsTraining",
-   "version": "11.4.9",
+   "version": "11.4.11",
    "interface": "20506, 16001, 11509",
    "files": [
     "Api.lua",

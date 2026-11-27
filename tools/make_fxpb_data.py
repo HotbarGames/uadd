@@ -163,9 +163,11 @@ def collect(src_dir=None):
         text = joined(recipe, lits)
         if text is None:
             skipped.append(("gone", S.Text("format", repr(recipe), 0, "joined"), f"JOINED #{n}"))
-        elif ("format", text) not in seen:
-            seen[("format", text)] = ["format", text, [f"JOINED #{n}"]]
-            kept["joined"].append(seen[("format", text)])
+        else:
+            kind = "format" if H.is_template(text) else "exact"     # a joined text may have no slot
+            if (kind, text) not in seen:
+                seen[(kind, text)] = [kind, text, [f"JOINED #{n}"]]
+                kept["joined"].append(seen[(kind, text)])
     return kept, skipped
 
 

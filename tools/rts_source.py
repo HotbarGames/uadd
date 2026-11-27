@@ -26,14 +26,20 @@ V1 = ["Core.lua", "Map.lua", "Panel.lua", "Options.lua", "MinimapButton.lua", "W
       "FriendsPanel.lua"]
 # Line ranges (first, last) left out: later parts, diagnostics, game globals, the sync lines.
 EXCLUDE = {
-    "Core.lua": [(160, 182), (393, 408)],       # error prints (diagnostics); the moved-journey login print
+    "Core.lua": [(160, 192), (393, 414)],       # error prints (diagnostics); the moved-journey login print
     "Map.lua": [(1058, 1072), (2712, 2732)],    # sync marks; performance diagnostics
-    "Panel.lua": [(358, 412), (510, 680)],      # journal kinds and filters; per-kind lines (later)
+    "Panel.lua": [(510, 680)],                  # per-kind lines (later); the History filter labels are ours
     "Options.lua": [(176, 192)],                # diagnostics line
     "Style.lua": [(150, 180)],                  # journal kind keys
     "StatsScreen.lua": [(680, 705), (1605, 1735)],   # equipment slot names (game globals); the Life page (later)
 }
 INCLUDE = {"Journal.lua": [(758, 780)], "FriendsPanel.lua": [(15, 30)]}     # /rts stats; the remove-friend popup
+# Lines the code glues as head .. <character's name> .. tail (lesson 7: a JOINED recipe): each pair gives one row more,
+# the two pieces' English around a %s (sort f in rts_rules2.SORTS), so the whole line is ours with the name kept as
+# it is (Words.lua NameSlot); the pieces side by side would read badly. (head key, tail key) -> the joined key.
+JOINED = {("Code.b24711ef", "Code.9a7ab82b"): "Code.1ec1348d",     # Panel: the character row's hint
+          ("Code.9551d73b", "Code.6713713c"): "Code.1ac8a0ea",     # Panel: a character not shared yet
+          ("Code.7e0fad59", "Code.9a7ab82b"): "Code.3ea43ef7"}     # Map: the banner's back tooltip
 
 
 def addon_dir(arg=None):
@@ -78,7 +84,23 @@ def source(addon):
     rows = [r for r in found.values() if r[0] in helps or not N.news_only(r[3])]
     if len(rows) < len(found):
         why["news (What's New)"] = len(found) - len(rows)
+    rows += joined(found, why)
     return R.split(sorted(rows, key=lambda r: r[2])), why
+
+
+def joined(found, why):
+    """A row per JOINED pair whose pieces are both found: head + "%s" + tail, at the head's places."""
+    out = []
+    for (h, t), key in JOINED.items():
+        if h not in found or t not in found:
+            why["joined: a piece gone"] = why.get("joined: a piece gone", 0) + 1
+            continue
+        en = found[h][1] + "%s" + found[t][1]
+        if "%" in found[h][1] + found[t][1] or "Code." + H.djb2(en) != key:
+            why["joined: a piece changed"] = why.get("joined: a piece changed", 0) + 1
+            continue
+        out.append([key, en, found[h][2], list(found[h][3]), "joined in code: head, a character's name, tail"])
+    return out
 
 
 if __name__ == "__main__":

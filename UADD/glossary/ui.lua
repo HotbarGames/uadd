@@ -140,3 +140,5 @@ E{ id = "ui.chat_output", en = "Chat frame output", uk = "Повідомленн
 E{ id = "ui.master_channel", en = "Master", uk = "Загальний канал звуку", note = "The game's main sound channel (Master volume). BugSack, 2026-11-22." }
 E{ id = "ui.wipe", en = "Wipe", uk = "Стерти", note = "Button: delete all saved entries for good. Not ui.clear (empty a field or a list on screen). BugSack, 2026-11-22." }
 E{ id = "ui.addon_compartment_button", en = "Addon compartment button", uk = "Кнопка в меню аддонів", note = "Option: show the addon in the game's addon menu by the minimap (ui.addon_compartment). BugSack, 2026-11-22." }
+E{ id = "ui.auto_leave", en = "Auto leave", uk = "Автовихід", note = "Option: leave the group by itself once the layer swap is done (LayerSwap). lead's choice 2026-11-27." }
+E{ id = "ui.addon_module", en = "Module", uk = "Модуль", note = "A part of an addon the player can turn on or off (Mastercraft's Modules tab). lead's choice 2026-11-27." }

@@ -1,10 +1,15 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.17. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.0c1ada63"] = "Ваша фракція та нейтральні. Натисніть на вхід, щоб відкрити це підземелля в OneForAll. Цепеліни, кораблі, трамвай і майстри польотів показують, куди вони ведуть."
+T["Code.2ce32bff"] = "Переходи між зонами"
+T["Code.143345cc"] = "Вказівник там, де дорога веде до наступної зони."
+T["Code.8063e1ad"] = "Підказка називає іншу зону; клік показує її на карті. Місця з аддона Carbonite (GPL)."
+T["Code.a26fa1e2"] = "Значок книги там, де лежить кожна бібліотечна книга, яка вам ще потрібна."
 T["Code.e43cb3aa"] = "Книги у ваших сумках чи банку, здані або позначені вами не показуються. Натисніть на книгу, щоб побачити її на вкладці \"Бібліотечні книги\"."
 T["Code.40eb84d3"] = "Значки завдань"
 T["Code.609bfa6a"] = "Жовтий ! над тими, хто видає завдання для вашого рівня, і ? там, де здають виконані завдання."
@@ -248,13 +253,3 @@ T["Code.65053c74"] = "Закляття кліком"
 T["Code.962d3989"] = "Ранг %s"
 S["Code.962d3989"] = "v"
 T["Code.e16bdc76"] = "Низькі ранги заклять"
-T["Code.1b185443"] = "Ці кнопки дій використовують нижчий ранг, ніж ви знаєте."
-T["Code.0df6f7a1"] = "Оновити все"
-T["Code.0d95721d"] = "Пізніше"
-T["Code.7ba7354e"] = "Закляття можна оновити після бою."
-T["Code.41477e61"] = "1 кнопку дій оновлено до найвищого рангу."
-T["Code.667e1f4c"] = "%d {кнопку|кнопки|кнопок} дій оновлено до найвищого рангу."
-S["Code.667e1f4c"] = "v"
-T["Code.1004d2f0"] = "Ставить на ці кнопки найвищий відомий вам ранг (те саме місце, та сама клавіша)."
-T["Code.15ad3c33"] = "Низьких рангів заклять на ваших панелях дій немає."
-T["Code.0e1c1865"] = "Закляття"

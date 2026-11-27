@@ -28,6 +28,8 @@ SORTS = {
     "Code.9ff8af0a": "ft", "Code.9147fc0f": "v", "Code.eda961e9": "vv",
     "Code.83a6ef2d": "vu", "Code.667eca79": "vu", "Code.16a2068b": "vu", "Code.ddd48a7c": "",
     "Code.111e0944": "", "Code.32338925": "", "Code.43114625": "f",
+    # the joined rows of rts_source.JOINED: a character's name between two pieces of the code
+    "Code.1ec1348d": "f", "Code.1ac8a0ea": "f", "Code.3ea43ef7": "f",
     # Map FormatTime and StatsScreen Day print English month names (%b): u, so those lines stay English.
 }
 NOTES = {

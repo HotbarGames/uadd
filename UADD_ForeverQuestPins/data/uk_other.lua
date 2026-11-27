@@ -8,18 +8,16 @@ ns.UK = T
 -- "Quest %d skipped breadcrumbs: %s", "none"
 T["Preview only. Accept a quest that skips its breadcrumb to use this action."] = "Лише перегляд. Щоб скористатися цією дією, прийміть завдання, що пропускає своє вступне завдання."
 T["No waypoint is available for this quest."] = "Для цього завдання немає точки маршруту."
-T["This quest is no longer in your log."] = "Цього завдання вже немає у вашому журналі."
-T["This quest is ready to turn in. Abandon it from the quest log instead."] = "Це завдання готове до здачі. Покиньте його в журналі завдань."
 T["You accepted %s without completing its breadcrumb quest %s."] = "Ви прийняли %s, не виконавши вступне завдання %s."
+-- Since 1.1.9 glued after that sentence ("\n" between): built whole with it in Breadcrumb.lua, never in L (Lc.NAMES).
+T["Abandon it from the quest log to set a waypoint to the breadcrumb."] = "Покиньте його в журналі завдань, щоб поставити точку маршруту до вступного завдання."
 T["Breadcrumb Quest Skipped"] = "Пропущене вступне завдання"
-T["Abandon Quest"] = "Покинути завдання"
 T["Ignore"] = "Ігнорувати"
 T["Set Waypoint"] = "Поставити точку маршруту"
-T["Abandoned %s."] = "Покинуто %s."
 T["Could not create a waypoint for this quest."] = "Не вдалося створити точку маршруту для цього завдання."
-T["Could not abandon this quest."] = "Не вдалося покинути це завдання."
 
 -- MapPins.lua
+-- stays English: "(Repeatable)", glued after "[level] <quest title>" (a game name) in a pin's tooltip line.
 T["Quest"] = "Завдання"
 T["Breadcrumb quest"] = "Вступне завдання"
 T["Includes a breadcrumb quest"] = "Містить вступне завдання"

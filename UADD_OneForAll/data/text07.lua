@@ -1,10 +1,18 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.17. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.2bbacde0"] = "Рівень: %d"
+S["Code.2bbacde0"] = "v"
+T["Code.792dbf69"] = "Доступно: %d"
+S["Code.792dbf69"] = "v"
+T["Code.7ae73372"] = "Витрачено: %d"
+S["Code.7ae73372"] = "v"
+T["Code.5fe0cb82"] = "Залишилось: %d"
+S["Code.5fe0cb82"] = "v"
 T["Code.00afb3c1"] = "Шаблон %d"
 S["Code.00afb3c1"] = "v"
 T["Code.44a03da7"] = "Зберегти шаблон"
@@ -269,11 +277,3 @@ T["Code.8e9b0c93"] = "Елітний блакитний шаблезубий к�
 T["Code.f71cb30b"] = "Елітний білий лев, що з'являється не завжди."
 T["Code.597db726"] = "Єдиний шаблезубий кіт лавандового кольору, якого можна приборкати."
 T["Code.93063d24"] = "Червоний ящер, якого викликають через завдання (з'являється)."
-T["Code.c9ea106f"] = "Рідкісний червоний гриф."
-T["Code.902ba891"] = "Рідкісний білий вітряний змій."
-T["Code.31640782"] = "Рідкісна червона горила."
-T["Code.3db4952e"] = "швидкість %s"
-S["Code.3db4952e"] = "v"
-T["Code.686ac1e6"] = "швидкість атаки %s"
-S["Code.686ac1e6"] = "v"
-T["Code.b240fc07"] = "Родина"

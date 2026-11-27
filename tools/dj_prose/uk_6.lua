@@ -167,4 +167,6 @@ return {
   ["570bcc98"] = "Використайте предмет «{item:Divination Scryer}» у центрі підвалу місцевості «{zone:The Great Ossuary}» у підземеллі «{zone:Scholomance}». З’являться духи, з якими треба битися. Здолавши їх, ви викличете боса «{npc:Death Knight Darkreaver}»; здолайте його. Принесіть предмет «{item:Darkreaver's Head}» до НІП «{npc:Eldrun Stormbreaker}» у місті «{zone:Ironforge}».",
   ["97a5e99d"] = "Поговоріть із НІП «{npc:Mor'zul Bloodbringer}» у локації «{zone:Burning Steppes}».",
   ["f1cfa740"] = "Якщо хочете допомогти НІП «{npc:Eldrun Stormbreaker}» у місті «{zone:Ironforge}», принесіть йому предмети «{item:Azerothian Diamond}» і «{item:Pristine Black Diamond}».",
+  ["0ec1cb7f"] = "Завдання підземелля «{zone:Maraudon}» (див. «{zone:Maraudon}»). Використайте флакон на палаючому дереві поруч із НІП «{npc:Woodwyrd}», а не на НІП «{npc:Woodwyrd}».",
+  ["4c7c7f3e"] = "Знайдіть впливового свинобраза в місцевості «{zone:Bristleback Retreat}».",
 }

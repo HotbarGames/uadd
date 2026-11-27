@@ -186,17 +186,18 @@ def split_args(args):
 
 def duration_keys(addon):
     """{key: [slot index]} of each string.format(AL["KEY"], ...) whose slot gets a time span in RareScanner's own
-    English units: RSTimeUtils.FormatShortDuration, a function that returns it, or a local set from either."""
+    English units: RSTimeUtils.FormatShortDuration or the game's SecondsToTime, a function that returns one, or a
+    local set from either."""
     out = {}
     for _, p in code_files(addon):
         if p.suffix != ".lua":
             continue
         text = p.read_text(encoding="utf-8", errors="replace")
-        if "FormatShortDuration" not in text:
+        if "FormatShortDuration" not in text and "SecondsToTime" not in text:
             continue
-        names = {"FormatShortDuration"}
+        names = {"FormatShortDuration", "SecondsToTime"}
         for m in re.finditer(r"(?ms)^(?:local )?function ([\w.:]+)\(.*?^end", text):
-            if "FormatShortDuration" in m.group(0):
+            if any(n in m.group(0) for n in ("FormatShortDuration", "SecondsToTime")):
                 names.add(re.split(r"[.:]", m.group(1))[-1])
         fn = re.compile(r"\b(?:%s)\(" % "|".join(sorted(names)))
         held = {m.group(1) for m in re.finditer(r"\blocal (\w+) = ([^\n]*)", text) if fn.search(m.group(2))}

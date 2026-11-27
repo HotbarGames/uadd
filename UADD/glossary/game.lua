@@ -153,3 +153,7 @@ E{ id = "ui.lock_frame", en = "Lock", uk = "Закріпити", note = "Button:
 E{ id = "ui.social", en = "Social", uk = "Спілкування", note = "A tab for chat, guild and friends. lead's choice 2026-11-23, OneForAll." }
 E{ id = "ui.info_bar", en = "Info bar", uk = "Інфопанель", note = "A thin bar of facts (gold, time, FPS). lead's choice 2026-11-23, OneForAll." }
 E{ id = "ui.unit_frames", en = "Unit Frames", uk = "Рамки істот", note = "The player, target and party frames. lead's choice 2026-11-23, OneForAll." }
+E{ id = "game.guild", en = "Guild", uk = "Гільдія", note = "A player guild (Road to Sixty history filter, 2026-11-27)." }
+E{ id = "game.duels", en = "Duels", uk = "Дуелі", note = "Player duels as a history filter (Road to Sixty, 2026-11-27)." }
+E{ id = "game.riding", en = "Riding", uk = "Верхова їзда", note = "The riding skill (Road to Sixty, 2026-11-27)." }
+E{ id = "travel.hearth", en = "Hearthstones", uk = "Повернення додому", note = "Uses of a hearthstone, said without the item name (lesson 9). Road to Sixty, 2026-11-27." }

@@ -57,6 +57,37 @@ class HealthReport(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):          # no version known: every kind counts
             self.assertEqual(health_report.report(*health_report.collect([saved])), 6)
 
+    def test_undated_counts_quiet(self):
+        # 2026-11-27: "guard tip = 209" shouted, all from UADD before guardLast (2026-11-20..23, lesson 18 again).
+        # An installed UADD that writes guardLast dates each repair, so a count with no record is old.
+        saved = db({"guard": {"tip": 209, "box": 2}, "guardLast": {"box": {"at": 9, "version": "1.3.0"}}})
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            n = health_report.report(*health_report.collect([saved]), current="1.3.0", dated=True)
+        self.assertEqual(n, 2)
+        self.assertIn("guard box = 2: a text drew boxes", out.getvalue())
+        self.assertIn("guard tip = 209, all counted by an older UADD (no record of when; installed: 1.3.0)",
+                      out.getvalue())
+        self.assertNotIn("guard tip = 209:", out.getvalue())
+        with contextlib.redirect_stdout(io.StringIO()):          # an older UADD installed: no record is the norm
+            self.assertEqual(health_report.report(*health_report.collect([saved]), current="1.3.0"), 211)
+
+    def test_installed_dates(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            self.assertFalse(health_report.installed_dates(d))
+            os.makedirs(os.path.join(d, "UADD"))
+            with open(os.path.join(d, "UADD", "Guard.lua"), "w", encoding="utf-8") as f:
+                f.write("h.guard[kind] = 1\n")
+            self.assertFalse(health_report.installed_dates(d))
+            with open(os.path.join(d, "UADD", "Guard.lua"), "a", encoding="utf-8") as f:
+                f.write("h.guardLast = {}\n")
+            self.assertTrue(health_report.installed_dates(d))
+        self.assertFalse(health_report.installed_dates(None))
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "UADD", "Guard.lua"),
+                  encoding="utf-8") as f:                       # the shipped guard still writes the record
+            self.assertIn("h.guardLast[kind] = {", f.read())
+
     def test_odd_last_safe(self):
         odd = {"a": 5, "b": {"at": -3, "version": 7, "sample": {}}, "c": {"at": float("nan"), "sample": "x\n|y" * 99},
                "d": {"at": "9", "version": "v\x00"}}

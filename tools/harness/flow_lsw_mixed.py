@@ -5,6 +5,7 @@
   * glued(): the lines LayerSwap glues with a wide gap (mini bar on one line, minimap tooltip) are
     all Ukrainian.
   * swapped(): the chat lines after a swap (head, layer name, tail) are all Ukrainian.
+  * event_tails(): the event card's body with a tail glued on (no mark between) is all Ukrainian.
   * Shift held: the panel, the button label, the lazy menu and the tooltip show the addon's own English
     and fonts; let go, Ukrainian again.
   * Combat: texts set in combat are still translated (only font object changes wait).
@@ -37,7 +38,9 @@ def _same(check, name, rows):
 # The texts LayerSwap glues with a wide gap (its one-line mini bar: name, gap, status; its minimap
 # tooltip's first line: name, gap, "Host on"), by key (hashtext.key) of its English: names, then
 # (status template or exact text, the values of its slots).
-GLUED_NAMES = (("8:ebb2717a", ("B",)), ("12:fc83be06", ()), ("13:04f97572", ()))
+# 1.14.56 and up: a private layer's two names (Layer.title) take the letter's place.
+GLUED_NAMES = (("8:ebb2717a", ("B",)), ("12:fc83be06", ()), ("13:04f97572", ()), ("9:c0d0deec", ()),
+               ("13:6f5617e5", ()))
 GLUED_TAILS = (("12:3c294e85", ("|cffffb040", " 4:59")), ("12:3c294e85", ("|cffffb040", "")),
                ("12:4f100e04", ("|cff8a8a8a",)), ("18:ef7869fc", ("|cff8a8a8a",)), ("22:80b4f84d", ()))
 
@@ -137,11 +140,38 @@ def swapped(check, M):
     check(name, n == 4 and not bad, (n, bad[:2]))
 
 
+# The panel's event card after a player moved you (paintEvent): its body and a tail glued on with no mark
+# (the owner's missed lines, 2026-11-26). Body key, then the three tails.
+EVENT_BODY, EVENT_TAILS = "36:e24152aa", ("43:4d06ef5c", "36:a2b0867d", "44:b652a6a3")
+
+
+def event_tails(check, M):
+    """The event card's body and tail: whole Ukrainian (each half as it is alone); a body we lack: English."""
+    import make_lsw_data
+    name = "the event card's body with its tail glued on: whole Ukrainian, an unknown body whole English"
+    if not make_lsw_data.have_addon():
+        return check(f"{name} (LayerSwap not installed)", True, "")
+    by_key = {hashtext.key(en): en for _, en in make_lsw_data.texts(make_lsw_data.collect()[0])}
+    if EVENT_BODY not in by_key or any(k not in by_key for k in EVENT_TAILS):
+        return check(name, False, "a body or tail is gone from the addon")
+    body, bad = by_key[EVENT_BODY], []
+    for tk in EVENT_TAILS:
+        tail = by_key[tk]
+        want = [M.uk(lua_str(p)) for p in (body, tail)]
+        got = M.uk(lua_str(body + tail))
+        odd = M.uk(lua_str("Wobbly gizmo moved you." + tail))
+        if None in want or got is None or txt(got) != txt(want[0]) + txt(want[1]) \
+                or _english_left(txt(got).replace("LayerSwap", "")) or odd is not None:
+            bad.append((tk, got and txt(got), odd and txt(odd)))
+    check(name, not bad, bad[:2])
+
+
 def checks(check, eq, M, EN, UK, Cyr, c):
     halves_mods.lsw(check, M)
     glued(check, M)
     dashed(check, M)
     swapped(check, M)
+    event_tails(check, M)
     M.menu(True, 3)
     M.wait(0.1)
     _same(check, "before Shift: Ukrainian", _all(M, EN, UK, "uk", "D"))

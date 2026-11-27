@@ -104,10 +104,29 @@ end
 -- ends like this one, and a half-translated line is worse than none. Only d.free slots (a name the
 -- player or the game made) keep any English. One function per depth and mode, made once.
 local fillers = { [false] = {}, [true] = {} }
+local CODE = "^|c%x%x%x%x%x%x%x%x"
 local function Filler(depth, quick)
     local f = fillers[quick][depth]
     if f then return f end
+    local Fit
+    -- d.colour: slots that hold only an item quality colour code, right before the slot after them
+    -- ("%s%s": code, then a name). Hash.lua gives such a slot the shortest run, so it is empty and the
+    -- code leads the next slot. The colour slot: empty or exactly a code. The next one: a code first, no
+    -- other "|" in what follows; the rest goes through the usual checks. Else the template does not fit.
     f = function(k, c, d)
+        local col = d.colour
+        if not col then return Fit(k, c, d) end
+        if Has(col, k) then
+            if c == "" or (#c == 10 and c:find(CODE)) then return nil end
+            return false
+        end
+        if not Has(col, k - 1) then return Fit(k, c, d) end
+        if not c:find(CODE) or c:find("|", 11, true) then return false end
+        local r = Fit(k, c:sub(11), d)
+        if r == false then return false end
+        return c:sub(1, 10) .. (r or c:sub(11))
+    end
+    Fit = function(k, c, d)
         local s = d.kinds[k] == "s"
         -- A bullet or a wide gap in a %s: a short template ate a glued text (a "%s <word>" template
         -- on a bullet list of counts). Not this one, then (Parts splits it).

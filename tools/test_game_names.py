@@ -69,7 +69,6 @@ ALLOW = {
         "7:270fcac7": "22:40f65383",     # a button verb (a chat whisper); UALLF's item of that English is another thing
         "27:bb19586f": "58:9909a834",    # the same verb on a help line
         "30:b39fadc8": "32:99020882",    # the author's name, kept in Latin letters as it is
-        "164:b93e2e44": "317:b96752de",  # a plain past participle at a sentence start, not the UALLF item
         "34:75d0dfa7": "83:f98acaca",    # an NPC's short name: our Ukrainian has UALLF's full NPC name
         "96:e52cdf15": "288:7651ca0c",   # short specialization names: our Ukrainian has UALLF's spell names exactly
         "36:f2e7fe21": "134:c0d81526",   # the same specializations

@@ -34,6 +34,8 @@ MUTANTS = {
     "remove": ("Module.lua", "    U.SafeCall(Screen.Remove)\n", "", 4),
     "fault": ("Words.lua", "local ok, uk = pcall(Look, s)", "local ok, uk = true, Look(s)", 13),
     "glue": ("Words.lua", "(c == 39 and FreeName(before))", "nil", 7),
+    # 2026-11-27: a character's name of two words inside a text (a joined row)
+    "twoname": ("Words.lua", "out = Named(s, a, e2, true)", "out = nil", 7),
     # fixes of 2026-11-22 (A-F)
     "popup": ("Words.lua", "return Whole(s) or NameSlot(s) or Lines(s)", "return Whole(s) or Lines(s)", 10),
     "mark": ("Words.lua", 'while e >= a and find(s, "^[%?!%.,]", e) do e = e - 1 end', "", 10),
@@ -76,6 +78,38 @@ def real_keys(check, c):
     check("1 module: real texts of the addon show our data", not bad, f"{n} real texts; wrong: {bad}")
 
 
+def joined_real(check, c):
+    """Step 7 on the real data: each joined line (rts_source.JOINED) built from the installed addon's pieces with a
+    made-up name of one and of two words is whole Ukrainian, the name kept; small letters there stay English. And
+    every History filter label (Panel.lua's HISTORY_FILTERS) is ours."""
+    name = "7 module: real joined lines (head, a name, tail) whole Ukrainian, the name kept"
+    try:
+        import rts_source as RS
+        rows, _ = RS.source(RS.addon_dir())
+    except Exception as e:  # noqa: BLE001
+        return check(name, None, f"SKIP: addon not readable ({type(e).__name__})")
+    tr = c.H.rtsmod.tr
+    by = {r[0]: r for r in rows or []}
+    bad, n = [], 0
+    for key in RS.JOINED.values():
+        if key not in by:
+            bad.append(f"{key}: no row")
+            continue
+        en, uk = by[key][1], txt(tr(lua_str(by[key][1]))[1] or "")
+        for who in ("Quix", "Quix Zorpson"):
+            n += 1
+            got = tr(lua_str(en.replace("%s", who)))[0]
+            if not uk or txt(got or "") != uk.replace("%s", who):
+                bad.append(f"{key} {who}: {txt(got) if got else None}")
+        if tr(lua_str(en.replace("%s", "quix zorp")))[0] is not None:
+            bad.append(f"{key}: small letters taken as a name")
+    check(name, n and not bad, f"{n} lines; wrong: {bad}")
+    labels = [r for r in rows or [] if any(f == "Panel.lua" and 362 <= ln <= 385 for f, ln in r[3])]
+    miss = [r[0] for r in labels if not tr(lua_str(r[1]))[0]]
+    check("7 module: every History filter label is ours", len(labels) >= 20 and not miss,
+          f"{len(labels)} labels; English: {miss}")
+
+
 def load(c):
     for f in ("flow_rts_mod.lua", "flow_rts_mod2.lua"):
         c.lua.execute(read_text(os.path.join(HERE, f)))
@@ -92,6 +126,8 @@ def module_check(n, check, c, M):
         check(f"{n} module: {name}", None if ok is None else bool(ok), detail)
     if n == 1:
         real_keys(check, c)
+    if n == 7:
+        joined_real(check, c)
 
 
 def game(cut=None):

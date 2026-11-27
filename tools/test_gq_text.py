@@ -30,6 +30,7 @@ ALLOW = {
     "Wowhead": "a website's name, given as the source of its item lists",
     "Blizzard": "the company that makes the game",
     "OpenMap": "another addon's name, as it names itself in the game",
+    "Auctionator": "another addon's name, as it names itself in the game",
     "Discord": "a chat service's name",
     "Shift": "a key's name, as printed on the keyboard",
     "Ctrl": "a key's name, as printed on the keyboard",

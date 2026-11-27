@@ -5,6 +5,9 @@ the game, and the font facts the in-client probe recorded (UADD_DB.health.probe,
   * A guard repair means UADD broke the game for a moment (boxes, a dead key): it is printed first and loudly,
     to fix before any missed text. A kind whose last repair was in an older UADD than the one installed now
     may be fixed already: it is printed quietly and is not counted.
+  * The counts never go back to 0. A UADD that keeps guardLast (UADD/Guard.lua since 2026-11-26) writes a record
+    with each repair, so when the installed one does, a count with no record was made by an older UADD: it is
+    quiet too (2026-11-27: 209 tooltip repairs from 2026-11-20..23, lesson 18 again, shouted after the fix).
 Standard library only."""
 import math
 import os
@@ -80,6 +83,15 @@ def installed_version(addons_dir):
     return m.group(1) if m else None
 
 
+def installed_dates(addons_dir):
+    """True when the UADD installed in an AddOns folder writes a guardLast record with each repair."""
+    try:
+        with open(os.path.join(addons_dir, "UADD", "Guard.lua"), encoding="utf-8", errors="replace") as f:
+            return "guardLast" in f.read()
+    except (OSError, TypeError):
+        return False
+
+
 def _when(rec):
     bits = []
     if rec.get("at"):
@@ -91,14 +103,19 @@ def _when(rec):
     return ", ".join(bits)
 
 
-def report(guard, probes, last=None, current=None):
+def report(guard, probes, last=None, current=None, dated=False):
     """Prints the guard's repairs (loud) and the probe's facts. `current`: the UADD version installed now; a kind
-    last seen in another version is printed quietly. Returns the number of repairs that may still happen."""
+    last seen in another version is printed quietly. `dated`: the installed UADD writes guardLast
+    (installed_dates), so a kind with no record is from an older UADD: quiet. Returns the number of repairs that
+    may still happen."""
     last = last or {}
-    now, old = {}, {}
+    now, old, undated = {}, {}, {}
     for kind, n in guard.items():
         v = (last.get(kind) or {}).get("version")
-        (old if current and v and v != current else now)[kind] = n
+        if dated and kind not in last:
+            undated[kind] = n
+        else:
+            (old if current and v and v != current else now)[kind] = n
     total = sum(now.values())
     if total:
         print("!!! GAME HEALTH: UADD's guard had to repair the game %d times. Fix this first:" % total)
@@ -110,6 +127,9 @@ def report(guard, probes, last=None, current=None):
     for kind, n in sorted(old.items(), key=lambda kv: -kv[1]):
         print("guard %s = %d, last in UADD %s (installed: %s): may be fixed; last: %s"
               % (kind, n, last[kind]["version"], current, _when(last[kind])))
+    for kind, n in sorted(undated.items(), key=lambda kv: -kv[1]):
+        print("guard %s = %d, all counted by an older UADD (no record of when; installed: %s): may be fixed"
+              % (kind, n, current or "?"))
     for p in probes:
         facts = ", ".join("%s=%s" % (k, p[k]) for k in sorted(p) if k not in ("build", "at"))
         print("font probe (build %s): %s" % (p.get("build", "?"), facts or "no facts"))

@@ -14,6 +14,9 @@ ns.Breadcrumb = B
 
 local KEY = "foreverquestpins"
 local EN = "You accepted %s without completing its breadcrumb quest %s."
+-- Since 1.1.9 its body is that sentence, a line break and this one (L words both). Like EN it is never in L
+-- (Lc.NAMES): the body is ours only as a whole, so an English sentence never gets our second line (lesson 15).
+local HINT = "Abandon it from the quest log to set a waypoint to the breadcrumb."
 local QUEST = "Quest "                   -- its L["Quest "] .. id when it has no title
 local GOLD, DIM, END = "|cffffd100", "|cff9d9d9d", "|r"
 local CYR = "[\208-\211]"
@@ -67,6 +70,13 @@ local function Gold(s) return s:match("^|cffffd100(.-)|r$") end
 function B.Make(text)
     local tpl = Lc.Template(EN)
     if not tpl or type(text) ~= "string" or #text > 600 then return nil end
+    local nl, tail = text:find("\n", 1, true), nil
+    if nl then                                 -- only its own second line after it, else whole English
+        if text:sub(nl + 1) ~= HINT then return nil end
+        tail = Lc.Template(HINT)
+        if not tail then return nil end
+        text = text:sub(1, nl - 1)
+    end
     shape = shape or Lc.Shape(EN)
     local a, b = text:match(shape)
     if not a then return nil end
@@ -85,7 +95,8 @@ function B.Make(text)
         if not u2 then return nil end
         s2 = GOLD .. u2 .. END
     end
-    return Lc.Put(tpl, GOLD .. u1 .. END, s2)
+    local out = Lc.Put(tpl, GOLD .. u1 .. END, s2)
+    return tail and (out .. "\n" .. tail) or out
 end
 
 local function Set(text)

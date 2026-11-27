@@ -255,7 +255,7 @@ local MAP = {
         "Ваша гільдія й друзі з OpenMap бачать вас точкою на своїй карті там, де ви стоїте; поки ви рухаєтеся, це надсилається кожні кілька секунд. Ніколи з підземелля, рейду чи поля бою. Вимкнено: вони бачать лише вашу зону, як у списку друзів і гільдії.",
     ["... and %d more"] = "... і ще %d",
     ["Friends on the map"] = "Друзі на карті",
-    ["Guild"] = "Гільдія",
+    ["Guild"] = G"game.guild",
     ["Guild members on the map"] = "Члени гільдії на карті",
     ["Share where you are"] = "Показувати, де ви",
 
@@ -709,7 +709,7 @@ local LOADTIME = {
     ["Ignore"] = "Ігнорувати",
     -- Townsfolk filters
     ["Spirit healers"] = "Цілителі душ",
-    ["Rare mobs"] = "Рідкісні монстри",
+    ["Rare mobs"] = G"rare.mobs",
     ["Vendors"] = G"npc.vendors",
     ["Repair"] = G"vendor.repair",
     ["Innkeepers"] = "Корчмарі",

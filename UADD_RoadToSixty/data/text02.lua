@@ -1,10 +1,43 @@
--- Made by tools/make_rts_text.py build from Road to Sixty 1.20.12. Do not edit: change the review files
+-- Made by tools/make_rts_text.py build from Road to Sixty 1.20.13. Do not edit: change the review files
 -- (local/rts/review_NN.txt) and build again. Only hashes and our Ukrainian.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of one string literal of Road to Sixty's code). S: what each
 -- slot of a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.RTS or {}; ns.RTS = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.03f321d5"] = "пішки %d%%, літом %d%%"
+S["Code.03f321d5"] = "vv"
+T["Code.b72cee27"] = " із них"
+T["Code.c948af65"] = "зміна наявного золота"
+T["Code.04bcff4d"] = " записано"
+T["Code.ae2dd721"] = "вбивства тут не видно"
+T["Code.ef335845"] = "рівні з %d по %d"
+S["Code.ef335845"] = "vv"
+T["Code.a0d33c66"] = "рівень %d"
+S["Code.a0d33c66"] = "v"
+T["Code.7c8cec74"] = "Час"
+T["Code.e0ddf63a"] = "Досвід / год"
+T["Code.8d125ea4"] = "Кожен тиждень на максимальному рівні"
+T["Code.f55b8d10"] = "Кожен рівень, потім кожен тиждень на максимумі"
+T["Code.654ca02e"] = "Кожен рівень"
+T["Code.752e6de7"] = "Наведіть на тиждень, щоб побачити його, клікніть, щоб програти з початку"
+T["Code.f5fea190"] = "Наведіть на стовпчик, щоб побачити його, клікніть, щоб програти з початку"
+T["Code.77af3b02"] = "Наведіть на рівень, щоб побачити його, клікніть, щоб програти з підвищення рівня"
+T["Code.da2cac22"] = "Тиждень 1"
+T["Code.8fd0686d"] = "Відкрити в Спорядженні"
+T["Code.cb609b81"] = "Показати на карті"
+T["Code.955b923d"] = "Золото із завдань"
+T["Code.53a60953"] = "Тижнів ще немає"
+T["Code.1fc22f3a"] = "Тиждень %d"
+S["Code.1fc22f3a"] = "v"
+T["Code.ca78a40c"] = ", поки що"
+T["Code.d9e829dd"] = "Пішки"
+T["Code.73ce08ff"] = "Рівнів ще немає"
+T["Code.a141cefe"] = "Рівень %d%s"
+S["Code.a141cefe"] = "vv"
+T["Code.1c0c3000"] = "поки що"
+T["Code.43e81a9d"] = "запис почався не з початку"
+T["Code.b27280e0"] = "Досвід за вбивства"
 T["Code.a46858be"] = "за завдання"
 T["Code.8645a025"] = "Рівні з %d по %d"
 S["Code.8645a025"] = "vv"

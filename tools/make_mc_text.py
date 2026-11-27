@@ -21,6 +21,7 @@ sys.path.insert(0, str(HERE))
 import hashtext as H  # noqa: E402
 import mc_rules as R  # noqa: E402
 import mc_text_lib as L  # noqa: E402
+import news_texts as N  # noqa: E402
 
 ROOT = HERE.parent
 LOCAL = ROOT / "local" / "mastercraft"
@@ -98,8 +99,9 @@ def read_all(folder):
     return out
 
 
-def review(rows, folder):
-    """Write the batches into `folder`; returns (batch sizes, gone count)."""
+def review(rows, folder, news_keys=()):
+    """Write the batches into `folder`; returns (batch sizes, gone count). A text whose key is in `news_keys`
+    (a What's New text, lesson 43) is not kept in the gone part: its Ukrainian is dropped."""
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
     old = read_all(folder)
@@ -118,7 +120,7 @@ def review(rows, folder):
             ua = old.get(k, ("", "", ""))[2]
             out += L.block(n, en, kind, ua, slot_line(en) if "template" in kind else "")
         if i == len(bs):
-            gone = [(k, v) for k, v in old.items() if k not in now and v[2]]
+            gone = [(k, v) for k, v in old.items() if k not in now and v[2] and k not in news_keys]
             if gone:
                 out.append(GONE + "\n")
             for k, (en, _, ua) in gone:
@@ -128,7 +130,7 @@ def review(rows, folder):
     for p in batch_files(folder):
         if int(p.stem) > len(bs):
             p.unlink()
-    return [len(b) for b in bs], len([k for k, v in old.items() if k not in now and v[2]])
+    return [len(b) for b in bs], len([k for k, v in old.items() if k not in now and v[2] and k not in news_keys])
 
 
 def fit_ends(e, u):
@@ -205,24 +207,7 @@ def build(rows, folder, out_dir, glossary, ver="?"):
             "exact": len(exact), "templates": len(temps)}
 
 
-WRAP = 300                      # check_repo.py allows 400 chars a line; a longer E line is cut into pieces
-
-
-def wrap(line):
-    """An E line whose value is one long string literal, as `"a " ..` lines of at most WRAP chars, cut after a
-    space (lua_str never puts a space inside an escape). Other lines stay as they are."""
-    head, sep, lit = line.partition(" = ")
-    if len(line) <= WRAP or not (lit.startswith('"') and lit.endswith('"')):
-        return line
-    words, pieces, cur = lit[1:-1].split(" "), [], ""
-    for n, w in enumerate(words):
-        w += " " if n < len(words) - 1 else ""
-        if cur and len(cur) + len(w) > WRAP - 10:
-            pieces.append(cur)
-            cur = ""
-        cur += w
-    pieces.append(cur)
-    return head + sep + ' ..\n    '.join(f'"{p}"' for p in pieces)
+WRAP, wrap = L.WRAP, L.wrap    # a long E line cut into pieces (tools/mc_text_lib.py)
 
 
 def write_data(entries, out_dir, ver):
@@ -266,8 +251,17 @@ def main(argv):
     if not rows:
         print(f"Mastercraft not found in {addon} (pass its folder or set UADD_ADDONS_DIR)")
         return 1
+    # What's New texts stay English (lesson 43): no review line, no data, and no Ukrainian kept for them.
+    news = N.mc_news(rows, addon)
+    news_keys = {H.key(e) for e in news}
+    lost = sorted(news_keys - N.TEXTS["UADD_Mastercraft"])
+    if lost:
+        print(f"{len(lost)} What's New texts are not in news_texts.MC_KEYS (drift would list them): "
+              "python3 tools/news_texts.py mc-keys")
+        return 1
+    rows = [r for r in rows if r[0] not in news]
     if argv[1] == "review":
-        sizes, gone = review(rows, LOCAL)
+        sizes, gone = review(rows, LOCAL, news_keys)
         print(f"{len(rows)} texts in {len(sizes)} batches {sizes}; gone with UA: {gone} -> {LOCAL}")
         return 0
     if argv[1] == "slots":

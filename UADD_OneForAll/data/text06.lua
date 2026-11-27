@@ -1,10 +1,20 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.17. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.9847f8ba"] = "рів. ~%d"
+S["Code.9847f8ba"] = "v"
+T["Code.699ab1d9"] = "Серед предметів \"%s\" для цього слота у вашому діапазоні рівнів немає покращень.\nПоказано лише предмети кращі за ваші (для вашої спеціалізації).\nКнопка фільтра біля вкладки \"Список бажань\"."
+S["Code.699ab1d9"] = "t"
+T["Code.c9bc6461"] = "Ваш список бажань порожній.\nКлікніть зірку на предметі, щоб додати його."
+T["Code.3e66d6d1"] = "У вашому списку бажань ще немає предмета для цього слота.\nКлікніть зірку на предметі, щоб додати його."
+T["Code.966c5836"] = "Поки що немає покращень для цього слота у вашому діапазоні рівнів."
+T["Code.d9f73cf0"] = "Поки що жоден предмет з наших даних не підходить до цього слота й рівня."
+T["Code.ecf3e226"] = "Тут нічого немає за фільтром джерел \"%s\".\nКнопка фільтра біля вкладки \"Список бажань\"."
+S["Code.ecf3e226"] = "t"
 T["Code.4cd9193b"] = "Предметів не знайдено."
 T["Code.3d66ab9b"] = "Сила атаки дальнього бою"
 T["Code.4fb58d54"] = "Сила атаки у звіриній формі"
@@ -190,8 +200,6 @@ S["Code.c6a9167c"] = "v"
 T["Code.e8e0064c"] = "Випадіння рецепта  -  клікніть, щоб відкрити в Професіях"
 T["Code.8c4c67f6"] = "Поділитися всіма завданнями"
 T["Code.9f3c1c9d"] = "Лише завдання, яких не мають учасники вашої групи і які вони можуть взяти."
-T["Code.b5bd0e78"] = "Зелений = виконано   Напівзелений = готово до здачі   Зелений текст = у журналі   Бірюзовий = ланцюжок розпочато   Тьмяний = недоступно   %s + спільні"
-S["Code.b5bd0e78"] = "t"
 T["Code.2ea78e5d"] = "Готово до здачі"
 T["Code.9f96b273"] = "Потрібно: %s"
 S["Code.9f96b273"] = "v"
@@ -269,11 +277,3 @@ T["Code.4db11540"] = "Ctrl+C копіює білд. Вставте його в �
 T["Code.c59ece30"] = "Імпорт білда"
 T["Code.6ef6e270"] = "Вставте посилання на білд із talentsforever.com або wowforevertalents.com, або рядок білда OneForAll (Ctrl+V)."
 T["Code.f1a738a2"] = "Плануйте таланти для кожного класу. Дивіться, які заклинання вивчати далі."
-T["Code.2bbacde0"] = "Рівень: %d"
-S["Code.2bbacde0"] = "v"
-T["Code.792dbf69"] = "Доступно: %d"
-S["Code.792dbf69"] = "v"
-T["Code.7ae73372"] = "Витрачено: %d"
-S["Code.7ae73372"] = "v"
-T["Code.5fe0cb82"] = "Залишилось: %d"
-S["Code.5fe0cb82"] = "v"

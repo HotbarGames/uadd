@@ -127,6 +127,11 @@ SORTS = {
     "TELEMETRY_DATABASE_EXACT": "u", "TELEMETRY_DATABASE_RANGE": "uu", "TELEMETRY_EXACT_LEARNED": "u",
     "TELEMETRY_LAST_RESPAWN": "u", "TELEMETRY_NEXT_RESPAWN": "uv", "TELEMETRY_OBSERVED_RANGE": "uu",
     "TELEMETRY_RESPAWN_UNCONFIRMED": "u",
+    # Wanted rares (RSWanted.lua, RSWantedPopup.lua)
+    "WANTED_HOST_NOBODY": "n", "WANTED_HOST_WAIT": "n",   # RSNpcDB.GetNpcName(npcID), or the id
+    "WANTED_HOST_MOVED": "fn",                    # a player's name, then an NPC name
+    "WANTED_POPUP_DESC": "v",                     # a worldmap pin link (GetMapPinLink)
+    "WANTED_POPUP_NO_MOVES": "u",                 # SecondsToTime: the game's English units, the line stays English
 }
 # The AL keys RareScanner fills into each t slot, in order. The module (Module.lua INNER, kept the same by
 # tools/test_rs_text.py) uses a template only when each of these is ours too: else the line stays English.

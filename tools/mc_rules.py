@@ -128,6 +128,10 @@ OVERRIDE = {
     # The guide's crafts line (a step title, then money); a blocked player (F); the rank help's trainer (N);
     # the debug join line's channel names (F).
     "43:7a72cb6f": "T-V", "31:8de805b9": "T-", "115:d2786336": "F", "36:0b74e2c6": "N", "47:54f3e859": "-F",
+    # Mastercraft 2.1.3, Modules.lua and the Settings > Modules cards: each slot is a module's name or a list
+    # of them joined with ", " (its own texts, T), never a player.
+    "9:f63f2a06": "T", "36:d93097a4": "TT", "28:c60624a6": "TT", "30:19b79e37": "TT", "42:d9b68384": "T",
+    "43:7d999022": "T",
 }
 
 # Texts Mastercraft builds in its code, not in its locales (tools/mc_text_lib.py code_rows): by

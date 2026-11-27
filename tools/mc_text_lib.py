@@ -139,3 +139,23 @@ def named_rows(rows):
             seen.add(t)
             out.append((t, kind_of(t), sec, sub, f))
     return out
+
+
+WRAP = 300                      # check_repo.py allows 400 chars a line; a longer E line is cut into pieces
+
+
+def wrap(line):
+    """An E line whose value is one long string literal, as `"a " ..` lines of at most WRAP chars, cut after a
+    space (lua_str never puts a space inside an escape). Other lines stay as they are."""
+    head, sep, lit = line.partition(" = ")
+    if len(line) <= WRAP or not (lit.startswith('"') and lit.endswith('"')):
+        return line
+    words, pieces, cur = lit[1:-1].split(" "), [], ""
+    for n, w in enumerate(words):
+        w += " " if n < len(words) - 1 else ""
+        if cur and len(cur) + len(w) > WRAP - 10:
+            pieces.append(cur)
+            cur = ""
+        cur += w
+    pieces.append(cur)
+    return head + sep + ' ..\n    '.join(f'"{p}"' for p in pieces)

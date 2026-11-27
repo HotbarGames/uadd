@@ -75,7 +75,8 @@ around L's words, which are ours). `run.py` fails a module in `COVERED` whose fl
 `COVERED` or `NO_SLOTS` (with a reason), its flow really calls its function (not in a comment), and each
 free-slot mark points to a real `%s` slot. Free slots are marked here, by English or locale key:
 
-- ForeverXPBar: `FREE` and `BLANK` in `tools/fxpb_words.py`.
+- ForeverXPBar: `FREE`, `BLANK` and `COLOUR` in `tools/fxpb_words.py` (`COLOUR`: slots that hold only an item
+  quality colour code; Words.lua keeps one only when it is exactly `|c` and 8 hex digits).
 - LayerSwap: `FREE` and `BLANK` in `tools/lsw_words.py`.
 - AutoPotion: `FREE` and `GLUED` in `tools/make_ap_text.py`.
 - Bagnon: `FREE` in `tools/make_bgn_text.py` (`VALUE`: slots that hold only a number or money).

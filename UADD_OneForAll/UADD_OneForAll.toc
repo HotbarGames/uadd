@@ -32,6 +32,7 @@ data/text19.lua
 data/text20.lua
 Words.lua
 Joined.lua
+Routed.lua
 Screen.lua
 Chat.lua
 Module.lua

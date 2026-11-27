@@ -36,6 +36,7 @@ LEFT_TO_UALLF = frozenset({
     "Questie Tracker", "Quest Complete!", "Quest Failed!", "Time's up!",
     "Quests (By %% Complete)", "Quests (By %% Complete Reversed)", "Quests (By Level)",
     "Quests (By Level Reversed)", "Quests (By Proximity)", "Quests (By Proximity Reversed)",
+    "Quests (By Latest)", "Quests (By Latest Reversed)",
     "Achievements", "Recipes", "Challenge Mode",
 })
 

@@ -1,10 +1,19 @@
--- Made by tools/make_ofa_text.py build from OneForAll 6.2.16. Do not edit: change the review files
+-- Made by tools/make_ofa_text.py build from OneForAll 6.2.17. Do not edit: change the review files
 -- (local/ofa/review_NN.txt) and build again.
 -- T: key = Ukrainian (Code.<hash>: UADD.Hash of OneForAll's English as it draws it). S: what each slot of
 -- a template holds, in order: v value, f free (kept as it is), n game name, t our text.
 local _, ns = ...
 local T = ns.OFA or {}; ns.OFA = T
 local S = ns.SORT or {}; ns.SORT = S
+T["Code.9021f24f"] = "Ваші професії"
+T["Code.b5f03eec"] = "Професій ще не знайдено - вивчіть одну в учителя або один раз відкрийте вікно професії."
+T["Code.e4af8219"] = "Усі професії"
+T["Code.c8946d1a"] = "Інше"
+T["Code.890692ff"] = "Найближчі вчителі"
+T["Code.99bc95d2"] = "Вчитель: %s"
+S["Code.99bc95d2"] = "t"
+T["Code.89fc1d7e"] = "Приблизно %d {ярд|ярди|ярдів} звідси"
+S["Code.89fc1d7e"] = "v"
 T["Code.0db0d319"] = "На цьому континенті вчителів не відомо."
 T["Code.8bac9abc"] = "немає на цьому континенті"
 T["Code.3e6e7a5c"] = "Навичка %s"
@@ -268,11 +277,3 @@ T["Code.92a89628"] = "Показати приклад"
 T["Code.acc5f6ea"] = "Картинка того, як це виглядає в грі."
 T["Code.187a57c3"] = "Приклад із гри. Клацніть і перетягніть, щоб перемістити; Escape закриває."
 T["Code.0e043268"] = "Скинути"
-T["Code.7c8cdc45"] = "Перевірка"
-T["Code.7c89307c"] = "Перемістити"
-T["Code.7c88a1ae"] = "Закріпити"
-T["Code.0b87d4ae"] = "Додати"
-T["Code.0b881080"] = "Вимк."
-T["Code.892888ec"] = "Прибрати все"
-T["Code.19334d84"] = "Прибрати зі списку"
-T["Code.7caa6a65"] = "1 предмет"

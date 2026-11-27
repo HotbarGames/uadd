@@ -6,7 +6,9 @@
 -- A text is tried, in order:
 --   1. whole, as one literal (U.Shapes' Exact);
 --   2. as a template with its slots filled (U.Shapes: values, dates, links, names through UALL Forever or ClassicUA),
---      then the plural marks {one|few|many} after its last number (U.Plural);
+--      then the plural marks {one|few|many} after its last number (U.Plural); then a template whose one slot is
+--      a character's name kept as it is (NameSlot: one word, or two inside the text), also a line the code glues
+--      as head .. name .. tail (a joined row of tools/rts_source.py: one template, so it reads as one sentence);
 --   3. as pieces the code glues: a head piece of ours ending in a space and a rest that is a value or a whole text
 --      of ours, or such a rest and a tail piece of ours (starting with a space, a comma or an apostrophe). Only a
 --      possessive tail (an apostrophe first) takes a free name before it (a character's name): any other rest
@@ -65,36 +67,64 @@ local function Value(x)
 end
 
 -- A free name: one character's name as it is (one word, maybe with its realm after a dash), never a phrase,
--- a code or a line break.
-local function FreeName(x)
-    if #x == 0 or #x > 60 or find(x, "[|\n%s]") then return nil end
+-- a code or a line break. With two: also two words with one space, as a unique name "First Last" reads; each
+-- starts with a capital (or a byte of a letter beyond ASCII), so "Bob once" or "Bob - more" is no name.
+local function FreeName(x, two)
+    if #x == 0 or #x > 60 or find(x, "[|\n\r\t\v\f]") or find(x, "^ ") or find(x, " $") then return nil end
+    local sp = find(x, " ", 1, true)
+    if sp then
+        if not two or find(x, " ", sp + 1, true) or find(x, ": ", 1, true) then return nil end
+        if not find(x, "^[%u\192-\255]") or not find(x, "^[%u\192-\255]", sp + 1) then return nil end
+    end
     if find(x, CYR) then return x end
     if not P.Free(x) then return nil end
     return x
 end
 
+-- Where a name's last word (it starts at a, the next space or line break is at sp) ends: before an apostrophe,
+-- and before a mark after it ("?", "!", ".", ","), which stays in the template.
+local function NameEnd(s, a, sp)
+    local e = sp - 1
+    local q = find(s, "'", a, true)
+    if q and q < sp then e = q - 1 end
+    while e >= a and find(s, "^[%?!%.,]", e) do e = e - 1 end
+    return e
+end
+
+-- The text with s[a..e] as the slot: our Ukrainian with the name in, when that template's one slot is free.
+local function Named(s, a, e, two)
+    if e < a then return nil end
+    local name = FreeName(sub(s, a, e), two)
+    if not name then return nil end
+    local k = Key(sub(s, 1, a - 1) .. "%s" .. sub(s, e + 1))
+    local uk = ns.RTS[k]
+    if type(uk) == "string" and ns.SORT[k] == "f" then
+        local ok, out = pcall(string.format, uk, name)
+        if ok then return U.Plural(out, true) end
+    end
+    return nil
+end
+
 -- A template whose one slot is a free name inside the text (a character's name, also before "'s"): each word,
 -- or the part of it before an apostrophe, tried as the slot (at most MAXCUTS words, one hash each). A word ends at
 -- a space or a line break, and a mark after the name ("?", "!", ".", ",") stays in the template, not in the name:
--- a popup's whole text of several lines is one template with the name in its first line.
+-- a popup's whole text of several lines is one template with the name in its first line. A name of two words
+-- (one space, each capitalised) is tried only inside the text, with the template's own words on both sides, so it
+-- never takes glued English at an edge (lesson 7): one hash more per word.
 local function NameSlot(s)
     local a, words = 1, 0
     while a <= #s and words < MAXCUTS do
         local sp = find(s, "[ \n]", a) or (#s + 1)
         words = words + 1
-        local e = sp - 1
-        local q = find(s, "'", a, true)
-        if q and q < sp then e = q - 1 end
-        while e >= a and find(s, "^[%?!%.,]", e) do e = e - 1 end
-        if e >= a then
-            local name = FreeName(sub(s, a, e))
-            if name then
-                local k = Key(sub(s, 1, a - 1) .. "%s" .. sub(s, e + 1))
-                local uk = ns.RTS[k]
-                if type(uk) == "string" and ns.SORT[k] == "f" then
-                    local ok, out = pcall(string.format, uk, name)
-                    if ok then return U.Plural(out, true) end
-                end
+        local e = NameEnd(s, a, sp)
+        local out = Named(s, a, e)
+        if out then return out end
+        if a > 1 and e == sp - 1 and byte(s, sp) == 32 then
+            local sp2 = find(s, "[ \n]", sp + 1) or (#s + 1)
+            local e2 = NameEnd(s, sp + 1, sp2)
+            if e2 < #s and e2 > sp then
+                out = Named(s, a, e2, true)
+                if out then return out end
             end
         end
         a = sp + 1

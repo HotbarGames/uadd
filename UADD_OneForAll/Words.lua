@@ -205,7 +205,18 @@ local function Atom(s) return Whole(s) or Moneyed(s) or HeadNum(s) or NameSlot(s
 -- Joined.lua (W.Joined, W.Headed), loaded after this file.
 W.Atom, W.Value, W.Dungeon = Atom, Value, Dungeon
 
-local function Line(s) return Atom(s) or (W.Joined and W.Joined(s)) end
+-- A line whose game name needs its own route (W.Routed: a spell, a vendor, a class, a recipe item) is tried after a
+-- whole text of ours and before Shapes, which asks the Item route for any `n` slot. Its false (a name no source
+-- knows) ends the line English.
+local function Line(s)
+    local uk = P.Exact(s)
+    if uk then return uk end
+    if W.Routed then
+        uk = W.Routed(s)
+        if uk ~= nil then return uk or nil end
+    end
+    return Atom(s) or (W.Joined and W.Joined(s))
+end
 
 -- An author's signature line ("- Name", maybe in one colour): a name, kept as it is (lesson 44).
 local function Signed(one)

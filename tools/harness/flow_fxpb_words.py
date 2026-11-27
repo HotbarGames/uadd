@@ -45,6 +45,13 @@ def checks(check, eq, M, S, cyr):
     eq(check, "on screen: camp icon countdown", M.text("camp"), CAMP_UK)
     check("on screen: their own Latin font swapped for a Cyrillic one",
           cyr(M.font("underRight")[0]) and cyr(M.font("camp")[0]), f"{M.font('underRight')} {M.font('camp')}")
+    # Gold Farm bar, bottom right: the price-source line glued with a count tail.
+    c = "|cff9aa3b5"
+    for en, uk in ((c + "Auction prices (12 AH)|r", c + "Ціни з аукціону (12)|r"),
+                   (c + "Auction prices (12 AH, 3 vendor fallback)|r", c + "Ціни з аукціону (12, 3 торг.)|r"),
+                   (c + "Vendor prices|r", c + "Ціни торговця|r")):
+        eq(check, f"gold farm line: {en[10:20]}...", M.uk(lua_str(en)), uk)
+    check("gold farm line with an unknown piece stays English", M.uk(lua_str(c + "Auction prices (12 AH, x vendor fallback wobbly)|r")) is None)
     footer = "1 death  " + BULLET + "  12 kills  " + BULLET + "  3 quests"
     eq(check, "glued card footer", M.uk(lua_str(footer)), "1 смерть  —  вбивств: 12  —  завдань: 3")
     eq(check, "a time as a piece: units apart", M.uk(lua_str("Lock Bar - 5m")), S["Lock Bar"] + " — 5 хв")

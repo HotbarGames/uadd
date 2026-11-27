@@ -13,6 +13,8 @@ def rank(x, folder, loose):
     """(tier, name length) of how well token x names the module folder; None when it does not."""
     name = folder[5:]
     low = name.lower()
+    if not x or not low:  # test__parallel.py gives an empty token
+        return None
     caps = "".join(w[0] for w in re.findall(r"[A-Z][a-z0-9]*", name)).lower()
     if x == low:
         return (1, len(low))

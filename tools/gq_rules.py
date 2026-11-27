@@ -37,6 +37,10 @@ SORTS = {
     "L.ec9a5326": "vttn", "L.ef95b3dc": "n", "L.f17cb760": "f", "L.f18d8a55": "vv",
     "L.f1eb36a3": "n", "L.f9fe7525": "n", "L.fa12b2ca": "v", "L.facab15d": "v",
     "L.fc8ab34d": "vv",
+    "L.d0ad0ec3": "nt",   # Data.lua: the spec's name (kept English), then our "Rank #%d for your level": stays English
+    "L.5897c5ba": "v",    # Log.lua: the guide place (a number)
+    "L.85e0cd32": "v",    # Log.lua: money (Orders:CoinText)
+    "L.e8c7bbc3": "v",    # Orders.lua: a date and time, numbers only
 }
 
 # Keys never written: a text it saves into the player's data or compares with its own English (lesson 14).
@@ -82,6 +86,9 @@ NAMES = {
     "L.e918a813": "talent tab name",
     "L.eee85579": "talent tab name",
     "L.f2f44dc9": "talent tab name",
+    "L.b151a196": "the addon's name",
+    "L.30901267": "the PvP tag: written the same in Ukrainian (as in the Honor (PvP) filter)",
+    "L.865fd9a7": "the PvP tag: written the same in Ukrainian (as in the Honor (PvP) filter)",
 }
 
 # Notes shown in the review file, by key.

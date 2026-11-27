@@ -262,7 +262,7 @@ class Installed(unittest.TestCase):
         self.assertEqual(len(S.sound_labels(ADDON)), 11)
         for en, _ in S.sound_labels(ADDON):
             self.assertIn("X." + H.djb2(en), keys)
-        self.assertEqual(len(S.missing(ADDON, set(self.enus))), 2)
+        self.assertEqual(len(S.missing(ADDON, set(self.enus))), 1)
 
     def test_rule_keys_are_real(self):
         keys = {"L." + H.djb2(e) for e in self.enus}

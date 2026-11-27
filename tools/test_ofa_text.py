@@ -156,7 +156,8 @@ class Guards(unittest.TestCase):
     }
 
     def test_files_listed(self):
-        self.assertEqual(set(module_code()), {"Words.lua", "Joined.lua", "Screen.lua", "Chat.lua", "Module.lua"})
+        self.assertEqual(set(module_code()), {"Words.lua", "Joined.lua", "Routed.lua", "Screen.lua", "Chat.lua",
+                                                "Module.lua"})
         toc = (MOD / "UADD_OneForAll.toc").read_text(encoding="utf-8")
         for name in module_code():
             self.assertIn(name, toc)

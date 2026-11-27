@@ -89,6 +89,10 @@ SORTS = {
     "Code.e6a0c449": "vn",    # a count, then the dungeon's name (FLT.DungeonName)
     "Code.54e50a58": "v", "Code.d03d79eb": "v", "Code.e70eba84": "v", "Code.ab9a6ab8": "v",    # RT.Clock times
     "Code.f31989ba": "n",     # the wishlist item's name (GetItemInfo)
+    # 6.2.17
+    "Code.6a448f9b": "nff",   # thanks log: the buff, the player, the emote or text the player set (QoL.lua)
+    "Code.ebe093f6": "f",     # the emote the player typed in its option (UI/QoL.lua)
+    "Code.83d58a18": "v",     # loot value: money (RunHistory.lua)
 }
 # Fixed-width boxes (OneForAll-design.md): English -> letters. Filled as the review finds them.
 # 6.2.16: the dungeon tracker's columns (x 10, 96, 164), its settings popup (196 px wide, its check texts from x 32)
@@ -98,6 +102,11 @@ BOX = {
     "Hide time": 22, "Hide XP": 22, "Hide gold": 22, "Hide bosses": 22, "Lock tracker": 22,
     "Show dungeon picture": 22, "Bosses per row": 20,
     "Loading items (%d)": 18, "Waiting for server...": 22, "Reading %d%%": 18,
+    # 6.2.17: the settings popup is 2 columns of 250 px now; a check's label is 222 px, no wrap (GameFontHighlightSmall);
+    # a slider's label shares its row with the value on the right; "New run" is a 140 px button.
+    "Always show the current loot roll": 34, "Hide loot-roll button": 34, "Hide green items in loot rolls": 34,
+    "Add loot value to gold": 34, "Use auction prices (Auctionator)": 34, "Visible bosses": 30,
+    "Auto-hide loot rolls after": 30, "%d sec": 8, "New run": 20,
 }
 LONG = {}
 # Data pools and their fixed widths (HunterPets columns, TrainerSpells, LowRank): a note per pool.

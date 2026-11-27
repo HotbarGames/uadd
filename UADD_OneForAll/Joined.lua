@@ -2,9 +2,11 @@
 -- or a wide gap: each piece is ours (a text, a class from the glossary, a zone from UALL Forever or ClassicUA, a
 -- value); one piece left English keeps the whole line English. The dot is drawn as our "  -  " (lesson 6).
 -- Also its tooltip lines with a head before names ("Drops from: Boss (Dungeon)", "Target: Name"), with its own mark
--- ("OFA", an arrow, our text, "(replaces <item>)" in grey) and two of its words with a slash ("Rare / Optional").
--- Words.lua calls W.Joined after its own steps; it gives W.Atom, W.Value and W.Dungeon for the pieces. W.Headed is
--- its cheap gate for tooltip lines (W.Maybe).
+-- ("OFA", an arrow, our text, "(replaces <item>)" in grey) and two of its words with a slash ("Rare / Optional"),
+-- and player names after a head ("Guild: A, B +2", kept as they are).
+-- W.Routed (lines whose one game name needs its own route) and W.Headed (Words.lua's cheap gate for tooltip lines,
+-- W.Maybe) are in Routed.lua. Words.lua calls W.Routed before and W.Joined after its own steps; it gives W.Atom,
+-- W.Value and W.Dungeon for the pieces.
 
 local _, ns = ...
 local U = UADD
@@ -93,15 +95,17 @@ end
 local TAG = "|cffc8961eOFA|r "                    -- its mark before its gear lines, kept as it is
 local GREY = "  |cffb0b0b0"                       -- a second part in grey: "(replaces <item>)"
 
-local function Npc(p)
+-- A bare game name asked through one UADD.UALL route (lessons 20, 25: no [ ( | or edge spaces asked).
+local function Ask(p, route)
     if #p == 0 or #p > 60 or find(p, "[|%[%(\n]") or not find(p, "^%u") or find(p, "%s$") then return nil end
     P.asked = true                                -- a game name, as in Zone
-    local route = UADD.UALL and UADD.UALL.Npc
     if type(route) ~= "function" then return nil end
     local ok, uk = pcall(route, p)
     if ok and type(uk) == "string" and uk ~= p and find(uk, CYR) then return uk end
     return nil
 end
+local function Npc(p) return Ask(p, UADD.UALL and UADD.UALL.Npc) end
+local function Spell(p) return Ask(p, UADD.UALL and UADD.UALL.Spell) end
 
 -- "Boss (Dungeon), Boss (Dungeon) +3": every name known, else the whole line stays English.
 local function Drops(x)
@@ -135,7 +139,28 @@ local function Target(x)
     return find(name, "^%S+$") and x or nil
 end
 
-local NAMED = { ["Drops from:"] = Drops, ["Target:"] = Target }
+-- "Zorp, Smorgi Banklshofer, Zorp (Hunter) +2" (its recipe tips: alts and guild members, QoL.lua nameList): each
+-- player's name kept as it is (lessons 13, 31), a class after it from the glossary; one other piece: English.
+local function Players(x)
+    local plus = x:match(" %+%d+$") or ""
+    x = sub(x, 1, #x - #plus)
+    local out, n, pos = {}, 0, 1
+    while n < MAXPIECES do
+        local e = find(x, ", ", pos, true)
+        local piece = sub(x, pos, (e or #x + 1) - 1)
+        local name, cls = piece:match("^(.-) %((%u[%a ]-)%)$")
+        name = name or piece
+        local c = cls and Class(cls)
+        if (cls and not c) or find(name, "[%(%)%[%]:;,%d%+]") or not P.OneName(name) then return nil end
+        n = n + 1
+        out[n] = c and (name .. " (" .. c .. ")") or name
+        if not e then return table.concat(out, ", ") .. plus end
+        pos = e + 2
+    end
+    return nil
+end
+
+local NAMED = { ["Drops from:"] = Drops, ["Target:"] = Target, ["Guild:"] = Players, ["Twinks:"] = Players }
 
 local function Named(s)
     local e = find(s, ": ", 1, true)
@@ -160,11 +185,6 @@ local function Slot(s, a, b, letter, uk)
     if not uk or type(t) ~= "string" or ns.SORT[k] ~= letter then return nil end
     local ok, out = pcall(string.format, t, uk)
     return ok and out or nil
-end
-
-local function Clock(s)                           -- "Next free instance in 12:34.": a clock inside the text
-    local a, b = find(s, "%d+:%d%d[:%d]*")
-    return a and Slot(s, a, b, "v", sub(s, a, b)) or nil
 end
 
 -- "26 |4Min:Min; ago" (the game's SecondsToTime) or "26 min ago" (its own): one unit, ours, else the line is English.
@@ -215,16 +235,7 @@ local function Slash(s)                           -- "Rare / Optional"
     return l and r and (l .. " / " .. r) or nil
 end
 
--- Cheap (lesson 12): does a tooltip line start with a head its code fills or glues? By its first bytes only.
-local HEADS = { "Drops from: ", "Target: ", "On your wishlist: ", "Killed after ", "Quests in your log: ",
-    "Instances this hour: ", "The game lets you enter ", "Next free instance in ", "Sort by ", "Last scan here: ",
-    "Ready again in about ", "Coordinates: ", "Object: ", "Territory: ", TAG }
+-- For Routed.lua (W.Routed, W.Headed), loaded after this file.
+W.Pieces = { Class = Class, Npc = Npc, Spell = Spell, Slot = Slot, TAG = TAG }
 
-function W.Headed(s)
-    for i = 1, #HEADS do
-        if sub(s, 1, #HEADS[i]) == HEADS[i] then return true end
-    end
-    return false
-end
-
-function W.Joined(s) return Named(s) or Tag(s) or Slash(s) or Joined(s) or Clock(s) or Age(s) or Spot(s) end
+function W.Joined(s) return Named(s) or Tag(s) or Slash(s) or Joined(s) or Age(s) or Spot(s) end
