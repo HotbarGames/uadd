@@ -4,7 +4,8 @@ every text at run time from a feed built here from the installed addon (tools/gq
 
   * Game E (no module): its English: what "off" and the hold key must give back (window, guide, Orders, chat).
   * Game A (on at login), steps in flow_gq_steps.py: 1 ours: labels, option labels, tabs,
-    the guide page, the Orders headers and rows, the source tag and spec name; the names stay as typed (lesson 13),
+    the guide page, the Orders column headers, headers and rows (since 1.4.1 a row is the item name alone, its
+    skill a number in its own column), the source tag and spec name; the names stay as typed (lesson 13),
     an unknown item's row whole English. 2 guide: a page with no Ukrainian stays English, one with it ours, the
     bubble fits. 3 the chat line: a known slot ours, the preview ours, an unknown slot and held whole English.
     4 Orders rows: an item ClassicUA has not settled shows English, then ours on the retry. 5 our font on every
@@ -34,8 +35,9 @@ from loader import Addon, Client, lua_str, read_text, txt  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODULE, TARGET = "UADD_GearQuestForever", "GearQuestForever"
-ROLES = {"slot": "L.7c864557", "source": "L.d7dc5f93", "spec": "L.0c41e1c4", "skill": "L.3e6e7a4d",
+ROLES = {"slot": "L.7c864557", "source": "L.d7dc5f93", "spec": "L.0c41e1c4",
          "none": "L.7daf35e5", "hint": "L.dd9e1ccc", "asked": "L.e2444f80"}
+COLS = {"item": "L.7c871214", "recipe": "L.ce81ca3d", "skill": "L.ae052ca5", "costs": "L.a1b96520"}   # Orders headers
 PLAIN = ["L.b1dc5722", "L.c392d9dd", "L.64bd2450", "L.0de35f31", "L.7382e9dc", "L.9b979727", "L.689ff4ed",
          "L.f610e09c", "L.086cad68", "L.be85b2d7", "L.a3198921", "L.f21b2ab1", "L.adde7058", "L.0cf88a3b",
          "L.8d84e022", "L.0cf84ebb", "L.7c898026"]
@@ -89,9 +91,11 @@ def feed(langs=None):
     p = [en[k] for k in PLAIN]
     mn = flow_gq_menu.feed(en)
     roles = ",".join("%s=%s" % (r, _q(v)) for r, v in e.items())
-    return ("GearQuestStandInFeed = { win = %s, opts = %s, tabs = %s, late = %s, pages = %s, menu = %s, copy = %s, %s%s }"
+    cols = ",".join("%s=%s" % (r, _q(en[k])) for r, k in COLS.items())
+    return ("GearQuestStandInFeed = { win = %s, opts = %s, tabs = %s, late = %s, pages = %s, menu = %s, copy = %s, "
+            "cols = {%s}, %s%s }"
             % (_list(p[:5]), _list(p[5:9]), _list(p[9:13]), _list(p[13:17]), _list(pages), _list(mn["menu"]),
-               _q(mn["copy"]), roles,
+               _q(mn["copy"]), cols, roles,
                ", langs = %s" % _q(langs) if langs else ""))
 
 
@@ -204,6 +208,7 @@ CUTS = {
     "guide": ("Glued.lua", '    hooksecurefunc(fs, "SetText", Guard(OnBody))', "", "guide"),
     "chat": ("Glued.lua", "    WrapChat(g)", "", "chat"),
     "rows": ("Rows.lua", '    hooksecurefunc(orders, "Paint", G.Guard(AfterPaint))', "", "rows"),
+    "columns": ("Rows.lua", "    Columns(page)\n", "", "fonts"),
     **flow_gq_menu.CUTS,
 }
 

@@ -9,7 +9,7 @@
 --     hint. Ours only when the slot has our word and the hint is ours (or empty); else the whole line goes back to
 --     its English (its template and hint, learned by Locale.lua). Its slot table is never changed: other windows
 --     glue it too.
---   * Its Orders rows: an item name, then its grey skill template (Rows.lua, with the helpers below).
+--   * Its Orders rows: an item name (a game name) and its column headers' faces (Rows.lua, with the helpers below).
 -- On, held and off: the guide is laid out again and the Orders page painted again (by GearQuest itself), so each
 -- shows whole English or whole Ukrainian. Lines already in the chat stay as they were printed.
 -- Each hook runs under a plain pcall, counts its errors (U.Fault) and checks the state itself (lesson 19); any

@@ -1,10 +1,12 @@
--- UADD - GearQuest Forever: its Orders rows, glued in code (lesson 31): an item name, then its grey skill template.
+-- UADD - GearQuest Forever: its Orders rows. Since 1.4.1 a row's text is the item name alone; its skill is a number
+-- in a column of its own (no words), under column headers from its L.
 --
 --   * The item is a game name: ClassicUA or UALL Forever name it (UADD.UALL.Item), we write none.
 --   * Known: the row is ours, on UADD's Cyrillic face through the core helpers (lessons 18, 32; the row's own font
---     has no Cyrillic). Unknown: the row is its English, the skill template too (lesson 27), on its own font.
---   * A header ("asked by <name>", from its L, the name as typed: lesson 13) is drawn on GameFontNormal, which has no
---     Cyrillic: ours gets UADD's face while it shows Cyrillic, its own font back when it does not (lesson 32).
+--     has no Cyrillic). Unknown, or any odd text (a link, a code, its own fallback name): its English, its own font.
+--   * A header ("asked by <name>", from its L, the name as typed: lesson 13) and the column headers (made once, on
+--     GameFontNormalSmall) have no Cyrillic in their font: ours gets UADD's face while it shows Cyrillic, its own
+--     font back when it does not (lesson 32). Their words are switched by Screen.lua's walk (it runs first).
 --   * A name ClassicUA has not settled yet ("wait") is never kept: English now, the page painted again later.
 --   * On, held and off: GearQuest paints the page again and the hook after its paint follows (Glued.lua's Sync);
 --     rows it did not paint get their English and their font back while they still show ours (lesson 23).
@@ -19,9 +21,8 @@ ns.Rows = R
 
 local KEY = "gq"
 local CYR = "[\208-\211]"
-local SKILL = "L.3e6e7a4d"          -- its grey skill template (a value slot)
-local SEP, CLOSE = "  |cffb0b0b0", "|r"   -- how a row glues the skill on
-local GetText, SetRaw, Shown, Split, InForce = G.GetText, G.SetRaw, G.Shown, G.Split, G.InForce
+local COLUMNS = { "item", "recipe", "skill", "costs" }   -- its column headers (page.columns.<name>)
+local GetText, SetRaw, Shown, InForce = G.GetText, G.SetRaw, G.Shown, G.InForce
 local made = 0
 
 local saved = setmetatable({}, { __mode = "k" })   -- row text -> its own font, while ours is on it
@@ -39,31 +40,10 @@ local function Item(name)
 end
 
 -- One row as it is painted now (ours in force): ours or nil, its whole English, and "wait" (ask again later).
+-- The text is the item name alone; anything else (a code, a line break) is not a name and stays as it is.
 local function Row(text)
-    local s = text:find(SEP, 1, true)
-    if not s then
-        local ua, wait = Item(text)
-        return ua, text, wait
-    end
-    local head, tail = Split(ns.AL[SKILL], "%d")
-    if not head then return nil, nil end
-    local item, mid = text:sub(1, s - 1), text:sub(s + #SEP)
-    if #mid < #CLOSE or mid:sub(-#CLOSE) ~= CLOSE then return nil, nil end
-    mid = mid:sub(1, -#CLOSE - 1)
-    if #mid <= #head + #tail or mid:sub(1, #head) ~= head or mid:sub(#mid - #tail + 1) ~= tail then
-        return nil, nil                  -- not our skill template: its own line, left as it is
-    end
-    local num = mid:sub(#head + 1, #mid - #tail)
-    if not num:match("^%d+$") then return nil, nil end
-    local en
-    local tpl = ns.Loc.Back()[ns.AL[SKILL]]
-    if type(tpl) == "string" then
-        local ok, skill = pcall(string.format, tpl, tonumber(num))
-        if ok then en = item .. SEP .. skill .. CLOSE end
-    end
-    local ua, wait = Item(item)
-    if ua and en then return ua .. SEP .. mid .. CLOSE, en, wait end
-    return nil, en, wait
+    local ua, wait = Item(text)
+    return ua, text, wait
 end
 R.Row = Row
 
@@ -135,9 +115,25 @@ local function Retry()
     if not ok then queued = false end
 end
 
+-- A label of its own words (ours from its L): UADD's face while ours shows Cyrillic, else its own font back.
+local function Label(fs)
+    local t = GetText(fs)
+    if not (InForce() and t and t:find(CYR) and CyrOn(fs)) then FontBack(fs) end
+end
+
+local function Columns(page)
+    local cols = type(page) == "table" and rawget(page, "columns")
+    if type(cols) ~= "table" then return end
+    for _, name in ipairs(COLUMNS) do
+        local fs = rawget(cols, name)
+        if type(fs) == "table" then Label(fs) end
+    end
+end
+
 local function AfterPaint(orders)
-    local _, list = Page(orders)
+    local page, list = Page(orders)
     if not list then return end
+    Columns(page)
     pending = false
     for i = 1, math.min(#list, 400) do
         local row = list[i]
@@ -147,8 +143,7 @@ local function AfterPaint(orders)
         elseif rawget(row, "itemId") ~= nil then
             if InForce() then PaintRow(fs) else rows[fs] = nil; FontBack(fs) end
         else                                   -- a header: its own words (ours from its L) on a face with no Cyrillic
-            local t = GetText(fs)
-            if not (InForce() and t and t:find(CYR) and CyrOn(fs)) then FontBack(fs) end
+            Label(fs)
         end
     end
     if not pending then tries = 0 elseif InForce() then Retry() end

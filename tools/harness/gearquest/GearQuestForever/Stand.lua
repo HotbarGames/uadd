@@ -174,19 +174,24 @@ function S.Guide(i)
     return b
 end
 
--- ── Its Orders page (as Orders:Paint): a header per asker ("asked by <name>", no item id), then its rows ──
+-- ── Its Orders page (as 1.4.1's Orders:Ensure and Orders:Paint): column headers made once from its L (on
+-- GameFontNormalSmall), a header per asker ("asked by <name>", no item id), then its rows: the item name alone,
+-- its skill a number in a column of its own (GameFontHighlightSmall), shown only when it is a number ──
 local Orders = {}
 GQ.Orders = Orders
 S.list = {}
 function Orders:Paint()
     local page = self.page
     local used, last = 0, nil
+    page.columns:Show()
     local function Row()
         used = used + 1
         local row = page.rows[used]
         if not row then
             row = CreateFrame("Button", nil, page)
             row.text = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            row.skill = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            row.skill:Hide()
             page.rows[used] = row
         end
         row:Show()
@@ -197,23 +202,35 @@ function Orders:Paint()
         if who ~= last then
             last = who
             local header = Row()
+            header.skill:Hide()
             header.itemId = nil
             header.text:SetText(string.format(L[F.asked or "%s"], who))
         end
         local row = Row()
         row.itemId, row.who = 1000 + i, who
-        local line = d[1]
-        if type(d[2]) == "number" and d[2] > 1 then
-            line = d[1] .. "  |cffb0b0b0" .. string.format(L[F.skill or "%d"], d[2]) .. "|r"
+        row.text:SetText(d[1])
+        if type(d[2]) == "number" then
+            row.skill:SetText(tostring(d[2]))
+            row.skill:Show()
+        else
+            row.skill:Hide()
         end
-        row.text:SetText(line)
     end
     for i = used + 1, #page.rows do page.rows[i]:Hide() end
 end
 function S.Orders(list)
     if not Orders.page then
-        Orders.page = CreateFrame("Frame", "GearQuestOrdersPage", UIParent)
-        Orders.page.rows = {}
+        local page = CreateFrame("Frame", "GearQuestOrdersPage", UIParent)
+        page.rows = {}
+        local columns = CreateFrame("Frame", nil, page)
+        columns:Hide()
+        page.columns = columns
+        for _, name in ipairs({ "item", "recipe", "skill", "costs" }) do
+            local fs = columns:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            fs:SetText(L[(F.cols or {})[name] or "?"])
+            columns[name] = fs
+        end
+        Orders.page = page
     end
     S.list = list or S.list
     Orders.page:Show()

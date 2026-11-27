@@ -14,7 +14,8 @@ def _fonts(M, tag):
 def ours(check, g):
     A, E = g.A, g.E
     slot = g.ref["en"][SLOT]
-    words = [k for k in A if k[:2] in ("W:", "G:", "T:") and not cyr(A[k])]
+    words = [k for k in A if k[:2] in ("W:", "G:", "T:", "C:") and not cyr(A[k])]
+    words += [x for x in ("C:item", "C:recipe", "C:skill", "C:costs") if x not in A]   # its column headers shown
     words += [k for k in ("R:1", "R:2", "R:4", "R:5") if not cyr(A.get(k))]
     names = [k for k in ("R:4",) if slot not in (A.get(k) or "")]
     if "Zorpa" not in (A.get("R:1") or ""):
@@ -54,11 +55,14 @@ def chat(check, g):
 
 def rows(check, g):
     A0, A, E = g.A0, g.A, g.E
+    skills = [k for k in E if k.startswith("K:")]
+    kept = len(skills) == 3 and all(A.get(k) == E[k] and E[k].isdigit() for k in skills)
     ok = (A0.get("R:5") == E.get("R:5") and cyr(A.get("R:5")) and cyr(A.get("R:2")) and A.get("R:3") == E.get("R:3")
-          and cyr(A.get("R:1")))
+          and cyr(A.get("R:1")) and kept)
     check("4 Orders rows: an item not settled yet English, ours on the retry; a known one ours, an unknown one "
-          "English; the header ours", ok, (A0.get("R:5") == E.get("R:5"), cyr(A.get("R:5")), cyr(A.get("R:2")),
-                                           A.get("R:3") == E.get("R:3"), cyr(A.get("R:1"))))
+          "English; the header ours; each skill its number alone", ok,
+          (A0.get("R:5") == E.get("R:5"), cyr(A.get("R:5")), cyr(A.get("R:2")), A.get("R:3") == E.get("R:3"),
+           cyr(A.get("R:1")), kept))
     return ok
 
 

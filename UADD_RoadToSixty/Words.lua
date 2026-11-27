@@ -70,7 +70,7 @@ end
 -- a code or a line break. With two: also two words with one space, as a unique name "First Last" reads; each
 -- starts with a capital (or a byte of a letter beyond ASCII), so "Bob once" or "Bob - more" is no name.
 local function FreeName(x, two)
-    if #x == 0 or #x > 60 or find(x, "[|\n\r\t\v\f]") or find(x, "^ ") or find(x, " $") then return nil end
+    if #x == 0 or #x > 60 or find(x, "[|\n\13\t\11\12]") or find(x, "^ ") or find(x, " $") then return nil end
     local sp = find(x, " ", 1, true)
     if sp then
         if not two or find(x, " ", sp + 1, true) or find(x, ": ", 1, true) then return nil end

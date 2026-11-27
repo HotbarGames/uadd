@@ -63,7 +63,8 @@ def gaps(check, c, M, E, A):
     same("off", E)
     M.uadd("wtw on")
     same("on", A)
-    ok = gap_row and bool(caps) and len(ours) == len(rows + caps) and not first and not bad and not sizes and not pop
+    # caps may be empty: since its 2026-11-27 version its enUS has every settings caption (no gap to fill)
+    ok = gap_row and len(ours) == len(rows + caps) and not first and not bad and not sizes and not pop
     check(f"{STEP} ({len(rows)} rows, {len(caps)} captions)", ok,
           (gap_row, [k for k in rows + caps if k not in ours][:3], first, bad[:3], sizes[:3], pop[:3]))
     return ok

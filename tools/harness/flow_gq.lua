@@ -25,7 +25,7 @@ function H.runFile(addon, path, code)
 end
 
 for name, size in pairs({ GameFontNormal = 12, GameFontHighlight = 12, GameFontHighlightSmall = 10, QuestFont = 13,
-                          GameFontNormalLarge = 16 }) do
+                          GameFontNormalLarge = 16, GameFontNormalSmall = 10 }) do
     if not rawget(_G, name) then CreateFont(name):SetFont("Fonts\\FRIZQT__.TTF", size, "") end
 end
 
@@ -87,7 +87,8 @@ local function LangTexts(out)
 end
 
 -- Every text of its windows: W its main window (labels, option labels, tabs), L the late window, G the guide's
--- page, R the Orders rows shown (headers too: "asked by <name>", the name as the player typed it).
+-- page, R the Orders rows shown (headers too: "asked by <name>", the name as the player typed it), C its column
+-- headers, K a row's skill (a number in its own column).
 local function Texts(lang)
     local s, out = S(), {}
     if lang then LangTexts(out) end
@@ -102,7 +103,16 @@ local function Texts(lang)
     if b and b:IsShown() then out["G:now"] = b.body end
     local page = GearQuestOrdersPage
     if page and page:IsShown() then
-        for i, row in ipairs(page.rows) do if row:IsShown() then out["R:" .. i] = row.text end end
+        for i, row in ipairs(page.rows) do
+            if row:IsShown() then
+                out["R:" .. i] = row.text
+                if row.skill:IsShown() then out["K:" .. i] = row.skill end
+            end
+        end
+        local cols = page.columns
+        if cols and cols:IsShown() then
+            for _, name in ipairs({ "item", "recipe", "skill", "costs" }) do out["C:" .. name] = cols[name] end
+        end
     end
     return out
 end
