@@ -61,6 +61,14 @@ function M.readBack()
     local line, tk = GameTooltipTextLeft2, {}
     local obj = line:GetFontObject()
     GameTooltip:Show()
+    -- first a plain round, no scaler: UADD gives its object back (the scaler's SetFont below takes the pin from
+    -- UADD, so wow_fontfam sees no back of ours there; tipfont.segment needs each put of ours seen going back)
+    line:SetText(M.EN)
+    Bad(bad, U.CyrFix(line, tk), "tooltip line, plain: our font did not take")
+    Back(line, tk)
+    Bad(bad, line:GetFontObject() == obj and not U.IsCyrFont((line:GetFont())),
+        "tooltip line, plain: not its own object back: " .. Font(line))
+    tk = {}
     line:SetText(M.EN)
     Bad(bad, U.CyrFix(line, tk), "tooltip line: our font did not take")
     line:SetText(M.UK)
