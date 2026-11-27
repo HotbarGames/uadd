@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: OneForAll українською: головне вікно, вкладки, налаштування, панель, підказки, повідомлення. Частина UADD.
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## Dependencies: UADD
 ## OptionalDeps: UALLF, ClassicUA, OneForAll
 ## X-Category: Localization

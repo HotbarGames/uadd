@@ -13,10 +13,11 @@ is released.** Any module, any window, also when it shows only for a moment (the
 
 ## Cases
 
-- OPEN 2026-11-26 BugSack: the game crashes (stack overflow inside SetFontObject, crash log 14:23:55). Open
-  BugSack from the minimap icon while it holds an error. Fix in e9f6b1d (lesson 47, checks `flow_bs_crash.py`
-  and chaos "BugSack font records"), not yet seen gone in the game. Until then: `/uadd bs off`.
+None open.
 
-Closed: the last five (BugSack tab on hover, Forever Quest Pins Ignore button, Dungeon Journal buttons,
+Closed: BugSack game crash (stack overflow inside SetFontObject, on opening BugSack from the minimap icon while
+it holds an error) closed 2026-11-27: fixed in e9f6b1d (lesson 47), checks `flow_bs_crash.py` and chaos
+"BugSack font records", the owner saw it gone in the game.
+Before that, the last five (BugSack tab on hover, Forever Quest Pins Ignore button, Dungeon Journal buttons,
 LayerSwap swap button, OpenMap dungeon view) closed 2026-11-26: fixed in fec8fdf (lesson 46), checks
 `flow_button.py` and the boxes.lua state rule, the owner saw them gone in the game.

@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: ForeverXP Bar's own words in Ukrainian: XP bar texts, tooltips, options, settings, record and race windows, and its chat lines. Type /uadd fxpb.
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## Dependencies: UADD, ForeverXPbar
 ## X-Category: Localization
 ## X-License: GPL-3.0

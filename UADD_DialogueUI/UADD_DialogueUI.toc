@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Dialogue UI's own words in Ukrainian: buttons, quest labels, hints, settings, tooltips and chat lines. Type /uadd dialogueui.
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## Dependencies: UADD
 ## OptionalDeps: DialogueUI, DialogueUI_UALL
 ## X-Category: Localization

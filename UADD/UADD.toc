@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: Ukrainian for: Questie, Dungeon Journal, OpenMap, Dialogue UI, ForeverXP Bar, Auctionator, Attune, LayerSwap, Auto Potion, Bagnon, Mastercraft, What's Training?, TomTom, RareScanner, Pawn, GatherMate2, Scrap, Speedy AutoLoot, Waypoint UI, Forever Quest Pins, LiteMount, WhatTheWhisper, LootTriage, DeleteCheapestItem Reloaded, Wowhead Quick Link, BugSack, Road to Sixty, OneForAll, GearQuest Forever.
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## SavedVariables: UADD_DB
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

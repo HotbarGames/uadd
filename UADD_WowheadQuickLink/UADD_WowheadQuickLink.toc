@@ -2,7 +2,7 @@
 ## Title: UADD - Wowhead Quick Link
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## Dependencies: UADD, WowheadQuickLink
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

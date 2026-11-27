@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: LootTriage in Ukrainian: its tooltip lines, chat and settings window. Part of UADD.
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## Dependencies: UADD, LootTriage
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization

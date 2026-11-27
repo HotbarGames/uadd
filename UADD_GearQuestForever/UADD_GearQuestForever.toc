@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\UADD\Logo
 ## Notes: GearQuest Forever in Ukrainian: its windows, settings, filters and dialogs. Part of UADD.
 ## Author: HotbarGames
-## Version: 1.2.4
+## Version: 1.3.0
 ## Dependencies: UADD, GearQuestForever
 ## OptionalDeps: UALLF, ClassicUA
 ## X-Category: Localization
