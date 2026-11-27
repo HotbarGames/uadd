@@ -19,7 +19,7 @@
 - OneForAll: сторінки, які відкриваєш не одразу (професії, підземелля), тепер теж українською, а назви вкладок не залазять на сусідні.
 - OneForAll: рядок «Ціль:» не лишається англійським, поки ім'я НІПа ще в дорозі, а англійська під клавішею оригіналу знову у своєму шрифті.
 - Mastercraft: рядок підказки про те, з чиїх кишень можна дістати предмет, тепер українською. Спритність рук не постраждала.
-- DialogueUI, What's Training?, Mastercraft і Dungeon Journal: англійська під клавішею оригіналу і після вимкнення перекладу знову у своєму шрифті.
+- DialogueUI, What's Training? і Mastercraft: англійська під клавішею оригіналу і після вимкнення перекладу знову у своєму шрифті.
 
 ---
 
@@ -40,7 +40,7 @@ Fixed:
 - OneForAll: pages you open later (professions, dungeons) are Ukrainian too, and tab names no longer run into each other.
 - OneForAll: the target line no longer stays English while the NPC's name is on its way, and the English under the original-text key is back in its own font.
 - Mastercraft: the tooltip line on whose pockets hold the item is Ukrainian now. Sleight of hand unharmed.
-- DialogueUI, What's Training?, Mastercraft and Dungeon Journal: the English under the original-text key and after turning the translation off is back in its own font.
+- DialogueUI, What's Training? and Mastercraft: the English under the original-text key and after turning the translation off is back in its own font.
 
 ## 1.3.0
 
