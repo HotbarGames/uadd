@@ -7,6 +7,7 @@ Run: python3 -m unittest tools.test_missed
 import contextlib
 import io
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -118,6 +119,20 @@ class Report(unittest.TestCase):
         self.assertEqual([t for t, _ in names], ["Zork Plank"])
         self.assertEqual([t for t, _ in older], ["Old thingy"])
         self.assertEqual(stayed, 1)
+
+    def test_noise(self):
+        """A colour-wrapped number is a value; a comma list of names is maybe names; a STAY pattern hides a
+        diagnostic line; a sentence with a comma is still missed."""
+        rows = ["|cnIQ2:42|r", "|cff00ff0012|r", "|cnIQ2:42|r text", "Zork Plank, Quux Vale",
+                "Zork Plank, Quux Vale, Bob of Vale", "Zork Plank, and so on", "debug check: a=1 b=2"]
+        mod = {"v": None, "dropped": 0, "namesDropped": 0, "names": {},
+               "texts": {t: {"n": 1, "d": "x", "v": None} for t in rows}}
+        stay = {"m": {"keys": set(), "texts": set(), "templates": [], "note": None,
+                      "patterns": [re.compile(r"^debug check")]}}
+        texts, names, _, stayed = missed.sort_out("m", mod, stay)
+        self.assertEqual(sorted(t for t, _ in texts), ["Zork Plank, and so on", "|cnIQ2:42|r text"])
+        self.assertEqual(sorted(t for t, _ in names), ["Zork Plank, Quux Vale", "Zork Plank, Quux Vale, Bob of Vale"])
+        self.assertEqual(stayed, 3)
 
     def test_main(self):
         old_stay = missed.stay_sets

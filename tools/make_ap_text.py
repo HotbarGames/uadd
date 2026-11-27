@@ -30,6 +30,9 @@ REVIEW = REPO / "local" / "autopotion.txt"
 ADDON_DIRS = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns",
               "C:/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns"]
 MACROS = ("AutoPotion", "AutoBandage", "AutoFood", "AutoDrink", "AutoManaPotion", "AutoManaGem")
+# English on purpose, for tools/missed.py: a slash command, game version labels, and the names of the
+# author's other addons (the Info page's OTHER_ADDONS: "Quality of Life" is the QoL addon's name, not a word).
+STAY_ENGLISH = {"/ap debug", "Retail · WoW Forever", "WoW Forever", "Quality of Life"}
 # By hash: keys the addon never shows (an item name it no longer uses, an old header).
 UNUSED = {"21:e749cbee", "19:b42bf369"}
 # By hash: slots that hold a name as it is (the author, a key name, a macro name).

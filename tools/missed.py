@@ -1,23 +1,20 @@
 """Lists the texts the modules showed in English because we have no Ukrainian for them yet.
 
-The recorder is off by default. Turn it on in the game with /uadd missed on; then UADD notes each such text
-once (UADD/Missed.lua) in its SavedVariables. After you log out (the game writes the file then), run:
-    python3 tools/missed.py
-It reads WTF/Account/*/SavedVariables/UADD.lua under the WoW _forever_ folder ($UADD_WTF_DIR: another WTF
+Turn the recorder on in the game with /uadd missed on (UADD/Missed.lua); log out (the game writes the
+file then), run python3 tools/missed.py. It reads WTF/Account/*/SavedVariables/UADD.lua under the WoW _forever_ folder ($UADD_WTF_DIR: another WTF
 folder; or give the UADD.lua path as an argument), prints per module the missed texts (most shown first)
 and writes all of them to local/missed/<module>.txt (git-ignored: it holds the addons' English).
-First it prints, loudly, what UADD's guard had to repair in the game (tools/health_report.py): each kind (boxes
-fixed or not, a shared font, the keyboard) with when it last happened, in which UADD version, and a sample. A kind
-last seen in an older UADD than the installed one is printed quietly and is no repair for the exit code.
-Exit code: 1 when it lists missed texts or guard repairs, 0 with "nothing missed." when there are none, 2
-when no file could be read.
-  * Kept quiet here: a module's STAY texts (English on purpose), for every module in STAY_LISTS. A STAY
-    template ("%s ...") also hides its filled lines; the English of a STAY hash is read from the installed
-    addon at run time (never written to a tracked file). Without the addon only exact texts are dropped.
-  * "maybe names": texts the game noted as a name (1 to 5 capitalised words). A UI label can land here too.
+First it prints, loudly, what UADD's guard repaired in the game (tools/health_report.py): each kind with when,
+in which UADD version, and a sample. A kind last seen in an older UADD than the installed one is quiet.
+Exit code: 1 when it lists missed texts or guard repairs, 0 with "nothing missed." when none, 2: no file read.
+  * Kept quiet: a module's STAY texts (English on purpose; a STAY template "%s ..." also hides its filled
+    lines; a STAY hash's English is read from the installed addon at run time, never written to a tracked
+    file; without the addon only exact texts are dropped), STAY patterns (a diagnostic print), and a colour-
+    wrapped number alone (a value).
+  * "maybe names": texts the game noted as a name (1 to 5 capitalised words), or a comma list of such names.
   * "older version": noted while an older version of the addon was installed; it may be gone now.
   * In a text, <link> is an item or player link and "<name>" a quoted name; %s a slot that held a name.
-Account folders are never printed: they show as "account 1", "account 2". Standard library only.
+Account folders are never printed ("account 1", "account 2"). Standard library only.
 """
 import glob
 import math
@@ -32,6 +29,9 @@ DEFAULT_WTF = ["/mnt/c/Program Files (x86)/World of Warcraft/_forever_/WTF",
                "C:/Program Files (x86)/World of Warcraft/_forever_/WTF"]
 SHOW = 15            # texts per module on screen; the file has all
 NAME = re.compile(r"^[A-Z][\w'-]*( (of|the|de|[A-Z][\w'-]*)){0,2}$")
+# VALUE: a colour-wrapped number only (a value). NAME_LIST: a comma list of names (maybe names).
+VALUE = re.compile(r"^\|c(?:[0-9a-fA-F]{8}|n\w+:)[-+]?\d[\d,.]*%?(?:\|r)?$")
+NAME_LIST = re.compile(r"^%s(?:, ?%s)+$" % ((NAME.pattern[1:-1],) * 2))
 sys.path.insert(0, HERE)
 import hashtext  # noqa: E402
 import health_report  # noqa: E402
@@ -123,24 +123,19 @@ def _att_never(path):
 # module key: (addon folder, hash keys, English texts, function(addon path) -> more English texts)
 STAY_LISTS = {
     "attune": ("Attune", lambda: (), lambda: (), _att_never),
-    "auctionator": ("Auctionator", lambda: (), lambda: (), None),
-    "autopotion": ("AutoPotion", lambda: (), lambda: (), None),       # Keep (Module.lua) keeps them quiet in Lua
-    "bagnon": ("BagBrother", lambda: (), lambda: (), None),           # Keep (Module.lua) keeps them quiet in Lua
-    "dialogueui": ("DialogueUI", lambda: (), lambda: (), None),        # ns.NotOurs keeps them quiet in Lua
+    "autopotion": ("AutoPotion", lambda: (), lambda: _attr("make_ap_text", "STAY_ENGLISH"), None),
     "fxpb": ("ForeverXPbar", lambda: _attr("test_fxpb_strings", "STAY"), lambda: _attr("fxpb_rules", "STAY_ENGLISH"),
              None),
     "layerswap": ("LayerSwap", lambda: _attr("test_lsw_strings", "STAY"), lambda: _attr("lsw_rules", "STAY_ENGLISH"),
                   None),
-    "mastercraft": ("Mastercraft", lambda: (), lambda: (), None),     # Keep (Module.lua) keeps them quiet in Lua
-    "whatstraining": ("WhatsTraining", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
-    "tomtom": ("TomTom", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
-    "rarescanner": ("RareScanner", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
-    "pawn": ("Pawn", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
-    "gathermate2": ("GatherMate2", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
-    "scrap": ("Scrap", lambda: (), lambda: (), None),   # Keep (Module.lua) keeps them quiet in Lua
     "openmap": ("OpenMap", lambda: (), lambda: set(_attr("test_openmap_strings", "SKIP_NAMES"))
                 | set(_attr("test_openmap_strings", "SKIP_OTHER")), None),
 }
+# These keep their STAY texts quiet in Lua (Keep in Module.lua, or ns.NotOurs): nothing more to read here.
+STAY_LISTS.update({k: (f, lambda: (), lambda: (), None) for k, f in (
+    ("auctionator", "Auctionator"), ("bagnon", "BagBrother"), ("dialogueui", "DialogueUI"),
+    ("mastercraft", "Mastercraft"), ("whatstraining", "WhatsTraining"), ("tomtom", "TomTom"),
+    ("rarescanner", "RareScanner"), ("pawn", "Pawn"), ("gathermate2", "GatherMate2"), ("scrap", "Scrap"))})
 SLOT_RE = {"d": r"-?\d[\d,.]*", "f": r"-?\d[\d,.]*", "x": r"[0-9a-fA-F]+", "x2": r"[0-9a-fA-F]{2}"}
 
 
@@ -190,7 +185,8 @@ def stay_sets():
                     except Exception as e:      # noqa: BLE001
                         note = "STAY of %s not read (%s)" % (folder, type(e).__name__)
         templates = [m for m in map(matcher, sorted(texts)) if m]
-        out[key] = {"keys": keys, "texts": texts, "templates": templates, "note": note}
+        pats = [p for p in [_attr("fxpb_rules", "DEBUG_TEXT", None)] if p] if key == "fxpb" else []   # diagnostic prints
+        out[key] = {"keys": keys, "texts": texts, "templates": templates, "patterns": pats, "note": note}
     return out
 
 
@@ -199,8 +195,12 @@ def plain(t):
 
 
 def is_stay(t, s):
+    if VALUE.match(t):
+        return True
     if not s:
         return False
+    if any(p.search(plain(t)) for p in s.get("patterns", ())):
+        return True
     if hashtext.key(t) in s["keys"] or t in s["texts"] or plain(t) in s["texts"]:
         return True
     return any(m.fullmatch(t) or m.fullmatch(plain(t)) for m in s["templates"])
@@ -216,7 +216,7 @@ def sort_out(key, mod, stay):
             stayed += 1
         elif mod["v"] and e["v"] and e["v"] != mod["v"]:
             older.append((t, e))
-        elif name or NAME.match(plain(t)):
+        elif name or NAME.match(plain(t)) or NAME_LIST.match(plain(t)):
             names.append((t, e))
         else:
             texts.append((t, e))
