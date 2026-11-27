@@ -34,6 +34,7 @@ import loader  # noqa: E402
 import flow_dj_cua  # noqa: E402
 import flow_dj_head  # noqa: E402
 import flow_dj_prose  # noqa: E402
+import flow_dj_readback  # noqa: E402
 import flow_dj_shift  # noqa: E402
 import flow_dj_summon  # noqa: E402
 import flow_dj_words  # noqa: E402
@@ -50,7 +51,6 @@ ORDER = [JOURNAL, "OpenMap", "UALLF", "UADD", MODULE, flow_openmap.MODULE]
 HELD = 0.3                 # seconds: the core waits 0.25 s before it shows the original
 SHARED_FONTS = ["GameFontNormal", "GameFontHighlight", "GameFontNormalSmall", "GameFontHighlightSmall",
                 "GameFontNormalLarge", "GameFontHighlightLarge", "GameFontNormalHuge", "GameFontDisable"]
-
 
 
 class ModuleSession(DJSession):
@@ -94,8 +94,10 @@ def run():
     gc.collect()
     run_client_locale(ModuleSession, check, facts)
     gc.collect()
-    flow_dj_cua.run(check, facts)          # with ClassicUA: no frozen cache, objective lines
-    gc.collect()
+    # with ClassicUA: no frozen cache, objective lines; the journal's SetFont of our file (lesson 48)
+    for extra in (flow_dj_cua.run, flow_dj_readback.run):
+        extra(check, facts)
+        gc.collect()
     return checks, facts
 
 

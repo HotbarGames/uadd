@@ -51,10 +51,53 @@ local function OnFont(fs)
     UADD.SafeCall(Fix, fs, true)
 end
 
+local function SamePath(a, b)
+    return type(a) == "string" and type(b) == "string" and (a:gsub("/", "\\"):lower()) == (b:gsub("/", "\\"):lower())
+end
+
+-- ── The journal's SetFont that reads our file back (docs/LESSONS5.md lesson 48) ───────────────
+-- The journal sets a size or flags by SetFont with the file its GetFont gives, so with ours on it passes our
+-- Cyrillic file. That is no font of its own choice: the record keeps its own file and takes the new size and
+-- flags, set by hand now (`own`), so F.Restore gives back its own file at its latest size, as it would have set
+-- it without us. A button's label never (UADD.SaveFont: its states decide its font). Also with our language off,
+-- until F.Restore could put its font back.
+local function ReadBack(fs, was)
+    local p, size, flags = fs:GetFont()
+    if not UADD.IsCyrFont(p) or type(size) ~= "number" then return end
+    was.size, was.flags = size, type(flags) == "string" and flags or ""
+    if was.object and not UADD.LabelButton(fs) then was.own = true end
+end
+
+local function OnSetFont(fs, path)
+    if guard then return end
+    local was, ours = changed[fs], UADD.CyrFontPath()
+    if was and ours and SamePath(path, ours) and UADD.IsCyrFont((fs:GetFont())) then
+        return UADD.SafeCall(ReadBack, fs, was)
+    end
+    OnFont(fs)
+end
+
+-- The journal's SetFontObject on a text that keeps our file over it (the client keeps a file set by hand): ours
+-- is still on, so the record stays, with the journal's newest object to give back.
+local function NewObject(fs, was)
+    local o, unsafe = UADD.SafeFontObject(fs)
+    was.object, was.unsafe = UADD.FontBase(o), unsafe or nil
+end
+
+local function OnObject(fs)
+    if guard then return end
+    local was = changed[fs]
+    if was and UADD.IsCyrFont((fs:GetFont())) then return UADD.SafeCall(NewObject, fs, was) end
+    OnFont(fs)
+end
+
 -- Decided by the font file the FontString really uses now: the journal sets a file directly
 -- (fs:SetFont) on some texts, while their font object stays the same.
 -- `byJournal`: called from a hook, so the font now set is the journal's own latest choice.
+local later = false       -- F.Restore kept texts that still showed Ukrainian: its next call is the last try
+
 Fix = function(fs, byJournal)
+    later = false         -- ours on again: a later F.Restore starts over
     local path = UADD.CyrFontPath()
     if not path then return end
     local p, size, flags = fs:GetFont()
@@ -75,8 +118,8 @@ Fix = function(fs, byJournal)
     end
     if not hookedFont[fs] then
         hookedFont[fs] = true
-        hooksecurefunc(fs, "SetFont", OnFont)
-        hooksecurefunc(fs, "SetFontObject", OnFont)
+        hooksecurefunc(fs, "SetFont", OnSetFont)
+        hooksecurefunc(fs, "SetFontObject", OnObject)
     end
 end
 F.Fix = Fix
@@ -163,18 +206,36 @@ function F.Mine(btn) return mine[btn] == true end
 -- Cyrillic letters come back; then the file, size and flags when the journal had set them by hand.
 local Put = UADD.FontBack
 
+local function LineShowsCyr(fs)
+    local okV, vis = pcall(fs.IsVisible, fs)
+    if not okV or not vis then return false end
+    local ok, t = pcall(fs.GetText, fs)
+    t = ok and UADD.Plain(t) or nil
+    return t ~= nil and t:find("[\208\209\210][\128-\191]") ~= nil
+end
+
 -- The journal's fonts back, exactly as they were before we changed them (the hooks keep `changed`
--- up to date with each new choice of the journal).
+-- up to date with each new choice of the journal). Off and another language call it before the journal draws
+-- its English: a text that still shows our Ukrainian keeps ours (UADD.FontBack would too: no boxes) and its
+-- record, for one more try after that draw (the look it asks for, Screen.lua). The next call forgets them all.
 function F.Restore()
     pcall(ButtonsBack)
+    local last, kept = later, false
     for fs, old in pairs(changed) do
+        local keep = false
         if UADD.IsCyrFont((fs:GetFont())) then
-            guard = true
-            pcall(Put, fs, old)
-            guard = false
+            if not last and LineShowsCyr(fs) then
+                keep, kept = true, true
+            else
+                guard = true
+                pcall(Put, fs, old)
+                guard = false
+            end
         end
+        if not keep then changed[fs] = nil end
     end
-    wipe(changed)
+    later = kept
+    if kept and ns.Screen then pcall(ns.Screen.Schedule) end
 end
 
 -- For the checks: how many FontStrings carry our font file now.

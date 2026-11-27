@@ -61,9 +61,12 @@ function T.Apply(fs, quick)
             Remember(fs, uk, orig[fs])
         elseif quick then return end
         ns.Fonts.Fix(fs)              -- again each time: DialogueUI resets fonts on a size change
-    elseif mine[fs] then
-        if orig[fs] ~= now then Put(fs, orig[fs]) end
-        mine[fs] = nil
+    else
+        if mine[fs] then
+            if orig[fs] ~= now then Put(fs, orig[fs]) end
+            mine[fs] = nil
+        end
+        ns.Fonts.Back(fs)             -- held: English first, then its own font (lessons 32, 45)
     end
 end
 

@@ -9,6 +9,7 @@
 --     calls F.Fix again on every text it shows (ours then takes the object's new size and flags),
 --     and the hooks below catch a new SetFont at once (a Cyrillic one from DialogueUI: we let go).
 --   * "/uadd dialogueui off" puts back exactly what DialogueUI had: font object, file, size, flags.
+--     So does the hold key, once its English is back (F.Back); the release puts ours on again.
 
 local _, ns = ...
 local F = {}
@@ -64,8 +65,18 @@ Fix = function(fs, byDUI)
         size, flags = osize, oflags
     else
         local op, osize, oflags = ObjectFont(fs)
-        changed[fs] = { path = p, size = size, flags = flags, object = UADD.SafeFontObject(fs),
-            follows = SamePath(op, p) and osize == size and oflags == (flags or "") }
+        local was = changed[fs]
+        local o = was and was.back and was.follows and op and was.object
+        if type(o) == "table" and UADD.SafeFontObject(fs) == o and SamePath((o:GetFont()), p) then
+            -- Its own font given back on the hold key (F.Back): it still follows its object, whose size
+            -- may have changed while held (that FontString kept the file and size put back by hand).
+            -- Only while the record still holds: DialogueUI may have set another object or its own file
+            -- while held (OnFont skips it then); then a fresh record below.
+            was.back, size, flags = nil, osize, oflags
+        else
+            changed[fs] = { path = p, size = size, flags = flags, object = UADD.SafeFontObject(fs),
+                follows = SamePath(op, p) and osize == size and oflags == (flags or "") }
+        end
     end
     guard = true
     local ok, err = pcall(fs.SetFont, fs, path, size or 12, flags or "")
@@ -95,6 +106,21 @@ local function Put(fs, old)
         end
     end
     fs:SetFont(old.path, old.size or 12, old.flags or "")
+end
+
+-- The hold key (Texts.lua, after its English is back): its own font again, its record kept, so the
+-- release (Texts.Apply -> F.Fix) puts ours on at DialogueUI's latest size (lessons 32, 45). Never while
+-- the text shows Cyrillic (DialogueUI - UALL's): that stays in our file. Never in combat (callers).
+function F.Back(fs)
+    local old = changed[fs]
+    if not old or old.back then return end
+    local t = UADD.Plain(fs:GetText())
+    if type(t) ~= "string" or t:find("[\208-\211]") or not UADD.IsCyrFont((fs:GetFont())) then return end
+    guard = true
+    local ok, err = pcall(Put, fs, old)
+    guard = false
+    if not ok then error(err, 0) end
+    old.back = true
 end
 
 -- Every font we changed back as DialogueUI left it.

@@ -45,7 +45,7 @@ def canvas(F, c, M, check, step):
         F._is(M, check, "canvasText", step + " shown again", "instruction line in Ukrainian at once")
     M.key(True)
     M.wait(F.HELD)
-    F._all_en(c, M, check, step + ", Shift held", fonts=False)
+    F._all_en(c, M, check, step + ", Shift held", fonts="shown")
     M.key(False)
     M.wait(F.HELD)
     F._is(M, check, "canvasButton", step + ", Shift let go", "button in Ukrainian again")

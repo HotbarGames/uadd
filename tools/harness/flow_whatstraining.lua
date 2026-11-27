@@ -21,6 +21,20 @@ getmetatable = function(x)
     return realMeta(x)
 end
 
+-- Mutants (flow_whatstraining.py --prove): one fix cut out of the module's file as it loads.
+local CUTS = {}
+M.cut, M.wasCut = nil, false
+function M.addCut(name, file, old, new) CUTS[name] = { file, old, new } end
+local runFile = H.runFile
+function H.runFile(addon, path, code)
+    local c = M.cut and CUTS[M.cut]
+    if c and addon == "UADD_WhatsTraining" and path == c[1] then
+        local a, b = code:find(c[2], 1, true)
+        if a then code, M.wasCut = code:sub(1, a - 1) .. c[3] .. code:sub(b + 1), true end
+    end
+    return runFile(addon, path, code)
+end
+
 -- UIPanelDialogTemplate: the client makes the template's title region itself, never through the Lua
 -- CreateFontString method that Screen.lua hooks; so here it is made straight, as the method would.
 local applyTemplate = H.applyTemplate
@@ -134,6 +148,60 @@ function M.reshow(text)
 end
 function M.set(name, text) S().Set(name, text) end
 function M.label(text) S().Label(text) end
+
+-- Labels made from a font object, as What's Training?'s own (CreateFontString with a font template): the object
+-- first, then the text. "row" is a pooled row whose object the addon switches while ours is on (its skills list
+-- takes a header's object, then a recipe's): A, then B. Each object its own Latin file and size.
+local OWN = { A = { "Fonts\\MORPHEUS.TTF", 13 }, B = { "Fonts\\SKURRI.TTF", 10 } }
+local function Obj(key)
+    local name = "WhatsTrainingStandInFont" .. key
+    local o = rawget(_G, name)
+    if not o then
+        o = CreateFont(name)
+        o:SetFont(OWN[key][1], OWN[key][2], "")
+    end
+    return o
+end
+function M.objLabels(text)
+    local f = rawget(_G, "WhatsTrainingFrame")
+    M.objs = {}
+    for _, k in ipairs({ "plain", "row" }) do
+        local fs = f:CreateFontString(nil, "OVERLAY")
+        fs:SetFontObject(Obj("A"))
+        fs:SetText(text)
+        M.objs[k] = fs
+    end
+    M.wait(0.1)                         -- the C_Timer tick: the queued CreateFontString work
+end
+function M.objSwitch() M.objs.row:SetFontObject(Obj("B")) end
+-- Each label: { text, file (lower case), size, file is a Cyrillic one }.
+function M.objState()
+    local out = {}
+    for k, fs in pairs(M.objs) do
+        local p, s = fs:GetFont()
+        out[k] = { fs:GetText() or "", type(p) == "string" and p:lower() or "", s or 0,
+            UADD.IsCyrFont(p) and true or false }
+    end
+    return out
+end
+-- A label whose font What's Training? set by hand (object A, then SetFont at A's own file and size), so ours
+-- goes on by hand (U.CyrOnOwn); M.handSwitch: the addon then sets object B (the client keeps the file).
+function M.handLabel(text)
+    local fs = rawget(_G, "WhatsTrainingFrame"):CreateFontString(nil, "OVERLAY")
+    fs:SetFontObject(Obj("A"))
+    fs:SetFont(OWN.A[1], OWN.A[2], "")
+    fs:SetText(text)
+    M.hand = fs
+    M.wait(0.1)
+end
+function M.handSwitch() M.hand:SetFontObject(Obj("B")) end
+-- { text, file (lower case), size, file is a Cyrillic one, its font object is B }.
+function M.handState()
+    local fs = M.hand
+    local p, s = fs:GetFont()
+    return { fs:GetText() or "", type(p) == "string" and p:lower() or "", s or 0, UADD.IsCyrFont(p) and true or false,
+        fs:GetFontObject() == Obj("B") }
+end
 
 -- A tooltip line from the stand-in's code on the game tooltip, and the same line from here.
 function M.tip(left, right)

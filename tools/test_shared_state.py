@@ -4,7 +4,8 @@ Two bugs broke the whole game: a throwaway EditBox took the keyboard (lesson 16)
 with SetFont lost its font family, so its Cyrillic showed boxes (lesson 18). Both came from a risky call in a
 module file. This check reads every .lua file a UADD*/*.toc loads and lists each risky call:
 
-- set font      SetFont on anything (it pins one file; a game line loses its font family)
+- set font      SetFont on anything (it pins one file; a game line loses its font family), also a setter taken
+                with rawget(x, "SetFont") to call
 - font object   a method that changes a font object (SetFont, SetTextColor, ...) on a global *Font* name:
                 GameFontNormal, GameTooltipText, ... are shared by the whole game. Never allowed.
 - put object    SetFontObject with an object that is not a game global by its name, nil or a string (a saved one,
@@ -137,6 +138,20 @@ def hits_in_text(path, text):
             found.append((path, line, "font object"))
         elif method and value == "SetFont":
             found.append((path, line, "set font"))
+        if bare and value == "rawget":                   # rawget(<any receiver>, "SetFont"): a setter to call
+            depth, j = 0, i + 1
+            while j < n:
+                if is_sym(j, "(", "[", "{"):
+                    depth += 1
+                elif is_sym(j, ")", "]", "}"):
+                    depth -= 1
+                    if depth == 0:
+                        break
+                elif depth == 1 and is_sym(j, ","):
+                    break
+                j += 1
+            if is_sym(j, ",") and t(j + 1)[0] == luatok.STR and t(j + 1)[1] == "SetFont":
+                found.append((path, line, "set font"))
         if method and value == "SetFontObject" and t(recv)[1] not in ("UADD", "U"):
             a = i + 2 if is_sym(i + 1, "(") else i + 4      # fs:SetFontObject(x) / pcall(fs.SetFontObject, fs, x)
             k, v, _ = t(a)
@@ -244,6 +259,7 @@ class SharedState(unittest.TestCase):
                'fs:SetFontObject(GameFontNormal)\n'                      # a FontString's own font: fine
                'pcall(fs.SetFontObject, fs, saved[fs])\n'                # 22 put object
                'fs:SetFontObject(was.object) UADD.SetFontObject(fs, was.object)\n'  # 23 put object; the helper: fine
+               'local set = rawget(f.x[1], "SetFont") local g = rawget(fs, "GetFont")\n'  # 24 set font; GetFont: fine
                '-- GameFontNormal:SetFont() in a comment\n')
         got = [(n, k) for _, n, k in hits_in_text("UADD_X/Screen.lua", src)]
         self.assertEqual(sorted(got), sorted([(1, "set font"), (2, "font object"), (3, "font object"),
@@ -251,7 +267,8 @@ class SharedState(unittest.TestCase):
                                               (7, "global write"), (8, "game field"), (9, "settings"),
                                               (10, "run code"), (11, "new font"), (12, "global write"),
                                               (13, "global write"), (14, "chat replace"), (14, "game field"),
-                                              (15, "walk"), (22, "put object"), (23, "put object")]))
+                                              (15, "walk"), (22, "put object"), (23, "put object"),
+                                              (24, "set font")]))
         self.assertEqual(hits_in_text("UADD/Guard.lua", src), [])
 
     def test_a_planted_line_fails(self):

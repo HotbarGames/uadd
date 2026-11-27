@@ -59,3 +59,25 @@ less per frame and the frame count grows with load: the check measured the PC, n
 check that counts frames to catch a wait first lifts the per-frame work budget, so the frames left are the waits
 only. Check: `tools/harness/flow_routes.py` `_budget` (an off route takes 1 frame, the bound is 100); with the
 collector's off-route branches cut (old waiting kept) every route takes 2416 frames and fails.
+
+**Lesson 32 again, modules with their own font code (2026-11-27).** DialogueUI and What's Training? put our font
+on with their own code, so the core never saw it. DialogueUI kept our file while the key was held: the English
+showed in our Cyrillic file. What's Training? gave back only the font object, but our file had been set by hand,
+and the client keeps a hand-set file over a new object (`keepsFileOverObject`): the English stayed in our file
+and a pooled row lost its size. Rule: a module puts our font on and takes it off only through U.CyrFix /
+U.CyrUnfix, or through its own helper that gives the font back both off and held, English first (lesson 45).
+Check: `python3 tools/harness/flow_dialogueui.py --prove` (game F in `flow_dialogueui_hold.py`, mutants
+`holdback`, `heldsize`); `python3 tools/harness/flow_whatstraining.py --prove` (`flow_whatstraining_objs.py`,
+mutants `unfix`, `refix`).
+
+**Lesson 48 again, modules that set our font themselves (2026-11-27).** UADD/FontReadBack.lua watches only
+records made through core helpers. Mastercraft put our file on through the addon's raw setter; the addon's
+fitters read the font back and its wrapper stored our file as its own (`mcPath`), so off and hold gave our
+Cyrillic file back. Dungeon Journal's own SetFont hook took the journal setting our read-back file again as the
+journal choosing a Cyrillic font, and dropped the record, so off had nothing to put back. Rule: a module with its
+own font code and its own SetFont hook takes an addon's SetFont of our file as a read-back: the record keeps the
+addon's own file and takes the new size and flags. A SetFontObject while our hand-set file stays keeps the
+record. Off forgets a record only once ours is off the line. A copy that reads the font again every few frames
+(ForeverXP Bar's options preview) heals itself and needs nothing. Check: `python3 tools/harness/flow_mastercraft.py
+--prove` (`flow_mc_readback.py`, mutants `readback_size`, `readback_kept`); `python3
+tools/harness/flow_dj_readback.py --prove` (mutants `readback`, `object`, `keep`).

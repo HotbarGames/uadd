@@ -37,7 +37,7 @@ A new kind of problem: a lesson (newest file with room), a check and its line he
 - 36 P Redraw, walk, popup work: never in combat; core Tell or U.AfterCombat, once, with the final state.
 - 37 P Code that installs and undoes: install only while ns.On(). Test that after off the addon's own function is back (same function).
 - 39 P A guard against boxes or dead keys goes in always, on or off; its error gives the addon's own output. Beware code taking the first byte of a Cyrillic name.
-- 48 P Kept hidden pages fill the 4000-frame walk: skip hidden ones, walk on OnShow.
+- 48+ P Kept hidden pages fill the 4000-frame walk: skip hidden ones, walk on OnShow.
 
 ## Finding and matching texts
 - 1*+ P List every English text shown, also code-built and game globals (ADD, YES): start with scan_addon.py. Never write a global; swap only English, on the addon's own frames. Popups and their buttons: U.Popups.Register; Sushi's: SushiPopups.

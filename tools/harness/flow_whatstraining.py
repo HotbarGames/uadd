@@ -15,7 +15,8 @@ need our Ukrainian are skipped with a note when none is.
     one from other code do not. No Cyrillic font: no Ukrainian anywhere, English back. The hold key
     and "/uadd whatstraining off" give the English back, key up and "on" give ours again. Speed and
     garbage of the miss paths; no half-translated line. The main window made late, on first open
-    (WhatsTrainingFloatingFrame, a template title): ours after the next tick, also shown again.
+    (WhatsTrainingFloatingFrame, a template title): ours after the next tick, also shown again. Labels made
+    from a font object, one switched to another while ours is on (flow_whatstraining_objs.py, --prove).
   * Game C (ruRU client): the module does nothing and says why.
 """
 import collections
@@ -57,12 +58,14 @@ def _feed(M, p):
     M.feedTitle(lua_str(p["title"]))
 
 
-def _game(addons, locale, p=None):
+def _game(addons, locale, p=None, pre=None):
     c = Client(addons, None, locale)
     c.lua.execute(read_text(os.path.join(HERE, "flow_whatstraining.lua")))
     M = c.H.wt
     if p:
         _feed(M, p)
+    if pre:
+        pre(c, M)                       # before the game starts: a mutant's cut (flow_whatstraining_objs.py)
     c.start()
     c.H.pump(60)
     return c, M
@@ -213,6 +216,8 @@ def game_a(check, facts, p, src, temps):
         _lines(check, M, p)
         _back(check, M, p, english, on, good)
         _late(check, M, p)
+        import flow_whatstraining_objs  # labels made from a font object, a pooled row's object switch
+        flow_whatstraining_objs.objects(check, M, p)
     ms, kb = M.speed(SPEED_N, "unknown")
     facts["speed_ms"], facts["garbage_kb"] = round(ms, 2), round(kb, 2)
     check(f"speed: {3 * SPEED_N} misses under {SPEED_MS} ms, under {SPEED_KB} KB garbage",
@@ -278,7 +283,10 @@ def run_checks():
     return checks, facts
 
 
-if __name__ == "__main__":       # alone: python3 tools/harness/flow_whatstraining.py
+if __name__ == "__main__":       # alone: python3 tools/harness/flow_whatstraining.py [--prove]
+    if "--prove" in sys.argv:           # the mutants of the font-object step
+        import flow_whatstraining_objs
+        sys.exit(flow_whatstraining_objs.prove())
     cs, fs = run_checks()
     for x in cs:
         print(("ok    " if x.ok else "FAIL  ") + x.name + (f"  [{x.detail}]" if x.detail else ""))

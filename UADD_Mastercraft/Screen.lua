@@ -21,6 +21,7 @@
 local _, ns = ...
 local U = UADD
 local W = ns.Words
+local K = ns.Kept
 local S = {}
 ns.Screen = S
 
@@ -41,6 +42,9 @@ local function English(fs)
     return raw, false
 end
 
+local function Hush(on) local was = busy busy = on return was end
+
+-- Its size and file while ours is on, and its own back: Kept.lua (its fitters read our file back, lesson 48).
 local function Font(fs, on)
     if on then
         local path = U.CyrFontPath()
@@ -49,9 +53,9 @@ local function Font(fs, on)
         if not was then
             was = U.SaveFont(fs)                -- its font object too (lesson 18)
             was[1], was[2], was[3] = was.path, was.size, was.flags
+            K.Saved(fs, was)
         end
-        local size = rawget(fs, "mcSize") or was[2]
-        local flags = rawget(fs, "mcSize") and rawget(fs, "mcFlags") or was[3]
+        local size, flags = K.Size(fs, was)
         if not size then return end
         fs.mcSetFont(fs, path, size, flags or "")
         local now = fs:GetFont()
@@ -59,18 +63,12 @@ local function Font(fs, on)
     elseif fonted[fs] then
         local was = fonted[fs]
         fonted[fs] = nil
-        local size = rawget(fs, "mcSize")
-        -- (Mastercraft's row fitter passes the font back to SetFont, so mcPath can be ours by now)
-        local path = rawget(fs, "mcPath")
-        if path and U.IsCyrFont(path) then path = nil end
-        if size then
-            fs.mcSetFont(fs, rawget(fs, "mcScript") or path or was[1] or STANDARD_TEXT_FONT,
-                size, rawget(fs, "mcFlags") or "")
-        elseif was.object then                  -- its font object back, never a pinned file
+        local path, size, flags = K.Back(fs, was)
+        if was.object and not rawget(fs, "mcSize") then   -- its font object back, never a pinned file
             U.FontBack(fs, { object = was.object })
-            if was.own then fs.mcSetFont(fs, was[1], was[2], was[3] or "") end
-        elseif was[1] and was[2] then
-            fs.mcSetFont(fs, was[1], was[2], was[3] or "")
+            if was.own and size then K.Give(fs, path, size, flags, Hush) end
+        elseif size then
+            K.Give(fs, path, size, flags, Hush)
         end
     end
 end
@@ -160,7 +158,11 @@ local function Restore(fs)
         return
     end
     if still then fs:SetText(raw) end
-    if fonted[fs] and U.IsCyrFont((fs:GetFont())) then Font(fs, false) else fonted[fs] = nil end
+    if fonted[fs] and U.IsCyrFont((fs:GetFont())) then Font(fs, false)
+    elseif fonted[fs] then                  -- its own font is on already: only its kept file, never ours
+        K.Drop(fs, fonted[fs])
+        fonted[fs] = nil
+    end
 end
 
 -- Any error while we write: Mastercraft's text as it would draw it, in its own font (the worst we may do
@@ -228,9 +230,12 @@ local function Refont(fs)
     Fit(fs)
 end
 
-local function OnFont(fs)
+local function OnFont(fs, path, size, flags)
+    if busy then return end
+    -- its own SetFont, ours on; under SafeCall, so no error of ours reaches Mastercraft's caller (lesson 19)
+    if fonted[fs] then U.SafeCall(K.Asked, fs, fonted[fs], path, size, flags) end
     -- (not wanted: Mastercraft is switching to another language and sets its own font next)
-    if busy or not mine[fs] or not ns.WordsWanted() then return end
+    if not mine[fs] or not ns.WordsWanted() then return end
     Guarded(fs, Refont)
 end
 

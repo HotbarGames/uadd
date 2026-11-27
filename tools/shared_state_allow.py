@@ -31,7 +31,8 @@ ALLOW = {
     ("UADD_Questie/Locale.lua", "global write"): (1, "QUESTIE_LOCALES_OVERRIDE: Questie's own documented locale switch"),
     ("UADD_WaypointUI/Fonts.lua", "set font"): (1, "Cyrillic file on Waypoint UI's own font objects after "
                                                    "U.SaveFont, read back; back with U.FontBack"),
-    ("UADD_WhatsTraining/Screen.lua", "set font"): (2, FONT_FIX + "; " + TODO),
+    ("UADD_Mastercraft/Kept.lua", "set font"): (1, "Mastercraft's own SetFont wrapper on its own label, to give "
+                                                   "its own file back; read back, else its raw setter"),
     ("UADD_Scrap/Swap.lua", "global write"): (2, SWAP), ("UADD_WhatTheWhisper/Swap.lua", "global write"): (1, SWAP),
     ("UADD_WowheadQuickLink/Module.lua", "global write"): (1, SWAP),
     ("UADD/Lines.lua", "chat replace"): (2, "core chat bus (U.ChatHook): one wrap for all modules, lesson 35"),

@@ -11,9 +11,12 @@
 -- Each one gets its own hooksecurefunc on SetText, SetFormattedText, SetFont and SetFontObject (never a
 -- shared metatable); each of its buttons one on SetText (a button sets its label from the game's side,
 -- past the label's own SetText). We keep the English it was given, write our Ukrainian over it and give
--- that one font string UADD's Cyrillic font at its own size (read back: S.Count counts only those that
--- really have it; no Cyrillic font: the English stays). The size is never made smaller (lesson 5).
--- Off, or the hold key: its English and its own font (font object or font) again.
+-- that one font string UADD's Cyrillic font at its own size through the core (U.CyrFix: our font object
+-- first, a file by hand only on a label whose font was set by hand; read back: S.Count counts only those
+-- that really have it; no Cyrillic font: the English stays). The size is never made smaller (lesson 5).
+-- When What's Training? sets its font again while ours is on (a pooled row takes another font object),
+-- that font is its own now: saved, ours over it. Off, or the hold key: its English first, then its own
+-- font back (U.CyrUnfix): the object it had last, and its own file at its latest size.
 
 local _, ns = ...
 local U = UADD
@@ -26,7 +29,7 @@ local function Weak() return setmetatable({}, { __mode = "k" }) end
 local hooked = Weak()     -- fs -> true: our hooks are on it
 local raw = Weak()        -- fs -> the English What's Training? gave it
 local mine = Weak()       -- fs -> true: it shows our Ukrainian
-local fonted = Weak()     -- fs -> { font object, path, size, flags } it had before ours
+local kept = Weak()       -- fs -> its own font before ours (U.SaveFont, kept by U.CyrFix)
 local buttons = Weak()    -- button -> true: our SetText hook is on it
 local owned = Weak()      -- frame -> true: it is What's Training?'s
 local walked = Weak()
@@ -61,33 +64,18 @@ local function Owned(f)
 end
 S.Owned = Owned
 
+-- Its own font back (the caller puts the English back first: while ours still shows Cyrillic the core
+-- keeps our font and the record, lesson 45).
 local function Restore(fs)
-    local was = fonted[fs]
-    if not was then return end
-    fonted[fs] = nil
-    if was[1] then U.SetFontObject(fs, was[1])    -- lesson 47: only an object that may go back
-    elseif was[2] and was[3] and not was[5] then fs:SetFont(was[2], was[3], was[4] or "") end
+    if kept[fs] then pcall(U.CyrUnfix, fs, kept) end
 end
 
--- UADD's Cyrillic font at the size the font string has (or `was`: the font What's Training? just gave
--- it). True only when it really has it now.
-local function Cyr(fs, was)
-    local path = U.CyrFontPath()
-    if not path then return false end
-    if not was then
-        was = fonted[fs]
-        if not was then
-            local p, s, f = fs:GetFont()
-            local o, unsafe = U.SafeFontObject(fs)
-            was = { o, p, s, f, unsafe }
-        end
-    end
-    if not was[3] then return false end
-    fonted[fs] = was
-    fs:SetFont(path, was[3], was[4] or "")
-    if U.IsCyrFont((fs:GetFont())) then return true end
-    Restore(fs)
-    return false
+-- UADD's Cyrillic font at the size the font string has, through the core. True only when it really has
+-- it now (read back); no take: its own font back.
+local function Cyr(fs)
+    if not U.CyrFontPath() then return false end
+    local ok, took = pcall(U.CyrFix, fs, kept)
+    return ok and took == true and U.IsCyrFont((fs:GetFont())) or false
 end
 
 -- Our words, else (a whole text that is one game name) UALL Forever's (Names.lua).
@@ -98,9 +86,9 @@ local function Put(fs)
     local nofont = cyr and not U.CyrFontPath()
     if uk and cyr and not Cyr(fs) then uk = nil end
     if uk then
-        if not cyr then Restore(fs) end
         fs:SetText(uk)
         mine[fs] = true
+        if not cyr then Restore(fs) end             -- text first, then the font (lesson 45)
     else
         if mine[fs] then
             mine[fs] = nil
@@ -131,17 +119,33 @@ end
 local function OnTextHook(fs, text) U.SafeCall(OnText, fs, text) end
 local function OnFormatted(fs) if not busy then U.SafeCall(OnText, fs, fs:GetText()) end end
 
--- What's Training? changed the font of one that shows ours: that is the font to go back to; ours again.
-local function OnFont(fs, byObject)
-    if busy or not mine[fs] or not fonted[fs] then return end
-    local p, s, f = fs:GetFont()
+-- What's Training? changed the font of one that shows ours. Ours still on (the client keeps a file set by
+-- hand over SetFontObject): nothing to do. Ours gone: U.CyrFix saves that font as its own and puts ours
+-- over it; no take: the English back, never Cyrillic in a Latin file.
+local function OnFont(fs)
+    if busy or not mine[fs] or not kept[fs] then return end
     busy = true
-    pcall(Cyr, fs, { byObject and U.SafeFontObject(fs) or nil, p, s, f })
+    local ok, took = pcall(Cyr, fs)             -- never left busy
     busy = false
+    if not (ok and took) then U.SafeCall(Apply, fs) end
 end
 
-local function OnSetFont(self) U.SafeCall(OnFont, self, false) end
-local function OnSetFontObject(self) U.SafeCall(OnFont, self, true) end
+-- A new font object while our hand-set file stays (U.CyrOnOwn, or set by hand before us: the client keeps a file
+-- set by hand over SetFontObject): that object is its own now, so held and off give it back, not the old one.
+local function NewObject(fs)
+    local was = kept[fs]
+    if busy or not was or not (was.byhand or was.own) or not U.IsCyrFont((fs:GetFont())) then return end
+    local o, unsafe = U.SafeFontObject(fs)
+    local n = type(o) == "table" and o.GetName and o:GetName()
+    if type(n) == "string" and n:find("^UADD_") then return end   -- one of ours: not the addon's choice
+    was.object, was.unsafe = U.FontBase(o), unsafe or nil
+end
+
+local function OnSetFont(self) U.SafeCall(OnFont, self) end
+local function OnSetFontObject(self)
+    U.SafeCall(NewObject, self)
+    U.SafeCall(OnFont, self)
+end
 
 local function Hook(fs)
     if hooked[fs] or type(fs) ~= "table" or not fs.SetText or (fs.IsForbidden and fs:IsForbidden()) then return end
@@ -279,7 +283,7 @@ end
 
 function S.Count()
     local n = 0
-    for fs in pairs(fonted) do if mine[fs] and U.IsCyrFont((fs:GetFont())) then n = n + 1 end end
+    for fs in pairs(kept) do if mine[fs] and U.IsCyrFont((fs:GetFont())) then n = n + 1 end end
     return n
 end
 

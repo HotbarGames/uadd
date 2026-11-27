@@ -10,9 +10,10 @@ DialogueUI's own font without Ukrainian letters). Run by run.py after the other 
     "/uadd dialogueui off" (exact English, exact fonts, hooks idle) and "on" again; no Lua errors.
   * Game B: DialogueUI loaded after UADD. Game C: no DialogueUI (idle). Game D: a Russian client
     (the module steps aside). Game E: DialogueUI's page in the game's options made after login.
+    Game F: the hold key gives its own font back, a size change while held (flow_dialogueui_hold.py).
   * Games A, B and E open that page (Options > AddOns > Dialogue UI) and check it in Ukrainian, also
     shown again, with the hold key, off and on: flow_dialogueui_canvas.py (also game E).
-The Lua helpers are in flow_dialogueui.lua.
+The Lua helpers are in flow_dialogueui.lua. --prove: flow_dialogueui_hold.py's cuts.
 """
 import collections
 import gc
@@ -20,6 +21,7 @@ import os
 import sys
 
 import flow_dialogueui_canvas
+import flow_dialogueui_hold
 import halves_mods
 import session
 from loader import Addon, Client, lua_str, read_text, txt
@@ -77,8 +79,9 @@ def _all_en(c, M, check, step, fonts=True):
     bad = _list(c, bad)
     check(f"{step}: every shown text exactly DialogueUI's English", not bad and n > 0, f"{n} looked at; " + "; ".join(bad[:3]))
     if fonts:
-        f = _list(c, M.fontsOriginal())
-        check(f"{step}: every font exactly DialogueUI's (object, file, size, flags)", not f, "; ".join(f[:3]))
+        f = _list(c, M.fontsOriginal(fonts == "shown"))   # "shown": the hold key (hidden ones wait)
+        check(f"{step}: every {'shown ' if fonts == 'shown' else ''}font exactly DialogueUI's (object, file, size, flags)",
+              not f, "; ".join(f[:3]))
 
 
 def _is(M, check, name, step, what):
@@ -177,38 +180,32 @@ def game_a(check, facts):
     _is(M, check, "questType", "set again", "SetText(GetText()) keeps our words")
 
     # The hold key.
-    M.key(True)
-    M.wait(HELD)
-    _all_en(c, M, check, "Shift held", fonts=False)
+    M.hold(True, HELD)
+    _all_en(c, M, check, "Shift held", fonts="shown")
     qt, qe = txt(M.text("questType")), txt(M.want("questType", "en"))
     check("Shift held: the text set again shows its English", qt == qe, [qt, qe])
-    M.key(False)
-    M.wait(HELD)
+    M.hold(False, HELD)
     _all_uk(c, M, check, "Shift let go")
 
     # The hold key with the settings hidden: its texts are left as they are, and put right the moment
     # the window shows (no wait for the next look).
     M.root("DUIDialogSettings", False)
-    M.key(True)
-    M.wait(HELD)
+    M.hold(True, HELD)
     row = txt(M.text("row1"))
     check("Shift held, settings hidden: its texts not touched", row == txt(M.want("row1", "uk")), row)
     M.root("DUIDialogSettings", True)
-    _all_en(c, M, check, "Shift held, settings shown at once", fonts=False)
+    _all_en(c, M, check, "Shift held, settings shown at once", fonts="shown")
     M.root("DUIDialogSettings", False)
-    M.key(False)
-    M.wait(HELD)
+    M.hold(False, HELD)
     M.root("DUIDialogSettings", True)
     _all_uk(c, M, check, "let go while hidden, settings shown at once")
 
     # Combat: nothing changes; after combat, a catch-up.
     M.combat(True)
-    M.key(True)
-    M.wait(HELD)
+    M.hold(True, HELD)
     bad, _ = M.compare("uk")
     check("combat: the hold key changes nothing", not _list(c, bad), _list(c, bad)[:3])
-    M.key(False)
-    M.wait(HELD)
+    M.hold(False, HELD)
     M.event("GOSSIP_SHOW")
     M.wait(WAIT)
     o1, en1 = txt(M.text("option1")), txt(M.want("option1", "en"))
@@ -272,8 +269,9 @@ def run(check, facts):
     if not module_there():
         check("UADD_DialogueUI is there", False, "no UADD_DialogueUI/UADD_DialogueUI.toc")
         return
+    F = sys.modules[__name__]
     for g in (lambda: game_a(check, facts), lambda: game_b(check), lambda: game_c(check), lambda: game_d(check),
-              lambda: flow_dialogueui_canvas.game_e(sys.modules[__name__], check)):
+              lambda: flow_dialogueui_canvas.game_e(F, check), lambda: flow_dialogueui_hold.game_f(F, check)):
         g()
         gc.collect()
 
@@ -291,7 +289,9 @@ def run_checks():
     return checks, facts
 
 
-if __name__ == "__main__":       # alone: python3 tools/harness/flow_dialogueui.py
+if __name__ == "__main__":       # alone: python3 tools/harness/flow_dialogueui.py [--prove]
+    if "--prove" in sys.argv:
+        sys.exit(flow_dialogueui_hold.prove(sys.modules[__name__]))
     cs, fs = run_checks()
     for x in cs:
         print(("ok    " if x.ok else "FAIL  ") + x.name + (f"  [{x.detail}]" if x.detail else ""))

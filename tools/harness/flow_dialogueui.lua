@@ -7,6 +7,21 @@ H.dui = M
 H.fontFiles["interface\\addons\\dialogueui\\fonts\\frizqt__.ttf"] = true
 H.fontFiles["interface/addons/dialogueui/fonts/frizqt__.ttf"] = true
 
+-- The proof that a step has teeth (flow_dialogueui_hold.py --prove): with M.cut set, one module file
+-- runs without one fix (in memory only).
+local CUTS = {}
+M.cut, M.wasCut = nil, false
+function M.addCut(name, file, old, new) CUTS[name] = { file, old, new } end
+local runFile = H.runFile
+function H.runFile(addon, path, code)
+    local c = M.cut and CUTS[M.cut]
+    if c and addon == "UADD_DialogueUI" and path == c[1] then
+        local a, b = code:find(c[2], 1, true)
+        if a then code, M.wasCut = code:sub(1, a - 1) .. c[3] .. code:sub(b + 1), true end
+    end
+    return runFile(addon, path, code)
+end
+
 local function S() return rawget(_G, "DialogueUIStandIn") end
 local function Has(t) return type(t) == "string" and t:find("[\208-\210]") ~= nil end
 
@@ -78,13 +93,15 @@ function M.fontsCyr()
 end
 
 -- Every FontString exactly as DialogueUI made it: its own font object, that object's file, size, flags.
-function M.fontsOriginal()
+-- shown: only the shown ones (the hold key leaves a hidden one, text and font, until it shows).
+function M.fontsOriginal(shown)
     local bad = {}
     for _, e in ipairs(S().all) do
         local fs = e.fs
         local p, size, flags = fs:GetFont()
         local op, osize, oflags = e.object:GetFont()
-        if fs:GetFontObject() ~= e.object or p ~= op or size ~= osize or flags ~= oflags then
+        if (not shown or fs:IsVisible())
+            and (fs:GetFontObject() ~= e.object or p ~= op or size ~= osize or flags ~= oflags) then
             bad[#bad + 1] = ("%s: %s %s %s | want %s %s %s"):format(tostring(fs:GetText()):sub(1, 40), tostring(p),
                 tostring(size), tostring(flags), op, osize, oflags)
         end
@@ -120,6 +137,24 @@ function M.fontSize(size)
         end
     end
 end
+
+-- The size setting as the client does it to a FontString that once got a file by hand (ours, or its
+-- own given back on the hold key) keeps that file and size; one that never did follows its object.
+function M.objectsSize(size)
+    S().SetFontSize(size)
+    for _, e in ipairs(S().all) do
+        if not rawget(e.fs, "__hand") then rawset(e.fs, "__font", { e.object:GetFont() }) end
+    end
+end
+
+-- DialogueUI sets another font object on a FontString (as on a pooled one reused); the checks then
+-- want that object.
+function M.reobject(name, object)
+    local fs, o = S().texts[name], _G[object]
+    fs:SetFontObject(o)
+    for _, e in ipairs(S().all) do if e.fs == fs then e.object = o end end
+end
+function M.objectIs(name, object) return S().texts[name]:GetFontObject() == _G[object] end
 
 -- Words.Text straight (body: as on a quest page).
 function M.words(t, body) return H.ns.UADD_DialogueUI.Words.Text(t, body) end
@@ -206,5 +241,6 @@ function M.key(down)
     H.fire("MODIFIER_STATE_CHANGED", "LSHIFT", down and 1 or 0)
 end
 function M.wait(seconds) for _ = 1, math.ceil(seconds / 0.05 - 1e-6) do H.step(0.05) end end
+function M.hold(down, seconds) M.key(down) M.wait(seconds) end   -- the hold key, then a wait
 function M.uadd(msg) return H.call("/uadd " .. msg, SlashCmdList.UADD, msg) end
 function M.standIn() return S() ~= nil end

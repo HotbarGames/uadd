@@ -244,11 +244,16 @@ def run(check, facts, prove=False):
     import flow_mc_code2                    # the lines of the owner's screenshots (2026-11-20)
     flow_mc_code2.run(check, sys.modules[__name__], src)
     gc.collect()
+    import flow_mc_readback                 # its SetFont of our file read back (lesson 48)
+    flow_mc_readback.run(check, sys.modules[__name__], src)
+    gc.collect()
     game_c(check, p)
     if prove:
         gc.collect()
         import mc_prove                     # one fix cut out of Font.lua: the refill step must fail
         mc_prove.mutants(sys.modules[__name__], check, p)
+        gc.collect()
+        flow_mc_readback.mutants(check, sys.modules[__name__], src)
 
 
 Check = collections.namedtuple("Check", "name ok detail")
