@@ -107,7 +107,7 @@ UNFIT = {
                     "13f3acda c8acb9e8 14b55eb6 45a6ad04 0c11e0cf e841de76 dfb4d1e9 ade693b8 979b6913 "
                     "3d872f28".split()},
         **{"Code." + k: "no Ukrainian for it yet: no text shipped in ns.OFA"
-           for k in "ce10d379 a174ec26".split()},
+           for k in "a174ec26".split()},
         **{"Code.9856bfbc": "stays English: its literal 1 is read as a value slot, so the one-item line never "
                             "matches its own template",
            "Code.24423d3c": "stays English: two value slots glued with no gap between, which the sample values do not fit",
